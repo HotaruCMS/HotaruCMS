@@ -30,14 +30,14 @@ class Blocked
 		*/
 		public function buildBlockedList($h)
 		{
-		$h->pageTitle = $h->lang["admin_theme_blocked_list"]; // set page title as "Blocked List"
+		$h->pageTitle = $h->lang("admin_theme_blocked_list"); // set page title as "Blocked List"
 		
 		$safe = true; // CSRF flag
 		
 		if ($h->cage->post->keyExists('type')) {
 			$safe = $h->csrf();
 			if (!$safe) {
-				$h->message = $h->lang['error_csrf'];
+				$h->message = $h->lang('error_csrf');
 				$h->messageType = 'red';
 			}
 		}
@@ -49,7 +49,7 @@ class Blocked
 			$value = $h->cage->post->sanitizeTags('value');
 			
 			if (!$value) {
-				$h->message = $h->lang['admin_blocked_list_empty'];
+				$h->message = $h->lang('admin_blocked_list_empty');
 				$h->messageType = 'red';
 			} else {
 				$this->addToBlockedList($h, $type, $value);
@@ -63,7 +63,7 @@ class Blocked
 			$type = $h->cage->post->testAlnumLines('blocked_type');
 			$value = $h->cage->post->sanitizeTags('value');
 			$this->updateBlockedList($h, $id, $type, $value);
-			$h->message = $h->lang['admin_blocked_list_updated'];
+			$h->message = $h->lang('admin_blocked_list_updated');
 			$h->messageType = 'green';
 		}
 		
@@ -72,7 +72,7 @@ class Blocked
 		{
 			$id = $h->cage->get->testInt('id');
 			$this->removeFromBlockedList($h, $id);
-			$h->message = $h->lang["admin_blocked_list_removed"];
+			$h->message = $h->lang("admin_blocked_list_removed");
 			$h->messageType = 'green';
 		}
 		
@@ -86,7 +86,7 @@ class Blocked
 		if ($safe && $h->cage->post->getAlpha('type') == 'search') {
 			$search_term = $h->cage->post->sanitizeTags('search_value');
 			$where_clause = " WHERE blocked_value LIKE %s";
-			$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . $where_clause;
+			$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED . $where_clause;
 			$count = $h->db->get_var($h->db->prepare($count_sql, '%' . trim($search_term) . '%'));
 			$sql = "SELECT * FROM " . TABLE_BLOCKED . $where_clause . $sort_clause;
 			$query = $h->db->prepare($sql, '%' . trim($search_term) . '%');
@@ -97,12 +97,12 @@ class Blocked
 		if ($safe && $h->cage->post->getAlpha('type') == 'filter') {
 			$filter = $h->cage->post->testAlnumLines('blocked_type');
 			if ($filter == 'all') { 
-				$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+				$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED;
 				$count = $h->db->get_var($h->db->prepare($count_sql));
 				$sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
 				$query = $h->db->prepare($sql);
 			} else {
-				$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s";
+				$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s";
 				$count = $h->db->get_var($h->db->prepare($count_sql, $filter));
 				$sql = "SELECT * FROM " . TABLE_BLOCKED . " WHERE blocked_type = %s" . $sort_clause;
 				$query = $h->db->prepare($sql, $filter);
@@ -111,7 +111,7 @@ class Blocked
 		
 		// SQL
 		if (!$query) { 
-			$count_sql = "SELECT count(*) AS number FROM " . TABLE_BLOCKED;
+			$count_sql = "SELECT count(blocked_id) AS number FROM " . TABLE_BLOCKED;
 			$count = $h->db->get_var($h->db->prepare($count_sql));
 			$sql = "SELECT * FROM " . TABLE_BLOCKED . $sort_clause;
 			$query = $h->db->prepare($sql);
@@ -141,24 +141,24 @@ class Blocked
 				
 				switch($block->blocked_type) { 
 					case 'url':
-						$text = $h->lang["admin_theme_blocked_url"];
+						$text = $h->lang("admin_theme_blocked_url");
 						break;
 					case 'email':
-						$text = $h->lang["admin_theme_blocked_email"];
+						$text = $h->lang("admin_theme_blocked_email");
 						break;
 					default:
-						$text = $h->lang["admin_theme_blocked_ip"];
+						$text = $h->lang("admin_theme_blocked_ip");
 						break;
 				}
 				
 				$output .= "<option value='" . $block->blocked_type . "'>" . $text . "</option>\n";
-				$output .= "<option value='ip'>" . $h->lang["admin_theme_blocked_ip"] . "</option>\n";
-				$output .= "<option value='url'>" . $h->lang["admin_theme_blocked_url"] . "</option>\n";
-				$output .= "<option value='email'>" . $h->lang["admin_theme_blocked_email"] . "</option>\n";
-				$output .= "<option value='user'>" . $h->lang["admin_theme_blocked_username"] . "</option>\n";
+				$output .= "<option value='ip'>" . $h->lang("admin_theme_blocked_ip") . "</option>\n";
+				$output .= "<option value='url'>" . $h->lang("admin_theme_blocked_url") . "</option>\n";
+				$output .= "<option value='email'>" . $h->lang("admin_theme_blocked_email") . "</option>\n";
+				$output .= "<option value='user'>" . $h->lang("admin_theme_blocked_username") . "</option>\n";
 				$output .= "</select></td>\n";
 				$output .= "<td><input type='text' size=30 name='value' value='" . $block->blocked_value . "' /></td>\n";
-				$output .= "<td><input class='submit' type='submit' value='" . $h->lang['admin_blocked_list_update'] . "' /></td>\n";
+				$output .= "<td><input class='submit' type='submit' value='" . $h->lang('admin_blocked_list_update') . "' /></td>\n";
 				$output .= "</tr></table>\n";
 				$output .= "<input type='hidden' name='id' value='" . $block->blocked_id . "' />\n";
 				$output .= "<input type='hidden' name='page' value='blocked' />\n";
@@ -166,7 +166,7 @@ class Blocked
 				$output .= "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />";
 				$output .= "</form>\n";
 				$output .= "</td>";
-				$output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $h->lang["admin_theme_plugins_close"] . "</a></td>";
+				$output .= "<td class='table_description_close'><a class='table_hide_details' href='#'>" . $h->lang("admin_theme_plugins_close") . "</a></td>";
 				$output .= "</tr>";
 			}
 		}
@@ -192,7 +192,7 @@ class Blocked
 		
 		if ($exists) { // already exists
 			if ($msg) { 
-				$h->message = $h->lang['admin_blocked_list_exists']; 
+				$h->message = $h->lang('admin_blocked_list_exists'); 
 				$h->messageType = 'red';
 			}
 			return false;
@@ -201,7 +201,7 @@ class Blocked
 		$sql = "INSERT INTO " . TABLE_BLOCKED . " (blocked_type, blocked_value, blocked_updateby) VALUES (%s, %s, %d)"; 
 		$h->db->query($h->db->prepare($sql, $type, $value, $h->currentUser->id));
 		if ($msg) { 
-			$h->message = $h->lang['admin_blocked_list_added']; 
+			$h->message = $h->lang('admin_blocked_list_added'); 
 			$h->messageType = 'green';
 		}
 		

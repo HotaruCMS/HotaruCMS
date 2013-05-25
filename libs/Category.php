@@ -49,15 +49,32 @@ class Category
 	 */
 	public function getCatName($h, $cat_id = 0, $cat_safe_name = '')
 	{
-		if ($cat_id == 0 && $cat_safe_name != '') {
-			// Use safe name
-			$sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-			$cat_name = $h->db->get_var($h->db->prepare($sql, $cat_safe_name));
-		} else {
-			// Use id
-			$sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-			$cat_name = $h->db->get_var($h->db->prepare($sql, $cat_id));
-		}
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                    if ($cat_id == 0 && $cat_safe_name != '') {
+                            // Use safe name
+                            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
+                            $cat_name = $h->db->get_var($h->db->prepare($sql, $cat_safe_name));
+                    } else {
+                            // Use id
+                            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+                            $cat_name = $h->db->get_var($h->db->prepare($sql, $cat_id));
+                    }
+                } else {
+                    if ($cat_id == 0 && $cat_safe_name != '') {
+                            // Use safe name
+                            $category = models___Categories::first(array( 
+                                'select' => 'category_name',
+                                'conditions' => array('category_safe_name = ?', urlencode($cat_safe_name))
+                              ));
+                    } else {
+                            // Use id
+                            $category = models___Categories::first(array( 
+                                'select' => 'category_name',
+                                'conditions' => array('category_id = ?', urlencode($cat_id))
+                              ));
+                    }
+                    $cat_name = isset($category->category_name) ? $category->category_name : null;
+                }
 		return urldecode($cat_name);
 	}
 	
@@ -216,7 +233,7 @@ class Category
 	 */
 	public function isCatEmpty($h, $cat_id = 0)
 	{
-		$sql = "SELECT count(*) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
+		$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
 		$posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
 		if ($posts == 0) {
 			return true;	//empty

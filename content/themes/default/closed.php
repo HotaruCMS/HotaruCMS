@@ -27,7 +27,7 @@
 
 ?>
 
-<?php $msg1 = $h->lang['main_hotaru_site_closed']; ?>
+<?php $msg1 = $h->lang('main_hotaru_site_closed'); ?>
 
 <html lang="en"><head>
     <meta charset="utf-8">

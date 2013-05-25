@@ -57,10 +57,10 @@ class Maintenance
 		
 		// prepare messages
 		if ($success) {
-			$h->message = $h->lang['admin_maintenance_clear_cache_success'];
+			$h->message = $h->lang('admin_maintenance_clear_cache_success');
 			$h->messageType = 'green';
 		} else {
-			$h->message = $h->lang['admin_maintenance_clear_cache_failure'];
+			$h->message = $h->lang('admin_maintenance_clear_cache_failure');
 			$h->messageType = 'red';    
 		}
 		
@@ -82,7 +82,7 @@ class Maintenance
 		$h->db->get_results($h->db->prepare($sql, $folder));
 		
 		if ($msg) {
-			$h->message = $h->lang['admin_maintenance_settings_removed'];
+			$h->message = $h->lang('admin_maintenance_settings_removed');
 			$h->messageType = 'green';
 		}
 	}
@@ -151,7 +151,7 @@ class Maintenance
 			$h->db->query("OPTIMIZE TABLE " . $table_name);
 		}
 		
-		$h->message = $h->lang['admin_maintenance_optimize_success'];
+		$h->message = $h->lang('admin_maintenance_optimize_success');
 		$h->messageType = 'green';
 	}
         
@@ -168,7 +168,7 @@ class Maintenance
 
                 try {
                     system($command);                    
-                    $h->message = $h->lang['admin_maintenance_export_success'] . ' : ' . $backupFile;
+                    $h->message = $h->lang('admin_maintenance_export_success') . ' : ' . $backupFile;
                     $h->messageType = 'green';
                 } catch (Exception $e) {
                     //echo( "Caught exception: " . $e->getMessage() );
@@ -188,7 +188,7 @@ class Maintenance
 		$h->db->query("DELETE FROM " . $table_name);
 		
 		if ($msg) {
-			$h->message = $h->lang['admin_maintenance_table_emptied'];
+			$h->message = $h->lang('admin_maintenance_table_emptied');
 			$h->messageType = 'green';
 		}
 	}
@@ -204,7 +204,7 @@ class Maintenance
 		$h->db->query("DROP TABLE " . $table_name);
 		
 		if ($msg) {
-			$h->message = $h->lang['admin_maintenance_table_deleted'];
+			$h->message = $h->lang('admin_maintenance_table_deleted');
 			$h->messageType = 'green';
 		}
 	}
@@ -222,13 +222,13 @@ class Maintenance
 			// open
 			$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
 			$h->db->query($h->db->prepare($sql, 'true', 'SITE_OPEN'));
-			$h->message = $h->lang['admin_maintenance_site_opened'];
+			$h->message = $h->lang('admin_maintenance_site_opened');
 			$h->messageType = 'green';
 		} else {
 			//close
 			$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
 			$h->db->query($h->db->prepare($sql, 'false', 'SITE_OPEN'));
-			$h->message = $h->lang['admin_maintenance_site_closed'];
+			$h->message = $h->lang('admin_maintenance_site_closed');
 			$h->messageType = 'green';
 		}
 	}
@@ -321,7 +321,7 @@ class Maintenance
 		// clear the database cache:
 		$h->clearCache('db_cache', false);
 		
-		$h->message = $h->lang['admin_maintenance_announcement_updated'];
+		$h->message = $h->lang('admin_maintenance_announcement_updated');
 		$h->messageType = 'green';
 	}
 	

@@ -1,156 +1,147 @@
-/* ******* INSTALL CSS STYLE **************************************************************************
- * Stylesheet: install_style.css
- * Stylesheet author: Nick Ramsay
- * Version: 0.1
- * License:
- *
- *   This file is part of Hotaru CMS (http://www.hotarucms.org/).
- *
- *   Hotaru CMS is free software: you can redistribute it and/or modify it under the terms of the
- *   GNU General Public License as published by the Free Software Foundation, either version 3 of
- *   the License, or (at your option) any later version.
- *
- *   Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License along with Hotaru CMS. If not,
- *   see http://www.gnu.org/licenses/.
- *
- *   Copyright (c) 2010 Hotaru CMS - http://www.hotarucms.org/
- *
- **************************************************************************************************** */
+/* Sidenav
+-------------------------------------------------- */
+.bs-sidenav {
+  width: 230px;
+  padding: 0;
+  background-color: #fff;
+  position: static;
+  -webkit-border-radius: 6px;
+	 -moz-border-radius: 6px;
+		  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	 -moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+		  box-shadow: 0 1px 4px rgba(0,0,0,.065);
+}
+.bs-sidenav > li > a {
+  display: block;
+  width: 190px \9;
+  margin: 0 0 -1px;
+  padding: 8px 14px;
+  border: 1px solid #e5e5e5;
+}
+.bs-sidenav > li:first-child > a {
+  -webkit-border-radius: 6px 6px 0 0;
+	 -moz-border-radius: 6px 6px 0 0;
+		  border-radius: 6px 6px 0 0;
+}
+.bs-sidenav > li:last-child > a {
+  -webkit-border-radius: 0 0 6px 6px;
+	 -moz-border-radius: 0 0 6px 6px;
+		  border-radius: 0 0 6px 6px;
+}
+.bs-sidenav > .active > a {
+  position: relative;
+  z-index: 2;
+  padding: 9px 15px;
+  border: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  -webkit-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+	 -moz-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+		  box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+}
+/* Chevrons */
+.bs-sidenav .icon-chevron-left {
+  float: left;
+  margin-top: 2px;
+  margin-left: -6px;
+  opacity: .25;
+}
+.bs-sidenav > li > a:hover {
+  background-color: #f5f5f5;
+}
+.bs-sidenav a:hover .icon-chevron-left {
+  opacity: .5;
+}
+.bs-sidenav .active .icon-chevron-left,
+.bs-sidenav .active a:hover .icon-chevron-left {
+  opacity: 1;
+}
+.bs-sidenav .affix {
+  top: 40px;
+}
+.bs-sidenav .affix-bottom {
+  position: absolute;
+  top: auto;
+  bottom: 270px;
+}
+/* Sidenav */
+.bs-sidenav {
+	width: auto;
+	margin-bottom: 20px;
+	position: static;
+}
+.bs-sidenav .affix {
+	position: static;
+	width: auto;
+	top: 0;
+}
+/* Responsive
+-------------------------------------------------- */
 
-.clear			{ clear: both; }
-.clearfix:after		{ clear: both; content: "."; display: block; height: 0; line-height: 0; visibility: hidden; }
-html[xmlns] .clearfix	{ display: block; }
-* html .clearfix	{ height: 1%; }
-
-html, body {
-	margin-top: 2.0em;
-	min-height: 100%; height: 100%;
-	background-color: #f0f0f0;
-	text-align: center;
-	font-size: 1.0em;
+/* Desktop large
+------------------------- */
+@media (min-width: 1200px) {
+  .bs-sidenav {
+	width: 258px;
+  }
+  .bs-sidenav > li > a {
+	width: 230px \9; /* Override the previous IE8-9 hack */
+  }
 }
 
-h1 {
-	font-size: 1.5em;
-	margin-left: 1.0em;
-	padding-top: 0.6em;
+/* Desktop
+------------------------- */
+@media (max-width: 980px) {
+/* Unfloat brand */
+  body > .navbar-fixed-top .brand {
+    float: left;
+    margin-left: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+/* When affixed, space properly */
+  .bs-sidenav {
+    top: 0;
+    width: 218px;
+    margin-top: 30px;
+    margin-right: 0;
+	position: static;
+  }
 }
 
-img {
-	padding-right: 1.0em;
+/* Tablet to desktop
+------------------------- */
+@media (min-width: 768px) and (max-width: 979px) {
+  /* Remove any padding from the body */
+  body {
+    padding-top: 0;
+  }
+  /* Adjust sidenav width */
+  .bs-sidenav {
+    width: 166px;
+    margin-top: 20px;
+  }
+  .bs-sidenav.affix {
+    top: 0;
+  }
 }
 
-h2 {
-	font-size: 1.2em;
-	padding-bottom: 0.4em;
+/* Tablet
+------------------------- */
+@media (max-width: 767px) {
+/* Remove any padding from the body */
+  body {
+    padding-top: 0;
+  }
+ 
+/* Sidenav */
+  .bs-sidenav {
+    width: auto;
+    margin-bottom: 20px;
+  }
+  .bs-sidenav.affix {
+    position: static;
+    width: auto;
+    top: 0;
+  }
 }
-
-a {
-	text-decoration: none;
-	color: #0000ff;
-}
-
-a:hover	{
-	text-decoration: underline;
-}
-
-pre {
-	display: inline;
-}
-
-li {
-	list-style: decimal outside;
-	margin-left: 2em;
-	padding: 0.2em;
-}
-
-div, p {
-	padding: 0.4em;
-}
-
-form {
-	padding: 1.0em;
-}
-
-td {	padding: 0.5em;
-
-}
-
-small {
-	font-size: 0.8em;
-}
-
-.install {
-	padding: 1.0em;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	background-color: #ffffff;
-	border: 0.1em solid #333333;
-}
-
-.install_content {
-	padding: 0.4em 0.8em 0.4em 0.8em;
-}
-
-.message {
-	margin: 0 auto 1em;
-	width: 90%;
-	padding: 0.8em;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	text-align: center;
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-.green {
-	background-color: #99FF66;
-}
-
-.red {
-	background-color: #FF6A55;
-	color: #ffffff;
-}
-
-.yellow {
-    	background-color: #FBE760;
-}
-
-.update {
-	font-weight: bold;
-	color: #00f;
-}
-
-.button {
-	margin-top: 0.8em;	
-	font-size: 1.2em;
-	padding: 0.3em 0.5em 0.3em 0.5em;
-	background-color: #f6f6f6;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-	border: 0.1em solid #666;
-}
-
-.next { float: right; }
-.back { float: left; }
-
-.next a, .back a {
-	font-weight: bold;
-}
-
-.select { float: left; margin-right: 2em; text-align: center; width: 300px; font-weight:bold; }
-.center a:hover {background-color: #ee1; text-decoration: none;}
-
-.center { margin: 0 auto; width:720px;}
-
-#ft {
-	margin-top: 3.0em;
-	padding-bottom: 0em;
-	text-align: center;
-	font-size: 0.8em;
-}
-

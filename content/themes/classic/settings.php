@@ -47,9 +47,9 @@ if (!$theme_settings) {
  
 <br />
 <input type='hidden' name='submitted' value='true' />
-<input type='submit' value='<?php echo $h->lang["main_form_save"]; ?>' />
+<input type='submit' value='<?php echo $h->lang("main_form_save"); ?>' />
 <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 </form>
  
 <br />
-<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>&amp;reset=true"><?php echo $h->lang["admin_theme_theme_revert_settings"]; ?></a>
+<a href="<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>&amp;reset=true"><?php echo $h->lang("admin_theme_theme_revert_settings"); ?></a>

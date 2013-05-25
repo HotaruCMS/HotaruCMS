@@ -27,11 +27,6 @@
  */
 
 ?>
-<?php if ($h->isActive('submit') && isset($h->lang['submit_submit_a_story'])) { ?>
-<div class="well sidebar-nav">    
-        <center><a href="<?php echo $h->url(array('page'=>'submit'));?>"><div class="btn btn-success"><?php echo $h->lang['submit_submit_a_story']; ?></div></a></center>
-</div>
-<?php } ?>
 
 <div class="well sidebar-nav">
     <div id="sidebar">               

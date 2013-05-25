@@ -47,15 +47,15 @@
         <div class="nav-collapse collapse">
           <div class="pull-right">
             <a href="#" class="brand">
-                <span style="font-size:75%;"><?php echo $h->lang["admin_theme_header_hotarucms"]; ?><?php echo $h->version; ?></span>
+                <span style="font-size:75%;"><?php echo $h->lang("admin_theme_header_hotarucms"); ?><?php echo $h->version; ?></span>
             </a>
           </div>
           <ul class="nav">
-            <li class="active"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang["admin_theme_menu_admin_home"]; ?></a></li>
-            <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["admin_theme_menu_site_home"]; ?></a></li>
+            <li class="active"><a href="<?php echo $h->url(array(), 'admin'); ?>"><?php echo $h->lang("admin_theme_menu_admin_home"); ?></a></li>
+            <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("admin_theme_menu_site_home"); ?></a></li>
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang["admin_theme_menu_hotaru_forums"]; ?> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="http://forums.hotarucms.org/">Top</a></li>
                   <li><a href="http://forums.hotarucms.org/forumdisplay.php?2-News-and-Announcements">News</a></li>
@@ -67,8 +67,8 @@
                 </ul>
               </li>
 
-            <li><a href="http://docs.hotarucms.org"><?php echo $h->lang["admin_theme_menu_help"]; ?></a></li>
-            <li><a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><?php echo $h->lang["admin_theme_menu_logout"]; ?></a></li>
+            <li><a href="http://docs.hotarucms.org"><?php echo $h->lang("admin_theme_menu_help"); ?></a></li>
+            <li><a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><?php echo $h->lang("admin_theme_menu_logout"); ?></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

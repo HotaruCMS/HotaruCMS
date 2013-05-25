@@ -81,7 +81,24 @@ class Messages
 	public function showMessages($h)
 	{
 		if ($h->messages) {
-			foreach ($h->messages as $msg => $msg_type) {
+			foreach ($h->messages as $msg => $msg_params) {
+                                // check whether we have an array here or a normal vars first
+                                // old message type or new extra params type
+                                if (is_array($msg_params)) {
+                                    $msg_type = $msg_params[0];
+                                    $msg_role = $msg_params[1];
+                                    
+                                    // If we are not on admin page then show the role with the message
+                                    if (!$h->adminPage) $msg = "<strong>" . ucfirst($msg_role) . "</strong>: " . $msg;
+                                } else {
+                                    $msg_type = $msg_params;
+                                    $msg_role = '';
+                                }
+                                
+                                if (!$msg_role == '') {
+                                    if ($msg_role !== $h->currentUser->role) continue;   //  go to the next for item 
+                                }
+
                                 // for older hotaru plugins
                                 if ($msg_type == 'red') $msg_type .= ' alert-error';
                                 if ($msg_type == 'green') $msg_type .= ' alert-success';
@@ -93,5 +110,12 @@ class Messages
 			}
 		}
 	}
+        
+        
+        public function addMessage($h, $msg = '', $msg_type = '', $msg_role = '')
+        {
+                $h->messages[$msg] = array($msg_type, $msg_role);
+                return true;
+        }
 }
 ?>

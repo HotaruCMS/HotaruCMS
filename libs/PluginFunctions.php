@@ -186,9 +186,9 @@ class PluginFunctions
 	public function numActivePlugins($h)
 	{
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(*) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
+                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(plugin_id) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
                 } else {
-                    $enabled = models\Plugins::count_by_plugin_enabled(1);
+                    $enabled = models___Plugins::count_by_plugin_enabled(1);
                 }
                 
                 if ($enabled > 0) { return $enabled; } else { return false; }
@@ -327,7 +327,7 @@ class PluginFunctions
 
                     $h->smartCache('off');   // stop using cache                     
                 } else {
-                    $pluginNames = models\Plugins::all(array(
+                    $pluginNames = models___Plugins::all(array(
                         'select' => 'plugin_name, plugin_folder',
                         'conditions' => array('plugin_enabled = ?', 1),
                         'order' => 'plugin_name asc'
@@ -355,8 +355,8 @@ class PluginFunctions
 
                     $h->smartCache('off');   // stop using cache                 
                 } else {
-                    $h->allPluginDetails = models\Plugins::find('all',array('order'=>'plugin_order asc'));
-                    $h->allPluginDetails['hooks'] = models\Pluginhooks::find('all', array('select'=> 'plugin_folder, plugin_hook'));
+                    $h->allPluginDetails = models___Plugins::find('all',array('order'=>'plugin_order asc'));
+                    $h->allPluginDetails['hooks'] = models___Pluginhooks::find('all', array('select'=> 'plugin_folder, plugin_hook'));
                 }
 	}
 	
@@ -388,12 +388,12 @@ class PluginFunctions
                 } else {
                     // first see if there's an active plugin with this *type*:
                     if ($type) { 
-                        $status = models\Plugins::count_by_plugin_type($type);
+                        $status = models___Plugins::count_by_plugin_type($type);
                             
                         if (!$status) 
-                            $status = models\Plugins::count_by_plugin_folder($type);                            
+                            $status = models___Plugins::count_by_plugin_folder($type);                            
                     } else {
-                        $status = models\Plugins::count_by_plugin_folder($h->plugin->folder);
+                        $status = models___Plugins::count_by_plugin_folder($h->plugin->folder);
                     }                    
                 } 
                 
@@ -417,7 +417,7 @@ class PluginFunctions
                         $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
 			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));		
                     } else {
-                        $h->vars['all_plugin_hooks'] = models\Pluginhooks::find('first', array(
+                        $h->vars['all_plugin_hooks'] = models___Pluginhooks::find('first', array(
                             'select' => 'plugin_folder, plugin_hook',
                             'conditions' => array('plugin_hook', 'admin_plugin_settings')                       
                         )); 

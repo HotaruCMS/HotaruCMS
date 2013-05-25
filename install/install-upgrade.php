@@ -69,30 +69,9 @@ exit;
 /**
  * Step 1 of upgrade - checks existing version available and confirms details
  */
-function upgrade_check($h, $old_version) {
-	global $lang;
-	
-	echo html_header();
-
-	// Step title
-	echo "<h2>" . $lang['upgrade_step1'] . "</h2>\n";
-
-	// Current version
-	if ( isset($old_version) )
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_version'] . $old_version . "</div>\n";
-	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_no_version'] . "</div>\n";
-
-	if ($h->version > $old_version)
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_details'] . "</div>\n";
-	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_current_version'] . "</div>\n";
-
-	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='?step=2&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
-
-	echo html_footer();
+function upgrade_check($h, $old_version) 
+{        
+        template($h, 'upgrade/upgrade_step_1.php', array('old_version' => $old_version));	
 }
 
     
@@ -101,23 +80,7 @@ function upgrade_check($h, $old_version) {
  */
 function upgrade_complete($h)
 {
-	global $lang;
-	global $cage;
-
-	echo html_header();
-	
-	// Step title
-	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
-
-	// Step content
-	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
-
-	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='index.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
-	
-	echo html_footer();    
+        template($h, 'upgrade/upgrade_step_2.php');          
 }
 
 
@@ -678,7 +641,13 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.5.0";
         }
 
-	// Update Hotaru version number to the database (referred to when upgrading)
+        
+        /*
+         * 
+         * Update Hotaru version number to the database (referred to when upgrading)
+         * This is always the final step of the upgrade
+         * 
+         */ 
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }

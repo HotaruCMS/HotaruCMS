@@ -32,7 +32,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-<meta name="generator" content="Hotaru CMS <?php echo $h->version; ?>" />
+<meta name="generator" content="Hotaru CMS" />
 
 	<title><?php echo $h->getTitle(); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -40,8 +40,8 @@
                 // plugin hook
                 $result = $h->pluginHook('header_meta');
                 if (!$result) { ?>
-                        <meta name="description" content="<?php echo $h->lang['header_meta_description']; ?>" />
-                        <meta name="keywords" content="<?php echo $h->lang['header_meta_keywords']; ?>" />
+                        <meta name="description" content="<?php echo $h->lang('header_meta_description'); ?>" />
+                        <meta name="keywords" content="<?php echo $h->lang('header_meta_keywords'); ?>" />
         <?php } ?>
                         
 	
@@ -62,6 +62,5 @@
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
-	
-        
+	        
 </head>

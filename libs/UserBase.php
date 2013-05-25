@@ -28,6 +28,8 @@ class UserBase
 	protected $id           = 0;
 	protected $name         = '';
 	protected $role         = 'member';
+        protected $isAdmin      = false;
+        protected $adminAccess  = false;
 	protected $password     = 'password';
 	protected $email        = '';
 	protected $emailValid   = 0;
@@ -157,10 +159,10 @@ class UserBase
                 } else {
                     if ($userid != 0){              
                             // use userid
-                            $user_info = models\Users::find_by_user_id($userid);
+                            $user_info = models___Users::find_by_user_id($userid);
                     } elseif ($username != '') {    
                             // use username
-                            $user_info = models\Users::find('first', array(
+                            $user_info = models___Users::find('first', array(
                                 'conditions' => array('user_username=?',$username)
                                 ));
                     } else {
@@ -174,6 +176,8 @@ class UserBase
 		$this->name = $user_info->user_username;
 		$this->password = $user_info->user_password;
 		$this->role = $user_info->user_role;
+                $this->idAdmin = $this->role == 'admin' ? true : false;
+                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
 		$this->email = $user_info->user_email;
 		$this->emailValid = $user_info->user_email_valid;
 		$this->ip = $user_info->user_ip;
@@ -217,9 +221,16 @@ class UserBase
 		// get user settings:
 		$this->settings = $this->getProfileSettingsData($h, 'user_settings', $this->id);
                 
-                // TODO check why we had user_settings added here
-		//$user_info->user_settings = $this->settings;   // update $user_info
-		
+		$this->id = $user_info->user_id;
+		$this->name = $user_info->user_username;
+		$this->password = $user_info->user_password;
+		$this->role = $user_info->user_role;
+                $this->idAdmin = $this->role == 'admin' ? true : false;
+                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
+		$this->email = $user_info->user_email;
+		$this->emailValid = $user_info->user_email_valid;
+		$this->ip = $user_info->user_ip;
+
 		return $user_info;
 	}
 	

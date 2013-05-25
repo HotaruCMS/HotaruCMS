@@ -153,7 +153,7 @@ class PageHandling
 			
 			if (!$query_args) { // no query vars - must be the home page
 				$index = ($h->home) ? $h->home : ''; 
-				return ($h->isAdmin) ? 'admin_index' : $index;
+				return ($h->adminPage) ? 'admin_index' : $index;
 			}
 
 			parse_str($query_args, $parsed_query_args); // split query vars into key->value pairs
@@ -220,7 +220,7 @@ class PageHandling
 		else
 		{ 
 			// there's no title and no page name - assume "page not found"
-			$h->pageTitle = $h->lang['main_theme_page_not_found'];
+			$h->pageTitle = $h->lang('main_theme_page_not_found');
 			
 			// return the title only
 			if ($raw) { return $h->pageTitle; }
@@ -244,7 +244,7 @@ class PageHandling
 		// if no plugin folder, provide it:
 		if (!$plugin) { $plugin = $h->plugin->folder; }
 		
-		if ($h->isAdmin) { 
+		if ($h->adminPage) { 
 			$themes = ADMIN_THEMES; 
 			$theme = ADMIN_THEME;
 			$default = $this->adminDefault;
@@ -286,6 +286,10 @@ class PageHandling
 				include_once($themes . $default . $page);
 			}
 		}
+                elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $page)) 
+                {
+                        include_once($themes . $theme . 'views/' . $page);
+                }
 		elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $page))
 		{
 			include_once(CONTENT . 'pages/' . $page);
@@ -320,12 +324,12 @@ class PageHandling
 	 */
 	public function render($h, $page = '', $data = array())
 	{
+                if (!$h->adminPage) return false;
+                
 		$page = str_replace('..', '', $page); // prevents access outside the current folder
                 $page = $page . '.php';
                 
-                if ($h->isAdmin) { 
-                    $folder = ADMIN_THEMES . ADMIN_THEME;
-                }
+                $folder = ADMIN_THEMES . ADMIN_THEME;                
                  
                 if (file_exists($folder . 'views/' . $page))
                 {
@@ -342,6 +346,7 @@ class PageHandling
 	 */
 	public function url($h, $parameters = array(), $head = 'index')
 	{
+                $url = '';
 		if (FRIENDLY_URLS == "false") {
 		
 			if ($head == 'index') {
@@ -437,7 +442,7 @@ class PageHandling
 	{
 		$path = $friendly_url;
 		
-		if ($h->isAdmin) { 
+		if ($h->adminPage) { 
 			$head = 'admin_index.php?';
 		} else {
 			$head = 'index.php?';

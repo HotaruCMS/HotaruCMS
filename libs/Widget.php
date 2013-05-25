@@ -101,7 +101,7 @@ class Widget
                     $sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
                     $result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));		
                 } else {
-                    $result = models\Widgets::count_by_widget_plugin_and_widget_function_and_widget_args($plugin, $function, $args);
+                    $result = models___Widgets::count_by_widget_plugin_and_widget_function_and_widget_args($plugin, $function, $args);
                 }
                 		
 		if (!$result) {
@@ -129,7 +129,7 @@ class Widget
                     $sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
                     $widgets_settings = $h->db->get_results($h->db->prepare($sql));
                 } else {
-                    $widgets_settings = models\Widgets::all();
+                    $widgets_settings = models___Widgets::all();
                 }				
 		
                 if (!$widgets_settings) { return false; }                
@@ -236,7 +236,7 @@ class Widget
                     $sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
                     $widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
                 } else {
-                    $widget_plugin = models\Widgets::find_by_widget_function($function);
+                    $widget_plugin = models___Widgets::find_by_widget_function($function);
                 }                
 		
 		return $widget_plugin;

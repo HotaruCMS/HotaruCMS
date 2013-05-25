@@ -95,7 +95,8 @@ class SystemInfo
 		);
 
 		 $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
+                 print_r($info);
+                 die();
 		 if ($info) {
 		    // save the updated version numbers to the local db so we can display it on the plugin management panel
 		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;

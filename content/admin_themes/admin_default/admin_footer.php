@@ -27,7 +27,7 @@
  */
     
 ?>
-
+<?php if ($h->currentUser->adminAccess) { ?>
 	<div id="ft" role="contentinfo">
             <div class="container">
                 <hr/>
@@ -35,7 +35,7 @@
 			$h->pluginHook('admin_footer');
 			
 			// Link to forums...
-			echo "<p>" . $h->lang["admin_theme_footer_having_trouble_vist_forums"] . "</p>";
+			echo "<p>" . $h->lang("admin_theme_footer_having_trouble_vist_forums") . "</p>";
 			
 			if ($h->isDebug) {
 				$h->showQueriesAndTime();
@@ -43,6 +43,7 @@
 		?>
             </div>
 	</div>
+<?php } ?>
 
 
 <?php $h->pluginHook('pre_close_body'); ?>

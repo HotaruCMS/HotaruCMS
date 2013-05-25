@@ -80,14 +80,10 @@ if (!$result) {
             $result = $h->pluginHook('admin_theme_index_main');
             if (!$result) {
                     if ($h->pageName == 'admin_login') {
-                            if ($h->currentUser->loggedIn && $h->currentUser->role == 'admin') {
+                            if ($h->currentUser->loggedIn && $h->currentUser->adminAccess) {
                                     $h->template('admin_home');
-                            } else {
-                                if ($h->currentUser->role != 'admin')  {
-                                        $h->message = $h->lang["admin_not_adminuser"];
-                                        $h->messageType = "red";
-                                }
-                                $h->adminLoginForm();
+                            } else {                                
+                                    $h->adminLoginForm();
                             }
                     } else {
                             if ($h->pageName == 'plugin_settings') {  

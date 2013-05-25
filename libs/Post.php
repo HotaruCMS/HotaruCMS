@@ -141,9 +141,9 @@ class Post
                             $post = $h->db->get_row($sql);
                             $h->vars['tempPostCache'][$sql] = $post;
                     }
-                } else {
-                    $post = models\Posts::find_by_post_id($post_id);
-                    // note we dont use models\Posts::($post_id); because it will throw an error if record not foound
+                } else {                                       
+                    $post = models___Posts::find_by_post_id($post_id);
+                    // note we dont use models___Posts::($post_id); because it will throw an error if record not foound
                 }
 		
 		if ($post) { return $post; } else { return false; }
@@ -259,7 +259,7 @@ class Post
                     $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
                     $results = $h->db->get_results($h->db->prepare($sql, $user_id));
                 } else {
-                    $results = models\Posts::all(array(
+                    $results = models___Posts::all(array(
                         'conditions' => array('post_author = ?', $user_id)
                      ));
                 }
@@ -310,7 +310,7 @@ class Post
                     $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
                 } else {
-                    $posts = models\Posts::all(array(
+                    $posts = models___Posts::all(array(
                         'select' => 'post_id, post_status',
                         'conditions' => array('post_orig_url = ?', urlencode($url))
                         ));
@@ -331,7 +331,7 @@ class Post
                     $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
                     $post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
                 } else {
-                    $post = models\Posts::first(array(                        
+                    $post = models___Posts::first(array(                        
                         'conditions' => array('post_orig_url = ?', urlencode($url))
                      ));
                 }  
@@ -357,7 +357,7 @@ class Post
                     $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
                 } else {
-                    $posts = models\Posts::all(array(
+                    $posts = models___Posts::all(array(
                         'select' => 'post_id, post_status',
                         'conditions' => array('post_title = ?', urlencode($title))
                     ));
@@ -378,7 +378,7 @@ class Post
                     $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
                 } else {
-                    $post = models\Posts::first(array( 
+                    $post = models___Posts::first(array( 
                         'select' => 'post_id',
                         'conditions' => array('post_title = ?', urlencode($title))
                     ));
@@ -401,7 +401,7 @@ class Post
                     $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
                 } else {
-                    $post = models\Posts::first(array( 
+                    $post = models___Posts::first(array( 
                         'select' => 'post_id',
                         'conditions' => array('post_url = ?', urlencode($post_url))
                       ));
@@ -424,10 +424,10 @@ class Post
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                    $sql = "SELECT COUNT(*) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                    $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
                 } else {                                 
-                    $count = models\Posts::count(array(
+                    $count = models___Posts::count(array(
                         'conditions' => array('(post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
                      );;
                 }

@@ -27,7 +27,7 @@
  */
 
 if ($h->vars['theme_settings_csrf_error']) { 
-	$h->showMessage($h->lang['error_csrf'], 'red'); return false;
+	$h->showMessage($h->lang('error_csrf'), 'red'); return false;
 }
 
 $theme = $h->vars['settings_theme'];    // theme folder name
@@ -40,15 +40,15 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 		{
 			if ($theme == rtrim(THEME, '/')) {
 				$span = "current";
-				$instruct = $h->lang['admin_theme_theme_activate_current'];
+				$instruct = $h->lang('admin_theme_theme_activate_current');
 			} else {
 				$span = "activate";
-				$instruct = $h->lang['admin_theme_theme_activate'];
+				$instruct = $h->lang('admin_theme_theme_activate');
 			}
 
 			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'"><span class="' . $span . '">' . make_name($theme, '-') . $instruct . '</span></div><br/>';
 			
-			$no_settings = '<i>' . make_name($theme, '-') . $h->lang['admin_theme_theme_no_settings'] . '</i>';
+			$no_settings = '<i>' . make_name($theme, '-') . $h->lang('admin_theme_theme_no_settings') . '</i>';
 			
 			$meta = $h->readThemeMeta($theme);
 			if ($meta) {
@@ -74,7 +74,7 @@ $theme = $h->vars['settings_theme'];    // theme folder name
 		else 
 		{
 	?>
-		<h3><?php echo $h->lang["admin_theme_theme_settings"]; ?></h3>
+		<h3><?php echo $h->lang("admin_theme_theme_settings"); ?></h3>
 		<ul id="plugin_settings_list">
 			<?php 
 				$themes = $h->getFiles(THEMES, array('404error.php'));

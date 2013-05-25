@@ -68,7 +68,7 @@ class AdminAuth
 				}
 				
 				// User doesn't have permission to access Admin
-				$h->messages[$h->lang['main_access_denied']] = 'red';
+				$h->messages[$h->lang('main_access_denied')] = 'red';
 				$h->template('admin_denied');
 				die(); exit;
 			}
@@ -100,7 +100,7 @@ class AdminAuth
 		if ($h->cage->post->keyExists('login_attempted') || $h->cage->post->keyExists('forgotten_password')) {
 			// check the CSRF key coming from either the navigation bar, login or forgot password forms     
 			if (!$h->csrf('check', 'navigation') && !$h->csrfToken) {
-				$h->message = $h->lang["error_csrf"];
+				$h->message = $h->lang("error_csrf");
 				$h->messageType = "red";
 				return false;
 			}
@@ -125,21 +125,21 @@ class AdminAuth
                                 } else {
                                         $h->sidebars = false;
                                         $h->pageName = 'admin_login';
-                                        $h->message = $h->lang["admin_not_adminuser"];
+                                        $h->message = $h->lang("admin_not_adminuser");
                                         $h->messageType = "red";
                                 }
                 				
 				return true;
 			} else {
 				// login failed
-				$h->message = $h->lang["admin_login_failed"];
+				$h->message = $h->lang("admin_login_failed");
 				$h->messageType = "red";
 			}
 		} 
 		else 
 		{
 			if ($h->cage->post->keyExists('login_attempted')) {
-				$h->message = $h->lang["admin_login_failed"];
+				$h->message = $h->lang("admin_login_failed");
 				$h->messageType = "red";
 			}
 			$username_check = '';
@@ -156,10 +156,10 @@ class AdminAuth
 			
 			if ($passconf && $userid) {
 				if ($h->currentUser->newRandomPassword($h, $userid, $passconf)) {
-					$h->message = $h->lang['admin_email_password_conf_success'];
+					$h->message = $h->lang('admin_email_password_conf_success');
 					$h->messageType = "green";
 				} else {
-					$h->message = $h->lang['admin_email_password_conf_fail'];
+					$h->message = $h->lang('admin_email_password_conf_fail');
 					$h->messageType = "red";
 				}
 			}
@@ -180,7 +180,7 @@ class AdminAuth
 		if (!$email_check = $h->cage->post->testEmail('email')) { 
 			$email_check = ''; 
 			// login failed
-			$h->message = $h->lang["admin_login_email_invalid"];
+			$h->message = $h->lang("admin_login_email_invalid");
 			$h->messageType = "red";
 			return false;
 		} 
@@ -191,12 +191,12 @@ class AdminAuth
 		if ($valid_email && $userid) {
 			//success
 			$h->currentUser->sendPasswordConf($h, $userid, $valid_email);
-			$h->message = $h->lang['admin_email_password_conf_sent'];
+			$h->message = $h->lang('admin_email_password_conf_sent');
 			$h->messageType = "green";
 			return true;
 		} else {
 			// login failed
-			$h->message = $h->lang["admin_login_email_invalid"];
+			$h->message = $h->lang("admin_login_email_invalid");
 			$h->messageType = "red";
 			return false;
 		}
@@ -253,10 +253,7 @@ class AdminAuth
 			if (strpos(SITEURL, "localhost") !== false) {
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
-			} else {
-			     $parsed = parse_url(SITEURL); 
-			                
-			     // now we need a dot in front of that so cookies work across subdomains:
+			} else {			                
 			     setcookie("hotaru_user", $h->currentUser->name, $month, "/");
 			     setcookie("hotaru_key", $strCookie, $month, "/");
 			}  

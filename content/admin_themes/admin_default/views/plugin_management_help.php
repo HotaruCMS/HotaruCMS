@@ -1,9 +1,9 @@
 <div>
-    <p class="info_header"><?php echo $h->lang["admin_theme_plugins_guide"]; ?></p>
-    &raquo; <?php echo $h->lang["admin_theme_plugins_guide1"]; ?><br />
-    &raquo; <?php echo $h->lang["admin_theme_plugins_guide2"]; ?><br />
-    &raquo; <?php echo $h->lang["admin_theme_plugins_guide3"]; ?><br />
-    &raquo; <?php echo $h->lang["admin_theme_plugins_guide4"]; ?><br />
+    <p class="info_header"><?php echo $h->lang("admin_theme_plugins_guide"); ?></p>
+    &raquo; <?php echo $h->lang("admin_theme_plugins_guide1"); ?><br />
+    &raquo; <?php echo $h->lang("admin_theme_plugins_guide2"); ?><br />
+    &raquo; <?php echo $h->lang("admin_theme_plugins_guide3"); ?><br />
+    &raquo; <?php echo $h->lang("admin_theme_plugins_guide4"); ?><br />
 </div>
 <br/>
 

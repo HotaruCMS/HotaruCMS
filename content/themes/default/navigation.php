@@ -30,10 +30,19 @@
  */
 ?>
 
+<?php
+// check whether we have the fluid setting. If not make false
+$fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+$h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings']['userProfile_tabs']) ? $h->vars['theme_settings']['userProfile_tabs'] : 0;
+
+
+//print_r($h->vars['theme_settings']);
+?>
+
 <!-- Navigation Bar -->
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container<?php if ($h->vars['theme_settings']['fullWidth']) echo '-fluid'; ?>">
+        <div class="container<?php echo $fluid; ?>">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -58,7 +67,7 @@
                     } ?>
                     
                     <?php if ($h->pageName == $h->home) { $status = "class='active'"; } else { $status = ""; } ?>
-                    <li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang["main_theme_navigation_home"]; ?></a></li><?php $h->pluginHook('navigation'); ?>
+                    <li <?php echo $status; ?>><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("main_theme_navigation_home"); ?></a></li><?php $h->pluginHook('navigation'); ?>
                     <?php // RSS Link and icon if a type "base" plugin is active
                         if ($h->isActive('base')) { ?>
                             <li>
@@ -74,29 +83,117 @@
                     if (!$h->isActive('signin')) { 
 		
 			if ($h->currentUser->loggedIn == true) { 
-			
-				if ($h->isAdmin) { $status = "class='active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_admin"] . "</a></li>";
-			
-				if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
-				echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang["main_theme_navigation_logout"] . "</a></li>";
+				
+                                if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
+                                    $h->adminNav();
+                                } else {
+                                    echo "<li><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
+                                }
+                                
+				//if ($h->pageName == 'logout') { $status = "class='active'"; } else { $status = ""; }
+				// Logout
+                                //echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";
+                                // User Settings
+                                //echo "<li id='nav_usersettings'>&nbsp;</li>";
+                                
+                                ?>
+                                
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">
+                    <span id="nav_usersettings">
+                        <span class="hide">
+                            User Settings
+                        </span>
+                    </span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-caret">
+                      <span class="caret-outer"></span>
+                      <span class="caret-inner"></span>
+                    </li>
+
+                    <li class="current-user" data-name="profile">
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>                        
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_editProfile')); ?>" class="account-nav account-nav-small">
+                        <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page' => 'edit-profile' , 'user' => $h->currentUser->name)); ?>" class="account-nav account-nav-small">
+                        <?php } ?>
+                        <div class="content">
+                              
+                           <?php   if($h->isActive('avatar')) {
+					$h->setAvatar($h->currentUser->id, 32, 'g', 'img-circle');
+					echo  $h->getAvatar();                                       
+				}
+                            ?>
+                                                                                        
+                              <b class="fullname"><?php echo $h->currentUser->name; ?></b>
+                              <small class="metadata">
+                                  Edit profile
+                              </small>
+                            </div>
+                         
+                        </a>
+                    </li>
+
+                    <?php $h->pluginHook('usermenu_top'); ?>
+                    
+                    <?php if ($h->isActive('messaging')) { ?>
+                    <li class="divider"></li>
+
+                    <li class="messages" data-name="messages">
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#inbox')) ?>">
+                          <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page'=>'inbox', 'user' => $h->currentUser->name)) ?>">
+                          <?php } ?>
+                        <span class=""></span>
+                        Messages
+                      </a>
+                    </li>                    
+                    <?php } ?>                  
+
+                    <li class="divider"></li>
+
+                    <li>
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_settings')) ?>" data-nav="messages">
+                         <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page'=>'user-settings', 'user' => $h->currentUser->name )); ?>">
+                         <?php } ?>
+                            Settings
+                        </a>
+                    </li>
+  
+                    <li>
+                      <a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>">Sign out</a>                   
+                    </li>
+
+                </ul>
+
+            </li>
+          
+                                
+                               <?php
+                                
+                                
 			} else { 
 				if ($h->pageName == 'login') { $status = "class='active'"; } else { $status = ""; }
-				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["main_theme_navigation_login"] . "</a></li>";
+				echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
                                 
                                 ?>
                                 
                                     <li class="dropdown visible-desktop">
-							<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo $h->lang["main_theme_navigation_login"]; ?> <b class="caret"></b></a>
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo $h->lang("main_theme_navigation_login"); ?> <b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li>
 									<form id="signin" action="<?php echo SITEURL; ?>admin_index.php" method="post">
 										<div style="margin:5px 15px 0 15px;">
-                                                                                        <label for="username"><?php echo $h->lang["main_theme_login_username"]; ?></label>
+                                                                                        <label for="username"><?php echo $h->lang("main_theme_login_username"); ?></label>
 											<input id="username" name="username" value="" title="username" tabindex="1" type="text">
 										</div>
 										<div style="margin:5px 15px 0 15px;">
-											<label for="password"><?php echo $h->lang["main_theme_login_password"]; ?></label>
+											<label for="password"><?php echo $h->lang("main_theme_login_password"); ?></label>
 											<input id="password" name="password" value="" title="password" tabindex="2" type="password">
 										</div>
 										<div style="margin:0px 0 0 15px;">
@@ -107,8 +204,8 @@
 										<div style="margin:0;text-align:center;margin:0 auto;width:100%;">
 											<input type="hidden" name="processlogin" value="1">
 											<input type="hidden" name="return" value="">
-											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang['main_theme_login_form_submit']; ?>" tabindex="4" type="submit">
-											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/admin_index.php"><?php echo $h->lang["main_theme_login_forgot_password"]; ?></a>
+											<input id="signin_submit" class="btn btn-primary" style="margin:0;width:90%;" value="<?php echo $h->lang('main_theme_login_form_submit'); ?>" tabindex="4" type="submit">
+											<a id="forgot_password_link" class="btn" style="margin:8px 0 0 12px;width:74%;" href="/admin_index.php"><?php echo $h->lang("main_theme_login_forgot_password"); ?></a>
 										</div>
                                                                                 <input type='hidden' name='login_attempted' value='true'>
                                                                                 <input type='hidden' name='page' value='admin_login'>
@@ -133,6 +230,3 @@
         </div>
     </div>
 </div>
-
-
-

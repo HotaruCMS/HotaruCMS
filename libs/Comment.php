@@ -78,19 +78,25 @@ class Comment
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-		$sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
-		$query = $h->db->prepare($sql, $h->post->id, 'approved');
-		
-		$h->smartCache('on', 'comments', 60, $query); // start using cache
-		$num_comments = $h->db->get_var($query);
-		$h->smartCache('off'); // stop using cache
-		
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                    $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
+                    $query = $h->db->prepare($sql, $h->post->id, 'approved');
+
+                    $h->smartCache('on', 'comments', 60, $query); // start using cache
+                    $num_comments = $h->db->get_var($query);
+                    $h->smartCache('off'); // stop using cache		
+                } else {                                       
+                    $num_comments = models___Comments::count(array(
+                        'conditions' => array('comment_post_id = ? AND comment_status = ?', $h->post->id, 'approved'))
+                     );;
+                }
+                
 		if ($digits_only) { return $num_comments; } // just return the number
 		
 		if ($num_comments == 1) {
-			return "1 " . $h->lang['comments_singular_link'];
+			return "1 " . $h->lang('comments_singular_link');
 		} elseif ($num_comments > 1) {
-			return $num_comments . " " . $h->lang['comments_plural_link'];
+			return $num_comments . " " . $h->lang('comments_plural_link');
 		} 
 		
 		return $no_comments_text;  // shows "Leave a comment" above comment form when no comments
@@ -224,12 +230,12 @@ class Comment
 	{
 		// get all comments
 		if ($userid) { 
-			$sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+			$sql = "SELECT count(comment_id) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
 			$query = $h->db->prepare($sql, 'N', 'approved', $userid);
 			$h->smartCache('on', 'comments', 60, $query); // start using cache
 			$comment_count = $h->db->get_var($query);
 		} else {
-			$sql = "SELECT count(*) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order;
+			$sql = "SELECT count(comment_id) AS number FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order;
 			$query = $h->db->prepare($sql, 'N', 'approved');
 			$h->smartCache('on', 'comments', 60, $query); // start using cache
 			$comment_count = $h->db->get_var($query);
@@ -493,7 +499,7 @@ class Comment
 	 */
 	public function commentsApproved($h, $userid)
 	{
-		$sql = "SELECT COUNT(*) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d";
+		$sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d";
 		$query = $h->db->prepare($sql, 'approved', $userid);
 		
 		$h->smartCache('on', 'comments', 60, $query); // start using cache

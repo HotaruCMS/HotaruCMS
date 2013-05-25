@@ -155,7 +155,7 @@ class IncludeCssJs
 		$file_location = $this->findCssFile($folder, $filename);
 		
 		// Add this css file to the global array of css_files
-		$this->setCssIncludes($file_location, $h->isAdmin);
+		$this->setCssIncludes($file_location, $h->adminPage);
 		
 		return $folder; // returned for testing purposes only
 	 }
@@ -177,7 +177,7 @@ class IncludeCssJs
 		$file_location = $this->findJsFile($folder, $filename);
 		
 		// Add this js file to the global array of js_files
-		$this->setJsIncludes($file_location, $h->isAdmin);
+		$this->setJsIncludes($file_location, $h->adminPage);
 		
 		return $folder; // returned for testing purposes only
 	 }
@@ -274,7 +274,7 @@ class IncludeCssJs
 		$cache = CACHE . 'css_js_cache/';
 		
 	 	// run plugin functions to include css/js files
-		if ($h->isAdmin) {
+		if ($h->adminPage) {
 			$h->pluginHook('admin_header_include');
 			$prefix = 'hotaru_admin_';
 		} else {
@@ -288,18 +288,18 @@ class IncludeCssJs
 		// fill "includes" array with all the files we need to merge
 		if($type == 'css') { 
 			$content_type = 'text/css';
-			$includes = $this->getCssIncludes($h->isAdmin);
+			$includes = $this->getCssIncludes($h->adminPage);
 		} else { 
 			$type = 'js'; 
 			$content_type = 'text/javascript';
 			//don't forget to get the globals js file as well            
 			$this->includeJs($h, $cache, 'JavascriptConstants')    ;
 			$this->includeJs($h, BASE . 'javascript/' , "hotaru");        
-			if ($h->isAdmin) {
+			if ($h->adminPage) {
 				$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
 			}
 			
-			$includes = $this->getJsIncludes($h->isAdmin);
+			$includes = $this->getJsIncludes($h->adminPage);
 		}
 		
 		// remove duplicate include files

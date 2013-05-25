@@ -29,123 +29,66 @@
 $plugin_settings = $h->vars['admin_plugin_settings'];
 $db_tables = $h->vars['admin_plugin_tables'];
 ?>
-    
-<h2><?php echo $h->lang["admin_theme_maintenance_title"]; ?></h2>
 
 <?php $h->showMessage(); ?>
 
 <?php $h->pluginHook('admin_maintenance_top'); ?>
 
-<ul class="">
-	<?php if (SITE_OPEN == "true") { ?>
-	<li><a class="btn btn-warning" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=close">
-		<?php echo $h->lang["admin_theme_maintenance_close_site"]; ?></a>&nbsp;&nbsp;- <?php echo $h->lang["admin_theme_maintenance_close_site_desc"]; ?></li>
-	<?php } else { ?>
-	<li><a class="btn btn-primary" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=open">
-		<?php echo $h->lang["admin_theme_maintenance_open_site"]; ?></a>&nbsp;&nbsp;- <?php echo $h->lang["admin_theme_maintenance_open_site_desc"]; ?></li>
-	<?php } ?>
-	
-	<br />
-	<?php echo $h->lang["admin_theme_maintenance_announcement"]; ?>
-	
-	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php' method='get'>    
-	<div>
-            <div style='width:80%;'>
-		<textarea style='width:100%;' name='announcement_text' rows=3><?php echo $h->vars['admin_announcement']; ?></textarea>
-                
-                    <input type='checkbox' name='announcement_enabled' value='announcement_enabled' <?php echo $h->vars['admin_announcement_enabled']; ?>>
-			<?php echo $h->lang["admin_theme_maintenance_announcement_enable"]; ?>
-                    <div class="pull-right">
-                    <?php echo $h->lang["admin_theme_maintenance_announcement_tags"]; ?>
-                    </div>
-                </div>
-		<input class='btn' type='submit' value='<?php echo $h->lang['main_form_submit']; ?>' />
-		
-	</div>
-	<input type='hidden' name='action' value='announcement'>
-	<input type='hidden' name='page' value='maintenance'>
-	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-	</form>
-</ul>
-
-<h2><?php echo $h->lang["admin_theme_maintenance_cache"]; ?></h2>
-<ul>
-	<li style="margin-bottom: 1em;"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_all_cache">
-		<?php echo $h->lang["admin_theme_maintenance_all_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_all_cache_desc"]; ?></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_db_cache">
-		<?php echo $h->lang["admin_theme_maintenance_db_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_db_cache_desc"]; ?></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_css_js_cache">
-		<?php echo $h->lang["admin_theme_maintenance_css_js_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_css_js_cache_desc"]; ?></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_html_cache">
-		<?php echo $h->lang["admin_theme_maintenance_html_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_html_cache_desc"]; ?></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_lang_cache">
-		<?php echo $h->lang["admin_theme_maintenance_lang_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_lang_cache_desc"]; ?></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=clear_rss_cache">
-		<?php echo $h->lang["admin_theme_maintenance_rss_cache"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_rss_cache_desc"]; ?></li>
-</ul>
-
-<br />
-
-<h2><?php echo $h->lang["admin_theme_maintenance_debug"]; ?></h2>
-<ul>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=delete_debugs">
-		<?php echo $h->lang["admin_theme_maintenance_debug_delete"]; ?></a></li>
-	<li style="margin-bottom: 1em;"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=system_report">
-		<?php echo $h->lang["admin_theme_maintenance_system_report"]; ?></a></li>
-	<li style="margin-bottom: 1em;"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=email_report">
-		<?php echo $h->lang["admin_theme_maintenance_email_system_report"]; ?></a>
-		<?php echo $h->lang["admin_theme_maintenance_email_system_report_note"]; ?></li>
-</ul>
-
-<?php if ($h->vars['debug_files']) {
-			echo $h->lang["admin_theme_maintenance_debug_view"] . "<br />";
-			foreach ($h->vars['debug_files'] as $file) {
-				echo "<a href='" . SITEURL . "admin_index.php?page=maintenance&amp;debug=" . $file . "'>" . $file . "</a><br />";
-			}
-		} else {
-			echo $h->lang["admin_theme_maintenance_debug_no_files"];
-		}
+<?php 
+    $tabs = array('General', 'Cache', 'Debug', 'Database', 'Other');
+    $tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Other');
+    
+    buildtabs($h, 'maintenance', $tabs);
 ?>
-<br />
-
-<h2><?php echo $h->lang["admin_theme_maintenance_optimize"]; ?></h2>
-<ul>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=optimize">
-		<?php echo $h->lang["admin_theme_maintenance_optimize_database"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_optimize_desc"]; ?></li>
-        <li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=export">
-		<?php echo $h->lang["admin_theme_maintenance_export_database"]; ?></a> - <?php echo $h->lang["admin_theme_maintenance_export_desc"]; ?></li>
-        <?php $h->pluginHook('admin_maintenance_database'); ?>
-</ul>
-
-<?php $h->pluginHook('admin_maintenance_middle'); ?>
-
-<br />
-<h2><?php echo $h->lang["admin_theme_maintenance_plugin_settings"]; ?></h2>
-<?php echo $h->lang["admin_theme_maintenance_plugin_settings_explanation"]; ?><br /><br />
-<ul>
-<?php if ($plugin_settings) { ?>
-	<?php foreach ($plugin_settings as $settings) { ?>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=remove_settings&amp;settings=<?php echo $settings; ?>">
-		<?php echo $h->lang["admin_theme_maintenance_remove"] . " " . make_name($settings) . " " . $h->lang["admin_theme_maintenance_settings"]; ?> </a></li>
-	<?php } ?>
-<?php } else { ?>
-	<i><?php echo $h->lang["admin_theme_maintenance_no_plugin_settings_to_delete"]; ?></i>
-<?php } ?>
-</ul>
-
-<br />
-<h2><?php echo $h->lang["admin_theme_maintenance_db_tables"]; ?></h2>
-<span style='color: red;'><?php echo $h->lang["admin_theme_maintenance_db_table_warning"]; ?></span><br /><br />
-<?php echo $h->lang["admin_theme_maintenance_empty_explanation"]; ?><br /><br />
-<ul>
-<?php if($db_tables) { ?>
-	<?php foreach ($db_tables as $table) { ?>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=empty&amp;table=<?php echo $table; ?>">
-		<?php echo $h->lang["admin_theme_maintenance_empty"] . " " . $table; ?> </a></li>
-	<?php } ?>
-<?php } else { ?>
-	<i><?php echo $h->lang["admin_theme_maintenance_no_db_tables_to_empty"]; ?></i>
-<?php } ?>
-</ul>
 
 <?php $h->pluginHook('admin_maintenance_bottom'); ?>
+
+
+<?php 
+
+// TODO
+// Would like to put this function in the core somewhere
+function buildTabs($h, $page = '', $tabs = array())
+{
+    if (!$tabs || !$page) return false;
+    
+    // first extract the data and populate the name array fields
+    foreach ($tabs as $tab) {
+        if (is_array($tab)) {                                   
+            $names[] = $tab[0];
+            $dataItems = $tab[1];
+            
+            if (is_array($dataItems)) { 
+                foreach ($dataItems as $key => $dataItem) {
+                    $$key = $dataItem;
+                }
+            }
+        } else {
+            $names[] = $tab;
+        }
+    }    
+    
+    // tab structure
+    $active = " class = 'active'";
+        
+    echo '<ul class="nav nav-tabs" id="Tabs">';
+    foreach ($names as $name) {        
+        echo '<li' . $active . '><a href="#' . strtolower($name) . '" data-toggle="tab">' . ucfirst($name) . '</a></li>';
+        if ($active == " class = 'active'") $active = '';
+    }
+    echo '</ul>';
+    
+    // page content
+    $active = " active";
+    
+    echo '<div class="tab-content">';
+        foreach ($names as $name) {    
+           echo '<div class="tab-pane' . $active . '" id="' . strtolower($name) . '">';           
+               $h->template($page .'/' . strtolower($name), 'admin');
+               if ($active == " active") $active = '';
+           echo '</div>';        
+        }
+    echo '</div>';
+}
+
+?>

@@ -56,20 +56,21 @@
 
 <body>
 
-    <div id="wrap">       
-        <?php echo $h->template('admin_navigation'); ?>
+    <div id="wrap">        
+        <?php if ($h->currentUser->adminAccess) {
+            echo $h->template('admin_navigation');
+                           
+            $announcements = $h->checkAnnouncements();
+            if ($announcements && $h->currentUser->adminAccess) { 
 
-        <?php
-	$announcements = $h->checkAnnouncements();
-	if ($announcements && ($h->currentUser->getPermission('can_access_admin') == 'yes')) { 
-            ?>
-            <div id="announcement">
-                    <?php $h->pluginHook('admin_announcement_first'); ?>
-                    <?php foreach ($announcements as $announcement) { echo $announcement . "<br/>"; } ?>
-                    <?php $h->pluginHook('admin_announcement_last'); ?>
-            </div>
-           
-        <?php } ?>
+                echo '<div id="announcement">';
+                        $h->pluginHook('admin_announcement_first');
+                        foreach ($announcements as $announcement) { echo $announcement . "<br/>"; }
+                        $h->pluginHook('admin_announcement_last');
+                echo '</div>';
 
-         <br/>
-	
+             } 
+         } 
+        
+        ?>
+        <br/>

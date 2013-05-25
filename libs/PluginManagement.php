@@ -53,7 +53,7 @@ class PluginManagement
                                             $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
                                             $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
                                         } else {
-                                            $plugin_row = models\Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
+                                            $plugin_row = models___Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
                                         }
 				}
 				
@@ -239,7 +239,7 @@ class PluginManagement
 		foreach (explode(',', $h->plugin->requires) as $pair) 
 		{		    
 		    $pair_array = explode(' ', trim(strtolower($pair)));
-		    $pair_array ? $k = $pair_array[0] : $k=$h->lang["admin_plugins_install_unknown_plugin"];
+		    $pair_array ? $k = $pair_array[0] : $k=$h->lang("admin_plugins_install_unknown_plugin");
 		    count($pair_array) > 1 ? $v = $pair_array[1] : $v=0;		    
 		    $h->plugin->dependencies[$k] = $v;
 		}
@@ -286,7 +286,7 @@ class PluginManagement
 				if (($h->isActive($dependency) == 'inactive') 
 					|| version_compare($version, $h->getPluginVersion($dependency), '>')) {
 					$dependency = make_name($dependency);
-					$h->messages[$h->lang["admin_plugins_install_sorry"] . " " . $h->plugin->name . " " . $h->lang["admin_plugins_install_requires"] . " " . $dependency . " " . $version] = 'red';
+					$h->messages[$h->lang("admin_plugins_install_sorry") . " " . $h->plugin->name . " " . $h->lang("admin_plugins_install_requires") . " " . $dependency . " " . $version] = 'red';
 				}
 			}
 			return false;
@@ -330,9 +330,9 @@ class PluginManagement
 		if (!is_array($result))
 		{
 			if ($upgrade == 0) {
-				$h->messages[$h->lang["admin_plugins_install_done"]] = 'green';
+				$h->messages[$h->lang("admin_plugins_install_done")] = 'green';
 			} else {
-				$h->messages[$h->lang["admin_plugins_upgrade_done"]] = 'green';
+				$h->messages[$h->lang("admin_plugins_upgrade_done")] = 'green';
 			}
 		}
 	}
@@ -414,7 +414,7 @@ class PluginManagement
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$sql = "SELECT count(*) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
+		$sql = "SELECT count(phook_id) FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s AND plugin_hook = %s";
 		if ($h->db->get_var($h->db->prepare($sql, $folder, $hook))) { return true;} else { return false; }
 	}
 	
@@ -438,7 +438,7 @@ class PluginManagement
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINS);
 		$h->db->query("TRUNCATE TABLE " . TABLE_PLUGINHOOKS);
 		
-		$h->messages[$h->lang["admin_plugins_uninstall_all_done"]] = 'green';
+		$h->messages[$h->lang("admin_plugins_uninstall_all_done")] = 'green';
 	}
 	
 	
@@ -472,7 +472,7 @@ class PluginManagement
 		$h->pluginHook('uninstall_plugin', $h->plugin->folder);
 		
 		if ($upgrade == 0) {
-			$h->messages[$h->lang["admin_plugins_uninstall_done"]] = 'green';
+			$h->messages[$h->lang("admin_plugins_uninstall_done")] = 'green';
 		}
 		
 		// Re-sort all orders and remove any accidental gaps
@@ -634,7 +634,7 @@ class PluginManagement
 		if ($enabled == 0) { 
 		    $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d";
 		    $h->db->query($h->db->prepare($sql, $enabled, $h->currentUser->id));
-                    $h->messages[$h->lang["admin_plugins_deactivated"]] = 'green'; 
+                    $h->messages[$h->lang("admin_plugins_deactivated")] = 'green'; 
 		    return false;
 		    //$active_plugins = $this->activePlugins($h->db, '*', 1);
 		}
@@ -700,7 +700,7 @@ class PluginManagement
 				$this->upgrade($h); // runs the install function and shows "upgraded!" message instead of "installed".
 			} else {
 				// else simply show an activated message...
-				$h->messages[$h->lang["admin_plugins_activated"]] = 'green'; 
+				$h->messages[$h->lang("admin_plugins_activated")] = 'green'; 
 			}
 			
 			// Force inclusion of a language file (if exists) because the 
@@ -709,7 +709,7 @@ class PluginManagement
 		}
 		
 		if ($enabled == 0) { 
-			$h->messages[$h->lang["admin_plugins_deactivated"]] = 'green'; 
+			$h->messages[$h->lang("admin_plugins_deactivated")] = 'green'; 
 		}
 		
 		$h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
@@ -742,7 +742,7 @@ class PluginManagement
 	public function pluginOrder($h, $order = 0, $arrow = "up")
 	{
 		if ($order == 0) {
-			$h->messages[$h->lang['admin_plugins_order_zero']] = 'red';
+			$h->messages[$h->lang('admin_plugins_order_zero')] = 'red';
 			return false;
 		}
 		
@@ -755,12 +755,12 @@ class PluginManagement
 			$row_above = $h->db->get_row($h->db->prepare($sql, ($order - 1)));
 			
 			if (!$row_above) {
-				$h->messages[$this_plugin . " " . $h->lang['admin_plugins_order_first']] = 'red';
+				$h->messages[$this_plugin . " " . $h->lang('admin_plugins_order_first')] = 'red';
 				return false;
 			}
 			
 			if ($row_above->plugin_order == $order) {
-				$h->messages[$h->lang['admin_plugins_order_above']] = 'red';
+				$h->messages[$h->lang('admin_plugins_order_above')] = 'red';
 				return false;
 			}
 
@@ -779,12 +779,12 @@ class PluginManagement
 			$row_below = $h->db->get_row($h->db->prepare($sql, ($order + 1)));
 			
 			if (!$row_below) {
-				$h->messages[$this_plugin . " " . $h->lang['admin_plugins_order_last']] = 'red';
+				$h->messages[$this_plugin . " " . $h->lang('admin_plugins_order_last')] = 'red';
 				return false;
 			}
 			
 			if ($row_below->plugin_order == $order) {
-				$h->messages[$h->lang['admin_plugins_order_below']] = 'red';
+				$h->messages[$h->lang('admin_plugins_order_below')] = 'red';
 				return false;
 			}
 			
@@ -797,7 +797,7 @@ class PluginManagement
 			$h->db->query($h->db->prepare($sql, ($order + 1), $h->plugin->folder)); 
 		}
 		
-		$h->messages[$h->lang['admin_plugins_order_updated']] = 'green';
+		$h->messages[$h->lang('admin_plugins_order_updated')] = 'green';
 		
 		// Re-sort all orders and remove any accidental gaps
 		$this->refreshPluginOrder($h);
@@ -876,7 +876,7 @@ class PluginManagement
 			//$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
 		    }
 		} else {		    
-		    $h->messages[$file . $h->lang['admin_theme_fileexist_error']] = 'red';
+		    $h->messages[$file . $h->lang('admin_theme_fileexist_error')] = 'red';
 		}
 
 		// unzip
@@ -904,7 +904,7 @@ class PluginManagement
 			$this->fileFtpDelete($h, $ftp_url, $file, $copydir);
 		    }
 		} else {
-		    $h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+		    $h->messages[$h->lang('admin_theme_filecopy_error') . $file] = 'red';
 		}
 	}	
 
@@ -982,13 +982,13 @@ fclose($fp);
 			$handle =base64_encode(curl_exec ($ch));			
 			fclose($outfile);
 			if ($handle) {
-			    $h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+			    $h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
 			}
 		    } else {
-			$h->messages[$h->lang['admin_theme_filecopy_error'] . $file] = 'red';
+			$h->messages[$h->lang('admin_theme_filecopy_error' . $file)] = 'red';
 		    }
 		} else {
-		    $h->messages[$h->lang['admin_theme_fileexist_error'] . $file] = 'red';
+		    $h->messages[$h->lang('admin_theme_fileexist_error' . $file)] = 'red';
 		}
 		curl_close($ch);
             }
@@ -996,7 +996,7 @@ fclose($fp);
 
 	public function fileUnzip($h, $file, $to)
 	{
-		//$h->messages[$file . $h->lang['admin_theme_filecopy_success']] = 'green';
+		//$h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
                 $z = new ZipArchive();
 	        $zopen = $z->open($to . $file, ZIPARCHIVE::CHECKCONS);
             
@@ -1086,11 +1086,11 @@ fclose($fp);
 //		$archive = new PclZip($copydir . $file);
 //
 //		if (($list = $archive->extract(PCLZIP_OPT_PATH, PLUGINS)) == 0) {
-//		    $h->messages[$h->lang['admin_theme_unzip_error'] . $file] = 'red';
+//		    $h->messages[$h->lang('admin_theme_unzip_error'] . $file) = 'red';
 //                    return false;
 //		}
                                 
-                $h->messages[$file . $h->lang['admin_theme_unzip_success']] = 'green';
+                $h->messages[$file . $h->lang('admin_theme_unzip_success')] = 'green';
                 $z->close();
                 
                 return true;		
@@ -1101,7 +1101,7 @@ fclose($fp);
 		@chmod($copydir . $file,666);
 		$deleted = @unlink($copydir . $file);
 		if (!$deleted) {
-		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		    $h->messages[$file . $h->lang('admin_theme_zipdelete_error')] = 'yellow';
 		}
 	}
 
@@ -1143,7 +1143,7 @@ fclose($fp);
 
 		// 250 comes from FTP error code saying action completed ok
 		if (!$statusCode == 250) {
-		    $h->messages[$file . $h->lang['admin_theme_zipdelete_error']] = 'yellow';
+		    $h->messages[$file . $h->lang('admin_theme_zipdelete_error')] = 'yellow';
 		}
 
 		curl_close($ch);
@@ -1165,7 +1165,7 @@ fclose($fp);
 		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 		if ($error = curl_error($ch)) {
-		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    $h->messages[$h->lang('admin_theme_filecopy_permission_error')] = 'red';
 		    echo "Error: $error<br />\n";
 		}
 
@@ -1186,7 +1186,7 @@ fclose($fp);
 		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 		if ($error = curl_error($ch)) {
-		    $h->messages[$h->lang['admin_theme_filecopy_permission_error']] = 'red';
+		    $h->messages[$h->lang('admin_theme_filecopy_permission_error')] = 'red';
 		    echo "Error: $error<br />\n";
 		}
 
@@ -1226,9 +1226,9 @@ fclose($fp);
 		$systeminfo = New SystemInfo();
 		$result = $systeminfo->plugin_version_getAll($h);
 		if ($result) {
-		    $h->messages[$h->lang['admin_theme_version_check_completed']] = 'alert-success';
+		    $h->messages[$h->lang('admin_theme_version_check_completed')] = 'alert-success';
 		} else {
-                    $h->messages[$h->lang['admin_theme_version_check_failed']] = 'alert-error';
+                    $h->messages[$h->lang('admin_theme_version_check_failed')] = 'alert-error';
                 }
 	}
 }
