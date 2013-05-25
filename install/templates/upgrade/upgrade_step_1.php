@@ -12,7 +12,7 @@
     <!-- Complete Step Progress Bar -->
         <div class="progress progress-info">
                 <div class="bar" style="width: 33.33%;"></div>
-        </div>"
+        </div>
     <?php
     if ($h->version > $old_version)
         echo $lang['upgrade_step1_details'];

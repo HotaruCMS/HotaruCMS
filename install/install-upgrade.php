@@ -69,14 +69,9 @@ exit;
 /**
  * Step 1 of upgrade - checks existing version available and confirms details
  */
-function upgrade_check($h, $old_version) {
-	global $lang;
-	
-	echo html_upgrade_header();
-
-        include('templates/upgrade/upgrade_step_1.php');
-	
-	echo html_footer();
+function upgrade_check($h, $old_version) 
+{        
+        template($h, 'upgrade/upgrade_step_1.php', array('old_version' => $old_version));	
 }
 
     
@@ -85,14 +80,7 @@ function upgrade_check($h, $old_version) {
  */
 function upgrade_complete($h)
 {
-	global $lang;
-	global $cage;
-
-	echo html_upgrade_header();
-	
-        include('templates/upgrade/upgrade_step_2.php');
-	
-	echo html_footer();    
+        template($h, 'upgrade/upgrade_step_2.php');          
 }
 
 

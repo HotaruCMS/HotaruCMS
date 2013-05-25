@@ -124,180 +124,23 @@ switch ($step) {
 exit;
 
 
-/**
- * HTML header
- *
- * @return string returns the html output for the page header
+/*
+ * function for calling templates with header and footer
+ * 
  */
-function html_install_header()
+function template($h, $template, $args = array())
 {
-	global $lang;
-	global $version_number;
+    global $lang;
+    global $version_number;
+    
+    // check for any vars being passed in
+    extract($args);
 
-	$header = "<!DOCTYPE html>\n";
-	$header .= "<html lang=\"en\">\n";
-	$header .= "<head>\n";
-	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
-
-	// Title
-	$header .= "<title>" . $lang['install_title'] . "</title>\n";
-	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
-	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
-	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
-	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
-	$header .= "
-	<style type=\"text/css\">
-	body {
-		position: relative;
-		background-color: #fff;
-		background-image: url(grid-18px-masked.png);
-		background-repeat: repeat-x;
-		background-position: 0 40px;
-	}
-	</style>\n";	
-	$header .= "</head>\n";
-
-	// Body start
-	$header .= "<body>\n";
-	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
-	<div class=\"navbar-inner\">
-		<div class=\"container\">
-			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
-				<span class=\"icon-bar\"></span>
-				<span class=\"icon-bar\"></span>
-				<span class=\"icon-bar\"></span>
-			</button>
-			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
-			<ul class=\"nav\">
-				<li class=\"active\"><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
-				<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
-				<li><a href=\"instruction.html\">Readme</a></li>
-				<li><a href=\"../index.php\">Home</a></li>
-			</ul>
-		</div>
-	</div>\n";
-	$header .= "</div><br />\n";      
-	
-	$header .= "<div class=\"container\">\n";
-	/*
-		$header .= "
-		<div class=\"hero-unit span10\">
-			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
-			<h1>" . $lang['install_title'] . "</h1>
-			<p>v." . $version_number ."</p>
-			
-			<p>
-				<a class=\"btn btn-primary btn-large\" href=\"http://forums.hotarucms.org/showthread.php?1998-Download-Hotaru-CMS-1-5-0-(Beta2)\" target=\"_blank\">
-					Learn more
-				</a>
-			</p>
-		</div>	
-		";
-	*/
-
-
-	return $header;
-}
-
-function html_upgrade_header()
-{
-	global $lang;
-	global $version_number;
-
-	$header = "<!DOCTYPE html>\n";
-	$header .= "<html lang=\"en\">\n";
-	$header .= "<head>\n";
-	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
-
-	// Title
-	$header .= "<title>" . $lang['install_title'] . "</title>\n";
-	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
-	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
-	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
-	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
-	$header .= "
-	<style type=\"text/css\">
-	body {
-		position: relative;
-		background-color: #fff;
-		background-image: url(grid-18px-masked.png);
-		background-repeat: repeat-x;
-		background-position: 0 40px;
-	}
-	</style>\n";	
-	$header .= "</head>\n";
-
-	// Body start
-	$header .= "<body>\n";
-	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
-	<div class=\"navbar-inner\">
-		<div class=\"container\">
-			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
-				<span class=\"icon-bar\"></span>
-				<span class=\"icon-bar\"></span>
-				<span class=\"icon-bar\"></span>
-			</button>
-			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
-			<ul class=\"nav\">
-				<li><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
-				<li class=\"active\"><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
-				<li><a href=\"instruction.html\">Readme</a></li>
-				<li><a href=\"../index.php\">Home</a></li>
-			</ul>
-		</div>
-	</div>\n";
-	$header .= "</div><br />\n";      
-	
-	$header .= "<div class=\"container\">\n";
-	/*
-		$header .= "
-		<div class=\"hero-unit span10\">
-			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
-			<h1>" . $lang['install_title'] . "</h1>
-			<p>v." . $version_number ."</p>
-			
-			<p>
-				<a class=\"btn btn-primary btn-large\" href=\"http://forums.hotarucms.org/showthread.php?1998-Download-Hotaru-CMS-1-5-0-(Beta2)\" target=\"_blank\">
-					Learn more
-				</a>
-			</p>
-		</div>	
-		";
-	*/
-
-
-	return $header;
-}
-
-
-/**
- * HTML footer
- *
- * @return string returns the html output for the page footer
- */
-function html_footer()
-{
-	global $lang;
-	global $version_number;
-
-	// Footer content (a link to the forums)
-	
-	$footer = "<div class='clearfix'></div>\n"; // clear floats
-	
-	$footer .= "<hr /><footer>\n";
-	$footer .= "<p>&copy; " . date('Y') . " " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number ."</p>";
-	$footer .= "</footer>";
-	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
-
-	$footer .= "</div>\n"; // close "container" div
-	
-	$footer .= "<script src=\"../libs/frameworks/bootstrap/js/bootstrap.min.js\"></script>\n"; 
-
-	$footer .= "</html>\n";
-
-	return $footer;
+    include_once('templates/header.php');
+    
+    include_once('templates/' . $template);
+    
+    include_once('templates/footer.php');
 }
 
 
@@ -306,27 +149,7 @@ function html_footer()
  */
 function installation_welcome()
 {
-	global $lang;
-
-	echo html_install_header();
-
-	// Step content
-	echo "
-	<div class=\"hero-unit\">
-		<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
-		<h1>" . $lang['install_step0'] . "</h1>
-		<p class=\"text-info\">" . $lang['install_step0_welcome'] . "<br /> " . $lang['install_step0_select'] . "</p>
-		<img align=\"center\" src=\"hotarucms_splash.jpg\" class=\"img-polaroid\" style=\"height:170px; margin:50px 0;\">
-		<p class=\"text-center\">
-			<a class=\"btn btn-primary btn-large\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
-			<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
-		</p>
-	</div>";
-		
-	// Next button
-	//echo "<div class='next button''><a href='index.php?step=1'>" . $lang['install_next'] . "</a></div>\n";
-
-	echo html_footer();
+	template($h, 'install/install_welcome.php');
 }
 
 
@@ -445,97 +268,18 @@ function database_setup() {
 	$settings_file_writeable =  is_writeable(SETTINGS);
 
 	if ($settings_file_writeable) {
-	    global $lang;
-
-	    echo html_install_header();
-
-	    // Step title
-	    echo "<legend>" . $lang['install_step1'] . "</legend>\n";
-		
-		// Complete Step Progress Bar
-		echo "
-		<div class=\"alert\">
-			<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
-			<!-- Complete Step Progress Bar -->
-			<div class=\"progress progress-info\">
-				<div class=\"bar\" style=\"width: 25%\"></div>
-			</div>
-		</div>";
-
-	    // Splash image
-	    echo "<img align='center' src='../content/admin_themes/admin_default/images/create_db.png' style='float:left;'>";
-
-	    //Manual creation link
-	    echo "<div class='install_content clearfix' style='margin-left:54px;'>" . $lang['install_step1_instructions_manual_setup'] . "&nbsp;<a href='?step=1&action=install&type=manual'>" . $lang['install_step1_instructions_manual_setup_click'] . "</a>.";
-
-		$h->showMessages();
-		
-		if ($cage->post->getAlpha('updated') != 'true' && SETTINGS) {
-		// Alert if Settings file already exists
-		echo "
-		<div class=\"alert alert-block\">
-			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-			" . $lang['install_step1_settings_file_already_exists'] . "
-		</div>";
-	    }
-
-	    if (isset($table_exists) && ($table_exists)) {
-		// Alert if database already exists
-		echo "
-		<div class=\"alert alert-error\">
-			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-			" . $lang['install_step1_settings_db_already_exists'] . "
-		</div>";
-	    }
-		
-	    // Registration form
-	    echo "<form name='install_admin_reg_form' action='../install/index.php?step=1' method='post'>\n";
-
-	    echo "<br/><table>";
-
-	    // BASEURL
-	    echo "<tr><td>" . $lang["install_step1_baseurl"] . "&nbsp; </td><td><input type='text' size=30 name='baseurl' value='" . $baseurl_name . "' />&nbsp;<small>" . $lang["install_step1_baseurl_explain"] . "</small></td></tr>\n";
-
-	    // DB_USER
-	    echo "<tr><td>" . $lang["install_step1_dbuser"] . "&nbsp; </td><td><input type='text' size=30 name='dbuser' value='" . $dbuser_name . "' />&nbsp;<small>" . $lang["install_step1_dbuser_explain"] . "</small></td></tr>\n";
-
-	    // DB_PASSWORD
-	    echo "<tr><td>" . $lang["install_step1_dbpassword"] . "&nbsp; </td><td><input type='password' size=30 name='dbpassword' value='" . $dbpassword_name . "' />&nbsp;<small>" . $lang["install_step1_dbpassword_explain"] . "</small></td></tr>\n";
-
-	    // DB_NAME
-	    echo "<tr><td>" . $lang["install_step1_dbname"] . "&nbsp; </td><td><input type='text' size=30 name='dbname' value='" . $dbname_name . "' />&nbsp;<small>" . $lang["install_step1_dbname_explain"] . "</small></td></tr>\n";
-
-	    // DB_PREFIX
-	    echo "<tr><td>" . $lang["install_step1_dbprefix"] . "&nbsp; </td><td><input type='text' size=30 name='dbprefix' value='" . $dbprefix_name . "' />&nbsp;<small>" . $lang["install_step1_dbprefix_explain"] . "</small></td></tr>\n";
-
-	    // DB_HOST
-	    echo "<tr><td>" . $lang["install_step1_dbhost"] . "&nbsp; </td><td><input type='text' size=30 name='dbhost' value='" . $dbhost_name . "' />&nbsp;<small>" . $lang["install_step1_dbhost_explain"] . "</small></td></tr>\n";
-
-
-	    echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
-	    echo "<input type='hidden' name='step' value='2' />\n";
-	    echo "<input type='hidden' name='updated' value='true' />\n";
-
-	    // Update button
-	    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='btn btn-primary' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
-
-	    echo "</table>";
-	    echo "</form>\n";
-
-	   
-
-	    // Previous/Next buttons
-	    echo "<div class='btn'><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	    
-	    if ($show_next) {
-	    // and if db was connected ok
-		    echo "<div class='btn'><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
-	    } else {
-		    // link disbaled
-		    echo "<div class='btn disabled'>" . $lang['install_next'] . "</div>\n";
-	    }
-
-	    echo html_footer();
+            // show template
+	    template($h, 'install/database_setup.php', array(
+                'cage' => $cage,
+                'table_exists' => $table_exists,
+                'show_next' => $show_next,
+                'baseurl_name' => $baseurl_name,
+                'dbuser_name' => $dbuser_name,
+                'dbpassword_name' => $dbpassword_name,
+                'dbname_name' => $dbname_name,
+                'dbprefix_name' => $dbprefix_name,
+                'dbhost_name' => $dbhost_name
+            ));
 
 	} else {
             @chmod(SETTINGS,0644);
@@ -550,13 +294,7 @@ function database_setup() {
  */
 function database_setup_manual()
 {
-	global $lang;
-
-	echo html_install_header();
-	
-	include('templates/install/database_setup_manual.php');
-        
-	echo html_footer();
+	template($h, 'install/database_setup_manual.php');        
 }
 
 /**
@@ -584,41 +322,14 @@ function database_creation($h)
 	global $cage;
        
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
-	$show_next = false;
-
-	echo html_install_header();
-	
-	// Step title
-	echo "<legend>" . $lang['install_step2'] . "</legend>\n";
-
-	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 50%\"></div>
-	</div>";
+	$show_next = false;	
 	
 	$table_exists = $db->table_exists('miscdata');	 
-	if ($table_exists && $delete != 'DELETE') {
-		// Warning message
-		echo "
-		<div class=\"alert alert-error\">
-			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-			<h4>" . $lang['install_step1_warning'] . "</h4>
-			" . $lang['install_step2_existing_db'] . "
-		</div>";
-		echo "<div class=\"text-error\">" . $lang['install_step2_existing_confirm'] . "</div>\n";
-
-		// Confirm delete and continue install
-		echo "<form name='install_admin_reg_form' action='index.php?step=2' method='get'>\n";
-		echo "<div class='center clearfix'>&nbsp; <input type='text' size=10 name='del' value='' />";
-		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
-		echo "<input type='hidden' name='step' value='2' />\n";
-	    	    
-		echo "<input class='btn btn-primary' class='button' type='submit' value='" . $lang['install_step2_form_delete_confirm'] . "' />";
-		echo "</div></form>\n";
-
-		echo "<div class='install_content'>" . $lang['install_step2_existing_go_upgrade1'];
-		echo "<a class=\"btn btn-link\" href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
+        
+        if ($table_exists && $delete != 'DELETE') {
+            
+            template($h,'install/database_creation.php', array('show_next' => $show_next));
+	
 	}
 	else {	   
 	    
@@ -628,57 +339,13 @@ function database_creation($h)
 	    $db->selectDB(DB_NAME);
 
 
+            template($h,'install/database_creation_2.php', array(
+                'db'=>$db,
+                'show_next' => $show_next,
+                'tables' => $tables
+             ));
 
-	    // Used as test to check whether we have tables yet
-//	    $sql = "SELECT * FROM `" . DB_PREFIX . "miscdata`";
-//	    var_dump($db->get_results($sql)); die;
-
-	    if ($db->get_col("SHOW TABLES",0)) {
-		echo  $lang['install_step2_checking_tables']; 
-		foreach ( $db->get_col("SHOW TABLES",0) as $table_name )
-		{
-		    print $table_name . ', ';
-			drop_table($table_name); // table name
-		}
-		echo '<br /><br />' . $lang['install_step2_deleting_table'] . "'...<br /><br />\n";
-	    } else {
-		echo $lang['install_step2_no_tables'] . "<br/><br />\n";
-	    }
-
-
-	    $create_tables_problem = false;
-	    //create tables
-	    foreach ($tables as $table_name) {
-		    $error = '';
-		    create_table($table_name);
-		    $error = mysql_error();
-		    if ($error) {
-			echo $error . ' ';
-			$create_tables_problem = true;
-		    }
-	    }
-
-	    // Step content
-	    if (!$create_tables_problem) {
-		echo "<div class='text-success'>" . $lang['install_step2_success'] . "</div>\n";
-	    } else {
-		echo "<div class='text-error'>" . $lang['install_step2_fail'] . "</div>\n";
-	    }
-
-	    $show_next = true;
-	}
-
-	// Previous/Next buttons
-	echo "<a class='btn' href='index.php?step=1'>" . $lang['install_back'] . "</a>\n";
-	if ($show_next) {
-		// active "next" link
-		echo "<a class=\"btn btn-primary\" href='index.php?step=3'>" . $lang['install_next'] . "</a>\n";
-	} else {
-		// link disbaled
-		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
-	}
-
-	echo html_footer();
+        }
 }
 
 
