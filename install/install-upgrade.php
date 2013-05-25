@@ -113,28 +113,7 @@ function upgrade_complete($h)
 
 	echo html_upgrade_header();
 	
-	// Step title
-	echo "<legend>" . $lang['upgrade_step2'] . "</legend>\n";
-	
-	// Complete Step Progress Bar
-	echo "
-	<div class=\"alert alert-success\">
-		<strong>" . $lang['install_step4_installation_complete'] . "</strong>
-		<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-success\">
-			<div class=\"bar\" style=\"width: 66.66%;\"></div>
-		</div>
-	</div>\n";
-
-	// Step content	
-	echo "
-	<div class=\"alert alert-error\">
-		" . $lang['install_step4_installation_delete'] . "
-	</div>\n";
-
-	// Previous/Next buttons
-	echo "<a class='btn' href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a>\n";
-	echo "<a class='btn btn-primary' href='index.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a>\n";
+        include('templates/database_setup_manual.php');
 	
 	echo html_footer();    
 }
