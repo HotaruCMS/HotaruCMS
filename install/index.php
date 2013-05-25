@@ -143,15 +143,19 @@ function template($h, $template, $args = array())
     include_once('templates/footer.php');
 }
 
-
+// TODO
+// remove header and footer when all functions have been put in templates
 function html_install_header()
 {
+    global $lang;
     include_once('templates/header.php');
 }
 
 function html_footer()
 {
-     include_once('templates/footer.php');
+    global $lang;
+    global $version_number;    
+    include_once('templates/footer.php');
 }
 
 
@@ -608,7 +612,7 @@ function installation_complete()
 	    echo "<input type='hidden' name='phpinfo' value='true' />";
 	    echo "<input type='hidden' name='step' value='4' />";
 	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_check_php'] . "' />";
-	    echo "</div></form>\n";
+	    echo "</form>\n";
 	}
 
 	echo "<br/><div class='well'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
