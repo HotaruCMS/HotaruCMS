@@ -72,25 +72,32 @@ exit;
 function upgrade_check($h, $old_version) {
 	global $lang;
 	
-	echo html_header();
+	echo html_upgrade_header();
 
 	// Step title
-	echo "<h2>" . $lang['upgrade_step1'] . "</h2>\n";
-
-	// Current version
-	if ( isset($old_version) )
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_version'] . $old_version . "</div>\n";
-	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_old_no_version'] . "</div>\n";
-
+	echo "<legend>" . $lang['upgrade_step1'] . "</legend>\n";
+	
+	// Complete Step Progress Bar
+	echo "<div class=\"alert\">";
+	if ( isset($old_version) ) 
+		 echo "<strong>" . $lang['upgrade_step1_old_version'] . $old_version . "</strong>\n";
+	else 
+		echo "<strong>" . $lang['upgrade_step1_old_no_version'] . "</strong>\n";
+		
+	echo "<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-info\">
+			<div class=\"bar\" style=\"width: 33.33%\"></div>
+		</div>";
+	
 	if ($h->version > $old_version)
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_details'] . "</div>\n";
+	    echo $lang['upgrade_step1_details'];
 	else
-	    echo "<div class='install_content'>" . $lang['upgrade_step1_current_version'] . "</div>\n";
+	    echo $lang['upgrade_step1_current_version'];
+	echo "</div>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='?step=2&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a>\n";
+	echo "<a class='btn btn-primary' href='?step=2&action=upgrade'>" . $lang['install_next'] . "</a>\n";
 
 	echo html_footer();
 }
@@ -104,18 +111,30 @@ function upgrade_complete($h)
 	global $lang;
 	global $cage;
 
-	echo html_header();
+	echo html_upgrade_header();
 	
 	// Step title
-	echo "<h2>" . $lang['upgrade_step2'] . "</h2>\n";
+	echo "<legend>" . $lang['upgrade_step2'] . "</legend>\n";
+	
+	// Complete Step Progress Bar
+	echo "
+	<div class=\"alert alert-success\">
+		<strong>" . $lang['install_step4_installation_complete'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 66.66%;\"></div>
+		</div>
+	</div>\n";
 
-	// Step content
-	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
+	// Step content	
+	echo "
+	<div class=\"alert alert-error\">
+		" . $lang['install_step4_installation_delete'] . "
+	</div>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='index.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=1&action=upgrade'>" . $lang['install_back'] . "</a>\n";
+	echo "<a class='btn btn-primary' href='index.php?step=3&action=upgrade'>" . $lang['install_next'] . "</a>\n";
 	
 	echo html_footer();    
 }

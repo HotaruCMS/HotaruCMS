@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hotaru » Readme</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<link href="../libs/frameworks/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<style>
+	body {
+		position: relative;
+		background-color: #f9f9f9;
+		background-image: url(grid-18px-masked.png);
+		background-repeat: repeat-x;
+		background-position: 0 40px;
+	}
+	.reader {
+        max-width: 650px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+	.row {
+		padding-top: 20px; /* 60px to make the container go all the way to the bottom of the topbar */
+	}
+</style>
+<link href="install_style.css" rel="stylesheet">
+<link href="../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-static-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="brand" href="index.php">Hotaru CMS</a>
+			<div class="nav-collapse collapse">
+				<ul class="nav">
+					<li><a href="index.php?step=1&action=install">Install</a></li>
+					<li><a href="index.php?step=1&action=upgrade">Upgrade</a></li>
+					<li class="active"><a href="instruction.html">Readme</a></li>
+					<li><a href="../index.php">Home</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+
+<div class="container">
+
+	<div class="row">
+		<div class="span9 reader">
+		
+			<section id="installation">
+				<legend>Installation</legend>
+				<ol>
+					<li>Download the latest version of Hotaru CMS.</li>
+					<li>Create a database called 'hotaru' in you MySQL (using phpMyAdmin or similar).</li>
+					<li>Rename '/config/settings_default.php' to '/config/settings.php'.</li>
+					<li>Open '/config/settings.php' and edit the top section with your database details and path to Hotaru, e.g. 'http://example.com/'</li>
+					<li>Upload the contents of the 'hotaru' folder to your server.</li>
+					<li>Files should have permissions set to 644 and folders should be set to 755, except...</li>
+					<li>Set '/cache' and its sub-folders to 777</li>
+					<li>Go to 'http://example.com/hotaru/install/install.php' and follow the steps</li>
+					<li>When finished, delete the 'install' folder.</li>
+				</ol>
+			</section>
+			
+			<section id="settings">
+				<legend>Setting up your site</legend>
+				<ol>
+					<li>Log into Admin and go to Admin -> Settings</li>
+					<li>Change the settings as appropriate, but leave 'DB_CACHE' off for now.</li>
+					<li>Download plugins from the [Plugin Downloads forum][3], unzip and upload them to the '/content/plugins/' directory.</li>
+					<li>Go to Admin -> Plugin Management and install the plugins one by one.</li>
+					<li>Edit settings for each plugin listed in the sidebar under Plugin Settings.</li>
+					<li>Click the site title/banner to view your changes.</li>
+					<li>When finished, return to Admin -> Settings and set 'DB_CACHE' to true.</li>
+				</ol>
+			</section>
+			
+			<section id="upgrading">
+				<legend>Upgrading</legend>
+				<ol>
+					<li>Backup your database.</li>
+					<li>Download the latest version of Hotaru CMS.</li>
+					<li>Turn off all your plugins.</li>
+					<li>Overwrite ALL the old files. If you've made any customizations, read up on the [Hotaru File Organization][2]</li>
+					<li>Go to /install/upgrade.php and follow the steps</li>
+					<li>Turn your plugins back on</li>
+					<li>Reactivate your widgets</li>
+					<li>When finished, delete the install folder.</li>
+				</ol>	
+			</section>
+	
+			<section id="requirements">
+				<legend>Requirements</legend>
+				<ul>
+					<li><a href="http://www.php.net/">PHP</a> version <strong>5.3.2</strong> or higher.</li>
+					<li><a href="http://www.mysql.com/">MySQL</a> version <strong>5.0</strong> or higher.</li>
+				</ul>	
+			</section>
+			
+			<section id="friendly_URLS">
+				<legend>Friendly URLS</legend>
+				<p>If you want to use friendly urls, rename <strong>'htaccess_default'</strong> to <strong>'.htaccess'</strong>, and edit it according to the instructions within 
+				the htaccess file. Then go to Admin -> Settings and change the *friendly urls* setting to true.</p>
+			</section>
+			
+			<section id="troubleshooting">
+				<legend>Troubleshooting</legend>
+				<p>If you're having trouble installing Hotaru, please post your questions with as much detail as possible [in the forums][4]. Thanks.</p>
+				<ol>
+					<li>http://docs.hotarucms.org/index.php/Getting_Started#Installing_and_Upgrading</li>
+					<li>http://docs.hotarucms.org/index.php/File_Organization</li>
+					<li>http://forums.hotarucms.org/forumdisplay.php?18-Plugin-Downloads</li>
+					<li>http://forums.hotarucms.org/forum.php</li>
+				<ol> 
+			</section>
+			<!--<legend>Online Resources</legend>-->
+
+		</div><!-- /.span9 -->
+		
+		<div class="span3 bs-sidebar">
+			<ul class="nav nav-list bs-sidenav">
+				<li><a href="#installation"><i class="icon-chevron-left"></i> Installation</a></li>
+				<li><a href="#settings"><i class="icon-chevron-left"></i> Setting up your site</a></li>
+				<li><a href="#upgrading"><i class="icon-chevron-left"></i> Upgrading</a></li>
+				<li><a href="#requirements"><i class="icon-chevron-left"></i> Requirements</a></li>
+				<li><a href="#friendly_URLS"><i class="icon-chevron-left"></i> Friendly URLS</a></li>
+				<li><a href="#troubleshooting"><i class="icon-chevron-left"></i> Troubleshooting</a></li>
+			</ul>
+		</div>
+	</div><!-- /.row -->
+</div> <!-- /.container -->
+
+
+  </body>
+</html>

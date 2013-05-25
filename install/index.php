@@ -129,31 +129,144 @@ exit;
  *
  * @return string returns the html output for the page header
  */
-function html_header()
+function html_install_header()
 {
 	global $lang;
 	global $version_number;
 
-	$header = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 3.2//EN'>\n";
-	$header .= "<HTML><HEAD>\n";
+	$header = "<!DOCTYPE html>\n";
+	$header .= "<html lang=\"en\">\n";
+	$header .= "<head>\n";
 	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
 
 	// Title
-	$header .= "<TITLE>" . $lang['install_title'] . "</TITLE>\n";
-	$header .= "<META HTTP-EQUIV='Content-Type' CONTENT='text'>\n";
-	$header .= "<link rel='stylesheet' type='text/css' href='reset-fonts-grids.css' type='text/css'>\n";
-        //$header .= "<link rel='stylesheet' type='text/css' href='/libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css'>\n";	
-	$header .= "<link rel='stylesheet' type='text/css' href='install_style.css'>\n";
-	$header .= "</HEAD>\n";
+	$header .= "<title>" . $lang['install_title'] . "</title>\n";
+	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
+	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
+	$header .= "
+	<style type=\"text/css\">
+	body {
+		position: relative;
+		background-color: #fff;
+		background-image: url(grid-18px-masked.png);
+		background-repeat: repeat-x;
+		background-position: 0 40px;
+	}
+	</style>\n";	
+	$header .= "</head>\n";
 
 	// Body start
-	$header .= "<BODY>\n";
-	$header .= "<div id='doc' class='yui-t7 install'>\n";
-	$header .= "<div id='hd' role='banner'>";
-	$header .= "<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>";
-	$header .= "<h1>" . $lang['install_title'] . " v." . $version_number ."</h1></div>\n";
-	$header .= "<div id='bd' role='main'>\n";
-	$header .= "<div class='yui-g'>\n";
+	$header .= "<body>\n";
+	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
+	<div class=\"navbar-inner\">
+		<div class=\"container\">
+			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+			</button>
+			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
+			<ul class=\"nav\">
+				<li class=\"active\"><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
+				<li><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
+				<li><a href=\"instruction.html\">Readme</a></li>
+				<li><a href=\"../index.php\">Home</a></li>
+			</ul>
+		</div>
+	</div>\n";
+	$header .= "</div><br />\n";      
+	
+	$header .= "<div class=\"container\">\n";
+	/*
+		$header .= "
+		<div class=\"hero-unit span10\">
+			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
+			<h1>" . $lang['install_title'] . "</h1>
+			<p>v." . $version_number ."</p>
+			
+			<p>
+				<a class=\"btn btn-primary btn-large\" href=\"http://forums.hotarucms.org/showthread.php?1998-Download-Hotaru-CMS-1-5-0-(Beta2)\" target=\"_blank\">
+					Learn more
+				</a>
+			</p>
+		</div>	
+		";
+	*/
+
+
+	return $header;
+}
+
+function html_upgrade_header()
+{
+	global $lang;
+	global $version_number;
+
+	$header = "<!DOCTYPE html>\n";
+	$header .= "<html lang=\"en\">\n";
+	$header .= "<head>\n";
+	$header .= "<meta http-equiv=Content-Type content='text/html; charset=UTF-8'>\n";
+
+	// Title
+	$header .= "<title>" . $lang['install_title'] . "</title>\n";
+	$header .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	$header .= "<meta http-equiv=\"Content-Type\" content=\"text\">\n";
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap.min.css\">\n";	
+	$header .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css\">\n";	
+	$header .= "<script type=\"text/javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>\n";	
+	$header .= "
+	<style type=\"text/css\">
+	body {
+		position: relative;
+		background-color: #fff;
+		background-image: url(grid-18px-masked.png);
+		background-repeat: repeat-x;
+		background-position: 0 40px;
+	}
+	</style>\n";	
+	$header .= "</head>\n";
+
+	// Body start
+	$header .= "<body>\n";
+	$header .= "<div class=\"navbar navbar-inverse navbar-static-top\">
+	<div class=\"navbar-inner\">
+		<div class=\"container\">
+			<button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+				<span class=\"icon-bar\"></span>
+			</button>
+			<a class=\"brand\" href=\"index.php\">" . $lang['admin_theme_header_hotarucms'] . "</a>
+			<ul class=\"nav\">
+				<li><a href=\"index.php?step=1&action=install\">" . $lang['install_new2'] . "</a></li>
+				<li class=\"active\"><a href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade2'] . "</a></li>
+				<li><a href=\"instruction.html\">Readme</a></li>
+				<li><a href=\"../index.php\">Home</a></li>
+			</ul>
+		</div>
+	</div>\n";
+	$header .= "</div><br />\n";      
+	
+	$header .= "<div class=\"container\">\n";
+	/*
+		$header .= "
+		<div class=\"hero-unit span10\">
+			<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
+			<h1>" . $lang['install_title'] . "</h1>
+			<p>v." . $version_number ."</p>
+			
+			<p>
+				<a class=\"btn btn-primary btn-large\" href=\"http://forums.hotarucms.org/showthread.php?1998-Download-Hotaru-CMS-1-5-0-(Beta2)\" target=\"_blank\">
+					Learn more
+				</a>
+			</p>
+		</div>	
+		";
+	*/
+
 
 	return $header;
 }
@@ -167,20 +280,22 @@ function html_header()
 function html_footer()
 {
 	global $lang;
-
-	$footer = "<div class='clear'></div>\n"; // clear floats
+	global $version_number;
 
 	// Footer content (a link to the forums)
-	$footer .= "<div id='ft' role='contentinfo'>";
+	
+	$footer = "<div class='clearfix'></div>\n"; // clear floats
+	
+	$footer .= "<hr /><footer>\n";
+	$footer .= "<p>&copy; " . date('Y') . " " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number ."</p>";
+	$footer .= "</footer>";
 	$footer .= "<p>" . $lang['install_trouble'] . "</p>";
-	$footer .= "</div>\n"; // close "ft" div
 
-	$footer .= "</div>\n"; // close "yui-g" div
-	$footer .= "</div>\n"; // close "main" div
-	$footer .= "</div>\n"; // close "yui-t7 install" div
+	$footer .= "</div>\n"; // close "container" div
+	
+	$footer .= "<script src=\"../libs/frameworks/bootstrap/js/bootstrap.min.js\"></script>\n"; 
 
-	$footer .= "</BODY>\n";
-	$footer .= "</HTML>\n";
+	$footer .= "</html>\n";
 
 	return $footer;
 }
@@ -193,24 +308,21 @@ function installation_welcome()
 {
 	global $lang;
 
-	echo html_header();
-
-	// Step title
-	echo "<h2>" . $lang['install_step0'] . "</h2>\n";
+	echo html_install_header();
 
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step0_welcome'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step0_select'] . "</div>\n";
-
-	// Splash image
-	echo "<img align='center' src='hotarucms_splash.jpg' style='height:170px; margin:50px 0;'><br/>";
-
-	// Step content
-	echo "<div class='center clearfix'>";	
-	echo "<a class='select button floatright' href='index.php?step=1&action=upgrade'>" . $lang['install_upgrade'] . "</a>";
-        echo "<a class='select button floatright' href='index.php?step=1&action=install'>" . $lang['install_new'] . "</a>";
-	echo "</div>";
-
+	echo "
+	<div class=\"hero-unit\">
+		<!--<img align='left' src='../content/admin_themes/admin_default/images/hotaru.png' style='height:60px; width:60px;'>-->
+		<h1>" . $lang['install_step0'] . "</h1>
+		<p class=\"text-info\">" . $lang['install_step0_welcome'] . "<br /> " . $lang['install_step0_select'] . "</p>
+		<img align=\"center\" src=\"hotarucms_splash.jpg\" class=\"img-polaroid\" style=\"height:170px; margin:50px 0;\">
+		<p class=\"text-center\">
+			<a class=\"btn btn-primary btn-large\" href=\"index.php?step=1&action=install\">" . $lang['install_new'] . "</a>
+			<a class=\"btn btn-large\" href=\"index.php?step=1&action=upgrade\">" . $lang['install_upgrade'] . "</a>
+		</p>
+	</div>";
+		
 	// Next button
 	//echo "<div class='next button''><a href='index.php?step=1'>" . $lang['install_next'] . "</a></div>\n";
 
@@ -335,22 +447,47 @@ function database_setup() {
 	if ($settings_file_writeable) {
 	    global $lang;
 
-	    echo html_header();
-
-	    $h->showMessages();
+	    echo html_install_header();
 
 	    // Step title
-	    echo "<h2>" . $lang['install_step1'] . "</h2>\n";
+	    echo "<legend>" . $lang['install_step1'] . "</legend>\n";
+		
+		// Complete Step Progress Bar
+		echo "
+		<div class=\"alert\">
+			<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
+			<!-- Complete Step Progress Bar -->
+			<div class=\"progress progress-info\">
+				<div class=\"bar\" style=\"width: 25%\"></div>
+			</div>
+		</div>";
 
 	    // Splash image
 	    echo "<img align='center' src='../content/admin_themes/admin_default/images/create_db.png' style='float:left;'>";
 
-	    // Step content
-	    echo "<div class='install_content clearfix'>" . $lang['install_step1_instructions_create_db'] . "</div>\n";
-
 	    //Manual creation link
 	    echo "<div class='install_content clearfix' style='margin-left:54px;'>" . $lang['install_step1_instructions_manual_setup'] . "&nbsp;<a href='?step=1&action=install&type=manual'>" . $lang['install_step1_instructions_manual_setup_click'] . "</a>.";
 
+		$h->showMessages();
+		
+		if ($cage->post->getAlpha('updated') != 'true' && SETTINGS) {
+		// Alert if Settings file already exists
+		echo "
+		<div class=\"alert alert-block\">
+			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+			" . $lang['install_step1_settings_file_already_exists'] . "
+		</div>";
+	    }
+
+	    if (isset($table_exists) && ($table_exists)) {
+		// Alert if database already exists
+		echo "
+		<div class=\"alert alert-error\">
+			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+			" . $lang['install_step1_settings_db_already_exists'] . "
+		</div>";
+	    }
+		
 	    // Registration form
 	    echo "<form name='install_admin_reg_form' action='../install/index.php?step=1' method='post'>\n";
 
@@ -380,32 +517,22 @@ function database_setup() {
 	    echo "<input type='hidden' name='updated' value='true' />\n";
 
 	    // Update button
-	    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='update button' class='button' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
+	    echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='btn btn-primary' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
 
 	    echo "</table>";
 	    echo "</form>\n";
 
-	    if ($cage->post->getAlpha('updated') != 'true' && SETTINGS) {
-		// Alert if Settings file already exists
-		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
-		echo $lang["install_step1_settings_file_already_exists"] . "</div><br/>";
-	    }
-
-	    if (isset($table_exists) && ($table_exists)) {
-		// Alert if database already exists
-		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
-		echo $lang["install_step1_settings_db_already_exists"] . "</div><br/>";
-	    }
+	   
 
 	    // Previous/Next buttons
-	    echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
+	    echo "<div class='btn'><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
 	    
 	    if ($show_next) {
 	    // and if db was connected ok
-		    echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+		    echo "<div class='btn'><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 	    } else {
 		    // link disbaled
-		    echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		    echo "<div class='btn disabled'>" . $lang['install_next'] . "</div>\n";
 	    }
 
 	    echo html_footer();
@@ -425,29 +552,43 @@ function database_setup_manual()
 {
 	global $lang;
 
-	echo html_header();
-
+	echo html_install_header();
+	
 	// Step title
-	echo "<h2>" . $lang['install_step1'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step1'] . "</legend>\n";
 
+	// Complete Step Progress Bar
+	echo "
+	<div class=\"alert\">
+		<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-info\">
+			<div class=\"bar\" style=\"width: 25%\"></div>
+		</div>
+	</div>";
+	
 	// Step content
 	echo "<div class='install_content'>" . $lang['install_step1_instructions'] . ":</div>\n";
 
-	echo "<ol class='install_content'>\n";
+	echo "<ul>\n";
 	echo "<li>" . $lang['install_step1_instructions1'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions2'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions3'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions4'] . "</li>\n";
 	echo "<li>" . $lang['install_step1_instructions5'] . "</li>\n";
-	echo "</ol>\n";
+	echo "</ul>\n";
 
 	// Warning message
-	echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
-	echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step1_warning_note'] . "</div><br/>\n";
-
+	echo "
+	<div class=\"alert alert-error\">
+		<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+		<h4>" . $lang['install_step1_warning'] . "</h4>
+		" . $lang['install_step1_warning_note'] . "
+	</div>\n";
+	
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
+	echo "<div class='btn'><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<div class='btn'><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
 
 	echo html_footer();
 }
@@ -479,29 +620,39 @@ function database_creation($h)
 	$delete = $cage->get->getAlpha('del');        // Confirm delete.
 	$show_next = false;
 
-	echo html_header();
+	echo html_install_header();
 	
 	// Step title
-	echo "<h2>" . $lang['install_step2'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step2'] . "</legend>\n";
 
+	// Complete Step Progress Bar
+	echo "<!-- Complete Step Progress Bar -->
+	<div class=\"progress progress-info\">
+		<div class=\"bar\" style=\"width: 50%\"></div>
+	</div>";
+	
 	$table_exists = $db->table_exists('miscdata');	 
 	if ($table_exists && $delete != 'DELETE') {
 		// Warning message
-		echo "<br/><img align='center' src='../content/admin_themes/admin_default/images/delete.png' style='float:left;'>";
-		echo "<div class='install_content'><span style='color: red;'>" . $lang['install_step1_warning'] . "</span>: " . $lang['install_step2_existing_db'] . "</div>\n";
-		echo "<div class='install_content'>" . $lang['install_step2_existing_confirm'] . "</div>\n";
+		echo "
+		<div class=\"alert alert-error\">
+			<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+			<h4>" . $lang['install_step1_warning'] . "</h4>
+			" . $lang['install_step2_existing_db'] . "
+		</div>";
+		echo "<div class=\"text-error\">" . $lang['install_step2_existing_confirm'] . "</div>\n";
 
 		// Confirm delete and continue install
-		 echo "<form name='install_admin_reg_form' action='index.php?step=2' method='get'>\n";
+		echo "<form name='install_admin_reg_form' action='index.php?step=2' method='get'>\n";
 		echo "<div class='center clearfix'>&nbsp; <input type='text' size=10 name='del' value='' />";
 		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
 		echo "<input type='hidden' name='step' value='2' />\n";
 	    	    
-		echo "<input class='update button' class='button' type='submit' value='" . $lang['install_step2_form_delete_confirm'] . "' />";
+		echo "<input class='btn btn-primary' class='button' type='submit' value='" . $lang['install_step2_form_delete_confirm'] . "' />";
 		echo "</div></form>\n";
 
 		echo "<div class='install_content'>" . $lang['install_step2_existing_go_upgrade1'];
-		echo "<a href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
+		echo "<a class=\"btn btn-link\" href='?step=1&action=upgrade'>" . $lang['install_step2_existing_go_upgrade2'] . "</a></div>\n";
 	}
 	else {	   
 	    
@@ -543,22 +694,22 @@ function database_creation($h)
 
 	    // Step content
 	    if (!$create_tables_problem) {
-		echo "<div class='install_content'>" . $lang['install_step2_success'] . "</div>\n";
+		echo "<div class='text-success'>" . $lang['install_step2_success'] . "</div>\n";
 	    } else {
-		echo "<div class='install_content'>" . $lang['install_step2_fail'] . "</div>\n";
+		echo "<div class='text-error'>" . $lang['install_step2_fail'] . "</div>\n";
 	    }
 
 	    $show_next = true;
 	}
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=1'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=1'>" . $lang['install_back'] . "</a>\n";
 	if ($show_next) {
 		// active "next" link
-		echo "<div class='next button''><a href='index.php?step=3'>" . $lang['install_next'] . "</a></div>\n";
+		echo "<a class=\"btn btn-primary\" href='index.php?step=3'>" . $lang['install_next'] . "</a>\n";
 	} else {
 		// link disbaled
-		echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
 	}
 
 	echo html_footer();
@@ -588,13 +739,22 @@ function register_admin()
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 
 
-	echo html_header();
+	echo html_install_header();
 
 	// Step title
-	echo "<h2>" . $lang['install_step3'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step3'] . "</legend>\n";
 
+	// Complete Step Progress Bar
+	echo "<!-- Complete Step Progress Bar -->
+	<div class=\"progress progress-info\">
+		<div class=\"bar\" style=\"width: 75%\"></div>
+	</div>";
+	
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step3_instructions'] . ":<br /><br />\n";
+	echo "<div class='well'><h4>" . $lang['install_step3_instructions'] . ":</h4>\n";
+	
+	// Make note of password message
+	echo $lang["install_step3_make_note"] . "<br />\n";
 
 	$error = 0;
 	if ($h->cage->post->getInt('step') == 4)
@@ -716,22 +876,20 @@ function register_admin()
 	echo "<input type='hidden' name='updated' value='true' />\n";
 
 	// Update button
-	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='update button' class='button' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
+	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='btn btn-primary' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
 
 	echo "</table>";
 	echo "</form>\n";
-
-	// Make note of password message
-	echo $lang["install_step3_make_note"] . "</div>\n";
-
+	echo "</div>";
+	
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=2'>" . $lang['install_back'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=2'>" . $lang['install_back'] . "</a>\n";
 	if ($h->cage->post->getAlpha('updated') == 'true' && isset($next_button)) {
 		// active "next" link if user has been updated
-		echo "<div class='next button''><a href='index.php?step=4'>" . $lang['install_next'] . "</a></div>\n";
+		echo "<a class='btn btn-primary' href='index.php?step=4'>" . $lang['install_next'] . "</a>\n";
 	} else {
 		// link disbaled until "update" button pressed
-		echo "<div class='next button''>" . $lang['install_next'] . "</div>\n";
+		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
 	}
 
 	echo html_footer();
@@ -756,14 +914,26 @@ function installation_complete()
 		$systeminfo->hotaru_feedback($h); 
 	}
 
-	echo html_header();
+	echo html_install_header();
 
 	// Step title
-	echo "<h2>" . $lang['install_step4'] . "</h2>\n";
+	echo "<legend>" . $lang['install_step4'] . "</legend>\n";
+	
+	echo "
+	<div class=\"alert alert-success\">
+		<strong>" . $lang['install_step4_installation_complete'] . "</strong><br />
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 100%\"></div>
+		</div>
+	</div>";
 
 	// Step content
-	echo "<div class='install_content'>" . $lang['install_step4_installation_complete'] . "</div>\n";
-	echo "<div class='install_content'>" . $lang['install_step4_installation_delete'] . "</div>\n";
+	echo "
+	<div class=\"alert alert-error\">
+		<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+		" . $lang['install_step4_installation_delete'] . "
+	</div>\n";
 
 
 	if ($phpinfo) {
@@ -801,11 +971,11 @@ function installation_complete()
 	    echo "</div></form>\n";
 	}
 
-	echo "<br/><div class='install_content'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
+	echo "<br/><div class='well'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=3'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a></div>\n";
+	echo "<a class='btn' href='index.php?step=3'>" . $lang['install_back'] . "</a>\n";
+	echo "<a class='btn btn-primary' href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a>\n";
 
 	echo html_footer();
 }
@@ -819,24 +989,32 @@ function upgrade_plugins()
 	global $lang;
 	global $cage;
 	$h = new Hotaru();
-	echo html_header();
+	echo html_upgrade_header();
 
 	// Step title
-	echo "<h2>" . $lang['upgrade_step3'] . "</h2>\n";
+	echo "<legend>" . $lang['upgrade_step3'] . "</legend>\n";
 
-	echo "<br/><div class='install_content'>" . $lang['upgrade_step3_details'] . "<br/><br/>\n";
+	// Complete Step Progress Bar
+	echo "
+	<div class=\"alert alert-success\">
+		<strong>" . $lang['upgrade_step3_details'] . "</strong>
+		<!-- Complete Step Progress Bar -->
+		<div class=\"progress progress-success\">
+			<div class=\"bar\" style=\"width: 100%\"></div>
+		</div>
+	</div>";
 
 	//send feedback report
 	$systeminfo = new SystemInfo();
 	$systeminfo->hotaru_feedback($h);
 
-	echo "<br/>" . $lang['upgrade_step3_instructions'] . "<br/><br/>\n";
+	echo "<div class='well'>" . $lang['upgrade_step3_instructions'] . "</div>\n";
 	
-	echo "<br/>" . $lang['upgrade_step3_go_play'] . "</div><br/><br/>\n";
+	echo "<br/>" . $lang['upgrade_step3_go_play'] . "<br/><br/>\n";
 
 	// Previous/Next buttons
-	echo "<div class='back button''><a href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='next button''><a href='" . BASEURL . "index.php'>" . $lang['upgrade_home'] . "</a></div>\n";
+	echo "<a class=\"btn\" href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a>\n";
+	echo "<a class=\"btn btn-success\" href='" . BASEURL . "index.php'>" . $lang['upgrade_home'] . "</a>\n";
 
 	echo html_footer();
 }

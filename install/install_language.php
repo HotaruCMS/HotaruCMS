@@ -30,7 +30,7 @@ $lang["upgrade_step1"] = "Step 1/3: Checking your existing setup";
 $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 $lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
 $lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
-$lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/><br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
+$lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
 
 /* Upgrade Step 2 */
 $lang["upgrade_step2"] = "Step 2/3: Upgrade Complete";
@@ -45,6 +45,7 @@ $lang["upgrade_home"] = "Finish";
 
 /* Install Common */
 $lang["install_title"] = "Hotaru CMS Setup";
+$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
 $lang["install_next"] = "Next";
 $lang["install_back"] = "Back";
 $lang["install_trouble"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
@@ -54,7 +55,9 @@ $lang["install_step0"] = "Welcome to Hotaru CMS";
 $lang["install_step0_welcome"] = "Installing Hotaru can be completed in just 4 steps and normally requires just a few minutes.";
 $lang["install_step0_select"] = "Select below whether you want to make a new installation or upgrade an existing Hotaru site...";
 $lang["install_new"] = "New Installation";
+$lang["install_new2"] = "Install";
 $lang["install_upgrade"] = "Upgrade Existing Site";
+$lang["install_upgrade2"] = "Upgrade";
 
 /* Install Step 2 */
 $lang["install_step1"] = "Step 1/4: Database Setup";
@@ -110,7 +113,7 @@ $lang["install_step2_rebuild_note"] = "<i>Note</i>: If you'd like to start fresh
 $lang["install_step2_rebuild_link"] = "delete and rebuild the database tables";
 $lang["install_step2_success"] = "Database tables created successfully. Click \"Next\" to configure Hotaru CMS.";
 $lang["install_step2_fail"] = "There were some errors in creating database tables. Not all tables may have been created correctly.";
-$lang["install_step2_existing_db"] = "You already have an existing installation of Hotaru CMS.<br/><br/>If you continue, this installation will DELETE all your existing tables and settings, including posts, users and plugin data.";
+$lang["install_step2_existing_db"] = "You already have an existing installation of Hotaru CMS.<br/>If you continue, this installation will DELETE all your existing tables and settings, including posts, users and plugin data.";
 $lang["install_step2_existing_confirm"] = "Confirm you wish to continue this install by typing 'DELETE' in the box and press the button";
 $lang["install_step2_existing_go_upgrade1"] = "Alternatively, you may wish to ";
 $lang["install_step2_existing_go_upgrade2"] = "run the upgrade script";
