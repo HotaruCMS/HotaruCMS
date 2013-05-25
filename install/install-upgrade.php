@@ -74,31 +74,8 @@ function upgrade_check($h, $old_version) {
 	
 	echo html_upgrade_header();
 
-	// Step title
-	echo "<legend>" . $lang['upgrade_step1'] . "</legend>\n";
+        include('templates/upgrade/upgrade_step_1.php');
 	
-	// Complete Step Progress Bar
-	echo "<div class=\"alert\">";
-	if ( isset($old_version) ) 
-		 echo "<strong>" . $lang['upgrade_step1_old_version'] . $old_version . "</strong>\n";
-	else 
-		echo "<strong>" . $lang['upgrade_step1_old_no_version'] . "</strong>\n";
-		
-	echo "<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-info\">
-			<div class=\"bar\" style=\"width: 33.33%\"></div>
-		</div>";
-	
-	if ($h->version > $old_version)
-	    echo $lang['upgrade_step1_details'];
-	else
-	    echo $lang['upgrade_step1_current_version'];
-	echo "</div>\n";
-
-	// Previous/Next buttons
-	echo "<a class='btn' href='index.php?step=0&action=upgrade'>" . $lang['install_back'] . "</a>\n";
-	echo "<a class='btn btn-primary' href='?step=2&action=upgrade'>" . $lang['install_next'] . "</a>\n";
-
 	echo html_footer();
 }
 
@@ -113,7 +90,7 @@ function upgrade_complete($h)
 
 	echo html_upgrade_header();
 	
-        include('templates/upgrade_step_2.php');
+        include('templates/upgrade/upgrade_step_2.php');
 	
 	echo html_footer();    
 }
@@ -676,7 +653,13 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.5.0";
         }
 
-	// Update Hotaru version number to the database (referred to when upgrading)
+        
+        /*
+         * 
+         * Update Hotaru version number to the database (referred to when upgrading)
+         * This is always the final step of the upgrade
+         * 
+         */ 
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }

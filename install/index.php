@@ -554,42 +554,8 @@ function database_setup_manual()
 
 	echo html_install_header();
 	
-	// Step title
-	echo "<legend>" . $lang['install_step1'] . "</legend>\n";
-
-	// Complete Step Progress Bar
-	echo "
-	<div class=\"alert\">
-		<strong>" . $lang['install_step1_instructions_create_db'] . "</strong>
-		<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-info\">
-			<div class=\"bar\" style=\"width: 25%\"></div>
-		</div>
-	</div>";
-	
-	// Step content
-	echo "<div class='install_content'>" . $lang['install_step1_instructions'] . ":</div>\n";
-
-	echo "<ul>\n";
-	echo "<li>" . $lang['install_step1_instructions1'] . "</li>\n";
-	echo "<li>" . $lang['install_step1_instructions2'] . "</li>\n";
-	echo "<li>" . $lang['install_step1_instructions3'] . "</li>\n";
-	echo "<li>" . $lang['install_step1_instructions4'] . "</li>\n";
-	echo "<li>" . $lang['install_step1_instructions5'] . "</li>\n";
-	echo "</ul>\n";
-
-	// Warning message
-	echo "
-	<div class=\"alert alert-error\">
-		<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-		<h4>" . $lang['install_step1_warning'] . "</h4>
-		" . $lang['install_step1_warning_note'] . "
-	</div>\n";
-	
-	// Previous/Next buttons
-	echo "<div class='btn'><a href='index.php?step=0'>" . $lang['install_back'] . "</a></div>\n";
-	echo "<div class='btn'><a href='index.php?step=2'>" . $lang['install_next'] . "</a></div>\n";
-
+	include('templates/install/database_setup_manual.php');
+        
 	echo html_footer();
 }
 
