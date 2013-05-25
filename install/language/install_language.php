@@ -94,7 +94,7 @@ $lang["install_step1_dbprefix_error"] = "There was a problem with the database p
 $lang["install_step1_dbhost_error"] = "There was a problem with the database host";
 
 $lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru settings file on your server. If you press 'update' your existing file will be updated with the settings above.";
-$lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. If you press 'Next' your entire database will be wiped clean. Proceed with caution.";
+$lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. Proceed with caution.";
 $lang["install_step1_update_file_writing_success"] = "The 'settings' file was created.";
 $lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'settings' file.";
 $lang["install_step1_no_db_exists_failure"] = "The database does not exist or the connection settings are incorrect.";

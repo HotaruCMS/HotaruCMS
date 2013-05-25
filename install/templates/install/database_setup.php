@@ -11,10 +11,8 @@
             </div>
     </div>
 	    
-    <img align='center' src='../content/admin_themes/admin_default/images/create_db.png' style='float:left;'>
-
     <!-- Manual creation link -->
-    <div class='install_content clearfix' style='margin-left:54px;'>
+    <div class='install_content'>
         <?php echo $lang['install_step1_instructions_manual_setup']; ?>&nbsp;<a href='?step=1&action=install&type=manual'><?php echo $lang['install_step1_instructions_manual_setup_click']; ?></a>.
 
 	<?php $h->showMessages(); ?>
