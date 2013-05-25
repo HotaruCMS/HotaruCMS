@@ -2519,7 +2519,7 @@ class Hotaru
             {
                 extract($params);                
             }
-            print_r($params);
+            //print_r($params);
             
             $result = $activity->$method($this, $params);
             return $result;
