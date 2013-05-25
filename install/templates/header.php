@@ -10,16 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap.min.css">	
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css">
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>	
-	
-	<style type="text/css">
-	body {
-		position: relative;
-		background-color: #fff;
-		background-image: url(grid-18px-masked.png);
-		background-repeat: repeat-x;
-		background-position: 0 40px;
-	}
-	</style>	
+	<link href="css/install_style.css" rel="stylesheet">        		
 </head>
 
 	<!-- Body -->
