@@ -113,7 +113,7 @@ function upgrade_complete($h)
 
 	echo html_upgrade_header();
 	
-        include('templates/database_setup_manual.php');
+        include('templates/upgrade_step_2.php');
 	
 	echo html_footer();    
 }
