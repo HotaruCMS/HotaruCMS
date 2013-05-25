@@ -144,6 +144,17 @@ function template($h, $template, $args = array())
 }
 
 
+function html_install_header()
+{
+    include_once('templates/header.php');
+}
+
+function html_footer()
+{
+     include_once('templates/footer.php');
+}
+
+
 /**
  * Step 0 of installation - Welcome message
  */
@@ -302,7 +313,6 @@ function database_setup_manual()
  */
 function database_upgrade()
 {
-
     if (file_exists(SETTINGS)) {
         include_once('install-upgrade.php');
     }
@@ -330,21 +340,18 @@ function database_creation($h)
             
             template($h,'install/database_creation.php', array('show_next' => $show_next));
 	
-	}
-	else {	   
+	} else {	   
 	    
 	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
 
 	    // delete *all* tables in db:
 	    $db->selectDB(DB_NAME);
 
-
             template($h,'install/database_creation_2.php', array(
                 'db'=>$db,
                 'show_next' => $show_next,
                 'tables' => $tables
              ));
-
         }
 }
 
@@ -622,34 +629,8 @@ function upgrade_plugins()
 	global $lang;
 	global $cage;
 	$h = new Hotaru();
-	echo html_upgrade_header();
-
-	// Step title
-	echo "<legend>" . $lang['upgrade_step3'] . "</legend>\n";
-
-	// Complete Step Progress Bar
-	echo "
-	<div class=\"alert alert-success\">
-		<strong>" . $lang['upgrade_step3_details'] . "</strong>
-		<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-success\">
-			<div class=\"bar\" style=\"width: 100%\"></div>
-		</div>
-	</div>";
-
-	//send feedback report
-	$systeminfo = new SystemInfo();
-	$systeminfo->hotaru_feedback($h);
-
-	echo "<div class='well'>" . $lang['upgrade_step3_instructions'] . "</div>\n";
 	
-	echo "<br/>" . $lang['upgrade_step3_go_play'] . "<br/><br/>\n";
-
-	// Previous/Next buttons
-	echo "<a class=\"btn\" href='index.php?step=2&action=upgrade'>" . $lang['install_back'] . "</a>\n";
-	echo "<a class=\"btn btn-success\" href='" . BASEURL . "index.php'>" . $lang['upgrade_home'] . "</a>\n";
-
-	echo html_footer();
+        template($h, 'upgrade/upgrade_plugins.php');
 }
 
 /**

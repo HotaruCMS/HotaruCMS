@@ -13,9 +13,6 @@
 
 <!-- Step content -->
 
-<div class="alert alert-error">
-        <?php echo $lang['install_step4_installation_delete']; ?>
-</div>
 
 <!--  Previous/Next buttons -->
 <a class='btn' href='index.php?step=1&action=upgrade'><?php echo $lang['install_back']; ?></a>
