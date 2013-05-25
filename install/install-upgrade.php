@@ -47,9 +47,17 @@ $step = $cage->get->getInt('step');        // Installation steps.
             $show_next = false;
             $step = 1;  // rest to step if db not available
 	} else {        
-            $h = new Hotaru();  // replace start one with full one
-            $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-            $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
+            $table_exists = $db->table_exists('miscdata');
+            if (!$table_exists) {
+                $h->messages[$lang['install_step1_no_table_exists_failure']] = 'red';
+                $old_version = '';
+                $show_next = false;
+                $step = 1;  // rest to step if db not available
+            } else {
+                $h = new Hotaru();  // replace start one with full one
+                $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+                $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
+            }
         }
         
 
