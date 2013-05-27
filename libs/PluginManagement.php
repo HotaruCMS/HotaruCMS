@@ -842,7 +842,14 @@ class PluginManagement
 		$version= $h->cage->get->getHtmLawed('version');
 		$findfolder = str_replace('_', '-', $folder);
 		$version = str_replace('.', '-', $version);		
-		$copydir = CONTENT . "temp/";
+		
+                // TODO
+                // make temp folder the copy directory and unzip files here first
+                // copy old folder somewhere and then bring in new one
+                // before deleting zip and old folder totally
+                //$copydir = CONTENT . "temp/";
+                
+                $copydir = PLUGINS;
 		$file = $findfolder . "-" . $version . ".zip";
 
                 // Create those directories if need be:
@@ -850,7 +857,7 @@ class PluginManagement
                 if (! is_dir($copydir) && ! mkdir($copydir, 0777) )  {	                        
                         $h->messages['Failed to create temp directory.' . $copydir] = 'red';                        
                 } else {
-                    if ($h->debug) $h->messages['temp folder located'] = 'alert-info';
+                    //if ($h->debug) $h->messages['temp folder located'] = 'alert-info';
                 }
 	        
 		// get ftpsettings
@@ -865,13 +872,11 @@ class PluginManagement
 		// check that we can access the remote plugin repo site via curl
 		if ($this->fileCheckCurlConnection($url, $file) == 200) {
                     $h->messages['File succesfully located on remote plugin server'] = 'alert-success';
-		    if ($write = is_writeable($copydir)) {
-			//print "we can use PHP<br/>";
-                        if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
+		    if ($write = is_writeable($copydir)) {			
+                        //if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
 			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
-		    } else {
-			//print "we will use FTP<br/>";
-                        if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
+		    } else {			
+                        //if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
                         $h->messages['ftp copy not operational yet in this version of Hotaru CMS'] = 'red';
 			//$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
 		    }
@@ -879,20 +884,16 @@ class PluginManagement
 		    $h->messages[$file . $h->lang('admin_theme_fileexist_error')] = 'red';
 		}
 
-		// unzip
-		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
+		// unzip		
 		if (file_exists( $copydir . $file)) {
-		    //print "starting the unzip<br/>";
                     $h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
                     
                     // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
 
-
 		    // Should we rename old files first and then bring in new ?
 
-
-		    $zipResult = $this->fileUnzip($h, $file, $copydir);
+		    $zipResult = $this->fileUnzip($h, $copydir . $file, $copydir);
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
                     
                     if ($zipResult == 1) {
@@ -946,19 +947,19 @@ class PluginManagement
            // we can only get file if hotaruplugins is letting us access the zip folder
             // check for access first
             
-$h->messages['url = ' . $url . $file] = 'alert-info';
-$ch = curl_init($url . $file);
-$fp = fopen($copydir . $file, "w");
-
-curl_setopt($ch, CURLOPT_FILE, $fp);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-
-curl_exec($ch);
-curl_close($ch);
-fclose($fp);
+//$h->messages['url = ' . $url . $file] = 'alert-info';
+//$ch = curl_init($url . $file);
+//$fp = fopen($copydir . $file, "w");
+//
+//curl_setopt($ch, CURLOPT_FILE, $fp);
+//curl_setopt($ch, CURLOPT_HEADER, 0);
+//
+//curl_exec($ch);
+//curl_close($ch);
+//fclose($fp);
 
            
-            if (1==0) {
+            if (1==1) {
             
             
 		// create a new CURL resource
@@ -1009,7 +1010,7 @@ fclose($fp);
             //$file = '/home/ipadrank/public_html/content/temp/metatags-0-3.zip';
 
                 $z = new ZipArchive();
-	        $zopen = $z->open($to .$file, ZIPARCHIVE::CHECKCONS);                           
+	        $zopen = $z->open($file, ZIPARCHIVE::CHECKCONS);                           
 
                 //if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
                 
