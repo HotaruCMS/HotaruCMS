@@ -883,7 +883,7 @@ class PluginManagement
 		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
 		if (file_exists( $copydir . $file)) {
 		    //print "starting the unzip<br/>";
-                    $h->messages['About to start the unzip process'] = 'alert-info';
+                    $h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
                     
                     // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
@@ -892,17 +892,22 @@ class PluginManagement
 		    // Should we rename old files first and then bring in new ?
 
 
-		    $this->fileUnzip($h, $file, $copydir);
+		    $zipResult = $this->fileUnzip($h, $file, $copydir);
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
-		    // delete zip file
-                    if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
-		    if ($write) {
-			//print "we can use PHP<br/>";
-			$this->filePhpDelete($h, $file, $copydir);
-		    } else {
-			//print "we will use FTP<br/>";
-			$this->fileFtpDelete($h, $ftp_url, $file, $copydir);
-		    }
+                    
+                    if ($zipResult == 1) {
+                        // only delete zip file if we have been succesful ?
+                        if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
+                        if ($write) {
+                            //print "we can use PHP<br/>";
+                            $this->filePhpDelete($h, $file, $copydir);
+                        } else {
+                            //print "we will use FTP<br/>";
+                            $this->fileFtpDelete($h, $ftp_url, $file, $copydir);
+                        }
+                    } else {
+                        $h->messages['not deleting zip file as unzip failed'] = 'red';
+                    }
 		} else {
 		    $h->messages[$h->lang('admin_theme_filecopy_error') . $file] = 'red';
 		}
@@ -938,7 +943,9 @@ class PluginManagement
 
 	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
 	{			
-           
+           // we can only get file if hotaruplugins is letting us access the zip folder
+            // check for access first
+            
 $h->messages['url = ' . $url . $file] = 'alert-info';
 $ch = curl_init($url . $file);
 $fp = fopen($copydir . $file, "w");
@@ -983,7 +990,9 @@ fclose($fp);
 			fclose($outfile);
 			if ($handle) {
 			    $h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
-			}
+			} else {
+                            $h->messages['something went wrong getting base64 handle'];
+                        }
 		    } else {
 			$h->messages[$h->lang('admin_theme_filecopy_error' . $file)] = 'red';
 		    }
@@ -997,20 +1006,12 @@ fclose($fp);
 	public function fileUnzip($h, $file, $to)
 	{
 		//$h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
+            //$file = '/home/ipadrank/public_html/content/temp/metatags-0-3.zip';
+
                 $z = new ZipArchive();
-	        $zopen = $z->open($to . $file, ZIPARCHIVE::CHECKCONS);
-            
-          
-            if ($h->debug) $h->messages['Attempt to unzip ' . $to . $file] = 'alert-info';
-//                print $to . $file;
-//                $za = new ZipArchive();
-//                $za->open($to . $file); 
-//                
-//
-//for( $i = 0; $i < $za->numFiles; $i++ ){ 
-//    $stat = $za->statIndex( $i ); 
-//    print_r( basename( $stat['name'] ) . PHP_EOL ); 
-//} die();
+	        $zopen = $z->open($to .$file, ZIPARCHIVE::CHECKCONS);                           
+
+                //if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
                 
                 if ($zopen !== true) {
                         $h->messages['Could not open zip file ' . $file] = 'red';
@@ -1050,8 +1051,8 @@ fclose($fp);
 	        asort($needed_dirs);
 	
 	        // Create those directories if need be:
-	        foreach ( $needed_dirs as $_dir ) {          
-	                if ( ! mkdir($_dir, 0777) && ! is_dir($_dir) )  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
+	        foreach ( $needed_dirs as $_dir ) {  
+	                if (! is_dir($dir) && ! mkdir($_dir, 0777))  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
                                 $h->messages['Could not create directory.' . $dir] = 'red';
                                 return false;
                         }
@@ -1096,6 +1097,18 @@ fclose($fp);
                 return true;		
 	}
 
+        public function folderDelete($h, $folder)
+        {
+                @chmod($folder, 666);
+		$deleted = @unlink($folder);
+		if (!$deleted) {
+		    $h->messages['folder could not be deleted before unzipping'] = 'yellow';
+		} else {
+                    $h->messages['old folder deleted successfully'] = 'green';
+                }
+        }
+        
+        
 	public function filePhpDelete($h, $file, $copydir)
 	{
 		@chmod($copydir . $file,666);
