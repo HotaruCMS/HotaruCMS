@@ -25,52 +25,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+$h->template('admin_sidebar');
+
+$h->showMessages();
+
+$h->pluginHook('plugins_top');
+
+$the_plugins = isset($h->vars['installed_plugins']) ? $h->vars['installed_plugins'] : array();
+
+// Build tabs and content pages
+$tabs = array(
+    array('Install', array('the_plugins' => $the_plugins)),   // for some reason, even though we pass the array here it gets lost somehow in the include 
+    'Updates',
+    'Search',
+    'Help'
+ );
+
+buildTabs($h, 'plugin_management', $tabs);
+
 ?>
-
-<?php $h->template('admin_sidebar'); ?>
-
-<!--<h2><?php echo $h->lang("admin_theme_plugins"); ?></h2>-->
-
-<?php $h->showMessages(); ?>
-
-<div id="plugin_management">
-
-<?php $h->pluginHook('plugins_top'); ?>
-
-    <ul class="nav nav-tabs" id="Admin_Plugins_Tab">
-        <li class="active"><a href="#home" data-toggle="tab">Install</a></li>
-        <li><a href="#updates" data-toggle="tab">Updates</a></li>
-        <li><a href="#search" data-toggle="tab">Search</a></li>
-        <li><a href="#help" data-toggle="tab">Help</a></li>
-    </ul>
-    
-    <div class="tab-content">
-        <div class="tab-pane" id="help">
-            
-            <?php $h->template('plugin_management/help', 'admin'); ?>
-            
-        </div>
-        
-        <div class="tab-pane" id="updates">
-            
-            <?php $h->template('plugin_management/updates'); ?>
-            
-        </div>
-        
-        <div class="tab-pane" id="search">
-            
-            <?php $h->template('plugin_management/search'); ?>
-            
-        </div>
-   
-    
-        <div class="active tab-pane" id="home">
-        
-            <?php $h->template('plugin_management/install'); ?>
-            
-         </div>
-    </div>
-        
-</div>
-
-<div class="clear"></div>

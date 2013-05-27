@@ -186,6 +186,7 @@ class Initialize
 		require_once(FUNCTIONS . 'funcs.arrays.php');
 		require_once(FUNCTIONS . 'funcs.times.php');
 		require_once(FUNCTIONS . 'funcs.files.php');
+                require_once(FUNCTIONS . 'funcs.build.php');
 		require_once(FUNCTIONS . 'funcs.http.php'); 
 	}
 	

@@ -1,4 +1,4 @@
-   
+   <div id="plugin_management">
 <table>
 <tr class='table_a table table_bordered'><td colspan=3>
 	<?php echo $h->lang("admin_theme_plugins_installed"); ?>
@@ -35,7 +35,8 @@
 </td></tr>
 
 <?php
-	$the_plugins = $h->vars['installed_plugins'];
+        // for some reason, even though we have passed the array to here it gets lost somehow in the include,so we have to get it again
+	$the_plugins = isset($h->vars['installed_plugins']) ? $h->vars['installed_plugins'] : array();
 	$per_column = count($the_plugins)/3;
 	for($i=0; $i<3; $i++) { 
 ?>
@@ -46,13 +47,12 @@
 <table>
 
 <?php
-	$alt = 0;
-	if (!$the_plugins) { $the_plugins = array(); }
+	$alt = 0;	
 	foreach ($the_plugins as $plug) {	    
 		$alt++;
 		$info_icon = 'info_16.png';
 		$update = false;
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }}
+		if (isset($plug['latestversion']) && $plug['latestversion'] > $plug['version']) {$update=true; $info_icon = 'info_green_16.png'; }
 		echo "<tr class='table_tr table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
 		echo "<td class='table_installed_plugin'>";
@@ -194,3 +194,4 @@
 </table> <!-- close table which contains three columns of smaller tables -->
 
 
+</div>

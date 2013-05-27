@@ -886,7 +886,7 @@ class PluginManagement
 
 		// unzip		
 		if (file_exists( $copydir . $file)) {
-                    $h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
+                    //$h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
                     
                     // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
@@ -898,7 +898,7 @@ class PluginManagement
                     
                     if ($zipResult == 1) {
                         // only delete zip file if we have been succesful ?
-                        if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
+                        //if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
                         if ($write) {
                             //print "we can use PHP<br/>";
                             $this->filePhpDelete($h, $file, $copydir);
