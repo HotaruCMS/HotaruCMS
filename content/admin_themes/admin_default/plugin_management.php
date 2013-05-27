@@ -52,7 +52,7 @@
         
         <div class="tab-pane" id="search">
             
-            <?php $h->render('plugin_search'); ?>
+            <?php $h->template('plugin_search'); ?>
             
         </div>
    
@@ -61,7 +61,7 @@
         
     
 <table>
-<tr class='table_a'><td colspan=3>
+<tr class='table_a table table_bordered'><td colspan=3>
 	<?php echo $h->lang("admin_theme_plugins_installed"); ?>
 	<span class='table_key'>
 	    &nbsp;&nbsp;
