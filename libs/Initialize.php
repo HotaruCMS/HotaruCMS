@@ -203,7 +203,7 @@ class Initialize
                     // debug message
                     
                 } else {
-                    ActiveRecord\Config::initialize(function($cfg)
+                    ActiveRecord____Config::initialize(function($cfg)
                     {
                         $cfg->set_model_directory(LIBS);
                         $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
