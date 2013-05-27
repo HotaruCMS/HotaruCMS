@@ -318,7 +318,8 @@ function database_upgrade()
         include_once('install-upgrade.php');
     }
     else {
-        echo 'You need to have a "settings.php" file in the config folder to upgrade Hotaru.';
+        $msg1 = 'Hotaru is having trouble starting.<br/>You need to have a "settings.php" file in the config folder to upgrade Hotaru.';        
+        include('../error.php');
     }
 }
 
