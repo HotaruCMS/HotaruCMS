@@ -151,4 +151,16 @@ function time_block($block = 1)
 	return $start_of_next_block;
 
 }
+
+
+function time_ago($i){
+    $m = time()-$i; $o='just now';
+    $t = array('year'=>31556926,'month'=>2629744,'week'=>604800,
+'day'=>86400,'hour'=>3600,'minute'=>60,'second'=>1);
+    foreach($t as $u=>$s){
+        if($s<=$m){$v=floor($m/$s); $o="$v $u".($v==1?'':'s').' ago'; break;}
+    }
+    return $o;
+}
+
 ?>
