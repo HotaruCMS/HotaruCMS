@@ -47,8 +47,9 @@
 <table>
 
 <?php
-	$alt = 0;	
-	foreach ($the_plugins as $plug) {	    
+	$alt = 0;
+        if ($the_plugins){
+            foreach ($the_plugins as $plug) {	    
 		$alt++;
 		$info_icon = 'info_16.png';
 		$update = false;
@@ -91,6 +92,7 @@
 		array_shift($the_plugins);
 		if ($alt >= $per_column) { break; }
 	}
+        }
 ?>
 
 </table> <!-- close table which contains one column of plugins -->

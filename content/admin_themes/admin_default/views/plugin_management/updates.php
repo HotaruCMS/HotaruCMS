@@ -24,15 +24,19 @@
         <td>Update</td>
     </tr>
     
-    <?php foreach ($the_plugins as $plugin) { 
-        if (isset($plugin['latestversion']) && $plugin['latestversion'] > $plugin['version'])
-            { ?>
-                <tr>
-                    <td><?php echo $plugin['name']; ?></td>
-                    <td><?php echo $plugin['version']; ?></td>
-                    <td><?php echo $plugin['latestversion']; ?></td>
-                    <td><a href="<?php SITEURL; ?>admin_index.php?page=plugin_management&action=update&plugin=<?php echo strtolower($plugin['name']);?>&version=<?php echo $plugin['latestversion'];?>#tab_updates" class="button">Update</button></a></td>
-                </tr>
-            <?php } ?>
-    <?php } ?>
+    <?php 
+    if ($the_plugins) {
+        foreach ($the_plugins as $plugin) {             
+            if (isset($plugin['latestversion']) && $plugin['latestversion'] > $plugin['version'])
+                { ?>
+                    <tr>
+                        <td><?php echo $plugin['name']; ?></td>
+                        <td><?php echo $plugin['version']; ?></td>
+                        <td><?php echo $plugin['latestversion']; ?></td>
+                        <td><a href="<?php SITEURL; ?>admin_index.php?page=plugin_management&action=update&plugin=<?php echo strtolower($plugin['folder']);?>&version=<?php echo $plugin['latestversion'];?>#tab_updates" class="button">Update</button></a></td>
+                    </tr>
+                <?php } ?>
+        <?php } 
+    }
+    ?>
 </table>
