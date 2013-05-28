@@ -836,11 +836,11 @@ class PluginManagement
 	 * @param <type> $h
 	 */
 	public function update($h)
-	{
-		$url = "http://hotaruplugins.com/zip/";
+	{		
 		$folder = $h->plugin->folder;
 		$version= $h->cage->get->getHtmLawed('version');
 		$findfolder = str_replace('_', '-', $folder);
+                $url = "http://hotaruplugins.com/zip/plugins/" . $findfolder . '/';
 		$version = str_replace('.', '-', $version);		
 		
                 // TODO
@@ -1034,6 +1034,11 @@ class PluginManagement
 	                else
 	                        $needed_dirs[] = $to . rtrim(dirname($info['name']),'/');
 	        } 
+                
+                if (!isset($needed_dirs)) { 
+                    $h->messages['Could not extract file from archive : ' . $file] = 'red';
+                    return false;
+                }
 	
 	        $needed_dirs = array_unique($needed_dirs);
 	        foreach ( $needed_dirs as $dir ) {
