@@ -84,10 +84,20 @@ switch ($step) {
 	case 1: 
 		if ($action == 'upgrade') {                        
 			database_upgrade();
+                        
+                        // remove cookies from whole domain just in case of 1.4.2 cookies issue
+                        $parsed = parse_url(SITEURL); 
+                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
 		} else {
 			// Remove any cookies set in a previous installation:
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
+                        
+                        // and remove from whole domain just in case of 1.4.2 cookies issue
+                        $parsed = parse_url(SITEURL); 
+                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
 			
 			// use this direct call instead of $db = init_database() because db may not exist yet. We need to check and control the response
 			$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
