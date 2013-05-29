@@ -14,20 +14,15 @@
 
 
 <div id ="plugin_search_form">
-    <form name='plugin_search_form' action='<?php echo SITEURL; ?>admin_index.php?page=plugin_search#tab_search' method='post'>
-
-	<table align="center">
-		<tr>		
-		<td><input id='admin_plugin_search' type='text' size=24 name='plugin_search' value='<?php echo $search; ?>' /></td>
-		<td>
-		<input id='admin_plugin_search_button' type='submit' value='<?php echo $h->lang('admin_theme_plugin_search_submit'); ?>'  /></td>
-		</tr>
-	</table>
-
-	<input type='hidden' name='page' value='plugin_search'>
+    <form name='plugin_search_form' class='form-inline text-right' action='<?php echo SITEURL; ?>admin_index.php?page=plugin_search#tab_search' method='post'>
+	
+		<input id='admin_plugin_search' type='text' name='plugin_search' value='<?php echo $search; ?>' /></td>
+		<input id='admin_plugin_search_button' class='btn btn-primary' type='submit' value='<?php echo $h->lang('admin_theme_plugin_search_submit'); ?>'  /></td>
+		<input type='hidden' name='page' value='plugin_search'>
+	
     </form>
 
- </div>
+</div>
 
 
 <?php
