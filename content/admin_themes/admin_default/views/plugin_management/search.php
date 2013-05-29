@@ -30,7 +30,8 @@
 if ($plugins) {    
     foreach ($plugins as $plugin) {
 	//var_dump($plugin);
-	echo "<div class='plugin_col'><a href=''>" . urldecode($plugin['post_title']) . "</a> " . urldecode($plugin['post_content']) . "</div>";
+        $ahref= SITEURL . 'admin_index.php?page=plugin_management&action=update&plugin=' . strtolower($plugin['post_title']) . '&version=' . $plugin['post_title'] . '#tab_search';
+	echo "<div class='plugin_col'><a href='" . $ahref . "' class='button'>Install </button>" . urldecode($plugin['post_title']) . "</a> " . urldecode($plugin['post_content']) . "</div>";
 	//post_content
     }
 } else {
