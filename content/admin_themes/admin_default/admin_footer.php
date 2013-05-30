@@ -48,6 +48,7 @@
 
 <?php $h->pluginHook('pre_close_body'); ?>
 
+<script type='text/javascript' src='<?php echo SITEURL; ?>content/admin_themes/admin_default/javascript/bootstrapSwitch.js'></script>
 <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js'></script>
 
 <?php $h->doIncludes('js'); ?>

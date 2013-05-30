@@ -430,9 +430,17 @@ class AdminPages
 			case "activate":
 				$plugman->activateDeactivate($h, 1);
 				break;
+                        case "activateAjax":
+				$result = $plugman->activateDeactivate($h, 1, true);
+                                echo json_encode($result);
+				die();    
 			case "deactivate":
 				$plugman->activateDeactivate($h, 0);
-				break;    
+				break;  
+                        case "deactivateAjax":
+				$result = $plugman->activateDeactivate($h, 0, true);
+                                echo json_encode($result);
+				die();     
 			case "activate_all":
 				$plugman->activateDeactivateAll($h, 1);
 				break;

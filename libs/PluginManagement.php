@@ -102,20 +102,12 @@ class PluginManagement
 				}
 				
 				// Conditions for "active"...
-				if (($allplugins[$count]['status'] == 'active') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<div class=\"text-toggle-button\"><input type=\"checkbox\" checked=\"checked\"></div> </a>";
-				} elseif (($allplugins[$count]['status'] == 'inactive') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<div class=\"text-toggle-button\"><input type=\"checkbox\"></div> </a>";
-				} elseif ($allplugins[$count]['status'] == 'active') {
-					$allplugins[$count]['active'] = "<a href='" . SITEURL;
-					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=deactivate&amp;plugin=";
-					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<div class=\"text-toggle-button\"><input type=\"checkbox\" checked=\"checked\"></div> </a>";
+				if ($allplugins[$count]['status'] == 'active') {
+					
+					$allplugins[$count]['active'] = "<div class='switch' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\" checked=\"checked\"></div> </a>";
 				} else {
-					$allplugins[$count]['active'] = "<a href='" . SITEURL;
-					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=activate&amp;plugin=";
-					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<div class=\"text-toggle-button\"><input type=\"checkbox\"></div> </a>";
+					
+					$allplugins[$count]['active'] = "<div class='switch' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\"></div>";
 				}
 				
 				
@@ -586,7 +578,7 @@ class PluginManagement
 	 * @param int $enabled 
 	 * Note: This function does not uninstall/delete a plugin.
 	 */
-	public function activateDeactivate($h, $enabled = 0)
+	public function activateDeactivate($h, $enabled = 0, $ajax = false)
 	{	// 0 = deactivate, 1 = activate
 		
 		// Clear the database cache to ensure plugins and hooks are up-to-date.
@@ -608,7 +600,8 @@ class PluginManagement
 		} 
 		else 
 		{
-			$this->activateDeactivateDo($h, $plugin_row, $enabled);
+			$result = $this->activateDeactivateDo($h, $plugin_row, $enabled);
+                        return $result;
 		}
 	}
 	
@@ -713,6 +706,8 @@ class PluginManagement
 		}
 		
 		$h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
+                
+                return $enabled;
 	}
 	
 	

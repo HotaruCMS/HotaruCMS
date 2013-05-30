@@ -1407,12 +1407,12 @@ class Hotaru
 	 *
 	 * @param string $type "log" or "object"
 	 */
-	public function generateReport($type = 'log')
+	public function generateReport($type = 'log', $level = '')
 	{
 		if (!is_object($this->debug)) { 
 			$this->debug = new Debug();
 		}
-		return $this->debug->generateReport($this, $type);
+		return $this->debug->generateReport($this, $type, $level);
 	}
 
     
