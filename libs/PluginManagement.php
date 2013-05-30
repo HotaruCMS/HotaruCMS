@@ -102,11 +102,9 @@ class PluginManagement
 				}
 				
 				// Conditions for "active"...
-				if ($allplugins[$count]['status'] == 'active') {
-					
+				if ($allplugins[$count]['status'] == 'active') {					
 					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\" checked=\"checked\"></div> </a>";
-				} else {
-					
+				} else {					
 					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\"></div>";
 				}
 				
