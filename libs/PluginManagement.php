@@ -118,7 +118,6 @@ class PluginManagement
 					$allplugins[$count]['active'] .= "<div class=\"text-toggle-button\"><input type=\"checkbox\"></div> </a>";
 				}
 				
-				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
 					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"icon-download-alt\"></i> </a>";
