@@ -30,6 +30,7 @@ class Post
 	protected $archived         = 'N';            // archived Yes or No (Y/N)
 	protected $author           = 0;            // post author
 	protected $date             = '';           // post submission date
+        protected $updatedts        = '';           // post updated date
 	protected $pubDate          = '';           // post published date
 	protected $status           = 'unsaved';    // initial status before database entry
 	protected $type             = '';           // post type, e.g. news, blog, forum
@@ -91,6 +92,7 @@ class Post
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;
 			$this->date = $post_row->post_date;
+                        $this->updatedts = $post_row->post_updatedts;
 			$this->pubDate = $post_row->post_pub_date;
 			$this->status = $post_row->post_status;
 			$this->type = urldecode($post_row->post_type);
