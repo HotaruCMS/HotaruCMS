@@ -71,14 +71,14 @@ $sideBarWidth = 12 - $leftSpan;
 			<?php $h->pluginHook('announcement_last'); ?>
 		</div>
 	<?php } ?>
-		<?php $h->pluginHook('header_end'); ?>
-        
+		
+        <br/>
 	<div class="container<?php echo $fluid; ?>">
             <div class="row<?php echo $fluid; ?>">
 
                 <div id="header_end" class="container<?php echo $fluid; ?>">
                         <!-- CATEGORIES, ETC -->
-                        
+                        <?php $h->pluginHook('header_end'); ?>
                 </div>
 
 		<div id="content">

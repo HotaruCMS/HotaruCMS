@@ -49,7 +49,7 @@
 		<script>window.jQuery || document.write('<script src="<?php echo SITEURL; ?>content/admin_themes/admin_default/javascript/jquery.min.js"><\/script>')</script>
         
         <!-- Include merged files for all the plugin css and javascript (if any) -->
-        <?php $h->doIncludes('css'); ?>
+        <?php $h->doIncludes('css'); ?>		
 
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
