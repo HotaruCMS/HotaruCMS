@@ -1,8 +1,8 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: settings.php
- * Template author: Nick Ramsay
+ * Template name: mail.php
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -28,13 +28,13 @@
 $loaded_settings = $h->vars['admin_settings'];
 ?>
 
-<?php $h->pluginHook('admin_settings_top'); ?>
+<?php $h->pluginHook('admin_mail_top'); ?>
 
 <!--	<h2><?php echo $h->lang("admin_theme_settings_title"); ?></h2>-->
 	
 	<?php $h->showMessage(); ?>
 	
-	<form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
+	<form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=mail' method='post'>
 	
 	<table id="settings" class="table table-bordered">    
 	<tr class="info">
@@ -108,4 +108,4 @@ $loaded_settings = $h->vars['admin_settings'];
         </div>
 	</form>
 
-<?php $h->pluginHook('admin_settings_bottom'); ?>
+<?php $h->pluginHook('admin_mail_bottom'); ?>
