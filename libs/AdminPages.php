@@ -539,6 +539,9 @@ class AdminPages
                       <?php if ($h->isActive('category_manager')) { ?>
                         <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'category_manager'), 'admin'); ?>">Category Manager</a></li>
                       <?php  } ?>
+                        <?php if ($h->isActive('widgets')) { ?>
+                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'widgets'), 'admin'); ?>">Widgets</a></li>
+                      <?php  } ?>
                     </ul>
                   </li>
             <?php
