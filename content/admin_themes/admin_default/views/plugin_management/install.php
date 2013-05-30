@@ -186,11 +186,10 @@
 		</tr>
 	</table> <!-- close table which contains three columns of smaller tables -->
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="<?php echo SITEURL; ?>content/admin_themes/admin_default/javascript/jquery.toggle.buttons.js"></script>
 	<script>
 		$('.text-toggle-button').toggleButtons({
-		width: 65,
+		width: 67,
 		label: {
 			enabled: "On",
 			disabled: "Off"
