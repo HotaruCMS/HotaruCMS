@@ -286,15 +286,15 @@ class AdminPages
 		if ($action == 'announcement') { $maintenance->addSiteAnnouncement($h); }
 		if ($action == 'open') { $h->openCloseSite('open'); }
 		if ($action == 'close') { $h->openCloseSite('close'); }
-		if ($action == 'clear_all_cache') { 
+		if ($action == 'clear_all_cache') {                         
 			$h->clearCache('db_cache', false);
 			$h->clearCache('css_js_cache', false);
 			$h->clearCache('rss_cache', false);
 			$h->clearCache('html_cache', false);
 			$h->clearCache('lang_cache', false);
 			@unlink(BASE. 'cache/smartloader_cache.php');
-			$h->message = $h->lang('admin_maintenance_clear_all_cache_success');
-			$h->messageType = 'green alert-success';
+                        $h->pluginHook('maintenance_clear_all_cache');
+			$h->messages[$h->lang('admin_maintenance_clear_all_cache_success')] = 'green';                         
 		}
 		if ($action == 'clear_db_cache') { $h->clearCache('db_cache'); }
 		if ($action == 'clear_css_js_cache') { $h->clearCache('css_js_cache'); }

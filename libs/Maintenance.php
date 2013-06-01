@@ -57,11 +57,11 @@ class Maintenance
 		
 		// prepare messages
 		if ($success) {
-			$h->message = $h->lang('admin_maintenance_clear_cache_success');
-			$h->messageType = 'green';
+			$h->messages[$h->lang('admin_maintenance_clear_cache_success')] = 'alert-success';
+			
 		} else {
-			$h->message = $h->lang('admin_maintenance_clear_cache_failure');
-			$h->messageType = 'red';    
+			$h->messages[$h->lang('admin_maintenance_clear_cache_failure')] = 'alert-danger';
+			  
 		}
 		
 		// return boolean result

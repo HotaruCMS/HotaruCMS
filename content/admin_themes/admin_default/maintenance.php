@@ -29,7 +29,7 @@
 $plugin_settings = isset($h->vars['admin_plugin_settings']) ? $h->vars['admin_plugin_settings'] : '';
 $db_tables = isset($h->vars['admin_plugin_tables']) ? $h->vars['admin_plugin_tables'] : '';
 
-$h->showMessage();
+$h->showMessages();
 
 // Hook above content
 $h->pluginHook('admin_maintenance_top');
