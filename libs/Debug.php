@@ -79,7 +79,7 @@ class Debug
                  $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage()),
                  '$h->vars: ' => array('(' . count($h->vars) . ') ' . display_filesize(strlen(serialize($h->vars))), $h->url(array('debug'=>'hvars' ,'admin'))),
                  'divider'=>'',                 
-                 'Error log' => array('', 'http://ipadrank.com/admin_index.php?page=maintenance&debug=error_log.php')
+                 'Error log' => array('', BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php')
               );
              ?>
 
