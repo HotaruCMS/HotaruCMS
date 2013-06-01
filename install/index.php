@@ -86,7 +86,7 @@ switch ($step) {
 			database_upgrade();
                         
                         // remove cookies from whole domain just in case of 1.4.2 cookies issue
-                        $parsed = parse_url(SITEURL); 
+                        $parsed = parse_url(BASEURL); 
                         setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
                         setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
 		} else {
@@ -95,7 +95,7 @@ switch ($step) {
 			setcookie("hotaru_key", "", time()-3600, "/");
                         
                         // and remove from whole domain just in case of 1.4.2 cookies issue
-                        $parsed = parse_url(SITEURL); 
+                        $parsed = parse_url(BASEURL); 
                         setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
                         setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
 			
