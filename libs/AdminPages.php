@@ -493,7 +493,7 @@ class AdminPages
         public static function sidebarPluginsList($h, $pluginResult)
         {           
             $pFuncs = new PluginFunctions();
-            $base = $pFuncs::getValues($h, $pluginResult);
+            $base = $pFuncs->getValues($h, $pluginResult);
 
             try {
                 if (is_array($base)) {
