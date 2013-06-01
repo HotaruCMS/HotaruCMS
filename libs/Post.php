@@ -476,6 +476,37 @@ class Post
 		
 		return $count;
 	}
+        
+        
+        /**
+	 * Count posts in the last X hours/minutes for this user
+	 *
+	 * @param int $hours
+	 * @param int $minutes
+	 * @param int $user_id (optional)
+	 * @param int $post_type (optional)
+	 * @return int 
+	 */
+	public function countPostsFilter($h, $hours = 0, $minutes = 0, $filter = '', $filterText = '', $link = '', $post_type = 'news')
+	{		
+		if ($hours) { 
+			$time_ago = "-" . $hours . " Hours";
+		} else {
+			$time_ago = "-" . $minutes . " minutes";
+		} 
+                
+                $and = '';
+                if ($filter == 'tag') $and = ' AND post_tags = %s';
+                elseif ($filter == 'category') $and = ' AND post_category = %s';
+		else { $and = ' AND 1= %d'; $filterText = 1; }                               
+                    
+		$start = date('YmdHis', time_block());
+		$end = date('YmdHis', strtotime($time_ago));
+		$sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE post_archived = %s" . $and . ' AND post_type = %s AND post_status <> %s'; // . " AND (post_date >= %s AND post_date <= %s)";
+		$count = $h->db->get_var($h->db->prepare($sql, 'N', $filterText, $post_type, 'pending')); //, $end, $start));
+		
+		return $count;
+	}
 	
 	
 	/**
