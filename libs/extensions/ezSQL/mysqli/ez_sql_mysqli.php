@@ -29,8 +29,7 @@
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
 	class ezSQL_mysqli extends ezSQLcore
-	{
-
+	{                
 		var $dbuser = false;
 		var $dbpassword = false;
 		var $dbname = false;
@@ -44,7 +43,8 @@
 		*/
 
 		function ezSQL_mysqli($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
-		{
+		{$this->h->vars['debug']['db_driver'] = 'mysqli';
+                print "mysqli";
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;

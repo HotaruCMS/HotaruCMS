@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.0";  // Hotaru CMS version
+	protected $version              = "1.5.1.a1";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -1515,6 +1515,13 @@ class Hotaru
         {
                 $admin = New AdminPages();
                 $admin->adminNav($this);
+        }
+        
+        
+        public function debugNav()
+        {
+                $admin = New Debug();
+                $admin->debugNav($this);
         }
     
     

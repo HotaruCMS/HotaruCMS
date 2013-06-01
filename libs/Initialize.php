@@ -48,11 +48,12 @@ class Initialize
 
 		$this->getFiles();
 		$this->cage = $this->initInspektCage();
-		$this->db = $this->initDatabase();
+		$this->db = $this->initDatabase(); // use default db driver until readSettings below
 
 		$this->errorReporting();
 
                 $this->readSettings();
+                $this->setDBDriver();  // we have to do this after readSettings
                 $this->setUpDatabaseCache();
                 $this->isDebug = $this->checkDebug();
                 $this->setUpJsConstants();                
@@ -178,10 +179,13 @@ class Initialize
                 //require_once('Log.php'); // PEAR function
                 
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
-                if (! function_exists ('mysqli_connect') ) {
-                    require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
-                } else {
-                    require_once(EXTENSIONS . 'ezSQL/mysqli/ez_sql_mysqli.php'); 
+                
+                // We havent accessed db yet, so we dont know what user db settings say
+                // Lets user mysqli if we an or fall back on mysql for this part then change later based on user settings table
+                if (! function_exists ('mysqli_connect')) {
+                    require_once(LIBS . 'Database_mysql.php');
+                } else {                    
+                    require_once(LIBS . 'Database.php');
                 }
 		
 		// include functions
@@ -292,7 +296,23 @@ class Initialize
 		return true;
 	}
 	
+        
+        /**
+         *  set the db driver based on the user settings table
+         */
+        public function setDBDriver()
+        {
+                print DB_DRIVER;
+                if (DB_DRIVER == 'mysql' || ! function_exists ('mysqli_connect')) {
+                    print "trying to get mysql";
+                    unset('Database');
+                    require_once(LIBS . 'Database_mysql.php');
+                } else {                    
+                    require_once(LIBS . 'Database.php');
+                }
+        }
 	
+        
 	/**
 	 * Make cache folders if they don't already exist
 	 */

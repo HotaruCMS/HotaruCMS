@@ -678,7 +678,7 @@
                 */
                function column_exists($table2check, $column)
                {
-                   $sql = "SHOW COLUMNS FROM " . DB_PREFIX . $table2check;
+                   $sql = "SHOW COLUMNS FROM " . DB_PREFIX . $table2check;                  
                    foreach ($this->get_col($sql,0) as $column_name)
                    {
                        if ($column_name == $column) {

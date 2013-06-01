@@ -44,7 +44,7 @@ class Debug
 			echo $h->lang('main_hotaru_php_version') . phpversion() . " | ";
 			echo $h->lang('main_hotaru_mysql_version') . $mysql_version . " | ";
 			echo $h->lang('main_hotaru_hotaru_version') . $h->version; 
-                        
+                        echo ' (' . $h->vars['debug']['db_driver'] . ') ';
                         $h->pluginHook('debug_footer');
                         
 			echo "</p>"; 
@@ -63,6 +63,38 @@ class Debug
 	
 		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
 	}
+        
+         public function debugNav($h)
+        {
+             $mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
+			
+             $debug = array(
+                 $h->lang('main_hotaru_php_version') => phpversion(),
+                 $h->lang('main_hotaru_mysql_version') => $mysql_version,
+                 'Hotaru CMS: ' => $h->version,
+                 'DB driver: ' => isset($h->vars['debug']['db_driver']) ? $h->vars['debug']['db_driver'] : '',
+                  'divider' => '',
+                 $h->lang('main_hotaru_db_queries') => $h->db->num_queries,
+                 $h->lang('main_hotaru_page_load_time') => timer_stop(1) . $h->lang('main_times_secs'),
+                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage())
+              );
+             ?>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_debug"); ?> <b class="caret"></b></a>
+                    <ul class="dropdown-menu debug">
+                    <?php
+                        foreach ($debug as $item => $value) {
+                            if ($item == 'divider')
+                                echo  '<li class="divider"></li>'; 
+                            else
+                                echo '<li><a href="#">' . $item . '<strong>' . $value . '</strong></a></li>';
+                        }
+                        ?>               
+                    </ul>
+                  </li>
+            <?php
+        }
 	
 	
 	/**
