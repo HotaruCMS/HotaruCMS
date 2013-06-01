@@ -1934,6 +1934,20 @@ class Hotaru
 		return $this->post->changePostStatus($this, $status, $post_id);
 	}
 	
+        
+        /**
+         * Count posts in the last X hours/minutes for this tag or category filter
+         * 
+         * @param type $hours
+         * @param type $minutes
+         * @param type $tag
+         * @param type $category
+         * @param type $post_type
+         */
+        public function countPostsFilter($hours = 0, $minutes = 0, $filter = '', $filterText = '', $link = '', $post_type = 'news')
+	{
+                return $this->post->countPostsFilter($this, $hours, $minutes, $filter, $filterText, $link, $post_type);
+        }
 	
 	/**
 	 * Count how many approved posts a user has had
