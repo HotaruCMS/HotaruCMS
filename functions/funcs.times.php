@@ -49,7 +49,7 @@ function timer_start()
  * 
  *  Notes: Measured in seconds / Function borrowed from Wordpress.org
  */
-function timer_stop($precision = 3)
+function timer_stop($precision = 4)
 {
 	//if called like timer_stop(1), will echo $timetotal
 
@@ -154,6 +154,8 @@ function time_block($block = 1)
 
 
 function time_ago($i){
+    $i = strtotime($i);
+    
     $m = time()-$i; $o='just now';
     $t = array('year'=>31556926,'month'=>2629744,'week'=>604800,
 'day'=>86400,'hour'=>3600,'minute'=>60,'second'=>1);
