@@ -55,7 +55,7 @@
 	
         <?php 
         $pluginFunc = new PluginFunctions();
-        $sb_links = $pluginFunc::getAllActivePluginNames($h);
+        $sb_links = $pluginFunc->getAllActivePluginNames($h);
         ?>        
         
         <hr style="margin:10px 0;"/>	         
@@ -71,7 +71,7 @@
                         $pluginResult = $h->pluginHook('admin_sidebar_users');
                         
                         $adminPages = new AdminPages();
-                        echo $adminPages::sidebarPluginsList($h, $pluginResult);                        
+                        echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
                         
                     echo '</ul>';
                 echo '</div>';
@@ -90,7 +90,7 @@
                         $pluginResult = $h->pluginHook('admin_sidebar_posts');
                         
                         $adminPages = new AdminPages();
-                        echo $adminPages::sidebarPluginsList($h, $pluginResult);                        
+                        echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
                         
                     echo '</ul>';
                 echo '</div>';
