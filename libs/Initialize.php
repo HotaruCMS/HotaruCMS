@@ -186,6 +186,7 @@ class Initialize
 		require_once(FUNCTIONS . 'funcs.arrays.php');
 		require_once(FUNCTIONS . 'funcs.times.php');
 		require_once(FUNCTIONS . 'funcs.files.php');
+                require_once(FUNCTIONS . 'funcs.build.php');
 		require_once(FUNCTIONS . 'funcs.http.php'); 
 	}
 	
@@ -203,23 +204,23 @@ class Initialize
                     // debug message
                     
                 } else {
-                    ActiveRecord\Config::initialize(function($cfg)
-                    {
-                        $cfg->set_model_directory(LIBS);
-                        $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
-                        
-                        if(class_exists('Memcache',false)) {
-                            // Memcache is enabled.
-                            $cfg->set_cache("memcache://localhost",array("expire" => 60));
-                        }
-
-                        //if ($h->isDebug) {
-    //                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
-    //                        $cfg->set_logging(true);
-    //                        $cfg->set_logger($logger); 
-                        //}
-
-                    });   
+//                    ActiveRecord\Config::initialize(function($cfg)
+//                    {
+//                        $cfg->set_model_directory(LIBS);
+//                        $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
+//                        
+//                        if(class_exists('Memcache',false)) {
+//                            // Memcache is enabled.
+//                            $cfg->set_cache("memcache://localhost",array("expire" => 60));
+//                        }
+//
+//                        //if ($h->isDebug) {
+//    //                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
+//    //                        $cfg->set_logging(true);
+//    //                        $cfg->set_logger($logger); 
+//                        //}
+//
+//                    });   
                                        
                 }                                    
                 

@@ -27,10 +27,8 @@
  */
 
 ?>
-<!-- HEADER-->
 <?php // turn off admin so we can jump to THEME templates instead ?>
 <?php $h->adminPage = false; ?>
-
 <?php $h->template('header'); ?>
 
 <div class="container">

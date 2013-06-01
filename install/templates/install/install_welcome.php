@@ -7,7 +7,7 @@
         <?php echo $lang['install_step0_select'];?>
     </p>
     
-    <img align="center" src="hotarucms_splash.jpg" class="img-polaroid" style="height:170px; margin:50px 0;" alt="splash">
+    <img align="center" src="images/hotarucms_splash.jpg" class="img-polaroid" style="height:170px; margin:50px 0;" alt="splash">
     
     <p class="text-center">
             <a class="btn btn-primary btn-large" href="index.php?step=1&action=install"><?php echo $lang['install_new'];?></a>

@@ -69,7 +69,7 @@ require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 //$h  = new Hotaru('install'); // must come before language inclusion
 $h  = new Hotaru('start');
-require_once(INSTALL . 'install_language.php');    // language file for install
+require_once(INSTALL . 'language/install_language.php');    // language file for install
 
 $version_number = $h->version;
 $cage = init_inspekt_cage();
@@ -79,20 +79,28 @@ $action = $cage->get->getAlpha('action');    // Install or Upgrade.
 
 switch ($step) {
 	case 0:
-		installation_welcome();     // "Welcome to Hotaru CMS.
+		installation_welcome($h);     // Welcome to Hotaru CMS.
 		break;
 	case 1: 
-		if ($action == 'upgrade') {
+		if ($action == 'upgrade') {                        
 			database_upgrade();
+                        
+                        // remove cookies from whole domain just in case of 1.4.2 cookies issue
+                        $parsed = parse_url(SITEURL); 
+                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
 		} else {
 			// Remove any cookies set in a previous installation:
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
+                        
+                        // and remove from whole domain just in case of 1.4.2 cookies issue
+                        $parsed = parse_url(SITEURL); 
+                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
 			
-			// database setup (DB name, user, password, prefix...)
 			// use this direct call instead of $db = init_database() because db may not exist yet. We need to check and control the response
 			$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-
 			if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual(); } else { database_setup(); }
 		}
 		break;
@@ -117,7 +125,7 @@ switch ($step) {
 		break;
 	default:
 		// Anything other than step=1, 3 or 4 will return user to Step 0
-		installation_welcome();
+		installation_welcome($h);
 	
 }
 
@@ -162,7 +170,7 @@ function html_footer()
 /**
  * Step 0 of installation - Welcome message
  */
-function installation_welcome()
+function installation_welcome($h)
 {
 	template($h, 'install/install_welcome.php');
 }
@@ -178,7 +186,6 @@ function database_setup() {
 	global $cage;
 	global $settings_file_exists;
 
-	//$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
 	$show_next = false;
 
 	if ($cage->post->KeyExists('updated')) {
@@ -317,11 +324,12 @@ function database_setup_manual()
  */
 function database_upgrade()
 {
-    if (file_exists(SETTINGS)) {
+    if (file_exists(SETTINGS)) {               
         include_once('install-upgrade.php');
     }
     else {
-        echo 'You need to have a "settings.php" file in the config folder to upgrade Hotaru.';
+        $msg1 = 'Hotaru is having trouble starting.<br/>You need to have a "settings.php" file in the config folder to upgrade Hotaru.';        
+        include('../error.php');
     }
 }
 
@@ -381,24 +389,6 @@ function register_admin()
 	}
 
 	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
-
-
-	echo html_install_header();
-
-	// Step title
-	echo "<legend>" . $lang['install_step3'] . "</legend>\n";
-
-	// Complete Step Progress Bar
-	echo "<!-- Complete Step Progress Bar -->
-	<div class=\"progress progress-info\">
-		<div class=\"bar\" style=\"width: 75%\"></div>
-	</div>";
-	
-	// Step content
-	echo "<div class='well'><h4>" . $lang['install_step3_instructions'] . ":</h4>\n";
-	
-	// Make note of password message
-	echo $lang["install_step3_make_note"] . "<br />\n";
 
 	$error = 0;
 	if ($h->cage->post->getInt('step') == 4)
@@ -464,8 +454,10 @@ function register_admin()
 		$h->showMessage();
 	}
 
+        $next_button = false;
+        
 	if ($error == 0) {
-
+            
 		$sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
 
 		if (!$admin_name = $h->db->get_var($h->db->prepare($sql, 'admin')))
@@ -498,45 +490,11 @@ function register_admin()
 		}
 	}
 
-	// Registration form
-	echo "<form name='install_admin_reg_form' action='index.php?step=3' method='post'>\n";
-
-	echo "<table>";
-
-	// Username
-	echo "<tr><td>" . $lang["install_step3_username"] . "&nbsp; </td><td><input type='text' size=30 name='username' value='" . $user_name . "' /></td></tr>\n";
-
-	// Email
-	echo "<tr><td>" . $lang["install_step3_email"] . "&nbsp; </td><td><input type='text' size=30 name='email' value='" . $user_email . "' /></td></tr>\n";
-
-	// Password
-	echo "<tr><td>" . $lang["install_step3_password"] . "&nbsp; </td><td><input type='password' size=30 name='password' value='' /></td></tr>\n";
-
-	// Password verify
-	echo "<tr><td>" . $lang["install_step3_password_verify"] . "&nbsp; </td><td><input type='password' size=30 name='password2' value='' /></td></tr>\n";
-
-	echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
-	echo "<input type='hidden' name='step' value='4' />\n";
-	echo "<input type='hidden' name='updated' value='true' />\n";
-
-	// Update button
-	echo "<tr><td>&nbsp;</td><td style='text-align:right;'><input class='btn btn-primary' type='submit' value='" . $lang['install_step3_form_update'] . "' /></td></tr>\n";
-
-	echo "</table>";
-	echo "</form>\n";
-	echo "</div>";
-	
-	// Previous/Next buttons
-	echo "<a class='btn' href='index.php?step=2'>" . $lang['install_back'] . "</a>\n";
-	if ($h->cage->post->getAlpha('updated') == 'true' && isset($next_button)) {
-		// active "next" link if user has been updated
-		echo "<a class='btn btn-primary' href='index.php?step=4'>" . $lang['install_next'] . "</a>\n";
-	} else {
-		// link disbaled until "update" button pressed
-		echo "<a class='btn btn-primary disabled'>" . $lang['install_next'] . "</a>\n";
-	}
-
-	echo html_footer();
+        template($h, 'install/register_admin.php', array(
+            'next_button' => $next_button,
+            'user_name' => $user_name,
+            'user_email' => $user_email
+        ));
 }
 
 
@@ -630,8 +588,6 @@ function installation_complete()
  */
 function upgrade_plugins()
 {
-	global $lang;
-	global $cage;
 	$h = new Hotaru();
 	
         template($h, 'upgrade/upgrade_plugins.php');

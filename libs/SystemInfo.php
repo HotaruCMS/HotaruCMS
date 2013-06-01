@@ -32,7 +32,7 @@ class SystemInfo
 	 */
 	public function hotaru_feedback($h, $format = 'json')
 	{
-		$report = $h->generateReport("object");
+		$report = $h->generateReport("object", "lite");
 		
 		$query_vals = array(
 			'api_key' => '',
@@ -95,8 +95,7 @@ class SystemInfo
 		);
 
 		 $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-                 print_r($info);
-                 die();
+
 		 if ($info) {
 		    // save the updated version numbers to the local db so we can display it on the plugin management panel
 		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
@@ -188,7 +187,7 @@ class SystemInfo
 	 * @param string $type 'log' or 'object'
 	 * @return object
 	 */
-	public function getSystemData($h)
+	public function getSystemData($h, $level = '')
 	{
 		// essentials:
 		
@@ -214,7 +213,7 @@ class SystemInfo
 		$report['hotaru_user_settings'] = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
 		
 		// plugins: folder, enabled, version, order
-		
+		                
 		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
 		$plugins = $h->db->get_results($h->db->prepare($sql));
 		if ($plugins) {
@@ -228,25 +227,29 @@ class SystemInfo
 		
 		// plugin hooks: id, folder, hook name
 		
-		$sql = "SELECT phook_id, plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
-		$plugins = $h->db->get_results($h->db->prepare($sql));
-		if ($plugins) {
-			foreach ($plugins as $plugin) {
-				$report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
-				$report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
-			}
-		}
+                if ($level != 'lite') {
+                    $sql = "SELECT phook_id, plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+                    $plugins = $h->db->get_results($h->db->prepare($sql));
+                    if ($plugins) {
+                            foreach ($plugins as $plugin) {
+                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
+                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
+                            }
+                    }
+                }
 		
 		// plugin settings: folder, setting (can't use value because might include passwords)
 		
-		$sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
-		$plugins = $h->db->get_results($h->db->prepare($sql));
-		if ($plugins) {
-			foreach ($plugins as $plugin) {
-				if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
-				$report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
-			}
-		}
+                if ($level != 'lite') {
+                    $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
+                    $plugins = $h->db->get_results($h->db->prepare($sql));
+                    if ($plugins) {
+                            foreach ($plugins as $plugin) {
+                                    if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
+                                    $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
+                            }
+                    }
+                }
 		
 		// Settings: Name, value (excluding SMTP PASSWORD)
 		
@@ -255,8 +258,7 @@ class SystemInfo
 		if ($settings) {
 			foreach ($settings as $setting) {
 				// mask sensitive data
-				switch ($setting->settings_name) {
-					case 'SITE_EMAIL':
+				switch ($setting->settings_name) {					
 					case 'SMTP_HOST':
 					case 'SMTP_PORT':
 					case 'SMTP_USERNAME':

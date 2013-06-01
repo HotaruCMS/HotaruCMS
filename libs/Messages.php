@@ -50,7 +50,7 @@ class Messages
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
 			echo "<div class='alert message " . $msg_type . "'>";
-                            echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                            echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
                             echo $msg;
                         echo "</div>";
 		} elseif ($h->message != '') {
@@ -62,7 +62,7 @@ class Messages
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
 			echo "<div class='alert message " . $msg_type . "'>";
-                            echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                            echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
                             echo $h->message;
                         echo "</div>";
 		}
@@ -105,7 +105,7 @@ class Messages
                                 if ($msg_type == 'blue') $msg_type .= ' alert-info';
                 
 				echo "<div class='alert message " . $msg_type . "'>";
-                                echo '<button type="button" class="close" data-dismiss="alert">×</button>';
+                                echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
                                 echo $msg . "</div>";
 			}
 		}

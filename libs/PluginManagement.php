@@ -102,28 +102,18 @@ class PluginManagement
 				}
 				
 				// Conditions for "active"...
-				if (($allplugins[$count]['status'] == 'active') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
-				} elseif (($allplugins[$count]['status'] == 'inactive') && ($allplugins[$count]['install'] == 'install')) {
-					$allplugins[$count]['active'] = "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
-				} elseif ($allplugins[$count]['status'] == 'active') {
-					$allplugins[$count]['active'] = "<a href='" . SITEURL;
-					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=deactivate&amp;plugin=";
-					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/active_16.png'></a>";
-				} else {
-					$allplugins[$count]['active'] = "<a href='" . SITEURL;
-					$allplugins[$count]['active'] .= "admin_index.php?page=plugin_management&amp;action=activate&amp;plugin=";
-					$allplugins[$count]['active'] .= $allplugins[$count]['folder'] . "'>";
-					$allplugins[$count]['active'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/inactive_16.png'></a>";
+				if ($allplugins[$count]['status'] == 'active') {					
+					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\" checked=\"checked\"></div> </a>";
+				} else {					
+					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\"></div>";
 				}
 				
 				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
-					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/install_16.png'></a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"icon-download-alt\"></i> </a>";
 				} else { 
-					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/uninstall_16.png'></a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"icon-trash\"></i> </a>";
 				}
 				
 				
@@ -153,12 +143,12 @@ class PluginManagement
 					$allplugins[$count]['order_output'] .= "admin_index.php?page=plugin_management&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderup&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/up_12.png'>";
+					$allplugins[$count]['order_output'] .= "<i class=\"icon-chevron-up\"></i> ";
 					$allplugins[$count]['order_output'] .= "</a> \n&nbsp;<a href='" . SITEURL;
 					$allplugins[$count]['order_output'] .= "admin_index.php?page=plugin_management&amp;";
 					$allplugins[$count]['order_output'] .= "action=orderdown&amp;plugin=". $allplugins[$count]['folder'];
 					$allplugins[$count]['order_output'] .= "&amp;order=" . $order . "'>";
-					$allplugins[$count]['order_output'] .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/down_12.png'>";
+					$allplugins[$count]['order_output'] .= "<i class=\"icon-chevron-down\"></i> ";
 					$allplugins[$count]['order_output'] .= "</a>\n";
 				} else {
 					$allplugins[$count]['order_output'] = "";
@@ -586,7 +576,7 @@ class PluginManagement
 	 * @param int $enabled 
 	 * Note: This function does not uninstall/delete a plugin.
 	 */
-	public function activateDeactivate($h, $enabled = 0)
+	public function activateDeactivate($h, $enabled = 0, $ajax = false)
 	{	// 0 = deactivate, 1 = activate
 		
 		// Clear the database cache to ensure plugins and hooks are up-to-date.
@@ -608,7 +598,8 @@ class PluginManagement
 		} 
 		else 
 		{
-			$this->activateDeactivateDo($h, $plugin_row, $enabled);
+			$result = $this->activateDeactivateDo($h, $plugin_row, $enabled);
+                        return $result;
 		}
 	}
 	
@@ -713,6 +704,8 @@ class PluginManagement
 		}
 		
 		$h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
+                
+                return $enabled;
 	}
 	
 	
@@ -842,7 +835,14 @@ class PluginManagement
 		$version= $h->cage->get->getHtmLawed('version');
 		$findfolder = str_replace('_', '-', $folder);
 		$version = str_replace('.', '-', $version);		
-		$copydir = CONTENT . "temp/";
+		
+                // TODO
+                // make temp folder the copy directory and unzip files here first
+                // copy old folder somewhere and then bring in new one
+                // before deleting zip and old folder totally
+                //$copydir = CONTENT . "temp/";
+                
+                $copydir = PLUGINS;
 		$file = $findfolder . "-" . $version . ".zip";
 
                 // Create those directories if need be:
@@ -850,7 +850,7 @@ class PluginManagement
                 if (! is_dir($copydir) && ! mkdir($copydir, 0777) )  {	                        
                         $h->messages['Failed to create temp directory.' . $copydir] = 'red';                        
                 } else {
-                    if ($h->debug) $h->messages['temp folder located'] = 'alert-info';
+                    //if ($h->debug) $h->messages['temp folder located'] = 'alert-info';
                 }
 	        
 		// get ftpsettings
@@ -865,13 +865,11 @@ class PluginManagement
 		// check that we can access the remote plugin repo site via curl
 		if ($this->fileCheckCurlConnection($url, $file) == 200) {
                     $h->messages['File succesfully located on remote plugin server'] = 'alert-success';
-		    if ($write = is_writeable($copydir)) {
-			//print "we can use PHP<br/>";
-                        if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
+		    if ($write = is_writeable($copydir)) {			
+                        //if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
 			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
-		    } else {
-			//print "we will use FTP<br/>";
-                        if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
+		    } else {			
+                        //if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
                         $h->messages['ftp copy not operational yet in this version of Hotaru CMS'] = 'red';
 			//$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
 		    }
@@ -879,30 +877,31 @@ class PluginManagement
 		    $h->messages[$file . $h->lang('admin_theme_fileexist_error')] = 'red';
 		}
 
-		// unzip
-		//print "checking if file exists " . PLUGINS . $folder . '/' . $file . '<br/>';
+		// unzip		
 		if (file_exists( $copydir . $file)) {
-		    //print "starting the unzip<br/>";
-                    $h->messages['About to start the unzip process'] = 'alert-info';
+                    //$h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
                     
                     // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
 
-
 		    // Should we rename old files first and then bring in new ?
 
-
-		    $this->fileUnzip($h, $file, $copydir);
+		    $zipResult = $this->fileUnzip($h, $copydir . $file, $copydir);
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '755'); }
-		    // delete zip file
-                    if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
-		    if ($write) {
-			//print "we can use PHP<br/>";
-			$this->filePhpDelete($h, $file, $copydir);
-		    } else {
-			//print "we will use FTP<br/>";
-			$this->fileFtpDelete($h, $ftp_url, $file, $copydir);
-		    }
+                    
+                    if ($zipResult == 1) {
+                        // only delete zip file if we have been succesful ?
+                        //if ($h->debug) $h->messages['About to delete zip file'] = 'alert-info';
+                        if ($write) {
+                            //print "we can use PHP<br/>";
+                            $this->filePhpDelete($h, $file, $copydir);
+                        } else {
+                            //print "we will use FTP<br/>";
+                            $this->fileFtpDelete($h, $ftp_url, $file, $copydir);
+                        }
+                    } else {
+                        $h->messages['not deleting zip file as unzip failed'] = 'red';
+                    }
 		} else {
 		    $h->messages[$h->lang('admin_theme_filecopy_error') . $file] = 'red';
 		}
@@ -938,20 +937,22 @@ class PluginManagement
 
 	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
 	{			
+           // we can only get file if hotaruplugins is letting us access the zip folder
+            // check for access first
+            
+//$h->messages['url = ' . $url . $file] = 'alert-info';
+//$ch = curl_init($url . $file);
+//$fp = fopen($copydir . $file, "w");
+//
+//curl_setopt($ch, CURLOPT_FILE, $fp);
+//curl_setopt($ch, CURLOPT_HEADER, 0);
+//
+//curl_exec($ch);
+//curl_close($ch);
+//fclose($fp);
+
            
-$h->messages['url = ' . $url . $file] = 'alert-info';
-$ch = curl_init($url . $file);
-$fp = fopen($copydir . $file, "w");
-
-curl_setopt($ch, CURLOPT_FILE, $fp);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-
-curl_exec($ch);
-curl_close($ch);
-fclose($fp);
-
-           
-            if (1==0) {
+            if (1==1) {
             
             
 		// create a new CURL resource
@@ -983,7 +984,9 @@ fclose($fp);
 			fclose($outfile);
 			if ($handle) {
 			    $h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
-			}
+			} else {
+                            $h->messages['something went wrong getting base64 handle'];
+                        }
 		    } else {
 			$h->messages[$h->lang('admin_theme_filecopy_error' . $file)] = 'red';
 		    }
@@ -997,20 +1000,12 @@ fclose($fp);
 	public function fileUnzip($h, $file, $to)
 	{
 		//$h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
+            //$file = '/home/ipadrank/public_html/content/temp/metatags-0-3.zip';
+
                 $z = new ZipArchive();
-	        $zopen = $z->open($to . $file, ZIPARCHIVE::CHECKCONS);
-            
-          
-            if ($h->debug) $h->messages['Attempt to unzip ' . $to . $file] = 'alert-info';
-//                print $to . $file;
-//                $za = new ZipArchive();
-//                $za->open($to . $file); 
-//                
-//
-//for( $i = 0; $i < $za->numFiles; $i++ ){ 
-//    $stat = $za->statIndex( $i ); 
-//    print_r( basename( $stat['name'] ) . PHP_EOL ); 
-//} die();
+	        $zopen = $z->open($file, ZIPARCHIVE::CHECKCONS);                           
+
+                //if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
                 
                 if ($zopen !== true) {
                         $h->messages['Could not open zip file ' . $file] = 'red';
@@ -1050,8 +1045,8 @@ fclose($fp);
 	        asort($needed_dirs);
 	
 	        // Create those directories if need be:
-	        foreach ( $needed_dirs as $_dir ) {          
-	                if ( ! mkdir($_dir, 0777) && ! is_dir($_dir) )  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
+	        foreach ( $needed_dirs as $_dir ) {  
+	                if (! is_dir($dir) && ! mkdir($_dir, 0777))  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
                                 $h->messages['Could not create directory.' . $dir] = 'red';
                                 return false;
                         }
@@ -1096,6 +1091,18 @@ fclose($fp);
                 return true;		
 	}
 
+        public function folderDelete($h, $folder)
+        {
+                @chmod($folder, 666);
+		$deleted = @unlink($folder);
+		if (!$deleted) {
+		    $h->messages['folder could not be deleted before unzipping'] = 'yellow';
+		} else {
+                    $h->messages['old folder deleted successfully'] = 'green';
+                }
+        }
+        
+        
 	public function filePhpDelete($h, $file, $copydir)
 	{
 		@chmod($copydir . $file,666);

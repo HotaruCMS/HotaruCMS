@@ -122,11 +122,11 @@ class Debug
 	 *
 	 * @param string $type 'log', 'email' or 'object'
 	 */
-	public function generateReport($h, $type = 'log')
+	public function generateReport($h, $type = 'log', $level = '')
 	{
 		$sysinfo = new SystemInfo();
 
-		$report = $sysinfo->getSystemData($h);
+		$report = $sysinfo->getSystemData($h, $level);
 		
 		if ($type == 'object') { return $report; }
 		

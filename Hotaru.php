@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.0.RC5";  // Hotaru CMS version
+	protected $version              = "1.5.0";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -1407,12 +1407,12 @@ class Hotaru
 	 *
 	 * @param string $type "log" or "object"
 	 */
-	public function generateReport($type = 'log')
+	public function generateReport($type = 'log', $level = '')
 	{
 		if (!is_object($this->debug)) { 
 			$this->debug = new Debug();
 		}
-		return $this->debug->generateReport($this, $type);
+		return $this->debug->generateReport($this, $type, $level);
 	}
 
     
@@ -2519,7 +2519,7 @@ class Hotaru
             {
                 extract($params);                
             }
-            print_r($params);
+            //print_r($params);
             
             $result = $activity->$method($this, $params);
             return $result;

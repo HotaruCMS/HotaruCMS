@@ -26,69 +26,21 @@
  * @link      http://www.hotarucms.org/
  */
 
-$plugin_settings = $h->vars['admin_plugin_settings'];
-$db_tables = $h->vars['admin_plugin_tables'];
-?>
+$plugin_settings = isset($h->vars['admin_plugin_settings']) ? $h->vars['admin_plugin_settings'] : '';
+$db_tables = isset($h->vars['admin_plugin_tables']) ? $h->vars['admin_plugin_tables'] : '';
 
-<?php $h->showMessage(); ?>
+$h->showMessage();
 
-<?php $h->pluginHook('admin_maintenance_top'); ?>
+// Hook above content
+$h->pluginHook('admin_maintenance_top');
 
-<?php 
-    $tabs = array('General', 'Cache', 'Debug', 'Database', 'Other');
-    $tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Other');
-    
-    buildtabs($h, 'maintenance', $tabs);
-?>
+// Tabs and content pages
+$tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Other');
 
-<?php $h->pluginHook('admin_maintenance_bottom'); ?>
+buildtabs($h, 'maintenance', $tabs);
 
+// Hook below content
+$h->pluginHook('admin_maintenance_bottom');
 
-<?php 
-
-// TODO
-// Would like to put this function in the core somewhere
-function buildTabs($h, $page = '', $tabs = array())
-{
-    if (!$tabs || !$page) return false;
-    
-    // first extract the data and populate the name array fields
-    foreach ($tabs as $tab) {
-        if (is_array($tab)) {                                   
-            $names[] = $tab[0];
-            $dataItems = $tab[1];
-            
-            if (is_array($dataItems)) { 
-                foreach ($dataItems as $key => $dataItem) {
-                    $$key = $dataItem;
-                }
-            }
-        } else {
-            $names[] = $tab;
-        }
-    }    
-    
-    // tab structure
-    $active = " class = 'active'";
-        
-    echo '<ul class="nav nav-tabs" id="Tabs">';
-    foreach ($names as $name) {        
-        echo '<li' . $active . '><a href="#' . strtolower($name) . '" data-toggle="tab">' . ucfirst($name) . '</a></li>';
-        if ($active == " class = 'active'") $active = '';
-    }
-    echo '</ul>';
-    
-    // page content
-    $active = " active";
-    
-    echo '<div class="tab-content">';
-        foreach ($names as $name) {    
-           echo '<div class="tab-pane' . $active . '" id="' . strtolower($name) . '">';           
-               $h->template($page .'/' . strtolower($name), 'admin');
-               if ($active == " active") $active = '';
-           echo '</div>';        
-        }
-    echo '</div>';
-}
 
 ?>

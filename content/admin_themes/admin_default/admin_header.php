@@ -40,11 +40,14 @@
         
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
+         <link rel='stylesheet' href='<?php echo SITEURL; ?>content/admin_themes/admin_default/css/bootstrapSwitch.css' type='text/css'>
         
         <!-- include this CSS last so it gets priority -->
         <!-- Bootstrap Responsive -->
         <?php $h->getFramework('bootstrap-responsive'); ?>
+		
         
+<!--       
         <!-- Include merged files for all the plugin css and javascript (if any) -->
         <?php $h->doIncludes('css'); ?>		
 

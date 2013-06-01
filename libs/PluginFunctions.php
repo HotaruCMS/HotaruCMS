@@ -142,8 +142,8 @@ class PluginFunctions
                                             $h->includeLanguage();                         // if a language file exists, include it										
                                             if (method_exists($h, $hook)) {
                                                 $result = $h->$hook($parameters);              // fall back on default function in Hotaru.php
-                                            } else {					    
-                                                echo "Could not find '" . $hook  .  "' function for " . $plugin->plugin_folder . "<br/>";
+                                            } else {	
+                                                if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $h->showMessage('Could not find ' . $hook  .  ' function for ' . $plugin->plugin_folder, 'red'); }
                                                 $result ='';					   
                                             }
                                     }

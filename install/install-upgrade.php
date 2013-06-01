@@ -29,26 +29,45 @@
  */
 
 
-$h = new Hotaru(); // must come before language inclusion
-$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-$old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
-//require_once(INSTALL . 'install_language.php');    // language file for install
+$h = new Hotaru('start'); // must come before language inclusion
 
-// delete existing cache
-$h->deleteFiles(CACHE . 'db_cache');
-$h->deleteFiles(CACHE . 'css_js_cache');
-$h->deleteFiles(CACHE . 'rss_cache');
-$h->deleteFiles(CACHE . 'lang_cache');
-$h->deleteFiles(CACHE . 'html_cache');
+global $lang;
 
-$step = $h->cage->get->getInt('step');        // Installation steps.
+$cage = init_inspekt_cage();
+$step = $cage->get->getInt('step');        // Installation steps.
+
+        $show_next = true;    
+    
+        $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+        $db->show_errors = false;
+	$database_exists = $db->quick_connect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);	
+	if (!$database_exists) {
+	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+            $old_version = '';
+            $show_next = false;
+            $step = 1;  // rest to step if db not available
+	} else {        
+            $table_exists = $db->table_exists('miscdata');
+            if (!$table_exists) {
+                $h->messages[$lang['install_step1_no_table_exists_failure']] = 'red';
+                $old_version = '';
+                $show_next = false;
+                $step = 1;  // rest to step if db not available
+            } else {
+                $h = new Hotaru();  // replace start one with full one
+                $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+                $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
+            }
+        }
+        
+
+
 
 switch ($step) {
-	case 0:
-		//upgrade_welcome();     // "Welcome to Hotaru CMS.
+	case 0:		
 		break;
 	case 1:
-		upgrade_check($h, $old_version);
+		upgrade_check($h, $old_version, $show_next);
 		break;
 	case 2:
 		do_upgrade($h, $old_version);
@@ -69,9 +88,19 @@ exit;
 /**
  * Step 1 of upgrade - checks existing version available and confirms details
  */
-function upgrade_check($h, $old_version) 
-{        
-        template($h, 'upgrade/upgrade_step_1.php', array('old_version' => $old_version));	
+function upgrade_check($h, $old_version, $show_next)         
+{               
+        // delete existing cache
+        $h->deleteFiles(CACHE . 'db_cache');
+        $h->deleteFiles(CACHE . 'css_js_cache');
+        $h->deleteFiles(CACHE . 'rss_cache');
+        $h->deleteFiles(CACHE . 'lang_cache');
+        $h->deleteFiles(CACHE . 'html_cache');
+
+        template($h, 'upgrade/upgrade_step_1.php', array(
+            'old_version' => $old_version,
+            'show_next' => $show_next
+            ));	
 }
 
     

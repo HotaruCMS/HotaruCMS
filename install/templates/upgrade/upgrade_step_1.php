@@ -19,8 +19,16 @@
     else
         echo $lang['upgrade_step1_current_version'];
     ?>
+        
 </div>
+
+<?php $h->showMessages(); ?>
 
 <!-- Previous/Next buttons -->
 <a class='btn' href='index.php?step=0&action=upgrade'><?php echo $lang['install_back']; ?></a>
-<a class='btn btn-primary' href='?step=2&action=upgrade'><?php echo $lang['install_next']; ?></a>
+
+<?php if ($show_next) { ?>		
+        <a class="btn btn-primary" href='?step=2&action=upgrade'><?php echo $lang['install_next']; ?></a>
+<?php } else { ?>		
+        <a class='btn btn-primary disabled'><?php echo $lang['install_next']; ?></a>
+<?php } ?>

@@ -14,7 +14,7 @@
 <!-- Step content -->
 <div class='install_content'><?php echo $lang['install_step1_instructions'];?>:</div>
 
-<ul>
+<ul id="install_db_manual">
     <li><?php echo $lang['install_step1_instructions1'];?></li>
     <li><?php echo $lang['install_step1_instructions2'];?></li>
     <li><?php echo $lang['install_step1_instructions3'];?></li>
@@ -22,6 +22,7 @@
     <li><?php echo $lang['install_step1_instructions5'];?></li>
 </ul>
 
+<br/>
 <!-- Warning message -->	
 <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

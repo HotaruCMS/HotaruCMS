@@ -10,16 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap.min.css">	
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css">
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>	
-	
-	<style type="text/css">
-	body {
-		position: relative;
-		background-color: #fff;
-		background-image: url(grid-18px-masked.png);
-		background-repeat: repeat-x;
-		background-position: 0 40px;
-	}
-	</style>	
+	<link href="css/install_style.css" rel="stylesheet">        		
 </head>
 
 	<!-- Body -->
@@ -35,8 +26,8 @@
                             <a class="brand" href="index.php"><?php echo $lang['admin_theme_header_hotarucms']; ?></a>
                             <ul class="nav">
                                     <li><a href="index.php?step=1&action=install"><?php echo $lang['install_new2']; ?></a></li>
-                                    <li class="active"><a href=\"index.php?step=1&action=upgrade\"><?php echo $lang['install_upgrade2']; ?></a></li>
-                                    <li><a href="instruction.html">Readme</a></li>
+                                    <li class="active"><a href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade2']; ?></a></li>
+                                    <li><a href="instruction.html">Help</a></li>
                                     <li><a href="../index.php">Home</a></li>
                             </ul>
                     </div>

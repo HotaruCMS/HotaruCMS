@@ -145,3 +145,8 @@
     top: 0;
   }
 }
+
+
+#install_db_manual li {
+    line-height: 2em;
+}

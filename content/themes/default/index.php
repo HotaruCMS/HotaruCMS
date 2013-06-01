@@ -72,14 +72,14 @@ $sideBarWidth = 12 - $leftSpan;
 		</div>
 	<?php } ?>
 		
-        <br/>
+        <div id="header_end">
+            <?php if (!$h->isActive('categories')) echo '<br/>'; ?>
+                <!-- CATEGORIES, ETC --> 
+                <?php $h->pluginHook('header_end'); ?>
+        </div>
+        
 	<div class="container<?php echo $fluid; ?>">
-            <div class="row<?php echo $fluid; ?>">
-
-                <div id="header_end" class="container<?php echo $fluid; ?>">
-                        <!-- CATEGORIES, ETC -->
-                        <?php $h->pluginHook('header_end'); ?>
-                </div>
+            <div class="row<?php echo $fluid; ?>">                
 
 		<div id="content">
 			
