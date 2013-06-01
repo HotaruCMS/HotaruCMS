@@ -177,9 +177,12 @@ class Initialize
                 }
                 //require_once('Log.php'); // PEAR function
                 
-		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-		require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
+		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
+                if (! function_exists ('mysqli_connect') ) {
+                    require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php');
+                } else {
+                    require_once(EXTENSIONS . 'ezSQL/mysqli/ez_sql_mysqli.php'); 
+                }
 		
 		// include functions
 		require_once(FUNCTIONS . 'funcs.strings.php');
@@ -226,7 +229,7 @@ class Initialize
                 
                 // TODO : remove ezSQL when activeRecord is fully working with all plugins
                 $ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-		$ezSQL->query("SET NAMES 'utf8'");
+		//$ezSQL->query("SET NAMES 'utf8'");
 		
 		return $ezSQL;
         }

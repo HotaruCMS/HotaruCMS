@@ -633,5 +633,62 @@
                }
 
 
+               
+                /**
+                * Check if table exists
+                *
+                * @param string $table2check
+                * @return bool
+                *
+                * Notes: This is a custom function for Hotaru CMS
+                */
+
+               function table_exists($table2check) {
+                   $tables = $this->get_col("SHOW TABLES",0);
+                   if (in_array(DB_PREFIX . $table2check, $tables)) { return true; }
+
+                   return false;
+               }
+
+               /**
+                * Check if table empty
+                *
+                * @param string $table2check
+                * @return bool
+                *
+                * Notes: This is a custom function for Hotaru CMS
+                */
+               function table_empty($table2check) {
+                   $rowcount = $this->get_var($this->prepare("SELECT COUNT(*) FROM " . DB_PREFIX . $table2check));
+                   if($rowcount && $rowcount > 0) {
+                       return false; // table not empty
+                   } else {
+                       return true; // table is empty
+                   }
+               }
+
+               /**
+                * Check if table column exists
+                *
+                * @param string $table2check
+                * @param string $column
+                * @return bool
+                *
+                * Notes: This is a custom function for Hotaru CMS
+                */
+               function column_exists($table2check, $column)
+               {
+                   $sql = "SHOW COLUMNS FROM " . DB_PREFIX . $table2check;
+                   foreach ($this->get_col($sql,0) as $column_name)
+                   {
+                       if ($column_name == $column) {
+                           return true;
+                       } 
+                   }
+
+                   return false;
+               }
+               
+               
 	}
 ?>

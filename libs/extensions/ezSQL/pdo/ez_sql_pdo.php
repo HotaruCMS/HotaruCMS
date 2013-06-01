@@ -53,7 +53,20 @@
 		*/
 
 		function connect($dsn='', $user='', $password='', $ssl=array())
-		{
+		{ 
+                    $dsn = 'mysql:host=localhost;dbname=' . $password;
+                    $password = $user;
+                    $user = $dsn;
+                    $ssl = false;
+                
+                if (!defined('PDO::ATTR_DRIVER_NAME')) {
+echo 'PDO unavailable';
+}
+
+print_r(PDO::getAvailableDrivers());
+               
+                print $dsn;
+               
 			global $ezsql_pdo_str; $return_val = false;
 			
 			// Must have a user and a password
@@ -102,7 +115,7 @@
 		*  once again, function included for the sake of consistency
 		*/
 
-		function select($dsn='', $user='', $password='', $ssl=array())
+		function selectDB($dsn='', $user='', $password='', $ssl=array())
 		{
 			return $this->connect($dsn, $user, $password);
 		}
