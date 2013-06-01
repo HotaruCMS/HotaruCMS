@@ -73,10 +73,13 @@ class Debug
                  $h->lang('main_hotaru_mysql_version') => $mysql_version,
                  'Hotaru CMS: ' => $h->version,
                  'DB driver: ' => isset($h->vars['debug']['db_driver']) ? $h->vars['debug']['db_driver'] : '',
-                  'divider' => '',
+                  'divider'=>'',
                  $h->lang('main_hotaru_db_queries') => $h->db->num_queries,
                  $h->lang('main_hotaru_page_load_time') => timer_stop(1) . $h->lang('main_times_secs'),
-                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage())
+                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage()),
+                 '$h->vars: ' => array('(' . count($h->vars) . ') ' . display_filesize(strlen(serialize($h->vars))), $h->url(array('debug'=>'hvars' ,'admin'))),
+                 'divider'=>'',                 
+                 'Error log' => array('', 'http://ipadrank.com/admin_index.php?page=maintenance&debug=error_log.php')
               );
              ?>
 
@@ -84,11 +87,14 @@ class Debug
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_debug"); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu debug">
                     <?php
-                        foreach ($debug as $item => $value) {
+                        foreach ($debug as $item => $value) {                      
                             if ($item == 'divider')
                                 echo  '<li class="divider"></li>'; 
                             else
-                                echo '<li><a href="#">' . $item . '<strong>' . $value . '</strong></a></li>';
+                                if (is_array($value)) 
+                                    echo '<li><a href="' . $value[1] . '">' . $item . '<strong>' . $value[0] . '</strong></a></li>';
+                                else                                    
+                                    echo '<li><a href="#">' . $item . '<strong>' . $value . '</strong></a></li>';
                         }
                         ?>               
                     </ul>
