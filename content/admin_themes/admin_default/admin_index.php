@@ -47,13 +47,6 @@ if (!$result) {
         <div class='breadcrumb'>
                 <?php echo $h->breadcrumbs("/"); ?>
         </div>
-        
-        <?php if ($h->pageName == 'plugin_settings') { ?>
-            <div id="admin_topright" class="floatright pull-right">
-                    <?php echo $h->pluginHook('admin_topright'); ?>                
-            </div>
-        <?php } ?>  
-        
     </div>
 </div>
 
