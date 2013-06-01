@@ -53,7 +53,7 @@ class Initialize
 		$this->errorReporting();
 
                 $this->readSettings();
-                $this->setDBDriver();  // we have to do this after readSettings
+                //$this->setDBDriver();  // we have to do this after readSettings
                 $this->setUpDatabaseCache();
                 $this->isDebug = $this->checkDebug();
                 $this->setUpJsConstants();                
@@ -301,11 +301,8 @@ class Initialize
          *  set the db driver based on the user settings table
          */
         public function setDBDriver()
-        {
-                print DB_DRIVER;
-                if (DB_DRIVER == 'mysql' || ! function_exists ('mysqli_connect')) {
-                    print "trying to get mysql";
-                    unset('Database');
+        {                
+                if (DB_DRIVER == 'mysql' || ! function_exists ('mysqli_connect')) {                                      
                     require_once(LIBS . 'Database_mysql.php');
                 } else {                    
                     require_once(LIBS . 'Database.php');

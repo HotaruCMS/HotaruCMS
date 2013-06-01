@@ -43,8 +43,7 @@
 		*/
 
 		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
-		{$this->h->vars['debug']['db_driver'] = 'mysql';
-                print "mysql";
+		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
@@ -59,6 +58,7 @@
                 function setHotaru($h)
                 {
                     $this->h = $h;
+                    $h->vars['debug']['db_driver'] = 'mysql';
                 }
 
 		/**********************************************************************
