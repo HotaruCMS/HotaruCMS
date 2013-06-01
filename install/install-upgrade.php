@@ -687,7 +687,7 @@ function do_upgrade($h, $old_version)
                     $newSettings = array('FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD');
                     foreach($newSettings as $setting) {
 			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
-                        $h->db->query($h->db->prepare($sql, ' ', ' ', ' ', ' ', 1));
+                        $h->db->query($h->db->prepare($sql, $setting, ' ', ' ', ' ', 1));
                     }
 						
 		}
