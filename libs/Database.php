@@ -235,8 +235,6 @@ class Database extends ezSQL_mysqli
 			if ($this->cache) { $h->smartCache('on', $table, 60, $this->prepare_array[0]); } // start using cache
 			$data = $h->db->get_results($this->prepare_array[0]); // ignoring the prepare function.
 		} else {
-//                    $db = new mysqli();
-//                    $db->prepare($this->prepare_array);
 			$query = $h->db->prepare($this->prepare_array);
 			if ($this->cache) { $h->smartCache('on', $table, 60, $query); } // start using cache
 			$data = $h->db->get_results($query);

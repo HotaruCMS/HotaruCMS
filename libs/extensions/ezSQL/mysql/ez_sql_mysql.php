@@ -360,9 +360,54 @@
 		{
 			@mysql_close($this->dbh);	
 		}
-
+ 
                 
                
-        
+         /**********************************************************************
+                * Prepares a SQL query for safe use, using sprintf() syntax.
+                * 
+                * Added for Hotaru
+                *
+                * @link http://php.net/sprintf See for syntax to use for query string.
+                * @since 2.3.0
+                *
+                * @param null|string $args If string, first parameter must be query statement
+                * @param mixed $args, If additional parameters, they will be set inserted into the query.
+                * @return null|string Sanitized query string
+                */
+               function escape_by_ref(&$s) 
+               {
+                   $s = $this->escape($s);
+               }
+
+               function prepare($args=null) 
+               {
+
+                   if (is_null( $args ))
+                       return;
+
+                   $args = func_get_args();
+
+                   // This is a Hotaru hack, enabling args to be built on the fly.
+                   if(is_array($args[0]))
+                   {
+                       // See Submit plugin: class.post.php get_posts() for an example.
+                       $args = $args[0];
+                   }
+
+                   $query = array_shift($args);
+
+                   // in case someone mistakenly already singlequoted it
+                   $query = str_replace("'%s'", '%s', $query); 
+
+                   $query = str_replace('"%s"', '%s', $query); // doublequote unquoting
+
+                   $query = str_replace('%s', "'%s'", $query); // quote the strings
+
+                   array_walk($args, array(&$this, 'escape_by_ref'));
+
+                   return @vsprintf($query, $args);
+               }
+               
 	}
 ?>

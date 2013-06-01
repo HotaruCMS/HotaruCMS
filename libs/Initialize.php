@@ -180,8 +180,6 @@ class Initialize
                 
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
                 
-                // We havent accessed db yet, so we dont know what user db settings say
-                // Lets user mysqli if we an or fall back on mysql for this part then change later based on user settings table
                 if (! function_exists ('mysqli_connect')) {
                     require_once(LIBS . 'Database_mysql.php');
                 } else {                    

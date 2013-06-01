@@ -659,37 +659,42 @@ function do_upgrade($h, $old_version)
 	if ($old_version == "1.4.2") {
             
                 // Add joint primary key to postvotes table was here, but error prevented it working
-                // moved to 1.5.0 - 1.5.1 update
+                // Updated here and also added to next update run
+		$exists = $h->db->column_exists('postvotes', 'vote_post_id');
+		if ($exists) {
+			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " ADD PRIMARY KEY(vote_user_id, vote_post_id)";
+			$h->db->query($h->db->prepare($sql));
+		}    
+            
 
                 // update "old version" for next set of upgrades
 		$old_version = "1.5.0";
         }
         
         // 1.5.0 to 1.5.1
-	if ($old_version == "1.5.0" ) {
-            
-                // Add joint primary key to postvotes table,
-		$exists = $h->db->column_exists('postvotes', 'vote_post_id');
-		if ($exists) {
-			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " ADD PRIMARY KEY(vote_user_id, vote_post_id)";
-			$h->db->query($h->db->prepare($sql));
-		}
-                
-                // Add a few new settings
-		$exists = $h->db->column_exists('settings', 'settings_id');
-		if ($exists) {
-                    $newSettings = array('FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD', 'DB_DRIVER');
-                    foreach($newSettings as $setting) {
-			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";
-                        if ($setting == 'DB_DRIVER') { $default = 'mysqli'; $note = 'mysqli, mysql'; } else { $default = ''; $note = ''; }                        
-                        $h->db->query($h->db->prepare($sql, $setting, $default, $default, $note, 1));
-                    }
-						
-		}
-                
-                // update "old version" for next set of upgrades
-		$old_version = "1.5.1";
-        }
+//	if ($old_version == "1.5.0" ) {
+//            
+//                // Add joint primary key to postvotes table,
+//		$exists = $h->db->column_exists('postvotes', 'vote_post_id');
+//		if ($exists) {
+//			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " ADD PRIMARY KEY(vote_user_id, vote_post_id)";
+//			$h->db->query($h->db->prepare($sql));
+//		}
+//                
+//                // Add a few new settings
+//		$exists = $h->db->column_exists('settings', 'settings_id');
+//		if ($exists) {
+//                    $newSettings = array('FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD');
+//                    foreach($newSettings as $setting) {
+//			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
+//                        $h->db->query($h->db->prepare($sql, ' ', ' ', ' ', ' ', 1));
+//                    }
+//						
+//		}
+//                
+//                // update "old version" for next set of upgrades
+//		$old_version = "1.5.1";
+//        }
 
         
         /*
