@@ -1170,7 +1170,12 @@ class Hotaru
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, $version_js, $version_css, $this->adminPage);                               	                        
                         
-                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                        // only load jquery if we havent already loaded it
+                        if (!isset($h->vars['framework']['jquery'])) {
+                            echo '<script async type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                            $h->vars['framework']['jquery'] = true;                            
+                        }
+                        
                         break;
                     case 'js': 
                         $version_js = $this->includes->combineIncludes($this, 'js');
@@ -1181,7 +1186,12 @@ class Hotaru
                         $this->includes->includeCombined($this, 0, $version_css, $this->adminPage);
                         
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
-                        echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+                        // only load jquery if we havent already loaded it
+                        if (!isset($h->vars['framework']['jquery'])) {
+                            echo '<script async type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                            $h->vars['framework']['jquery'] = true;                            
+                        }
+                        
                         break;
                     default :
                         break;
@@ -1257,21 +1267,15 @@ class Hotaru
                           
                 // then css files
                 switch ($file) {
-                    case 'bootstrap':
-                        //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap.min'); 
+                    case 'bootstrap':                        
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css' />\n";
+                        $h->vars['framework']['bootstrap'] = true;
                          break;
                     case 'bootstrap-lite':          
-                        // don't load the lite version if we already have the main
-//                        $exists = false;
-//                        foreach ($this->includes->getCssIncludes() as $filename) {                         
-//                           if (strpos($filename, 'bootstrap.min', false)) {
-//                                $exists = true;
-//                                break; 
-//                           }
-//                        }                        
-//                        if (!$exists) $this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-lite.min');  
-                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-lite.min.css' type='text/css' />\n";
+                        if (!isset($h->vars['framework']['bootstrap'])) {
+                            echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-lite.min.css' type='text/css' />\n";
+                            $h->vars['framework']['bootstrap'] = true;
+                        }
                         break;
                     case 'bootstrap-responsive':                        
                        //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
