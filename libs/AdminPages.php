@@ -60,6 +60,9 @@ class AdminPages
 			case "blocked":
 				$h->vars['admin_blocked_list'] = $this->blocked($h);
 				break;
+                        case "pages_management":
+                                $h->vars['admin_pages_array'] = $this->getPages($h);
+				break;
 			case "plugin_management":				
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
@@ -405,6 +408,12 @@ class AdminPages
 		return $blocked_items;
 	}
 	
+        
+        public function getPages($h)
+        {
+            
+        }
+        
 	
 	/* *************************************************************
 	*
