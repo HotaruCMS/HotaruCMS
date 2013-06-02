@@ -656,44 +656,50 @@ function do_upgrade($h, $old_version)
 	}
         
         // 1.4.2 to 1.5.0
-	if ($old_version == "1.4.2") {
-            
-                // Add joint primary key to postvotes table was here, but error prevented it working
-                // Updated here and also added to next update run
-		$exists = $h->db->column_exists('postvotes', 'vote_post_id');
-		if ($exists) {
-			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " ADD PRIMARY KEY(vote_user_id, vote_post_id)";
-			$h->db->query($h->db->prepare($sql));
-		}    
-            
+	if ($old_version == "1.4.2") {                            
 
                 // update "old version" for next set of upgrades
 		$old_version = "1.5.0";
         }
         
         // 1.5.0 to 1.5.1
-	if ($old_version == "1.5.1" ) {
-//            
-//                // Add joint primary key to postvotes table,
-//		$exists = $h->db->column_exists('postvotes', 'vote_post_id');
-//		if ($exists) {
-//			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " ADD PRIMARY KEY(vote_user_id, vote_post_id)";
-//			$h->db->query($h->db->prepare($sql));
-//		}
-//                
+	if (version_compare("1.4.2", $old_version) < 1) {                                                    
+                         
+                // Need to cover all of the RCx verson as well
                 // Add a few new settings
 		$exists = $h->db->column_exists('settings', 'settings_id');
 		if ($exists) {
                     $newSettings = array('FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD');
-                    foreach($newSettings as $setting) {
-			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
-                        $h->db->query($h->db->prepare($sql, $setting, ' ', ' ', ' ', 1));
-                    }
-						
+                    foreach($newSettings as $setting) {                        
+                        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+                        $result = $h->db->get_var($h->db->prepare($sql, $setting));
+                        
+                        if(!$result) {
+                            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
+                            $h->db->query($h->db->prepare($sql, $setting, ' ', ' ', ' ', 1));
+                        }
+                        
+                    }						
 		}
-//                
-//                // update "old version" for next set of upgrades
+                
+                // drop joint primary key to postvotes table if exists
+                // should not be there
+                $sql = "SHOW INDEX FROM " . TABLE_POSTVOTES . " WHERE KEY_NAME = %s";
+		$result = $h->db->query($h->db->prepare($sql, 'PRIMARY'));
+                if ($result) {                   
+			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " DROP PRIMARY KEY";
+			$h->db->query($h->db->prepare($sql));
+		}                
+                
+                // update "old version" for next set of upgrades
 		$old_version = "1.5.1";
+        }
+        
+        if ($old_version == "1.5.2") {
+            
+            
+                // update "old version" for next set of upgrades
+		//$old_version = "1.5.2";
         }
 
         
