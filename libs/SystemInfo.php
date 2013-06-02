@@ -190,7 +190,7 @@ class SystemInfo
 	public function getSystemData($h, $level = '')
 	{
 		// essentials:
-		
+            
 		$report['hotaru_site_name'] = SITE_NAME;
 		$report['hotaru_SITEURL'] = SITEURL;
 		
