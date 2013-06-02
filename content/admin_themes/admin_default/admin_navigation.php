@@ -35,7 +35,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="brand" href="/"><?php echo SITE_NAME; ?></a>
+        <a class="brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
         <span class="btn-navbar">
           <?php	if ($h->currentUser->loggedIn) {
                               if($h->isActive('avatar')) {
