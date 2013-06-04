@@ -51,7 +51,8 @@
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="icon-wrench"></i> <?php echo $h->lang("admin_theme_settings"); ?></a></li>
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="icon-pencil"></i> <?php echo $h->lang("admin_theme_maintenance"); ?></a></li>
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang("admin_theme_blocked_list"); ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="icon-file"></i> <?php echo $h->lang("admin_theme_pages"); ?></a></li>	
+        <li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
 	
         <?php 
         $pluginFunc = new PluginFunctions();
