@@ -60,7 +60,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                         <li><a href="#home" data-toggle="tab">Overview</a></li>
                         <li><a href="#support" data-toggle="tab">Support</a></li>
                         <li><a href="#about" data-toggle="tab">About</a></li> 
-                        <li class="pull-right btn btn-info disable">' . ucfirst($plugin) . '</li>';
+                        <li class="pull-right btn btn-info disable">' . ucfirst(make_name($plugin)) . '</li>';
                   $h->pluginHook('admin_plugin_tabLabel_after_last', $plugin);
                   echo '</ul>';
 
