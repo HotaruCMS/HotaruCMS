@@ -55,6 +55,9 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 		$h->updateThemeSettings($theme_settings, $vTheme);
 		$h->showMessage('Settings updated', 'alert-success');
 	}
+        
+        $h->clearCache('html_cache', false);
+        
 }
  
 // If the user wants to revert to the defaults...
@@ -83,9 +86,9 @@ if (!$theme_settings) {
 <p><label for="site_color">Base color for your Site&nbsp;#</label><input id='site_color' type='text' name='link_color' value='<?php echo $theme_settings['link_color']; ?>' <?php echo $theme_settings['link_color']; ?>>
 &nbsp;&nbsp;<a href="http://www.colorpicker.com/" target="blank">Online color picker.</a></p>
 
-<p><input type='checkbox' name='fullWidth' value='fullWidth' <?php echo $theme_settings['fullWidth']; ?>/>&nbsp;Full width UI&nbsp;&nbsp;
+<p><input type='checkbox' name='fullWidth' value='<?php echo $theme_settings['fullWidth']; ?>' />&nbsp;Full width UI&nbsp;&nbsp;
 
-<p><input type='checkbox' name='userProfile_tabs' value='userProfile_tabs' <?php echo $theme_settings['userProfile_tabs']; ?>/>&nbsp;Tabs on user profile&nbsp;&nbsp;
+<p><input type='checkbox' name='userProfile_tabs' value='<?php echo $theme_settings['userProfile_tabs']; ?>' />&nbsp;Tabs on user profile&nbsp;&nbsp;
     
 <p>Left Column Span: <input type='text' size="20" name='leftSpan' value='<?php echo $theme_settings['leftSpan']; ?>'/>
 <br/>Note: The default setting is 9, the max is 12
