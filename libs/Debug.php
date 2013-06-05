@@ -39,7 +39,7 @@ class Debug
 			
 			echo "<p class='debug'>";
 			echo $h->lang('main_hotaru_db_queries') . $h->db->num_queries . " | ";
-			echo $h->lang('main_hotaru_page_load_time') . timer_stop(1) . $h->lang('main_times_secs') . " | ";
+			echo $h->lang('main_hotaru_page_load_time') . timer_stop(2) . $h->lang('main_times_secs') . " | ";
 			echo $h->lang('main_hotaru_memory_usage') . display_filesize(memory_get_usage()) . " | ";
 			echo $h->lang('main_hotaru_php_version') . phpversion() . " | ";
 			echo $h->lang('main_hotaru_mysql_version') . $mysql_version . " | ";
@@ -49,7 +49,8 @@ class Debug
                         
 			echo "</p>"; 
 		}
-		elseif ($h->pageTemplate && function_exists('file_get_contents'))
+		
+                if (!$h->adminPage && $h->pageTemplate && function_exists('file_get_contents'))
 		{
 			$template = file_get_contents(THEMES . THEME . $h->pageTemplate . '.php');
 
@@ -60,6 +61,7 @@ class Debug
 				echo "<p><small><a href='http://hotarucms.org' title='HotaruCMS.org'>Powered by HotaruCMS</a></small></p>";
 			}
 		}
+                if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { echo $this->hvars($h); }
 	
 		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
 	}
@@ -73,13 +75,7 @@ class Debug
                  $h->lang('main_hotaru_mysql_version') => $mysql_version,
                  'Hotaru CMS: ' => $h->version,
                  'DB driver: ' => isset($h->vars['debug']['db_driver']) ? $h->vars['debug']['db_driver'] : '',
-                  'divider'=>'',
-                 $h->lang('main_hotaru_db_queries') => $h->db->num_queries,
-                 $h->lang('main_hotaru_page_load_time') => timer_stop(1) . $h->lang('main_times_secs'),
-                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage()),
-                 '$h->vars: ' => array('(' . count($h->vars) . ') ' . display_filesize(strlen(serialize($h->vars))), $h->url(array('debug'=>'hvars' ,'admin'))),
-                 'divider'=>'',                 
-                 'Error log' => array('', BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php')
+                  'divider'=>''                 
               );
              ?>
 
@@ -96,10 +92,25 @@ class Debug
                                 else                                    
                                     echo '<li><a href="#">' . $item . '<strong>' . $value . '</strong></a></li>';
                         }
-                        ?>               
+                        // Make these separate as we are using javascript to fill them later
+                        
+                        echo '<li><a href="#">' . $h->lang('main_hotaru_db_queries') . '<strong><span id="debug_nav_db_queries"></span></strong></a></li>';
+                        echo '<li><a href="#">' . $h->lang('main_hotaru_memory_usage') . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
+                        echo '<li><a href="#modal_hvars" data-toggle="modal">' . "h->vars: " . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
+                        echo '<li class="divider"></li>';
+                        echo '<li><a href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
+                        
+//                 $h->lang('main_hotaru_page_load_time') => timer_stop(2) . $h->lang('main_times_secs'),
+//                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage()),
+//                 '$h->vars: ' => array('(' . count($h->vars) . ') ' . display_filesize(strlen(serialize($h->vars))), $h->url(array('debug'=>'hvars' ,'admin'))),
+//                 'divider'=>'',                 
+//                 'Error log' => array('', BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php')
+//                        
+//                  ?>          
                     </ul>
-                  </li>
-            <?php
+                  </li>                        
+            <?php 
+            
         }
 	
 	
@@ -195,5 +206,52 @@ class Debug
 			return false;
 		}
 	}
+        
+        function hvars($h)
+        {
+            ?> 
+            <div id="modal_hvars" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h3 id="myModalLabel">$h->vars</h3>
+            </div>
+            <div class="modal-body">
+              
+              
+              <?php         
+                         //print_r($h->vars);
+              foreach ($h->vars as $key => $value) {
+                  if (is_array($value)) {                      
+                      echo '<h4>' . $key . '</h4>';
+                      foreach ($value as $subKey => $subValue) {
+                          //echo '<p>' . $subKey . ' = '  . $subValue . '</p>';
+                          echo '<p>' . htmlentities($subKey) . ' = ';
+                          
+                          if (is_object($subValue)) print_r($subValue); else print htmlentities($subValue);
+                          echo '</p>';
+                      }
+                      echo '<hr>';
+                  } else {                     
+                     echo '<p>';
+                     if (is_object($key)) print_r($key); else print htmlentities($key);                     
+                     print ' = ';
+                     if (is_object($value)) print_r($value); else print htmlentities($value);
+                     print '</p>';
+                     echo '<hr>';
+                  }
+                  
+              } ?>
+            </div>
+                
+            <div class="modal-footer">
+              <button class="btn" data-dismiss="modal">Close</button>
+<!--              <button class="btn btn-primary">Save changes</button>-->
+            </div>
+          </div>
+              
+                  
+                  
+            <?php
+        }
 }
 ?>
