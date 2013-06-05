@@ -41,6 +41,7 @@ if (file_exists(SETTINGS)) {
     $settings_file_exists = false;
 }
 
+define("SITEURL", BASEURL);
 // define path constants
 $path_constants = array(
     "BASE" => "/../",
