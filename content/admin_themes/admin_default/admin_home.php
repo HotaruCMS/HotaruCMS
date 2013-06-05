@@ -78,7 +78,7 @@
 <script type='text/javascript'>
 jQuery(window).load(function() {        
         
-        var sendurl = SITEURL + "admin_index.php?page=admin_news";
+        var sendurl = "<?php echo SITEURL; ?>admin_index.php?page=admin_news";
         
         $.ajax(
             {
