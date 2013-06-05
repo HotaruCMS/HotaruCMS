@@ -155,42 +155,46 @@ class sanitizeEnts extends AccessorAbstract
 
 class getHtmLawed extends AccessorAbstract
 {
-	/**
-	* a function to filter HTML
-	*
-	* @return string
-	*/
-	protected function inspekt($text)
-	{
-		/*  make_tag_strict is OFF because we don't want to convert <u>, etc. to css 
-			otherwise the strip_tags won't be able to allow them when requested in sanitize(). */
-		$config = array('safe' => 1, 'make_tag_strict' => 0);
-		
-		// Allow plugins to alter the value of $config/
-		// Plugins should return an array, e.g. array('safe' => 1);
-		/*
-		require_once(BASE . 'Hotaru.php');
-		$h = new Hotaru();
-		$results = $h->pluginHook('hotaru_inspekt_htmlawed_config');
-		if (is_array($results)) {
-			foreach ($results as $res) {
-				// THIS LOOKS WEIRD. IT NEEDS A RETHINK /Nick
-				$config = $res; // $config takes on the value returned from the last plugin using this hook.
-			}
-		}
-		*/
-		
-		require_once(EXTENSIONS . 'htmLawed/htmLawed.php');
-		
-		if (!get_magic_quotes_gpc()) {
-			return htmLawed($text, $config);
-		}
-		else 
-		{
-			return htmLawed(stripslashes($text), $config);
-		}
-		return false;
-	}
+        /**
+        * a function to filter HTML
+        *
+        * @return string
+        */
+        protected function inspekt($text)
+        { 
+         /*
+          Allow plugins to set the value of $config/
+          Plugins should return an array, e.g. array('safe' => 1);
+          If more than one plugin uses this hook, only use the last one.
+          If the last plugin didn't send an array, then ignore it and use the default $config array
+         */
+
+         $h = new Hotaru();
+         $results = $h->pluginHook('hotaru_inspekt_htmlawed_config', 'htmlawed_config');
+         $config = $results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'];
+
+
+         // use default $config if not set above:
+
+         if (!isset($config) || !is_array($config))
+         {
+          /*  make_tag_strict is OFF because we don't want HtmLawed to convert "<u>", etc. into css equivalent 
+           otherwise the strip_tags won't be able to allow them when requested in sanitize(). */
+
+          $config = array('safe' => 1, 'make_tag_strict' => 0);
+         }
+
+         require_once(EXTENSIONS . 'htmLawed/htmLawed.php');
+
+         if (!get_magic_quotes_gpc()) {
+          return htmLawed($text, $config);
+         }
+         else 
+         {
+          return htmLawed(stripslashes($text), $config);
+         }
+         return false;
+        }
 }
 
 ?>
