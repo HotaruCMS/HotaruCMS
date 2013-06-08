@@ -311,10 +311,18 @@ class UserInfo extends UserBase
 	 * @param string $stat_type
 	 * @return int
 	 */
-	public function stats($h)
-	{
-		$sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " GROUP BY user_role";
-		$query = $h->db->prepare($sql);
+	public function stats($h, $period = '')
+	{		
+                if ($period == 'today') {
+                    $end = date('Ymd');
+                    
+                    $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " WHERE user_date >= %s GROUP BY user_role";
+                    $query = $h->db->prepare($sql, $end);
+                } else {
+                    $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " GROUP BY user_role";
+                    $query = $h->db->prepare($sql);
+                }
+		
 		$h->smartCache('on', 'users', 60, $query); // start using cache
 		$users = $h->db->get_results($query, ARRAY_N);
 		$h->smartCache('off'); // stop using cache
