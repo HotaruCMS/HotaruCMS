@@ -11,6 +11,6 @@
     
     <p class="text-center">
             <a class="btn btn-primary btn-large" href="index.php?step=1&action=install"><?php echo $lang['install_new'];?></a>
-            <a class="btn btn-large" href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade'];?></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-large" href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade'];?></a>
     </p>
 </div>

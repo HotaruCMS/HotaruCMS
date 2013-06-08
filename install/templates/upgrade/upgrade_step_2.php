@@ -13,7 +13,8 @@
 
 <!-- Step content -->
 
-
+<div class="form-actions">
 <!--  Previous/Next buttons -->
 <a class='btn' href='index.php?step=1&action=upgrade'><?php echo $lang['install_back']; ?></a>
-<a class='btn btn-primary' href='index.php?step=3&action=upgrade'><?php echo $lang['install_next']; ?></a>
+<a class='btn pull-right' href='index.php?step=3&action=upgrade'><?php echo $lang['install_next']; ?></a>
+</div>

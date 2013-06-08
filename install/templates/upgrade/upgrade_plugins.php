@@ -25,6 +25,8 @@
         
 	<br/><?php echo $lang['upgrade_step3_go_play']; ?><br/><br/>
 
+        <div class="form-actions">
 	<!-- Previous/Next buttons -->
 	<a class="btn" href='index.php?step=2&action=upgrade'><?php echo $lang['install_back']; ?></a>
-	<a class="btn btn-success" href='<?php echo BASEURL; ?>index.php'><?php echo $lang['upgrade_home']; ?></a>
+	<a class="btn pull-right btn-success" href='<?php echo BASEURL; ?>index.php'><?php echo $lang['upgrade_home']; ?></a>
+        </div>

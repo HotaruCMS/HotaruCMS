@@ -71,13 +71,14 @@
 	    </table>
 	    </form>
 
-	   
+	   <div class="form-actions">
 	    <!-- Previous/Next buttons -->
 	    <div class='btn'><a href='index.php?step=0'><?php echo $lang['install_back']; ?></a></div>
-	    
+	                
             <?php
 	    if ($show_next) { // and if db was connected ok ?>
-		    <div class='btn'><a href='index.php?step=2'><?php echo $lang['install_next']; ?></a></div>
+		    <div class='btn pull-right pull-right'><a href='index.php?step=2'><?php echo $lang['install_next']; ?></a></div>
 	    <?php } else { // link disbaled ?>		    
-		    <div class='btn disabled'><?php echo $lang['install_next']; ?></div>
+		    <div class='btn disabled pull-right'><?php echo $lang['install_next']; ?></div>
 	    <?php } ?>
+            </div>

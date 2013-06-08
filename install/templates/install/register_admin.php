@@ -6,6 +6,10 @@
 		<div class="bar" style="width: 75%;"></div>
         </div>
 	
+        <div>
+            <?php $h->showMessages(); ?>
+        </div>
+        
 	<!--  Step content -->
 	<div class='well'><h4><?php echo $lang['install_step3_instructions'];?></h4>
 	
@@ -31,11 +35,13 @@
             </form>
 	</div>
 		
+        <div class="form-actions">
 	<a class='btn' href='index.php?step=2'><?php echo $lang['install_back'];?></a>
 	<?php if ($h->cage->post->getAlpha('updated') == 'true' && isset($next_button)) { ?>
 		<!-- active "next" link if user has been updated -->
-		<a class='btn btn-primary' href='index.php?step=4'><?php echo $lang['install_next'];?></a>
+		<a class='btn pull-right' href='index.php?step=4'><?php echo $lang['install_next'];?></a>
 	<?php } else { ?>
 		<!-- link disbaled until "update" button pressed -->
-		<a class='btn btn-primary disabled'><?php echo $lang['install_next'];?></a>
+		<a class='btn pull-right disabled'><?php echo $lang['install_next'];?></a>
 	<?php } ?>
+        </div>

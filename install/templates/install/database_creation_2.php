@@ -45,10 +45,11 @@
 
         
         ?>
-	
+	<div clasS="form-actions">
 	<a class='btn' href='index.php?step=1'><?php echo $lang['install_back']; ?></a>
 	<?php if ($show_next) { ?>		
-		<a class="btn btn-primary" href='index.php?step=3'><?php echo $lang['install_next']; ?></a>
+		<a class="btn pull-right" href='index.php?step=3'><?php echo $lang['install_next']; ?></a>
 	<?php } else { ?>		
-		<a class='btn btn-primary disabled'><?php echo $lang['install_next']; ?></a>
+		<a class='btn disabled pull-right'><?php echo $lang['install_next']; ?></a>
 	<?php } ?>
+        </div>

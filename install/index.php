@@ -32,10 +32,10 @@
 session_start();
 
 // Read Settings
-define("SETTINGS", '../config/settings.php');
+define("SETTINGS", '../config/');
 
-if (file_exists(SETTINGS)) {
-    include_once(SETTINGS);
+if (file_exists(SETTINGS . 'settings.php')) {
+    include_once(SETTINGS . 'settings.php');
     $settings_file_exists = true;
 } else {
     $settings_file_exists = false;
@@ -61,8 +61,8 @@ if (!defined($key))
     define($key, dirname(__FILE__) . $value);
 }
 
-require_once('install_tables.php');
-require_once('install_functions.php');
+require_once('libs/install_tables.php');
+require_once('libs/install_functions.php');
 require_once(BASE . 'Hotaru.php');
 require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
@@ -80,6 +80,7 @@ $action = $cage->get->getAlpha('action');    // Install or Upgrade.
 
 switch ($step) {
 	case 0:
+            //  Show the choice of upgrade or install screen
 		installation_welcome($h);     // Welcome to Hotaru CMS.
 		break;
 	case 1: 
@@ -90,19 +91,10 @@ switch ($step) {
                         $parsed = parse_url(BASEURL); 
                         setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
                         setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
-		} else {
-			// Remove any cookies set in a previous installation:
-			setcookie("hotaru_user", "", time()-3600, "/");
-			setcookie("hotaru_key", "", time()-3600, "/");
-                        
-                        // and remove from whole domain just in case of 1.4.2 cookies issue
-                        $parsed = parse_url(BASEURL); 
-                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
-                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
+		} else {	
+                        // Tell user to setup database
 			
-			// use this direct call instead of $db = init_database() because db may not exist yet. We need to check and control the response
-			$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-			if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual(); } else { database_setup(); }
+                        if ($cage->get->getAlpha('type') == 'manual') { database_setup_manual($h); } else { database_setup($h); }
 		}
 		break;
 	case 2:                
@@ -110,7 +102,7 @@ switch ($step) {
 		    database_upgrade();
 		} else {
 			$db = init_database();
-			database_creation($h);        // Creates the database tables
+			database_tables_creation($h);        // Creates the database tables
 		}
 		break;
 	case 3: 
@@ -118,6 +110,16 @@ switch ($step) {
 			upgrade_plugins();
 		} else {
 			$db = init_database();
+                        
+                        // Remove any cookies set in a previous installation:
+			setcookie("hotaru_user", "", time()-3600, "/");
+			setcookie("hotaru_key", "", time()-3600, "/");
+                        
+                        // and remove from whole domain just in case of 1.4.2 cookies issue
+                        $parsed = parse_url(BASEURL); 
+                        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
+			                                                                        
 			register_admin();           // Username and password for Admin user...
 		}
 		break;
@@ -180,10 +182,8 @@ function installation_welcome($h)
 /**Step 1 of installation
  *
  */
-function database_setup() {
-	global $lang;   //already included so Hotaru can't re-include it
-	global $db;
-	global $h;
+function database_setup($h) {
+	global $lang;   //already included so Hotaru can't re-include it		
 	global $cage;
 	global $settings_file_exists;
 
@@ -275,6 +275,8 @@ function database_setup() {
 	}
 
 	// Check whether database and tables exist on this server
+        $db = new ezSQL_mysql($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+			
 	$db->show_errors = false;
 	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);	
 	if (!$database_exists) {
@@ -306,7 +308,7 @@ function database_setup() {
 
 	} else {
             @chmod(SETTINGS,0644);
-	    database_setup_manual();
+	    database_setup_manual($h);
 	}
 
 }
@@ -315,7 +317,7 @@ function database_setup() {
 /**
  * Step 1a of installation - asks to put database info in settings.php
  */
-function database_setup_manual()
+function database_setup_manual($h)
 {
 	template($h, 'install/database_setup_manual.php');        
 }
@@ -338,7 +340,7 @@ function database_upgrade()
 /**
  * Step 2 of installation - Creates database tables
  */
-function database_creation($h)
+function database_tables_creation($h)
 {
 	global $lang;
 	global $db;
@@ -396,9 +398,8 @@ function register_admin()
 	{
 		// Test CSRF
 		if (!$h->csrf()) {
-			$h->message = $lang['install_step3_csrf_error'];
-			$h->messageType = 'red';
-			$h->showMessage();
+			$h->message = $lang['install_step3_csrf_error'];			;
+			$h->messages[$lang['install_step3_csrf_error']] = 'red';
 			$error = 1;
 		}
 
@@ -409,8 +410,7 @@ function register_admin()
 			$user_name = $name_check;
 		} else {
 			$h->message = $lang['install_step3_username_error'];
-			$h->messageType = 'red';
-			$h->showMessage();
+			$h->messages[$lang['install_step3_username_error']] = 'red';			
 			$error = 1;
 		}
 
@@ -421,18 +421,14 @@ function register_admin()
 			if ($password_check == $password2_check) {
 				// success
 				$user_password = $h->currentUser->generateHash($password_check);
-			} else {
-				$h->message = $lang['install_step3_password_match_error'];
-				$h->messageType = 'red';
-				$h->showMessage();
+			} else {				
+				$h->messages[$lang['install_step3_password_match_error']] = 'red';				
 				$error = 1;
 			}
 		} else {
 			$password_check = "";
-			$password2_check = "";
-			$h->message = $lang['install_step3_password_error'];
-			$h->messageType = 'red';
-			$h->showMessage();
+			$password2_check = "";			
+			$h->messages[$lang['install_step3_password_error']] = 'red';			
 			$error = 1;
 		}
 
@@ -440,19 +436,15 @@ function register_admin()
 		$email_check = $h->cage->post->testEmail('email');
 		if ($email_check) {
 			$user_email = $email_check;
-		} else {
-			$h->message = $lang['install_step3_email_error'];
-			$h->messageType = 'red';
-			$h->showMessage();
+		} else {			
+			$h->messages[$lang['install_step3_email_error']] = 'red';			
 			$error = 1;
 		}
 	}
 
 	// Show success message
-	if (($h->cage->post->getInt('step') == 4) && $error == 0) {
-		$h->message = $lang['install_step3_update_success'];
-		$h->messageType = 'green';
-		$h->showMessage();
+	if (($h->cage->post->getInt('step') == 4) && $error == 0) {		
+		$h->messages[$lang['install_step3_update_success']] = 'green';		
 	}
 
         $next_button = false;
@@ -515,72 +507,39 @@ function installation_complete()
 		//send feedback report 
 		$systeminfo = new SystemInfo(); 
 		$systeminfo->hotaru_feedback($h); 
-	}
+	} else {	   
+                $php_version = phpversion();
+                $modules = get_loaded_extensions();
+                $php_module_not_found = false;
 
-	echo html_install_header();
-
-	// Step title
-	echo "<legend>" . $lang['install_step4'] . "</legend>\n";
-	
-	echo "
-	<div class=\"alert alert-success\">
-		<strong>" . $lang['install_step4_installation_complete'] . "</strong><br />
-		<!-- Complete Step Progress Bar -->
-		<div class=\"progress progress-success\">
-			<div class=\"bar\" style=\"width: 100%\"></div>
-		</div>
-	</div>";
-
-	// Step content
-	echo "
-	<div class=\"alert alert-error\">
-		<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-		" . $lang['install_step4_installation_delete'] . "
-	</div>\n";
-
-
-	if ($phpinfo) {
-	    echo '<br/>';
-	    $php_version = phpversion();
-	    $modules = get_loaded_extensions();
-	    $php_module_not_found = false;
-
-	    $required = array(
+                $required = array(
 			'mysql'=>'http://php.net/manual/en/book.mysql.php',
 			'filter'=>'http://php.net/manual/en/book.filter.php',
 			'curl'=>'http://php.net/manual/en/book.curl.php',
-			'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php');
+			'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php'
+                    );
+                    /* No longer required: 'bcmath' => 'http://php.net/manual/en/book.bc.php' */
+                
+                foreach ($required as $module => $url) {
+                    if (!in_array($module, $modules)) {
+                        $h->messages[$lang['install_step4_form_check_php_warning'] . '<a href="' . $url . '" target="_blank">' . $module . '</a><br/>'] = 'red';
+                        $php_module_not_found = true;
+                    }
+                }
+                
+                // check for correct version number of php
+                if (version_compare($php_version, '5.2.5', '<')) { $h->messages[$lang['install_step4_form_check_php_version']] = 'yellow'; }
 
-		/* No longer required: 'bcmath' => 'http://php.net/manual/en/book.bc.php' */
-
-	    foreach ($required as $module => $url) {
-		if (!in_array($module, $modules)) {
-		    echo $h->showMessage($lang['install_step4_form_check_php_warning'] . '<a href="' . $url . '" target="_blank">' . $module . '</a><br/>','yellow');
-		    $php_module_not_found = true;
-		}
-	    }
-	    // check for correct version number of php
-	    if (version_compare($php_version, '5.2.5', '<')) { echo $h->showMessage($lang['install_step4_form_check_php_version'], 'yellow'); }
-
-	    // success of modules
-	    if (!$php_module_not_found) {
-		echo $h->showMessage($lang['install_step4_form_check_php_success'], 'green');
-	    }
-	} else {
-	    echo "<form name='install_admin_reg_form' action='index.php?step=4' method='post'>\n";	    
-	    echo "<input type='hidden' name='phpinfo' value='true' />";
-	    echo "<input type='hidden' name='step' value='4' />";
-	    echo "<input class='update button' type='submit' value='" . $lang['install_step4_form_check_php'] . "' />";
-	    echo "</form>\n";
-	}
-
-	echo "<br/><div class='well'>" . $lang['install_step4_installation_go_play'] . "</div><br/><br/>\n";
-
-	// Previous/Next buttons
-	echo "<a class='btn' href='index.php?step=3'>" . $lang['install_back'] . "</a>\n";
-	echo "<a class='btn btn-primary' href='" . BASEURL . "index.php'>" . $lang['install_home'] . "</a>\n";
-
-	echo html_footer();
+                // success of modules
+                if (!$php_module_not_found) {
+                    $h->messages[$lang['install_step4_form_check_php_success']] = 'blue';                    
+                }
+        }
+                
+	template($h, 'install/install_complete.php', array(
+            'phpinfo' => $phpinfo           
+        ));
+        
 }
 
 
