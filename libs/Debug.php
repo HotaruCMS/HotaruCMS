@@ -227,7 +227,7 @@ class Debug
                           //echo '<p>' . $subKey . ' = '  . $subValue . '</p>';
                           echo '<p>' . htmlentities($subKey) . ' = ';
                           
-                          if (is_object($subValue)) print_r($subValue); else print htmlentities($subValue);
+                          if (is_object($subValue) || is_array($subValue)) print_r($subValue); else print htmlentities($subValue);
                           echo '</p>';
                       }
                       echo '<hr>';
