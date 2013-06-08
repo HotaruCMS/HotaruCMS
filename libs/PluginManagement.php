@@ -836,6 +836,12 @@ class PluginManagement
 		$findfolder = str_replace('_', '-', $folder);
 		$version = str_replace('.', '-', $version);		
 		
+                // pluginmanagement so its a plugin
+                $url .= 'plugins';
+                // add pluginfoler to the url as well
+                $url .= '/' . $findfolder . '/';
+                //print $url;
+                
                 // TODO
                 // make temp folder the copy directory and unzip files here first
                 // copy old folder somewhere and then bring in new one
@@ -879,7 +885,7 @@ class PluginManagement
 
 		// unzip		
 		if (file_exists( $copydir . $file)) {
-                    //$h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
+                    $h->messages['About to start the unzip process' . $copydir . $file] = 'alert-info';
                     
                     // check chmod
 		    if (!$write) { $this->fileFtpChmod($h, $ftp_url, $folder, '777'); }
@@ -1005,7 +1011,7 @@ class PluginManagement
                 $z = new ZipArchive();
 	        $zopen = $z->open($file, ZIPARCHIVE::CHECKCONS);                           
 
-                //if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
+                if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
                 
                 if ($zopen !== true) {
                         $h->messages['Could not open zip file ' . $file] = 'red';
