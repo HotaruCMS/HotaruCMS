@@ -46,22 +46,24 @@ class csrf
         if (!$key) { return false; }
 
         $cleanKey = preg_replace('/[^a-z0-9]+/','',$key);
-        if (strcmp($key,$cleanKey) != 0) {
-            return false;
-        } else {
-            $sql = "SELECT token_sid FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s AND token_action = %s";
-            $results = $h->db->get_results($h->db->prepare($sql, $this->sid, $cleanKey, $this->action));
-            if ($results) {
-                foreach ($results as $row) {
-                    $valid = $row->token_sid;
-                }
-            }
-            if (isset($valid)) {
-                $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s";
-                $h->db->query($h->db->prepare($sql, $valid, $cleanKey));
-                return true;
-            }
+        if (strcmp($key,$cleanKey) != 0) 
+            return false;        
+        
+        $sql = "SELECT token_sid FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s AND token_action = %s";
+        $results = $h->db->get_results($h->db->prepare($sql, $this->sid, $cleanKey, $this->action));
+        
+        if (!$results) return false;        
+    
+        foreach ($results as $row) {
+            $valid = $row->token_sid;
         }
+        
+        if (isset($valid)) {
+            $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s";
+            $h->db->query($h->db->prepare($sql, $valid, $cleanKey));                
+        }
+        
+        return true;
     }
 
 
