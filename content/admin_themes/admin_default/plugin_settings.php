@@ -36,8 +36,9 @@ $meta = $h->readPluginMeta($plugin);
 $pluginData = $h->readPlugin($plugin);
 
 
-if (version_compare($pluginData->plugin_latestversion, $pluginData->plugin_version) == 1) {     
-    $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="#">upgrade now</a>', 'alert-info'); 
+if (version_compare($pluginData->plugin_latestversion, $pluginData->plugin_version) == 1) { 
+    $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($pluginData->plugin_folder) . "&version=" . $pluginData->plugin_latestversion . "#tab_updates";
+    $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="' . $href . '">upgrade now</a>', 'alert-info'); 
     // show version number in the message
 }
 
