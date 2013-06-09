@@ -46,7 +46,8 @@ $loaded_settings = $h->vars['admin_settings'];
 	
 	<?php     // **********************************************************
 	
-		// Loop through the settings, displaying each one as a row...    
+		// Loop through the settings, displaying each one as a row...  
+                if ($loaded_settings) { 
 		foreach ($loaded_settings as $ls)
 		{
 			if ($ls->settings_show == 'N') { continue; } // skip this row
@@ -97,7 +98,7 @@ $loaded_settings = $h->vars['admin_settings'];
 			<td><i><?php echo $ls->settings_note; ?></i></td>
 			</tr>
 	 
-	<?php	} // End loop **********************************************************     ?>
+	<?php	}} // End loop **********************************************************     ?>
 	
 	
 	<input type='hidden' name='settings_update' value='true' />
