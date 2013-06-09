@@ -132,3 +132,17 @@ ul { list-style-type: none;}
     margin: 120px auto;    
 }
 
+#editor { 
+        position: absolute;
+        top: 150px;
+        right: 100px;
+        bottom: 100px;
+        left: 330px;
+    }
+    
+.box {     
+    position: relative;
+    width: 100%;
+    margin: 0px;
+    margin-bottom: 40px;
+}
