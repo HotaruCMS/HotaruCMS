@@ -1,5 +1,41 @@
 <?php
 
+/**
+* gets the meta data from a website
+*/
+function fetchMeta($url = '')
+{
+   if (!$url) return false;
+
+   // check whether we have http at the zero position of the string
+   if (strpos($url, 'http://') !== 0 && strpos($url, 'https://') !== 0) $url = 'http://' . $url;          
+
+   $fp = @fopen( $url, 'r' );
+
+   if (!$fp) return false;
+
+   $content = '';
+
+   while( !feof( $fp ) ) {
+       $buffer = trim( fgets( $fp, 4096 ) );
+       $content .= $buffer;
+   }
+
+   $start = '<title>';
+   $end = '<\/title>';
+
+   preg_match( "/$start(.*)$end/s", $content, $match );
+   $title = isset($match) ? $match[1] : ''; 
+
+   $metatagarray = get_meta_tags( $url );
+
+   $keywords = isset($metatagarray[ "keywords" ]) ? $metatagarray[ "keywords" ] : '';
+   $description = isset($metatagarray[ "description" ]) ? $metatagarray[ "description" ] : '';
+
+   return array('title' => $title, 'keywords' => $keywords, 'description' => $description);
+}
+    
+    
 function hotaru_http_request($url)
 {
 	if(substr($url, 0, 4) != 'http')
