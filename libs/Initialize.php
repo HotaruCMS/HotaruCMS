@@ -251,7 +251,7 @@ class Initialize
             
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {                    
                     $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;                    
-                    $settings = $this->db->get_results($this->db->prepare($sql));                                           
+                    $settings = $this->db->get_results($this->db->prepare($sql));                   
                 } else {                    
                     $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
                     $settings = $this->mdb->query($sql);  
@@ -266,7 +266,13 @@ class Initialize
                     }                    
                     return false; 
                 }
-                                
+                
+                /**
+                 * override the theme if admin and ?themePreview is set on url                
+                 */                
+                $themePreview = $this->cage->get->testAlnumLines('themePreview');
+                if ($themePreview) $settings[2] = array('settings_name' => 'THEME', 'settings_value' => $themePreview . '/');
+                
 		// Make Hotaru settings global constants
 		foreach ($settings as $setting)
 		{                    
