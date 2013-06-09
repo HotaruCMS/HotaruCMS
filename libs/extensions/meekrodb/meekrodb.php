@@ -564,6 +564,7 @@ class MeekroDB {
   protected function prependCall($function, $args, $prepend) { array_unshift($args, $prepend); return call_user_func_array($function, $args); }
   public function queryArray() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'assoc'); }
   public function query() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'object'); }
+  public function queryObj() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'object'); }  
   public function queryAllLists() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'list'); }
   public function queryFullColumns() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'full'); }
 
