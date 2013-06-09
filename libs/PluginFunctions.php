@@ -155,9 +155,7 @@ class PluginFunctions
                                             // otherwise add to return array...
                                             $return_array[$plugin->plugin_class . "_" . $hook] = $result; // name the result Class + hook name
                                     }
-                                } else {
-                                    // TODO
-                                    // Report that a plugin could not be loaded properly
+                                } else {                                    
                                     $h->messages['Plugin class could not be found'] = "alert-error";
                                     return false;
                                 }
