@@ -80,9 +80,7 @@ if (!$result) {
                             }
                     } else {
                             if ($h->pageName == 'plugin_settings') {  
-                                // TODO
-                                // Put in the tab navs for all plugins here
-                                // then separate by hooks
+                                
                             } 
                             
                             $h->template($h->pageName);
