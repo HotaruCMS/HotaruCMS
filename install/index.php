@@ -154,21 +154,6 @@ function template($h, $template, $args = array())
     include_once('templates/footer.php');
 }
 
-// TODO
-// remove header and footer when all functions have been put in templates
-function html_install_header()
-{
-    global $lang;
-    include_once('templates/header.php');
-}
-
-function html_footer()
-{
-    global $lang;
-    global $version_number;    
-    include_once('templates/footer.php');
-}
-
 
 /**
  * Step 0 of installation - Welcome message
