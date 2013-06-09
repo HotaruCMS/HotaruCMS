@@ -138,6 +138,8 @@ class Comment
 		$h->smartCache('on', 'comments', 60, $query); // start using cache
 		$parents = $h->db->get_results($query);
 		$h->smartCache('off'); // stop using cache
+                
+                //$parents = $h->mdb->query($sql, $post_id, 0, 'approved');
 		
 		if($parents) { return $parents; } else { return false; }
 	}

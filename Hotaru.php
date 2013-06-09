@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.1";  // Hotaru CMS version
+	protected $version              = "1.5.2-b1";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -35,6 +35,7 @@ class Hotaru
 	
 	// objects
 	protected $db;                              // database object
+        protected $mdb;                             // meekro database object
 	protected $cage;                            // Inspekt object
 	protected $currentUser;                     // UserBase object
 	protected $plugin;                          // Plugin object
@@ -99,6 +100,7 @@ class Hotaru
 			$init = new Initialize($this);
 
 			$this->db           = $init->db;            // database object
+                        $this->mdb          = $init->mdb;            // meekro database object
 			$this->cage         = $init->cage;          // Inspekt cage
 			$this->isDebug      = $init->isDebug;       // set debug		
 			$this->currentUser  = new UserAuth();       // the current user
@@ -110,6 +112,7 @@ class Hotaru
 			
 			$this->csrf('set');                         // set a csrfToken
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
+                        $this->mdb->setHotaru($this);               // pass $h object to meekroDb for error reporting
 		}
 	}
     
@@ -1160,12 +1163,16 @@ class Hotaru
 	 */
 	 public function doIncludes($type = 'all')
 	 {                
-             // Note: dont use async or defer on the js otherwise inline jquery wihch may be in plugins has trouble running
-             
+             // Note: careful using async or defer on the js otherwise inline jquery wihch may be in plugins has trouble running
+                              
              switch ($type) {
                     case 'all':
                         $this->getFramework('bootstrap-lite');
 
+                        // for old themes that dont split between loading js and css
+                        if ($this->vars['framework']['bootstrap-js'])
+                            $this->includeJs(LIBS . 'frameworks/bootstrap/js/', 'bootstrap.min');                 
+                            
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, $version_js, $version_css, $this->adminPage);                               	                        
@@ -1178,6 +1185,11 @@ class Hotaru
                         
                         break;
                     case 'js': 
+                        
+                        // for better caching we should send this js file separately to hotarus combined js
+                        if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js'])
+                            echo "<script async type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap/js/bootstrap.min.js' /></script>\n";
+                          
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);                               	                        
                         break;
@@ -1197,7 +1209,6 @@ class Hotaru
                         break;
              }                                                           
 	 }
-	 
 	 
 	/**
 	 * Build an array of css files to combine
@@ -1260,19 +1271,19 @@ class Hotaru
          }                
 
          
-         public function getFramework($file = 'bootstrap')
+         public function getFramework($file = 'bootstrap', $jsInclude = true)
 	 {
-                //js files first
-                $this->includeJs(LIBS . 'frameworks/bootstrap/js/', 'bootstrap.min'); 
+                //js files first unless prohibited
+                $this->vars['framework']['bootstrap-js'] = $jsInclude ? true : false;  
                           
                 // then css files
                 switch ($file) {
                     case 'bootstrap':                        
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css' />\n";
-                        $h->vars['framework']['bootstrap'] = true;
+                        $this->vars['framework']['bootstrap'] = true;
                          break;
                     case 'bootstrap-lite':          
-                        if (!isset($h->vars['framework']['bootstrap'])) {
+                        if (!isset($this->vars['framework']['bootstrap']) || !$this->vars['framework']['bootstrap']) {
                             echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-lite.min.css' type='text/css' />\n";
                             $h->vars['framework']['bootstrap'] = true;
                         }
@@ -2560,10 +2571,10 @@ class Hotaru
 	 * @param string $type blank or "count" or "query"
 	 * @return array|false
 	 */
-	public function getLatestActivity($limit = 0, $userid = 0, $type = '')
+	public function getLatestActivity($limit = 0, $userid = 0, $type = '', $fromId = 0)
 	{
 		$activity = new UserActivity();
-		return $activity->getLatestActivity($this, $limit, $userid, $type);
+		return $activity->getLatestActivity($this, $limit, $userid, $type, $fromId);
 	}
 	
 	

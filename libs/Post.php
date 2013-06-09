@@ -143,7 +143,9 @@ class Post
                             $post = $h->db->get_row($sql);
                             $h->vars['tempPostCache'][$sql] = $post;
                     }
-                } else {                                       
+                } else {          
+                    $post = $h->mdb->queryOneRow($query, $post_id);
+                    
                     $post = models___Posts::find_by_post_id($post_id);
                     // note we dont use models___Posts::($post_id); because it will throw an error if record not foound
                 }

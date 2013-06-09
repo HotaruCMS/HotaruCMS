@@ -26,6 +26,7 @@
 class Initialize
 {
 	protected $db;                          // database object
+        protected $mdb;                         // meekro database object
 	protected $cage;                        // Inspekt object
 	protected $isDebug          = false;    // show db queries and page loading time
 	
@@ -48,12 +49,12 @@ class Initialize
 
 		$this->getFiles();
 		$this->cage = $this->initInspektCage();
-		$this->db = $this->initDatabase(); // use default db driver until readSettings below
+		$this->db = $this->initDatabase();
+                $this->mdb = $this->initDatabase('mdb');
 
 		$this->errorReporting();
 
                 $this->readSettings();
-                //$this->setDBDriver();  // we have to do this after readSettings
                 $this->setUpDatabaseCache();
                 $this->isDebug = $this->checkDebug();
                 $this->setUpJsConstants();                
@@ -172,10 +173,6 @@ class Initialize
                 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
                 require_once(LIBS       . 'InspektExtras.php'); // sanitation
                 
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD)
-                { } else {
-                    require_once(EXTENSIONS . 'php-activerecord/ActiveRecord.php'); // database
-                }
                 //require_once('Log.php'); // PEAR function
                 
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
@@ -184,8 +181,10 @@ class Initialize
                     require_once(LIBS . 'Database_mysql.php');
                 } else {                    
                     require_once(LIBS . 'Database.php');
+                    
                 }
-		
+                require_once(EXTENSIONS . 'meekrodb/hmeek.php');
+                                
 		// include functions
 		require_once(FUNCTIONS . 'funcs.strings.php');
 		require_once(FUNCTIONS . 'funcs.arrays.php');
@@ -201,39 +200,21 @@ class Initialize
 	 *
 	 * @return object
 	 */
-	public function initDatabase()
-	{                       
-
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD)
-                {
-                    // debug message
+	public function initDatabase($type = '')
+	{                
+                if ($type == 'mdb') {
+                    $port = '';
+                    $db = new hDB(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port, DB_CHARSET);
+                    //$db->debugMode('my_debugmode_handler');
+                    $db->error_handler = 'my_error_handler';
+                    $db->nonsql_error_handler = 'my_nonsql_error_handler';
                     
                 } else {
-//                    ActiveRecord\Config::initialize(function($cfg)
-//                    {
-//                        $cfg->set_model_directory(LIBS);
-//                        $cfg->set_connections(array('development' => 'mysql://' . DB_USER .':' . DB_PASSWORD . '@' . DB_HOST . '/' . DB_NAME . ';charset=utf8'));
-//                        
-//                        if(class_exists('Memcache',false)) {
-//                            // Memcache is enabled.
-//                            $cfg->set_cache("memcache://localhost",array("expire" => 60));
-//                        }
-//
-//                        //if ($h->isDebug) {
-//    //                        $logger = Log::singleton('file', CACHE . '/debug_logs/phpar.log','ident',array('mode' => 0664, 'timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
-//    //                        $cfg->set_logging(true);
-//    //                        $cfg->set_logger($logger); 
-//                        //}
-//
-//                    });   
-                                       
-                }                                    
-                
-                // TODO : remove ezSQL when activeRecord is fully working with all plugins
-                $ezSQL = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-		//$ezSQL->query("SET NAMES 'utf8'");
-		
-		return $ezSQL;
+                    $db = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+                    //$ezSQL->query("SET NAMES 'utf8'");
+                }
+
+		return $db;
         }
 	
 	
@@ -268,13 +249,16 @@ class Initialize
 	 */
 	public function readSettings() {	    
             
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {                    
+                    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;                    
+                    $settings = $this->db->get_results($this->db->prepare($sql));                                           
+                } else {                    
                     $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-                    $settings = $this->db->get_results($this->db->prepare($sql));                
-                } else {
-                    $settings = models___Settings::all(array('select' => 'settings_name, settings_value'));
+                    $settings = $this->mdb->query($sql);  
+//                    $settings = $this->db->query($sql);
+                    //$settings = models___Settings::all(array('select' => 'settings_name, settings_value'));
                 }
-
+                
                 if(!$settings) { 
                     $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false);
                     foreach ($default_settings as $setting => $value) {
@@ -282,31 +266,18 @@ class Initialize
                     }                    
                     return false; 
                 }
-
+                                
 		// Make Hotaru settings global constants
 		foreach ($settings as $setting)
-		{
+		{                    
 			if (!defined($setting->settings_name)) {
 				define($setting->settings_name, $setting->settings_value);
-			}
-		}
+			}                                               
+		}                                
 
 		return true;
 	}
-	
         
-        /**
-         *  set the db driver based on the user settings table
-         */
-        public function setDBDriver()
-        {                
-                if (DB_DRIVER == 'mysql' || ! function_exists ('mysqli_connect')) {                                      
-                    require_once(LIBS . 'Database_mysql.php');
-                } else {                    
-                    require_once(LIBS . 'Database.php');
-                }
-        }
-	
         
 	/**
 	 * Make cache folders if they don't already exist
