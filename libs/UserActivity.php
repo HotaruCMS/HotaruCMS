@@ -34,9 +34,9 @@ class UserActivity
 	 * @param string $type blank or "count" or "query"
 	 * @return array|false
 	 */
-	public function getLatestActivity($h, $limit = 0, $userid = 0, $type = '', $fromId = 0)
+	public function getLatestActivity($h, $limitCount = 0, $userid = 0, $type = '', $fromId = 0)
 	{
-		if (!$limit) { $limit = ""; } else { $limit = "LIMIT " . $limit; }
+		$limit = (!$limitCount) ? '' : "LIMIT " . $limitCount;
 		
 		$select = ($type == 'count') ? 'count(useract_id)' : '*';
 		
