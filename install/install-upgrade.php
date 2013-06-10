@@ -662,7 +662,7 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.5.0";
         }
         
-        // 1.5.0 to 1.5.1
+        // 1.5.0, 1.5.1, 1.5.2
 	if (version_compare("1.4.2", $old_version) < 1) {                                                    
                          
                 // Need to cover all of the RCx verson as well
@@ -692,7 +692,7 @@ function do_upgrade($h, $old_version)
 		}                
                 
                 // update "old version" for next set of upgrades
-		$old_version = "1.5.1";
+		$old_version = "1.5.2";
         }
         
         if ($old_version == "1.5.2") {
