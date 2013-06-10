@@ -22,21 +22,6 @@
  **************************************************************************************************** */
 
 var xmlhttp=false;
-/*@cc_on @*/
-/*@if (@_jscript_version >= 5)
-  try {
-  xmlhttp=new ActiveXObject("Msxml2.XMLHTTP")
- } catch (e) {
-  try {
-	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP")
-  } catch (E) {
-   xmlhttp=false
-  }
- }
-@else
- xmlhttp=false
-@end @*/
-
 
 if (!xmlhttp && typeof XMLHttpRequest != 'undefined')
 {
@@ -69,6 +54,7 @@ var returnvalue = Array ();
 // Custom JQuery functions:
 
 // FADE TOGGLE
+// used by category_manager, comments, vote plugin
 jQuery.fn.fadeToggle = function(speed, easing, callback) {
 	return this.animate({opacity: 'toggle'}, speed, easing, callback);
 
@@ -79,10 +65,6 @@ jQuery.fn.fadeToggle = function(speed, easing, callback) {
 // JQuery Function calls:
 
 $(document).ready(function(){
-
-	// Fade message
-	$(".message").css({display: "none"}).fadeIn(1000);
-	
 
 	// Show/Hide table details (Plugin Management page and similar tables)
 	$(".table_drop_down").click(function () {
