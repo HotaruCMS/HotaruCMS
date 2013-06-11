@@ -60,6 +60,7 @@ class PluginManagement
 				if ($plugin_row) 
 				{
 					// if plugin is in the database...
+                                        $allplugins[$count]['id'] = $plugin_row->plugin_id;   // need this for when we reorder the lists - use id in the sort_id col
 					$allplugins[$count]['name'] = $plugin_row->plugin_name;
 					$allplugins[$count]['description'] = $plugin_row->plugin_desc;
 					$allplugins[$count]['folder'] = $plugin_row->plugin_folder;
@@ -81,7 +82,7 @@ class PluginManagement
 				} 
 				else 
 				{
-					// if plugin is not in database...
+					// if plugin is not in database...                                        
 					$allplugins[$count]['name'] = $plugin_details['name'];
 					$allplugins[$count]['description'] = $plugin_details['description'];
 					$allplugins[$count]['folder'] = $plugin_details['folder'];
@@ -724,7 +725,32 @@ class PluginManagement
 		if ($active_plugins) { return $active_plugins; } else {return false; }
 	}
 	
+        
+        /**
+         * 
+         */
+        public function pluginReorder($h, $sort = '')
+        {
+            if (!$sort) return false;
+
+            foreach($sort as $p => $id)
+            {
+                //print $p+1 . '=' . $id . '<br/>'; 
+                // since array starts at 0 we need to add 1 to $p to get the sort order for saving to db               
+                
+                $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
+                print $h->db->prepare($sql, $p+1, $id) . '<br/>';
+                $h->db->query($h->db->prepare($sql, $p+1, $id)); 			
+            }   
+            
+            //refresh cache and sort hooks
+            $this->refreshPluginDetails($h);
+            $this->sortPluginHooks($h);
+                
+            return true;
+        }
 	
+        
 	/**
 	 * Updates plugin order and order of their hooks, i.e. changes the order 
 	 * of plugins in pluginHook.

@@ -87,3 +87,56 @@ jQuery('document').ready(function($) {
 });	
 
 
+$(function() {
+    $("#left-col, #right-col").sortable({
+        tolerance: 'pointer',
+        containment: '#plugintable_installed',
+        cursor: 'move',
+        opacity: 0.6, 
+        scroll: true,
+        scrollSensitivity: 20,
+        //handle: '.item h2',
+        revert: 'invalid',
+        placeholder: 'placeholder',
+        forceHelperSize: true,
+        connectWith: '#right-col, #left-col',
+        update: function(event, ui) {
+            var info_left = $('#left-col').sortable("serialize");
+            var info_right = $('#right-col').sortable("serialize");
+            $.ajax({
+                type: "POST",
+                url: "/admin_index.php?page=plugin_management&action=orderAjax",
+                data: info_left + info_right,
+                beforeSend: function () {                                  
+                                jQuery("body").css('cursor','progress');
+                                $('#left-col').sortable({disabled: true});
+                                $('#right-col').sortable({disabled: true});
+                                // alert(info_left + '&' + info_right);
+                        },
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {  
+                                jQuery("body").css('cursor','default');
+                                alert('ERROR');      
+                                $('#left-col').sortable({disabled: false});
+                                $('#right-col').sortable({disabled: false});                                
+                },
+                success: function(data) { // success means it returned some form of json code to us. may be code with custom error msg                                                                                                                                                   
+                                //alert(data);
+                                
+                                //if comes back reordered then refresh grid?
+                                
+                                
+                                //if comes back failure then revert the reordered col and give error message
+                                
+                                // allow reordering again
+                                jQuery("body").css('cursor','default');
+                                $('#left-col').sortable({disabled: false});
+                                $('#right-col').sortable({disabled: false});
+                                
+                },
+                dataType: 'html'
+          });
+
+        }    
+    }).disableSelection();
+    
+});

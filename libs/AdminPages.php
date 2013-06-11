@@ -431,11 +431,16 @@ class AdminPages
 		$h->plugin->folder = $pfolder;   // assign this plugin to Hotaru
 		
 		$action = $h->cage->get->testAlnumLines('action');
-		$order = $h->cage->get->testAlnumLines('order');
+		$order = $h->cage->get->testAlnumLines('order');                
 				
 		$plugman = new PluginManagement();
 		
 		switch ($action) {
+                        case "orderAjax":
+                                $sort = $h->cage->post->testAlnumLines('sort');
+                                $plugman->pluginReorder($h, $sort);
+                                //echo 1; 
+                                die();
 			case "activate":
 				$plugman->activateDeactivate($h, 1);
 				break;
