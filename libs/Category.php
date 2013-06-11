@@ -49,7 +49,7 @@ class Category
 	 */
 	public function getCatName($h, $cat_id = 0, $cat_safe_name = '')
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                if (!ACTIVERECORD) {
                     if ($cat_id == 0 && $cat_safe_name != '') {
                             // Use safe name
                             $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
@@ -60,20 +60,7 @@ class Category
                             $cat_name = $h->db->get_var($h->db->prepare($sql, $cat_id));
                     }
                 } else {
-                    if ($cat_id == 0 && $cat_safe_name != '') {
-                            // Use safe name
-                            $category = models___Categories::first(array( 
-                                'select' => 'category_name',
-                                'conditions' => array('category_safe_name = ?', $cat_safe_name)
-                              ));
-                    } else {
-                            // Use id
-                            $category = models___Categories::first(array( 
-                                'select' => 'category_name',
-                                'conditions' => array('category_id = ?', $cat_id)
-                              ));
-                    }
-                    $cat_name = isset($category->category_name) ? $category->category_name : null;
+                    
                 }
 		return $cat_name;
 	}
