@@ -70,7 +70,7 @@ class EmailFunctions
 		{
 			if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
 			if (!$this->headers) {
-				$this->headers = array ('From' => $this->from, 'To' => $to, 'Subject' => $this->subject);
+				$this->headers = array ('MIME-Version: 1.0\r\nFrom' => $this->from, '\r\nTo' => $to, 'Subject' => $this->subject);
 			} else {
 				$this->headers['To'] = $to;
 			}
@@ -84,7 +84,7 @@ class EmailFunctions
 		{
 			// if not using SMTP and no headers passed to this function, use default
 			if (!$this->headers) { 
-				$this->headers = "From: " . $this->from . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
+				$this->headers = "MIME-Version: 1.0\r\nFrom: " . $this->from . "\r\nReply-To: " . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
 			}
 
 			// set content type to work with French accents, etc.
