@@ -106,7 +106,7 @@ $(function() {
             $.ajax({
                 type: "POST",
                 url: "/admin_index.php?page=plugin_management&action=orderAjax",
-                data: info_left + info_right,
+                data: info_left + '&' + info_right,
                 beforeSend: function () {                                  
                                 jQuery("body").css('cursor','progress');
                                 $('#left-col').sortable({disabled: true});

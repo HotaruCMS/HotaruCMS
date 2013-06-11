@@ -739,13 +739,14 @@ class PluginManagement
                 // since array starts at 0 we need to add 1 to $p to get the sort order for saving to db               
                 
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-                print $h->db->prepare($sql, $p+1, $id) . '<br/>';
+                //print $h->db->prepare($sql, $p+1, $id) . '<br/>';
                 $h->db->query($h->db->prepare($sql, $p+1, $id)); 			
             }   
             
             //refresh cache and sort hooks
             $this->refreshPluginDetails($h);
             $this->sortPluginHooks($h);
+            $h->clearCache('db_cache', false);
                 
             return true;
         }

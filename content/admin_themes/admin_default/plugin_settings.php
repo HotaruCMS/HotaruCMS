@@ -110,10 +110,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                   
                     echo '<div class="tab-pane" id="support">';                        
                         echo 'Rating: N/A<br/><br/>';
-                        
-                        // Plugin hook for old versions of donate button
-                        //echo $h->pluginHook('admin_topright');
-                        
+                                                
                         // Plugin hook for adding content to support tab
                         echo $h->pluginHook('admin_plugin_support', $plugin);
                     
