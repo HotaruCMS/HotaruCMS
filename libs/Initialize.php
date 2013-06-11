@@ -207,11 +207,11 @@ class Initialize
                     $db = new hDB(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port, DB_CHARSET);
                     //$db->debugMode('my_debugmode_handler');
                     $db->error_handler = 'my_error_handler';
-                    $db->nonsql_error_handler = 'my_nonsql_error_handler';
-                    
+                    $db->nonsql_error_handler = 'my_nonsql_error_handler';                    
                 } else {
                     $db = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-                    //$ezSQL->query("SET NAMES 'utf8'");
+                    //$db->query("SET NAMES 'utf8'");
+                    //mysqli_set_charset($link, "utf8");    
                 }
 
 		return $db;
