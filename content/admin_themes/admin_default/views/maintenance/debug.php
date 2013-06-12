@@ -3,10 +3,7 @@
 	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=delete_debugs#tab_debug">
 		<?php echo $h->lang("admin_theme_maintenance_debug_delete"); ?></a></li>
 	<li style="margin-bottom: 1em;"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=system_report#tab_debug">
-		<?php echo $h->lang("admin_theme_maintenance_system_report"); ?></a></li>
-	<li style="margin-bottom: 1em;"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=email_report#tab_debug">
-		<?php echo $h->lang("admin_theme_maintenance_email_system_report"); ?></a>
-		<?php echo $h->lang("admin_theme_maintenance_email_system_report_note"); ?></li>
+		<?php echo $h->lang("admin_theme_maintenance_system_report"); ?></a></li>	
 </ul>
 
 <?php if ($h->vars['debug_files']) {
