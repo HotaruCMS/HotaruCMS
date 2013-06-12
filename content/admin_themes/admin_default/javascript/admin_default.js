@@ -105,7 +105,7 @@ $(function() {
             var info_right = $('#right-col').sortable("serialize");
             $.ajax({
                 type: "POST",
-                url: "/admin_index.php?page=plugin_management&action=orderAjax",
+                url: SITEURL + "admin_index.php?page=plugin_management&action=orderAjax",
                 data: info_left + '&' + info_right,
                 beforeSend: function () {                                  
                                 jQuery("body").css('cursor','progress');
