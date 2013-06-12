@@ -38,17 +38,17 @@ class UserActivity
 	{
 		$limit = (!$limitCount) ? '' : "LIMIT " . $limitCount;
 		
-		$select = ($type == 'count') ? 'count(useract_id)' : '*';
-		
 		if (!$userid)
 		{
-			$sql = "SELECT " . $select . " FROM " . TABLE_USERACTIVITY . " WHERE useract_archived = %s AND useract_status = %s AND useract_id > %d ORDER BY useract_date DESC " . $limit;
+                        $select = ($type == 'count') ? 'count(useract_id)' : 'UA.*, U.user_username';
+			$sql = "SELECT " . $select . " FROM " . TABLE_USERACTIVITY . " AS UA LEFT OUTER JOIN " . TABLE_USERS . " AS U ON UA.useract_userid = U.user_id WHERE UA.useract_archived = %s AND UA.useract_status = %s AND UA.useract_id > %d ORDER BY UA.useract_date DESC " . $limit;
 			$query = $h->db->prepare($sql, 'N', 'show', $fromId);
 			if ($type == 'query') { return $query; }
 			$result = ($type == 'count') ? $h->db->get_var($query) : $h->db->get_results($query);
 		} 
 		else
 		{
+                        $select = ($type == 'count') ? 'count(useract_id)' : '*';
 			$sql = "SELECT " . $select . " FROM " . TABLE_USERACTIVITY . " WHERE useract_archived = %s AND useract_status = %s AND useract_userid = %d AND useract_id > %d ORDER BY useract_date DESC " . $limit;
 			$query = $h->db->prepare($sql, 'N', 'show', $userid, $fromId);
 			if ($type == 'query') { return $query; }
