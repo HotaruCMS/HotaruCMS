@@ -62,7 +62,7 @@ class Category
                 } else {
                     
                 }
-		return $cat_name;
+		return urldecode($cat_name);
 	}
 	
 	
@@ -91,7 +91,7 @@ class Category
 			$h->vars['tempCategoryCache'][$sql] = $cat_safe_name;
 		}
 		
-		return $cat_safe_name;
+		return urldecode($cat_safe_name);
 	}
 	
 	
@@ -324,7 +324,7 @@ class Category
 		$sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
 		$h->db->query($h->db->prepare($sql, $delete_category));
 		return true;
-	}
+	} 
 
 }
 ?>
