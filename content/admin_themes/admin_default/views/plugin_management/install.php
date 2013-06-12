@@ -182,4 +182,51 @@
 		</tr>
 	</table> <!-- close table which contains three columns of smaller tables -->		
 
+        <script>
+            //https://github.com/nostalgiaz/bootstrap-switch
+		$('.switch').on('switch-change', function (e, data) {
+                    var $el = $(data.el), value = data.value
+                    var id = $(this).attr('id');
+                    var $d, $plugin;
+                    
+                    //alert(id);
+                    var stringParts = id.split("#");
+                    $plugin = stringParts[1];
+                    //alert($plugin);
+                    console.log(e, $el, value);
+                    
+                    if (value) $d = 'activate'; else $d = 'deactivate';
+                    
+                    //alert(value, $d);                    
+                    
+                    var sendurl = '<?php echo BASEURL; ?>admin_index.php?page=plugin_management&action='+$d+'Ajax&plugin='+$plugin;
+                    
+                    
+                    $.ajax(
+                    {
+                            type: 'get',
+                            url: sendurl,                                                     
+                            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                            //widget.html('ERROR');
+                                            alert(errorThrown);
+                            },
+                            success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                                    if (data.error === true) {
+                                        // reset the switch
+                                        alert(data.error);
+                                    }
+                                    else
+                                    {
+                                        //alert(data)                                        
+                                    }                    
+
+                            },
+                            dataType: "json"
+                        });
+                    
+                    
+                    
+                });
+	</script>
+        
 </div>
