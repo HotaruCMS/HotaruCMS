@@ -66,6 +66,11 @@ class Debug
 		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
 	}
         
+        
+        /**
+         * Creates a pull down menu in the nav bar for help with debugging
+         * @param type $h
+         */
          public function debugNav($h)
         {
              $mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
@@ -96,7 +101,7 @@ class Debug
                         
                         echo '<li><a href="#">' . $h->lang('main_hotaru_db_queries') . '<strong><span id="debug_nav_db_queries"></span></strong></a></li>';
                         echo '<li><a href="#">' . $h->lang('main_hotaru_memory_usage') . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
-                        echo '<li><a href="#modal_hvars" data-toggle="modal">' . "h->vars: " . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
+                        //echo '<li><a href="#modal_hvars" data-toggle="modal">' . "h->vars: " . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
                         echo '<li class="divider"></li>';
                         echo '<li><a href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
                         
@@ -179,15 +184,17 @@ class Debug
 		
 		if ($type == 'object') { return $report; }
 		
-		if ($type == 'email') {
-			$to = "admin@hotarucms.org"; // do not change!
-			$subject = "System Report from " . SITE_NAME;
-			$body = $sysinfo->logSystemReport($h, $report);
-			$h->email($to, $subject, $body);
-			$h->message = $h->lang('admin_maintenance_system_report_emailed');
-			$h->messageType = 'green';
-			return true;
-		}
+                // TODO
+                // remove by 1.6.0
+//		if ($type == 'email') {
+//			$to = "admin@hotarucms.org"; // do not change!
+//			$subject = "System Report from " . SITE_NAME;
+//			$body = $sysinfo->logSystemReport($h, $report);
+//			$h->email($to, $subject, $body);
+//			$h->message = $h->lang('admin_maintenance_system_report_emailed');
+//			$h->messageType = 'green';
+//			return true;
+//		}
 		
 		$h->openLog('system_report', 'w');
 		
@@ -207,6 +214,12 @@ class Debug
 		}
 	}
         
+        
+        /**
+         * dumps out the contents of $h->vars in a modal box
+         * used in context with the debug nav bar menu above
+         * @param type $h
+         */
         function hvars($h)
         {
             ?> 
@@ -245,12 +258,9 @@ class Debug
                 
             <div class="modal-footer">
               <button class="btn" data-dismiss="modal">Close</button>
-<!--              <button class="btn btn-primary">Save changes</button>-->
             </div>
           </div>
-              
-                  
-                  
+                                                  
             <?php
         }
 }
