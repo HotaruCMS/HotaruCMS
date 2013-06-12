@@ -2,7 +2,7 @@
 /**
  * Theme name: admin_default
  * Template name: sidebar.php
- * Template author: Nick Ramsay
+ * Template author: shibuya246
  *
  * PHP version 5
  *
@@ -20,8 +20,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Nick Ramsay <admin@hotarucms.org>
- * @copyright Copyright (c) 2010, Hotaru CMS
+ * @author    Hotaru CMS Team
+ * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
