@@ -81,7 +81,7 @@ function create_table($table_name)
 		$db->query($sql);
 		
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (category_name, category_safe_name) VALUES (%s, %s)";
-		$db->query($db->prepare($sql, urlencode('All'), urlencode('all')));
+		$db->query($db->prepare($sql, 'All', 'all'));
 	}
 
 
