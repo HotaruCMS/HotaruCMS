@@ -270,7 +270,7 @@ function do_upgrade($h, $old_version)
                 $old_version = "1.5.0";
         }
         
-        // 1.5.0, 1.5.1, 1.5.2
+        // 1.5.0 to 1.5.1
 	if (version_compare("1.4.2", $old_version) < 1) { // should set an upper limit here later
                          
                 // Need to cover all of the 1.5.0.RCx verson as well
@@ -301,9 +301,10 @@ function do_upgrade($h, $old_version)
                 
                 $h->messages['Updated from 1.5.0 - 1.5.1'] = 'green';
                 // update "old version" for next set of upgrades
-		$old_version = "1.5.2";
+		$old_version = "1.5.1";
         }
         
+        // 1.5.1 to 1.5.2
         if (version_compare("1.5.2", $old_version) < 1) { // this will also cover 1.5.2.b1 etc but need an upper limit
                         
                 $sql = "SHOW INDEX FROM `" . TABLE_POSTS . "` WHERE KEY_NAME = %s";
@@ -353,7 +354,7 @@ function do_upgrade($h, $old_version)
                 
                 $h->messages['Updated from 1.5.2'] = 'green';
                 // update "old version" for next set of upgrades
-		$old_version = "1.5.2-b1";
+		$old_version = "1.5.2-rc1";
         }
 
         
