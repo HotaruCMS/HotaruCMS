@@ -171,11 +171,9 @@ class getHtmLawed extends AccessorAbstract
 
          $h = new Hotaru();
          $results = $h->pluginHook('hotaru_inspekt_htmlawed_config', 'htmlawed_config');
-         $config = $results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'];
-
+         if (isset($results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'])) $results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'];
 
          // use default $config if not set above:
-
          if (!isset($config) || !is_array($config))
          {
           /*  make_tag_strict is OFF because we don't want HtmLawed to convert "<u>", etc. into css equivalent 
