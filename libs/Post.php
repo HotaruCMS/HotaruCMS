@@ -29,6 +29,7 @@ class Post
 	protected $id = 0;
 	protected $archived         = 'N';            // archived Yes or No (Y/N)
 	protected $author           = 0;            // post author
+        protected $authorname       = '';           // post authorname from user table on left join
 	protected $date             = '';           // post submission date
         protected $updatedts        = '';           // post updated date
 	protected $pubDate          = '';           // post published date
@@ -81,16 +82,17 @@ class Post
 		if (!$post_id && !$post_row) {
 			$post_id = $this->id;   // use the id already assigned to $h->post
 		}
-		
+
 		if ($post_id != 0) {
 			$post_row = $h->getPost($post_id);
 			if (!$post_row) { $h->vars['post_error'] = true; return false; }
 		}
-		
+
 		if ($post_row && isset($post_row->post_id)) {
 			$this->id = $post_row->post_id;
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;
+                        $this->authorname = $post_row->user_username;
 			$this->date = $post_row->post_date;
                         $this->updatedts = $post_row->post_updatedts;
 			$this->pubDate = $post_row->post_pub_date;
@@ -128,7 +130,8 @@ class Post
 	{
                 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
                     // Build SQL
-                    $query = "SELECT * FROM " . TABLE_POSTS . " WHERE post_id = %d ORDER BY post_date DESC";
+                    $query = "SELECT P.*, U.user_username FROM " . TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id WHERE P.post_id = %d";
+                    
                     $sql = $h->db->prepare($query, $post_id);                                
 
                     // Create temp cache array

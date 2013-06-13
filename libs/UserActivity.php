@@ -38,6 +38,12 @@ class UserActivity
 	{
 		$limit = (!$limitCount) ? '' : "LIMIT " . $limitCount;
 		
+                // if we also know the post id then we should join it in and check for buried,banned
+                // also we should select on the title
+                // however since we dont know whether post_id will appear in first or second useract_key we would have to make a case statement here which is messy
+                // TODO
+                // consider reorganizing the activity table to have a activity_post column which can be easily looked up
+                
 		if (!$userid)
 		{
                         $select = ($type == 'count') ? 'count(useract_id)' : 'UA.*, U.user_username';

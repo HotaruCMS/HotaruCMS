@@ -29,7 +29,9 @@ class Comment
 	protected $id           = 0;
 	protected $parent       = 0;
 	protected $postId       = 0;
+        protected $postTitle    = ''; // from left join on post table
 	protected $author       = 0;
+        protected $authorname   = ''; // from left join on user table
 	protected $date         = '';
 	protected $status       = 'approved';
 	protected $votes_up     = 0;
@@ -132,7 +134,7 @@ class Comment
 	 */
 	function readAllParents($h, $post_id, $order = "ASC")
 	{
-		$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_parent = %d AND comment_status = %s ORDER BY comment_date " . $order;
+		$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_post_id = %d AND C.comment_parent = %d AND C.comment_status = %s ORDER BY C.comment_date " . $order;
 		$query = $h->db->prepare($sql, $post_id, 0, 'approved');
 		
 		$h->smartCache('on', 'comments', 60, $query); // start using cache
@@ -153,9 +155,9 @@ class Comment
 	 */
 	function readAllChildren($h, $parent)
 	{
-		$fields = "comment_id, comment_post_id, comment_user_id, comment_parent, comment_date, comment_status, comment_content, comment_votes_up, comment_votes_down, comment_subscribe";
+		//$fields = "comment_id, comment_post_id, comment_user_id, comment_parent, comment_date, comment_status, comment_content, comment_votes_up, comment_votes_down, comment_subscribe";
 		
-		$sql = "SELECT " . $fields . " FROM " . TABLE_COMMENTS . " WHERE comment_parent = %d AND comment_status = %s ORDER BY comment_date";
+		$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_parent = %d AND C.comment_status = %s ORDER BY C.comment_date";
 		$query = $h->db->prepare($sql, $parent, 'approved');
 		
 		$h->smartCache('on', 'comments', 60, $query); // start using cache
@@ -174,7 +176,7 @@ class Comment
 	 */
 	function getComment($h, $comment_id = 0)
 	{
-		$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_id = %d";
+		$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_id = %d";
 		$query = $h->db->prepare($sql, $comment_id);
 		
 		$h->smartCache('on', 'comments', 60, $query); // start using cache
@@ -198,20 +200,20 @@ class Comment
 		
 		if ($post_id) {
 			// get all comments from specified post
-			$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s ORDER BY comment_date " . $order;
-			$query = $h->db->prepare($sql, $post_id, 'approved');
+			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_post_id = %d AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order;
+			$query = $h->db->prepare($sql, $post_id, 'approved', 'buried', 'pending');
 			$h->smartCache('on', 'comments', 60, $query); // start using cache
 			$comments = $h->db->get_results($query);
 		} else {
 			// get all comments
 			if ($userid) { 
-				$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order . $limit;
-				$query = $h->db->prepare($sql, 'N', 'approved', $userid);
+				$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_archived = %s AND C.comment_status = %s AND C.comment_user_id = %d AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order . $limit;
+				$query = $h->db->prepare($sql, 'N', 'approved', $userid, 'buried', 'pending');
 				$h->smartCache('on', 'comments', 60, $query); // start using cache
 				$comments = $h->db->get_results($query);
 			} else {
-				$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_status = %s ORDER BY comment_date " . $order . $limit;
-				$query = $h->db->prepare($sql, 'N', 'approved');
+				$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_archived = %s AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order . $limit;
+				$query = $h->db->prepare($sql, 'N', 'approved', 'buried', 'pending');
 				$h->smartCache('on', 'comments', 60, $query ); // start using cache
 				$comments = $h->db->get_results($query );
 			}
@@ -258,10 +260,10 @@ class Comment
 	{
 		// get all comments
 		if ($userid) { 
-			$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s AND comment_user_id = %d ORDER BY comment_date " . $order;
+			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_status = %s AND C.comment_user_id = %d ORDER BY C.comment_date " . $order;
 			$query = $h->db->prepare($sql, 'approved', $userid);
 		} else {
-			$sql = "SELECT * FROM " . TABLE_COMMENTS . " WHERE comment_status = %s ORDER BY comment_date " . $order;
+			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_status = %s ORDER BY C.comment_date " . $order;
 			$query = $h->db->prepare($sql, 'approved');
 		}
 		
@@ -279,7 +281,9 @@ class Comment
 		$this->id = $comment->comment_id;
 		$this->parent = $comment->comment_parent;
 		$this->postId = $comment->comment_post_id;
+                $this->postTitle = stripslashes(urldecode($comment->post_title));                
 		$this->author = $comment->comment_user_id;
+                $this->authorname = $comment->user_username;
 		$this->date = $comment->comment_date;
 		$this->status = $comment->comment_status;
 		$this->votes_up = $comment->comment_votes_up;
