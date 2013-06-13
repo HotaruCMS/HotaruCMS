@@ -52,7 +52,9 @@ class Debug
 		
                 if (!$h->adminPage && $h->pageTemplate && function_exists('file_get_contents'))
 		{
-			$template = file_get_contents(THEMES . THEME . $h->pageTemplate . '.php');
+                    $filename = THEMES . THEME . $h->pageTemplate . '.php';
+                    if (file_exists($filename)) {
+			$template = file_get_contents($filename);
 
 			$hlink1 = stripos($template,"href='http://hotarucms.org'");
 			$hlink2 = stripos($template,"href=\"http://hotarucms.org\"");
@@ -60,6 +62,7 @@ class Debug
 				// Hotaru link removed from footer so put it back in:
 				echo "<p><small><a href='http://hotarucms.org' title='HotaruCMS.org'>Powered by HotaruCMS</a></small></p>";
 			}
+                    }
 		}
                 if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { echo $this->hvars($h); }
 	
