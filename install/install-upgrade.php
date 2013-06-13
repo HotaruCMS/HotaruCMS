@@ -305,7 +305,7 @@ function do_upgrade($h, $old_version)
         }
         
         // 1.5.1 to 1.5.2
-        if (version_compare("1.5.2", $old_version) < 1) { // this will also cover 1.5.2.b1 etc but need an upper limit
+        if (version_compare($old_version, "1.5.2", '<=') > 0) { // this will also cover 1.5.2.b1 etc but need an upper limit
                         
                 $sql = "SHOW INDEX FROM `" . TABLE_POSTS . "` WHERE KEY_NAME = %s";
 		$result = $h->db->query($h->db->prepare($sql, 'post_author'));                
