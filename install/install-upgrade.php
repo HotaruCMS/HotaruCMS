@@ -325,7 +325,31 @@ function do_upgrade($h, $old_version)
                 if (!$result) {
                     $sql = "ALTER TABLE `" . TABLE_COMMENTS . "` ADD INDEX (`comment_parent`)";
                     $h->db->query($sql);
-                }                               
+                }   
+                
+                $sql = "SHOW INDEX FROM " . TABLE_MESSAGING . " WHERE KEY_NAME = %s";
+		$result = $h->db->query($h->db->prepare($sql, 'message_to'));
+                if (!$result) {
+                    $sql = "ALTER TABLE `" . TABLE_MESSAGING . "` ADD INDEX (`message_to`)";
+                    $h->db->query($sql);
+                }   
+                
+                // change NULL value setings in settings table
+                $sql = "ALTER TABLE " . TABLE_SETTINGS . " MODIFY `settings_name` varchar(64) NOT NULL";
+                $h->db->query($sql);
+                
+                $sql = "ALTER TABLE " . TABLE_SETTINGS . " MODIFY `settings_value` text NULL";
+                $h->db->query($sql);
+                
+                $sql = "ALTER TABLE " . TABLE_SETTINGS . " MODIFY `settings_default` text NULL";
+                $h->db->query($sql);
+                
+                $sql = "ALTER TABLE " . TABLE_SETTINGS . " MODIFY `settings_note` text NULL";
+                $h->db->query($sql);
+                
+                // should we hash the settings table on this version
+                
+                // should we urldecode the cats and save them back
                 
                 $h->messages['Updated from 1.5.2'] = 'green';
                 // update "old version" for next set of upgrades

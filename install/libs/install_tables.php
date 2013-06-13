@@ -106,7 +106,9 @@ function create_table($table_name)
 			FULLTEXT (`comment_content`),
 			INDEX  (`comment_archived`),
 			INDEX  (`comment_post_id`),
-			INDEX  (`comment_status`)
+			INDEX  (`comment_status`),
+                        INDEX  (`comment_user_id`),
+                        INDEX  (`comment_parent`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql); 
@@ -166,7 +168,8 @@ function create_table($table_name)
 			`message_inbox` tinyint(1) NOT NULL DEFAULT '1',
 			`message_outbox` tinyint(1) NOT NULL DEFAULT '1',
 			`message_updateby` int(20) NOT NULL DEFAULT 0,
-			INDEX  (`message_archived`)
+			INDEX  (`message_archived`),
+                        INDEX  (`message_to`),
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
@@ -298,7 +301,8 @@ function create_table($table_name)
 			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
 			INDEX  (`post_archived`),
 			INDEX  (`post_status`),
-			INDEX  (`post_type`)
+			INDEX  (`post_type`),
+                        INDEX  (`post_author`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql); 
@@ -350,7 +354,7 @@ function create_table($table_name)
 	if ($table_name == "settings") {
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`settings_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`settings_name` varchar(64) NULL,
+			`settings_name` varchar(64) NOT NULL,
 			`settings_value` text NULL,
 			`settings_default` text NULL,
 			`settings_note` text NULL,
