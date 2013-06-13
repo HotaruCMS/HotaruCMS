@@ -10,12 +10,8 @@
 			<div class="bar" style="width: 100%;"></div>
 		</div>
 	</div>
-
-        <?php 
-	//send feedback report
-	$systeminfo = new SystemInfo();
-	$systeminfo->hotaru_feedback($h);
-        ?>
+        
+        <?php $h->showMessages(); ?>
 
 	<div class='well'><?php echo $lang['upgrade_step3_instructions']; ?></div>
 	

@@ -534,6 +534,10 @@ function installation_complete()
 function upgrade_plugins()
 {
 	$h = new Hotaru();
+        
+        //send feedback report
+	$systeminfo = new SystemInfo();
+	$systeminfo->hotaru_feedback($h);
 	
         template($h, 'upgrade/upgrade_plugins.php');
 }

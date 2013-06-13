@@ -13,6 +13,8 @@
 
 <!-- Step content -->
 
+<?php $h->showMessages(); ?>
+
 <div class="form-actions">
 <!--  Previous/Next buttons -->
 <a class='btn' href='index.php?step=1&action=upgrade'><?php echo $lang['install_back']; ?></a>
