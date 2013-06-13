@@ -25,12 +25,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+$h->pluginHook('plugins_top');
 
 $h->template('admin_sidebar');
 
 $h->showMessages();
-
-$h->pluginHook('plugins_top');
 
 $the_plugins = isset($h->vars['installed_plugins']) ? $h->vars['installed_plugins'] : array();
 
