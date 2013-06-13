@@ -198,7 +198,7 @@
 
 		function query($query)
 		{
-
+                        if (isset($h->isTest) && $h->isTest) print $query . '<br/>*******<br/>';
 			// This keeps the connection alive for very long running scripts
 			if ( $this->num_queries >= 500 )
 			{
