@@ -239,9 +239,9 @@ print_r($this->getSystemData($h, 'lite'));
 			$report['hotaru_table_count'][$table_name] = $h->db->get_var("SELECT COUNT(*) FROM " . $table_name);
 		}
                 
-                $sql = 'SELECT s.schema_name,t.table_name, CONCAT(IFNULL(ROUND(SUM(t.data_length)/1024/1024,2),0.00),"Mb") data_size,CONCAT(IFNULL(ROUND(SUM(t.index_length)/1024/1024,2),0.00),"Mb") index_size, t.ENGINE ENGINE, t.table_rows TABLE_ROWS,t.row_format TABLE_ROW_FORMAT,date(t.update_time) FROM INFORMATION_SCHEMA.SCHEMATA s LEFT JOIN INFORMATION_SCHEMA.TABLES t ON s.schema_name = t.table_schema WHERE s.schema_name not in ("mysql","information_schema") GROUP BY s.schema_name,t.table_name,TABLE_ROW_FORMAT,ENGINE ORDER BY TABLE_ROWS DESC,data_size DESC,index_size DESC';
- 
-                print_r($h->db->get_results($sql));
+//                $sql = 'SELECT s.schema_name,t.table_name, CONCAT(IFNULL(ROUND(SUM(t.data_length)/1024/1024,2),0.00),"Mb") data_size,CONCAT(IFNULL(ROUND(SUM(t.index_length)/1024/1024,2),0.00),"Mb") index_size, t.ENGINE ENGINE, t.table_rows TABLE_ROWS,t.row_format TABLE_ROW_FORMAT,date(t.update_time) FROM INFORMATION_SCHEMA.SCHEMATA s LEFT JOIN INFORMATION_SCHEMA.TABLES t ON s.schema_name = t.table_schema WHERE s.schema_name not in ("mysql","information_schema") GROUP BY s.schema_name,t.table_name,TABLE_ROW_FORMAT,ENGINE ORDER BY TABLE_ROWS DESC,data_size DESC,index_size DESC';
+// 
+//                print_r($h->db->get_results($sql));
                 
 		// plugins: folder, enabled, version, order
 		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
