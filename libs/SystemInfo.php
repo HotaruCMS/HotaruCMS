@@ -25,7 +25,9 @@
  */
 class SystemInfo
 {
-	/**
+    protected $apiUrl = "http://api.hotarucms.org/index.php?page=api";
+
+    /**
 	 * Calls external site to provide system info feedback report
 	 *
 	 * @return bool true
@@ -41,7 +43,7 @@ class SystemInfo
 			'args' => serialize($report)
 		);
 		
-		$info = $this->sendApiRequest($h, $query_vals, 'http://api.hotarucms.org/index.php?page=api');
+		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
 		
 		return true;
 	}
@@ -59,7 +61,7 @@ class SystemInfo
 		    'method' => 'hotaru.version.get'
 		);
 
-		$info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
 
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
 		if (isset($info['version'])) {
@@ -94,7 +96,7 @@ class SystemInfo
 		    'method' => 'hotaru.plugin.version.getAll'
 		);
 
-		 $info = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+		 $info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
 
 		 if ($info) {
 		    // save the updated version numbers to the local db so we can display it on the plugin management panel
@@ -131,8 +133,8 @@ class SystemInfo
 		    'args' => $search
 		);
 
-		 $plugins = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
-
+		 $plugins = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
+print_r($this->getSystemData($h, 'lite'));
 		 return $plugins;
 	}
 
@@ -148,7 +150,7 @@ class SystemInfo
 		    'args' => $number
 		);
 
-		 $result = $this->sendApiRequest($h, $query_vals, 'http://hotaruplugins.com/index.php?page=api');
+		 $result = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
 
 		 return $result;
 	}
@@ -204,56 +206,16 @@ class SystemInfo
 		$report['hotaru_version_db'] = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
 		
 		// default permissions
+                if ($level !== 'lite') {
+                    $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+                    $report['hotaru_permissions'] = $h->db->get_var($h->db->prepare($sql, 'permissions'));
+                }
 		
-		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-		$report['hotaru_permissions'] = $h->db->get_var($h->db->prepare($sql, 'permissions'));
-		
-		// default user settings
-		
+		// default user settings		
 		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 		$report['hotaru_user_settings'] = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
 		
-		// plugins: folder, enabled, version, order
-		                
-		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
-		$plugins = $h->db->get_results($h->db->prepare($sql));
-		if ($plugins) {
-			foreach ($plugins as $plugin) {
-				$report['hotaru_plugins'][$plugin->plugin_folder]['enabled'] = $plugin->plugin_enabled;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['version'] = $plugin->plugin_version;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['order'] = $plugin->plugin_order;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['plugin_latestversion'] = $plugin->plugin_latestversion;
-			}
-		}
-		
-		// plugin hooks: id, folder, hook name
-		
-                if ($level != 'lite') {
-                    $sql = "SELECT phook_id, plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
-                    $plugins = $h->db->get_results($h->db->prepare($sql));
-                    if ($plugins) {
-                            foreach ($plugins as $plugin) {
-                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
-                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
-                            }
-                    }
-                }
-		
-		// plugin settings: folder, setting (can't use value because might include passwords)
-		
-                if ($level != 'lite') {
-                    $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
-                    $plugins = $h->db->get_results($h->db->prepare($sql));
-                    if ($plugins) {
-                            foreach ($plugins as $plugin) {
-                                    if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
-                                    $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
-                            }
-                    }
-                }
-		
-		// Settings: Name, value (excluding SMTP PASSWORD)
-		
+                // Settings: Name, value (excluding SMTP PASSWORD)		
 		$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
 		$settings = $h->db->get_results($h->db->prepare($sql));
 		if ($settings) {
@@ -270,6 +232,53 @@ class SystemInfo
 				$report['settings'][$setting->settings_name] = $setting->settings_value;
 			}
 		}
+                
+                // Counts for all tables		
+		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
+		{
+			$report['hotaru_table_count'][$table_name] = $h->db->get_var("SELECT COUNT(*) FROM " . $table_name);
+		}
+                
+                $sql = 'SELECT s.schema_name,t.table_name, CONCAT(IFNULL(ROUND(SUM(t.data_length)/1024/1024,2),0.00),"Mb") data_size,CONCAT(IFNULL(ROUND(SUM(t.index_length)/1024/1024,2),0.00),"Mb") index_size, t.ENGINE ENGINE, t.table_rows TABLE_ROWS,t.row_format TABLE_ROW_FORMAT,date(t.update_time) FROM INFORMATION_SCHEMA.SCHEMATA s LEFT JOIN INFORMATION_SCHEMA.TABLES t ON s.schema_name = t.table_schema WHERE s.schema_name not in ("mysql","information_schema") GROUP BY s.schema_name,t.table_name,TABLE_ROW_FORMAT,ENGINE ORDER BY TABLE_ROWS DESC,data_size DESC,index_size DESC';
+ 
+                print_r($h->db->get_results($sql));
+                
+		// plugins: folder, enabled, version, order
+		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
+		$plugins = $h->db->get_results($h->db->prepare($sql));
+		if ($plugins) {
+			foreach ($plugins as $plugin) {
+				$report['hotaru_plugins'][$plugin->plugin_folder]['enabled'] = $plugin->plugin_enabled;
+				$report['hotaru_plugins'][$plugin->plugin_folder]['version'] = $plugin->plugin_version;
+				$report['hotaru_plugins'][$plugin->plugin_folder]['order'] = $plugin->plugin_order;
+				$report['hotaru_plugins'][$plugin->plugin_folder]['plugin_latestversion'] = $plugin->plugin_latestversion;
+			}
+		}
+		
+		// plugin hooks: id, folder, hook name
+		
+                if ($level !== 'lite') {
+                    $sql = "SELECT phook_id, plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
+                    $plugins = $h->db->get_results($h->db->prepare($sql));
+                    if ($plugins) {
+                            foreach ($plugins as $plugin) {
+                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
+                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
+                            }
+                    }
+                }
+		
+		// plugin settings: folder, setting (can't use value because might include passwords)		
+                if ($level !== 'lite') {
+                    $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
+                    $plugins = $h->db->get_results($h->db->prepare($sql));
+                    if ($plugins) {
+                            foreach ($plugins as $plugin) {
+                                    if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
+                                    $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
+                            }
+                    }
+                }				
 		
 		// Widgets: plugin, function, args
 		
@@ -280,14 +289,7 @@ class SystemInfo
 				$report['hotaru_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
 				$report['hotaru_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
 			}
-		}
-		
-		// Counts for all tables
-		
-		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
-		{
-			$report['hotaru_table_count'][$table_name] = $h->db->get_var("SELECT COUNT(*) FROM " . $table_name);
-		}
+		}				
 		
 		return $report;
 	}
