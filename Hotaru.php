@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = "1.5.2-rc1";  // Hotaru CMS version
+	protected $version              = "1.5.2";  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -93,6 +93,9 @@ class Hotaru
                 if (!defined('ACTIVERECORD')) define('ACTIVERECORD', false);
 
 		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
+//                require_once(EXTENSIONS . 'SmartLoader/autoload.php');                
+//                $loader = new SplClassLoader(null, array(rtrim(LIBS, '/'), EXTENSIONS . 'ezSQL/mysqli'));
+//                $loader->register();
 
 		// initialize Hotaru
 		if (!$start) {
@@ -145,6 +148,25 @@ class Hotaru
 				$page = $admin->adminInit($this);       // initialize Admin & get desired page
 				$this->adminPages($page);               // Direct to desired Admin page
 				break;
+                        case 'api':
+                                $this->adminPage = false;
+                                if (SITE_OPEN == 'false') { return true; }
+                                // dont check cookies, dont set session
+                                // check access by http access
+                                
+                                // go to api class to extract data for this call
+                                
+                                $method = $this->cage->get->noTags('method'); 
+                                
+                                $apiArray = explode('.', $method);
+                                // check that we have 3 parts
+                                $class = isset($apiArray[0]) ? $apiArray[0] : '';
+                                $method = isset($apiArray[1]) ? $apiArray[1] : '';
+                                $action = isset($apiArray[2]) ? $apiArray[2] : '';
+                                if ($class !== 'hotaru') return false;
+                                
+                                $this->pluginHook('api_start', $method, $action);
+                                break;
 			default:
 				$this->adminPage = false;
 				$this->checkCookie();                   // log in user if cookie
