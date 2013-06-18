@@ -64,7 +64,9 @@ class Debug
                         }
                     }
                 }
-                if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { echo $this->hvars($h); }
+                if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { 
+                    //echo $this->hvars($h); 
+                }
 	
 		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
 	}
