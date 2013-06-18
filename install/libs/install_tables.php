@@ -169,7 +169,7 @@ function create_table($table_name)
 			`message_outbox` tinyint(1) NOT NULL DEFAULT '1',
 			`message_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`message_archived`),
-                        INDEX  (`message_to`),
+                        INDEX  (`message_to`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 		$db->query($sql);
