@@ -28,8 +28,12 @@
 if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');
 	require_once('Hotaru.php');
-	$h = new Hotaru();
-        $h->start('main');
+        $h = new Hotaru();
+        
+        // Server Variables
+        $apiAuth = $h->cage->get->testAlnumLines('apiAuth');
+
+        if (!$apiAuth) $h->start('main'); else $h->start('api');
 } else {
         	
 	if(file_exists('install/index.php') ) {
