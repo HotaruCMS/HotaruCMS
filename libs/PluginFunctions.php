@@ -183,10 +183,13 @@ class PluginFunctions
 	 */
 	public function numActivePlugins($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
-                    $enabled = $h->db->get_var($h->db->prepare("SELECT count(plugin_id) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d", 1));   
-                } else {
-                    $enabled = models___Plugins::count_by_plugin_enabled(1);
+                $sql = "SELECT count(plugin_id) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
+                if (!ACTIVERECORD) {
+                    $enabled = $h->db->get_var($h->db->prepare($sql, 1));   
+                } else {                    
+                    $enabled = $h->mdb->queryFirstField($sql,1);
+                    print_r($enabled);
+                    //$enabled = models___Plugins::count_by_plugin_enabled(1);
                 }
                 
                 if ($enabled > 0) { return $enabled; } else { return false; }
@@ -318,7 +321,7 @@ class PluginFunctions
          */
         public static function getAllActivePluginNames($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                if (!ACTIVERECORD) {
                     $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
                     $pluginNames = $h->db->get_results($sql);
@@ -342,20 +345,20 @@ class PluginFunctions
 	 */
 	public static function getAllPluginDetails($h)
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {           
+                //if (!ACTIVERECORD) {           
                     $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
-                    $h->allPluginDetails = $h->db->get_results($sql);
+                    if (!ACTIVERECORD) { $h->allPluginDetails = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
 
                     $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
                     $h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
-                    $h->allPluginDetails['hooks'] = $h->db->get_results($sql);
+                    if (!ACTIVERECORD) { $h->allPluginDetails['hooks'] = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
 
                     $h->smartCache('off');   // stop using cache                 
-                } else {
-                    $h->allPluginDetails = models___Plugins::find('all',array('order'=>'plugin_order asc'));
-                    $h->allPluginDetails['hooks'] = models___Pluginhooks::find('all', array('select'=> 'plugin_folder, plugin_hook'));
-                }
+//                } else {
+//                    $h->allPluginDetails = models___Plugins::find('all',array('order'=>'plugin_order asc'));
+//                    $h->allPluginDetails['hooks'] = models___Pluginhooks::find('all', array('select'=> 'plugin_folder, plugin_hook'));
+//                }
 	}
 	
 	
