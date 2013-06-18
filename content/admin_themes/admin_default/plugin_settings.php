@@ -35,14 +35,15 @@ $plugin = $h->vars['settings_plugin'];    // plugin folder name
 $meta = $h->readPluginMeta($plugin);
 $pluginData = $h->readPlugin($plugin);
 
+$plugin_latest_version = isset($pluginData->plugin_latestversion ) ? $pluginData->plugin_latestversion : '0.0';
 
-if (version_compare($pluginData->plugin_latestversion, $pluginData->plugin_version) == 1) { 
+if (version_compare($plugin_latest_version, $pluginData->plugin_version) == 1) { 
     $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($pluginData->plugin_folder) . "&version=" . $pluginData->plugin_latestversion . "#tab_updates";
     $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="' . $href . '">upgrade now</a>', 'alert-info'); 
     // show version number in the message
 }
 
-if ($pluginData->plugin_latestversion == '0.0') {     
+if ($plugin_latest_version == '0.0') {     
     $h->showMessage('No version information could be found on the plugin server ', ''); 
     // show version number in the message
 }
@@ -74,7 +75,7 @@ if ($pluginData->plugin_latestversion == '0.0') {
                         //echo 'Active status';
 			//echo '<br/>'; 
                         
-                        echo 'Latest Version : ' . $pluginData->plugin_latestversion; echo '<br/>';
+                        echo 'Latest Version : ' . $plugin_latest_version; echo '<br/>';
                         echo 'Your Version : ' . $pluginData->plugin_version; echo '<br/>';
                         //echo 'Last checked for newer version : need to add field for this in db';
                         echo '<br/><br/>';
