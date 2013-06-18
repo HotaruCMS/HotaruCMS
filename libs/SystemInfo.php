@@ -26,6 +26,7 @@
 class SystemInfo
 {
     protected $apiUrl = "http://api.hotarucms.org/index.php?page=api";
+    protected $pluginUrl = "http://hotaruplugins.com/index.php?page=api";
 
     /**
 	 * Calls external site to provide system info feedback report
@@ -61,7 +62,7 @@ class SystemInfo
 		    'method' => 'hotaru.version.get'
 		);
 
-		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
+		$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
 
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
 		if (isset($info['version'])) {
@@ -96,7 +97,7 @@ class SystemInfo
 		    'method' => 'hotaru.plugin.version.getAll'
 		);
 
-		 $info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
+		 $info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
 
 		 if ($info) {
 		    // save the updated version numbers to the local db so we can display it on the plugin management panel
@@ -133,8 +134,8 @@ class SystemInfo
 		    'args' => $search
 		);
 
-		 $plugins = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
-print_r($this->getSystemData($h, 'lite'));
+		 $plugins = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+
 		 return $plugins;
 	}
 
@@ -150,7 +151,7 @@ print_r($this->getSystemData($h, 'lite'));
 		    'args' => $number
 		);
 
-		 $result = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
+		 $result = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
 
 		 return $result;
 	}
