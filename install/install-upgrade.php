@@ -352,9 +352,9 @@ function do_upgrade($h, $old_version)
                 
                 // should we urldecode the cats and save them back
                 
-                $h->messages['Updated from 1.5.2'] = 'green';
+                $h->messages['Updated from 1.5.2.b/rc'] = 'green';
                 // update "old version" for next set of upgrades
-		$old_version = "1.5.2-rc1";
+		$old_version = "1.5.2";
         }
 
         
