@@ -249,7 +249,7 @@ class Initialize
 	 */
 	public function readSettings() {	    
             
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {                    
+                if (!ACTIVERECORD) {                    
                     $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;                    
                     $settings = $this->db->get_results($this->db->prepare($sql));                   
                 } else {                    
