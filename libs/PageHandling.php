@@ -399,9 +399,9 @@ class PageHandling
 					$value = $h->post->url;
 					
 					// if we're using categories and the category is not "all"...
-					if ($h->isActive('categories') && $h->post->category > 1) {
-						$url .= $h->getCatSafeName($h->post->category) . '/';
-					}
+//					if ($h->isActive('categories') && $h->post->category > 1) {
+//						$url .= $h->getCatSafeName($h->post->category) . '/';
+//					}
 					
 					$url .= $value . '/';
 				
