@@ -80,7 +80,7 @@ class Comment
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-                if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50300 || !ACTIVERECORD) {
+                if (!ACTIVERECORD) {
                     $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
                     $query = $h->db->prepare($sql, $h->post->id, 'approved');
 
@@ -281,9 +281,9 @@ class Comment
 		$this->id = $comment->comment_id;
 		$this->parent = $comment->comment_parent;
 		$this->postId = $comment->comment_post_id;
-                $this->postTitle = stripslashes(urldecode($comment->post_title));                
+                $this->postTitle = isset($comment->post_title) ? stripslashes(urldecode($comment->post_title)) : '';
 		$this->author = $comment->comment_user_id;
-                $this->authorname = $comment->user_username;
+                $this->authorname = isset($comment->user_username) ? $comment->user_username : '';
 		$this->date = $comment->comment_date;
 		$this->status = $comment->comment_status;
 		$this->votes_up = $comment->comment_votes_up;
@@ -307,8 +307,7 @@ class Comment
 		$sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
 		
 		$h->db->query($h->db->prepare($sql, $this->postId, $this->author, $this->parent, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $h->currentUser->id));
-		
-		$last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
+                $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
 		
 		$this->id = $last_insert_id;
 		$h->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
