@@ -248,12 +248,11 @@ class Initialize
 	 * @return <bool>
 	 */
 	public function readSettings() {	    
-            
-                if (!ACTIVERECORD) {                    
-                    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;                    
+                $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;  
+                
+                if (!MEEKRODB) {                                      
                     $settings = $this->db->get_results($this->db->prepare($sql));                   
-                } else {                    
-                    $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
+                } else {                                
                     $settings = $this->mdb->query($sql);  
 //                    $settings = $this->db->query($sql);
                     //$settings = models___Settings::all(array('select' => 'settings_name, settings_value'));

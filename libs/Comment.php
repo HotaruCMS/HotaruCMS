@@ -80,7 +80,7 @@ class Comment
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-                if (!ACTIVERECORD) {
+                if (!MEEKRODB) {
                     $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
                     $query = $h->db->prepare($sql, $h->post->id, 'approved');
 

@@ -49,7 +49,7 @@ class Category
 	 */
 	public function getCatName($h, $cat_id = 0, $cat_safe_name = '')
 	{
-                if (!ACTIVERECORD) {
+                if (!MEEKRODB) {
                     if ($cat_id == 0 && $cat_safe_name != '') {
                             // Use safe name
                             $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";

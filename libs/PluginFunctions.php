@@ -184,7 +184,7 @@ class PluginFunctions
 	public function numActivePlugins($h)
 	{
                 $sql = "SELECT count(plugin_id) FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = %d";
-                if (!ACTIVERECORD) {
+                if (!MEEKRODB) {
                     $enabled = $h->db->get_var($h->db->prepare($sql, 1));   
                 } else {                    
                     $enabled = $h->mdb->queryFirstField($sql,1);
@@ -321,7 +321,7 @@ class PluginFunctions
          */
         public static function getAllActivePluginNames($h)
 	{
-                if (!ACTIVERECORD) {
+                if (!MEEKRODB) {
                     $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
                     $pluginNames = $h->db->get_results($sql);
@@ -345,14 +345,14 @@ class PluginFunctions
 	 */
 	public static function getAllPluginDetails($h)
 	{
-                //if (!ACTIVERECORD) {           
+                //if (!MEEKRODB) {           
                     $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
-                    if (!ACTIVERECORD) { $h->allPluginDetails = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
+                    if (!MEEKRODB) { $h->allPluginDetails = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
 
                     $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
                     $h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
-                    if (!ACTIVERECORD) { $h->allPluginDetails['hooks'] = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
+                    if (!MEEKRODB) { $h->allPluginDetails['hooks'] = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
 
                     $h->smartCache('off');   // stop using cache                 
 //                } else {
@@ -371,32 +371,32 @@ class PluginFunctions
 	 */
 	public function isActive($h, $type = '')
 	{
-                if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || !ACTIVERECORD) {                       
+                                   
                     // first see if there's an active plugin with this *type*:
                     if ($type) {                                                 
                         $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
-                        $status = $h->db->get_var($h->db->prepare($sql, $type));  
+                        if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->query($sql, $type); } 
 
                         if (!$status) {                                                            
                             $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-                            $status = $h->db->get_var($h->db->prepare($sql, $type));
+                            if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->qery($sql, $type); }
                         }
                     } else {
 			// if not $type provided, see if the *current* plugin is enabled... (which it obviously is! doh!)			                       
                         $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-			$status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder));
+			if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder)); } else { $status = $h->mdb->query($sql, $h->plugin->folder); }
                     }
-                } else {
-                    // first see if there's an active plugin with this *type*:
-                    if ($type) { 
-                        $status = models___Plugins::count_by_plugin_type($type);
-                            
-                        if (!$status) 
-                            $status = models___Plugins::count_by_plugin_folder($type);                            
-                    } else {
-                        $status = models___Plugins::count_by_plugin_folder($h->plugin->folder);
-                    }                    
-                } 
+//                } else {
+//                    // first see if there's an active plugin with this *type*:
+//                    if ($type) { 
+//                        $status = models___Plugins::count_by_plugin_type($type);
+//                            
+//                        if (!$status) 
+//                            $status = models___Plugins::count_by_plugin_folder($type);                            
+//                    } else {
+//                        $status = models___Plugins::count_by_plugin_folder($h->plugin->folder);
+//                    }                    
+//                } 
                 
 		if ($status) { return true; } else { return false; }
 	}
@@ -414,7 +414,7 @@ class PluginFunctions
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!isset($h->vars['all_plugin_hooks'])) {
-                    if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || !ACTIVERECORD) {  
+                    if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || !MEEKRODB) {  
                         $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
 			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));		
                     } else {

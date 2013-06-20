@@ -90,7 +90,7 @@ class Hotaru
 			define("SITEURL", BASEURL);
 		}
                 
-                if (!defined('ACTIVERECORD')) define('ACTIVERECORD', false);
+                if (!defined('MEEKRODB')) define('MEEKRODB', false);
 
 		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
 //                require_once(EXTENSIONS . 'SmartLoader/autoload.php');                
