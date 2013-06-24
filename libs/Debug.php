@@ -39,6 +39,7 @@ class Debug
 			
 			echo "<p class='debug'>";
 			echo $h->lang('main_hotaru_db_queries') . $h->db->num_queries . " | ";
+                        echo $h->lang('main_hotaru_cache_queries') . $h->db->num_cache_queries . " | ";
 			echo $h->lang('main_hotaru_page_load_time') . timer_stop(2) . $h->lang('main_times_secs') . " | ";
 			echo $h->lang('main_hotaru_memory_usage') . display_filesize(memory_get_usage()) . " | ";
 			echo $h->lang('main_hotaru_php_version') . phpversion() . " | ";
