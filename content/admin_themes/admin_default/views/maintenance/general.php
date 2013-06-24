@@ -10,7 +10,7 @@
 	<br />
 	<?php echo $h->lang("admin_theme_maintenance_announcement"); ?>
 	
-	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php#tab_home' method='get'>    
+	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php?action=announcement#tab_home' method='post'>    
 	<div>
             <div style='width:80%;'>
 		<textarea style='width:100%;' name='announcement_text' rows=3><?php echo $h->vars['admin_announcement']; ?></textarea>
@@ -23,8 +23,7 @@
             </div>
             <input class='btn' type='submit' value='<?php echo $h->lang('main_form_submit'); ?>' />
 
-	</div>
-	<input type='hidden' name='action' value='announcement'>
+	</div>	
 	<input type='hidden' name='page' value='maintenance'>
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 	</form>
