@@ -49,6 +49,7 @@ $lang['main_userbase_cookie_error'] = "Error setting cookie. Username not provid
 
 /* Debug / Maintenance */
 $lang['main_hotaru_db_queries'] = "Database queries: ";
+$lang['main_hotaru_cache_queries'] = "Cache queries: ";
 $lang['main_hotaru_page_load_time'] = "Page load time: ";
 $lang['main_hotaru_memory_usage'] = "Memory usage: ";
 $lang['main_hotaru_php_version'] = "PHP v.";
