@@ -33,6 +33,7 @@
 		var $vardump_called   = false;
 		var $show_errors      = true;
 		var $num_queries      = 0;
+                var $num_cache_queries= 0;
 		var $last_query       = null;
 		var $last_error       = null;
 		var $col_info         = null;
