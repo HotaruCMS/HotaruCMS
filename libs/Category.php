@@ -49,19 +49,16 @@ class Category
 	 */
 	public function getCatName($h, $cat_id = 0, $cat_safe_name = '')
 	{
-                if (!MEEKRODB) {
-                    if ($cat_id == 0 && $cat_safe_name != '') {
-                            // Use safe name
-                            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
-                            $cat_name = $h->db->get_var($h->db->prepare($sql, $cat_safe_name));
-                    } else {
-                            // Use id
-                            $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-                            $cat_name = $h->db->get_var($h->db->prepare($sql, $cat_id));
-                    }
+                if ($cat_id == 0 && $cat_safe_name != '') {
+                        // Use safe name
+                        $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
+                        $cat_name = !MEEKRODB ? $h->db->get_var($h->db->prepare($sql, $cat_safe_name)) : $h->mdb->queryFirstField($sql, $cat_safe_name);
                 } else {
-                    
+                        // Use id
+                        $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+                        $cat_name = !MEEKRODB ? $h->db->get_var($h->db->prepare($sql, $cat_id)) : $h->mdb->queryFirstField($sql, $cat_id);
                 }
+               
 		return urldecode($cat_name);
 	}
 	

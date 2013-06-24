@@ -188,9 +188,11 @@ class PluginFunctions
                     $enabled = $h->db->get_var($h->db->prepare($sql, 1));   
                 } else {                    
                     $enabled = $h->mdb->queryFirstField($sql,1);
-                    print_r($enabled);
                     //$enabled = models___Plugins::count_by_plugin_enabled(1);
                 }
+                
+                //TODO
+                // we could cache this off and increment it on plugin activtated etc
                 
                 if ($enabled > 0) { return $enabled; } else { return false; }
 	}
@@ -321,18 +323,22 @@ class PluginFunctions
          */
         public static function getAllActivePluginNames($h)
 	{
+                $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
+                    
                 if (!MEEKRODB) {
-                    $sql = "SELECT plugin_name, plugin_folder FROM " . TABLE_PLUGINS . " WHERE plugin_enabled = 1 ORDER BY plugin_name ASC";
                     $h->smartCache('on', 'plugins', $h->db->cache_timeout, $sql); // start using cache
                     $pluginNames = $h->db->get_results($sql);
 
                     $h->smartCache('off');   // stop using cache                     
                 } else {
-                    $pluginNames = models___Plugins::all(array(
-                        'select' => 'plugin_name, plugin_folder',
-                        'conditions' => array('plugin_enabled = ?', 1),
-                        'order' => 'plugin_name asc'
-                    )); 
+                    $pluginNames = $h->mdb->queryObj($sql);
+                    //TODO include caching for this
+                    
+//                    $pluginNames = models___Plugins::all(array(
+//                        'select' => 'plugin_name, plugin_folder',
+//                        'conditions' => array('plugin_enabled = ?', 1),
+//                        'order' => 'plugin_name asc'
+//                    )); 
                 }
                 
                 return $pluginNames;

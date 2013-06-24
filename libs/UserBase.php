@@ -151,7 +151,7 @@ class UserBase
                         $user_info = $h->vars['tempUserCache'][$sql];
                 } else {
                         // Fetch from database
-                        if (!MEEKRODB) { $user_info = $h->db->get_row($sql); } else { $user_info = $h->mdb->queryObj($sql)[0]; }
+                        if (!MEEKRODB) { $user_info = $h->db->get_row($sql); } else { $user_info = $h->mdb->queryOneRow($sql); }
                         $h->vars['tempUserCache'][$sql] = $user_info;
                 }
 		 
