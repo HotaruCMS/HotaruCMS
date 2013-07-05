@@ -70,7 +70,10 @@ class EmailFunctions
 		{
 			if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
 			if (!$this->headers) {
-				$this->headers = array ('MIME-Version: 1.0\r\nFrom' => $this->from, '\r\nTo' => $to, 'Subject' => $this->subject);
+				//$this->headers = array ('MIME-Version: 1.0\r\nFrom' => $this->from, '\r\nTo' => $to, 'Subject' => $this->subject);
+                                $this->headers['From'] = $this->from;
+                                $this->headers['To'] = $to;
+                                $this->headers['Subject'] = $this->subject;
 			} else {
 				$this->headers['To'] = $to;
 			}
