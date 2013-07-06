@@ -301,17 +301,23 @@ class Maintenance
 	 * @param object $announcement_exists - result from getSiteAnnouncement()
 	 */
 	public function addSiteAnnouncement($h)
-	{
+	{   
+                if (!$h->csrf()) { 
+                        $h->messages[$h->lang['error_csrf']] = 'red';
+                        return false;
+                }
+                
 		$allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><del><br><br/>";
-		$h->vars['admin_announcement'] = sanitize($h->cage->get->getHtmLawed('announcement_text'), 'tags', $allowable_tags);
-		if ($h->cage->get->keyExists('announcement_enabled')) {
+		$h->vars['admin_announcement'] = sanitize($h->cage->post->getHtmLawed('announcement_text'), 'tags', $allowable_tags);
+		
+                if ($h->cage->post->keyExists('announcement_enabled')) {
 			$h->vars['admin_announcement_enabled'] = "checked";
 		} else {
 			$h->vars['admin_announcement_enabled'] = "";
 		}
 		
-		// prepare annoucment for database entry:
-		$value = array('announcement'=>urlencode($h->vars['admin_announcement']), 'enabled'=>$h->vars['admin_announcement_enabled']);
+		// prepare announcement for database entry:
+		$value = array('announcement'=>$h->vars['admin_announcement'], 'enabled'=>$h->vars['admin_announcement_enabled']);
 		$value = serialize($value);
 		
 		// update existing db record
@@ -321,8 +327,7 @@ class Maintenance
 		// clear the database cache:
 		$h->clearCache('db_cache', false);
 		
-		$h->message = $h->lang('admin_maintenance_announcement_updated');
-		$h->messageType = 'green';
+		$h->messages[$h->lang('admin_maintenance_announcement_updated')] = 'green';		
 	}
 	
 	
