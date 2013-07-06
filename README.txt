@@ -1,6 +1,6 @@
 HOTARU CMS
 ==========
-Version 1.5.0 RC3 - May 19th 2013
+Version 1.5.2 - June 2013
 
 Version: 1.4.2 - November 20th 2010
 
@@ -9,12 +9,12 @@ INSTALLATION
 
 Please visit [the appropriate documentation page][1] for the most up-to-date version of these instructions.
 
-Instructions last updated: May 19th 2013
+Instructions last updated: July 2013
 
 Requirements
 ------------
 
-Hotaru CMS has been tested using PHP 5.3.2~  and MySQL 5.0~.
+Hotaru CMS has been tested using PHP 5.2.x~  and MySQL 5.0~.
 
 Upgrading
 ---------
