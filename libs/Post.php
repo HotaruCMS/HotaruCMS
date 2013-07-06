@@ -127,11 +127,11 @@ class Post
 	 * @return array|false
 	 */    
 	public function getPost($h, $post_id = 0)
-	{
+	{ 
+                $query = "SELECT P.*, U.user_username FROM " . TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id WHERE P.post_id = %d";
+                   
                 if (!MEEKRODB) {
-                    // Build SQL
-                    $query = "SELECT P.*, U.user_username FROM " . TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id WHERE P.post_id = %d";
-                    
+                    // Build SQL                    
                     $sql = $h->db->prepare($query, $post_id);                                
 
                     // Create temp cache array
@@ -146,10 +146,10 @@ class Post
                             $post = $h->db->get_row($sql);
                             $h->vars['tempPostCache'][$sql] = $post;
                     }
-                } else {          
+                } else {
                     $post = $h->mdb->queryOneRow($query, $post_id);
                     
-                    $post = models___Posts::find_by_post_id($post_id);
+                    //$post = models___Posts::find_by_post_id($post_id);
                     // note we dont use models___Posts::($post_id); because it will throw an error if record not foound
                 }
 		
@@ -261,14 +261,15 @@ class Post
 	public function deletePosts($h, $user_id = 0) 
 	{
 		if (!$user_id) { return false; }
-		
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
+                
+		$sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
+                if (!MEEKRODB) {                    
                     $results = $h->db->get_results($h->db->prepare($sql, $user_id));
                 } else {
-                    $results = models___Posts::all(array(
-                        'conditions' => array('post_author = ?', $user_id)
-                     ));
+                    $results = $h->mdb->queryObj($sql, $user_id);
+//                    $results = models___Posts::all(array(
+//                        'conditions' => array('post_author = ?', $user_id)
+//                     ));
                 }
 				
 		if ($results) {
@@ -313,14 +314,16 @@ class Post
 	 */    
 	public function urlExists($h, $url = '')
 	{
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+                $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+                
+                if (!MEEKRODB) {                    
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
                 } else {
-                    $posts = models___Posts::all(array(
-                        'select' => 'post_id, post_status',
-                        'conditions' => array('post_orig_url = ?', urlencode($url))
-                        ));
+                    $posts = $h->mdb->queryObj($sql, urlencode($url));
+//                    $posts = models___Posts::all(array(
+//                        'select' => 'post_id, post_status',
+//                        'conditions' => array('post_orig_url = ?', urlencode($url))
+//                        ));
                 }                		
 		
 		if (!$posts) { return false; }
@@ -334,13 +337,14 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-                if (!MEEKRODB) {
-                    $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
+                $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
+                if (!MEEKRODB) {                    
                     $post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
                 } else {
-                    $post = models___Posts::first(array(                        
-                        'conditions' => array('post_orig_url = ?', urlencode($url))
-                     ));
+                    $post = $h->mdb->queryFirstRow($sql, urlencode($url));
+//                    $post = models___Posts::first(array(                        
+//                        'conditions' => array('post_orig_url = ?', urlencode($url))
+//                     ));
                 }  
 				
 		// if present return the first existing row
@@ -360,14 +364,16 @@ class Post
 
 		if (!$title) { return FALSE; }
 
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
+                $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
+                
+                if (!MEEKRODB) {                    
                     $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
                 } else {
-                    $posts = models___Posts::all(array(
-                        'select' => 'post_id, post_status',
-                        'conditions' => array('post_title = ?', urlencode($title))
-                    ));
+                    $posts = $h->mdb->queryObj($sql, urlencode($title));
+//                    $posts = models___Posts::all(array(
+//                        'select' => 'post_id, post_status',
+//                        'conditions' => array('post_title = ?', urlencode($title))
+//                    ));
                 } 		
 		
 		if (!$posts) { return false; }
@@ -381,15 +387,17 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
+                $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
+                
+                if (!MEEKRODB) {                    
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
                 } else {
-                    $post = models___Posts::first(array( 
-                        'select' => 'post_id',
-                        'conditions' => array('post_title = ?', urlencode($title))
-                    ));
-                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
+                    $post_id = $h->mdb->queryFirstField($sql, urlencode($title));
+//                    $post = models___Posts::first(array( 
+//                        'select' => 'post_id',
+//                        'conditions' => array('post_title = ?', urlencode($title))
+//                    ));
+//                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
                 } 		
 		
 		if ($post_id) { return $post_id; } else { return false; }
@@ -404,15 +412,17 @@ class Post
 	 */
 	public function isPostUrl($h, $post_url = '')
 	{
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
+                $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
+                
+                if (!MEEKRODB) {                    
                     $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
                 } else {
-                    $post = models___Posts::first(array( 
-                        'select' => 'post_id',
-                        'conditions' => array('post_url = ?', urlencode($post_url))
-                      ));
-                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
+                    $post_id = $h->mdb->queryFirstField($sql, urlencode($post_url));
+//                    $post = models___Posts::first(array( 
+//                        'select' => 'post_id',
+//                        'conditions' => array('post_url = ?', urlencode($post_url))
+//                      ));
+                    //if (isset($post->post_id)) $post_id = $post->post_id; else return false;
                 }
                 
 		if ($post_id) { return $post_id; } else { return false; }
@@ -430,13 +440,15 @@ class Post
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-                if (!MEEKRODB) {
-                    $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                
+                if (!MEEKRODB) {                    
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
-                } else {                                 
-                    $count = models___Posts::count(array(
-                        'conditions' => array('(post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
-                     );;
+                } else {                        
+                    $count = $h->mdb->queryFirstField($sql, 'top', 'new', $user_id, $post_type);
+//                    $count = models___Posts::count(array(
+//                        'conditions' => array('(post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
+//                     );;
                 }
                  
 		return $count;	
@@ -452,7 +464,8 @@ class Post
 		$timestamp = strtotime($h->db->get_var($sql));
 		$exp = date('YmdHis', $timestamp - (60 * 30));
 		$sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_status = %s AND post_date < %s";
-		$h->db->query($h->db->prepare($sql, 'processing', $exp));
+		
+                if (!MEEKRODB) { $h->db->query($h->db->prepare($sql, 'processing', $exp)); } else { $h->mdb->query($sql, 'processing', $exp); }
 	}
 	
 	

@@ -358,7 +358,7 @@ class PluginFunctions
 
                     $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
                     $h->smartCache('on', 'pluginhooks', $h->db->cache_timeout, $sql); // start using cache
-                    if (!MEEKRODB) { $h->allPluginDetails['hooks'] = $h->db->get_results($sql); } else { $h->allPluginDetails = $h->mdb->queryObj($sql); }
+                    if (!MEEKRODB) { $h->allPluginDetails['hooks'] = $h->db->get_results($sql); } else { $h->allPluginDetails['hooks'] = $h->mdb->queryObj($sql); }
 
                     $h->smartCache('off');   // stop using cache                 
 //                } else {
@@ -381,16 +381,16 @@ class PluginFunctions
                     // first see if there's an active plugin with this *type*:
                     if ($type) {                                                 
                         $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_type = %s";
-                        if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->query($sql, $type); } 
+                        if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->queryFirstField($sql, $type); } 
 
                         if (!$status) {                                                            
                             $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-                            if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->qery($sql, $type); }
+                            if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $type)); } else { $status = $h->mdb->queryFirstField($sql, $type); }
                         }
                     } else {
 			// if not $type provided, see if the *current* plugin is enabled... (which it obviously is! doh!)			                       
                         $sql = "SELECT count(plugin_enabled) FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-			if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder)); } else { $status = $h->mdb->query($sql, $h->plugin->folder); }
+			if (!MEEKRODB) { $status = $h->db->get_var($h->db->prepare($sql, $h->plugin->folder)); } else { $status = $h->mdb->queryFirstField($sql, $h->plugin->folder); }
                     }
 //                } else {
 //                    // first see if there's an active plugin with this *type*:
@@ -420,14 +420,16 @@ class PluginFunctions
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
 		if (!isset($h->vars['all_plugin_hooks'])) {
-                    if (defined('PHP_VERSION_ID') && PHP_VERSION_ID < 50300 || !MEEKRODB) {  
-                        $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
-			$h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));		
+                    $sql = "SELECT plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_hook = %s";
+			
+                    if (!MEEKRODB) {  
+                        $h->vars['all_plugin_hooks'] = $h->db->get_results($h->db->prepare($sql, 'admin_plugin_settings'));		
                     } else {
-                        $h->vars['all_plugin_hooks'] = models___Pluginhooks::find('first', array(
-                            'select' => 'plugin_folder, plugin_hook',
-                            'conditions' => array('plugin_hook', 'admin_plugin_settings')                       
-                        )); 
+                        $h->vars['all_plugin_hooks'] = $h->mdb->queryObj($sql, 'admin_plugin_settings');
+//                        $h->vars['all_plugin_hooks'] = models___Pluginhooks::find('first', array(
+//                            'select' => 'plugin_folder, plugin_hook',
+//                            'conditions' => array('plugin_hook', 'admin_plugin_settings')                       
+//                        )); 
                     }
                 } 
 

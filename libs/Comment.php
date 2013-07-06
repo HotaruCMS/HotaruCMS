@@ -80,17 +80,19 @@ class Comment
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
+                $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
+                    
                 if (!MEEKRODB) {
-                    $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
                     $query = $h->db->prepare($sql, $h->post->id, 'approved');
 
                     $h->smartCache('on', 'comments', 60, $query); // start using cache
                     $num_comments = $h->db->get_var($query);
                     $h->smartCache('off'); // stop using cache		
-                } else {                                       
-                    $num_comments = models___Comments::count(array(
-                        'conditions' => array('comment_post_id = ? AND comment_status = ?', $h->post->id, 'approved'))
-                     );;
+                } else {   
+                    $num_comments = $h->mdb->queryFirstField($sql, $h->post->id, 'approved');
+//                  $num_comments = models___Comments::count(array(
+//                        'conditions' => array('comment_post_id = ? AND comment_status = ?', $h->post->id, 'approved'))
+//                     );;
                 }
                 
 		if ($digits_only) { return $num_comments; } // just return the number
