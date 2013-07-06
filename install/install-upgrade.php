@@ -299,7 +299,7 @@ function do_upgrade($h, $old_version)
 			$h->db->query($h->db->prepare($sql));
 		}                
                 
-                $h->messages['Updated from 1.5.0 - 1.5.1'] = 'green';
+                $h->messages['Updated from 1.5.0, 1.5.1'] = 'green';
                 // update "old version" for next set of upgrades
 		$old_version = "1.5.1";
         }
@@ -357,6 +357,15 @@ function do_upgrade($h, $old_version)
 		$old_version = "1.5.2";
         }
 
+        
+        // 1.5.1 to 1.5.2
+        if (version_compare($old_version, "1.5.2", '<=') > 0) { // this will also cover 1.5.2.b1 etc but need an upper limit
+        
+                $h->messages['Updated from 1.5.2'] = 'green';
+                // update "old version" for next set of upgrades
+		$old_version = "1.6.0.b";
+            
+        }
         
         /*
          * 
