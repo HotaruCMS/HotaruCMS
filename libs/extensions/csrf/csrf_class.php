@@ -1,7 +1,9 @@
 <?php
 
 /* Customized version of http://www.phpclasses.org/browse/package/5313.html */
-
+// have added an index to token_action
+// removed index from token_key, 
+// changed key to varchar and changed timestamp field
 class csrf
 {
     public  $action = '';   // action page the script is good for
@@ -15,23 +17,23 @@ class csrf
         $this->sid  = preg_replace('/[^a-z0-9]+/i', '', session_id());
         $this->action = (!$action ) ? $this->action = $h->getPagename() : $this->action = $action;
         $this->table = DB_PREFIX . 'tokens';
-        $this->life = $life;
+        $this->life = is_int($life) ? $life : 60;
 
         if ($type == 'set') { 
-            $h->csrfToken = $this->csrfkey($h);   // set a new token
+            $h->csrfToken = $this->csrfkey($h);     // set a new token
         } else {
-            $result = $this->checkcsrf($h);            // check existing token, then clear it
-            $h->csrfToken = $this->csrfkey($h);   // set a new token
-            return $result;                                 // return result of check
+            $result = $this->checkcsrf($h);         // check existing token, then clear it
+            //$h->csrfToken = $this->csrfkey($h);     // set a new token
+            return $result;                         // return result of check
         }
     }
 
 
     public function csrfkey($h) {
         $key = md5(microtime() . $this->sid . rand());
-        $stamp = time() + (60 * $this->life);
-        $sql = "INSERT INTO " . $this->table . " (token_sid, token_key, token_stamp, token_action) VALUES (%s, %s, %d, %s)";
-        $h->db->query($h->db->prepare($sql, $this->sid, $key, $stamp, $this->action));
+        $sql = "INSERT INTO " . $this->table . " (token_sid, token_key, token_stamp, token_action) VALUES (%s, %s, TIMESTAMPADD(MINUTE, %d, CURRENT_TIMESTAMP()), %s)";
+        $h->db->query($h->db->prepare($sql, $this->sid, $key, $this->life, $this->action));
+        //print $h->db->prepare($sql, $this->sid, $key, $this->life, $this->action) . '<br/>';
         return $key;
     }
 
@@ -49,19 +51,19 @@ class csrf
         if (strcmp($key,$cleanKey) != 0) 
             return false;        
         
-        $sql = "SELECT token_sid FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s AND token_action = %s";
-        $results = $h->db->get_results($h->db->prepare($sql, $this->sid, $cleanKey, $this->action));
+        $sql = "SELECT token_sid FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s AND token_action = %s LIMIT 1";
+        $valid = $h->db->get_var($h->db->prepare($sql, $this->sid, $cleanKey, $this->action));
         
-        if (!$results) return false;        
+        if (!$valid) return false;        
     
-        foreach ($results as $row) {
-            $valid = $row->token_sid;
-        }
+//        foreach ($results as $row) {
+//            $valid = $row->token_sid;
+//        }
         
-        if (isset($valid)) {
-            $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s";
+//        if (isset($valid)) {
+            $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s AND token_key = %s LIMIT 500";
             $h->db->query($h->db->prepare($sql, $valid, $cleanKey));                
-        }
+//        }
         
         return true;
     }
@@ -70,16 +72,15 @@ class csrf
     private function cleanOld($h)
     {
         // remove expired keys
-        $exp = time();
-        $sql = "DELETE FROM " . $this->table . " WHERE token_stamp < %d";
-        $h->db->query($h->db->prepare($sql, $exp));
+        $sql = "DELETE FROM " . $this->table . " WHERE token_stamp < CURRENT_TIMESTAMP() LIMIT 500";
+        $h->db->query($h->db->prepare($sql));
         return true;
     }
 
 
     public function logout($h)
     {
-        $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s";
+        $sql = "DELETE FROM " . $this->table . " WHERE token_sid = %s LIMIT 500";
         $h->db->query($h->db->prepare($sql, $this->sid));
         return true;
     }
