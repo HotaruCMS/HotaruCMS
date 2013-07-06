@@ -177,6 +177,8 @@ class Initialize
                 
 		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
                 
+                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
+                
                 if (! function_exists ('mysqli_connect')) {
                     require_once(LIBS . 'Database_mysql.php');
                 } else {                    
@@ -207,7 +209,10 @@ class Initialize
                     $db = new hDB(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port, DB_CHARSET);
                     //$db->debugMode('my_debugmode_handler');
                     $db->error_handler = 'my_error_handler';
-                    $db->nonsql_error_handler = 'my_nonsql_error_handler';                    
+                    $db->nonsql_error_handler = 'my_nonsql_error_handler';    
+                    
+                    //$db->debugMode(true);
+                    
                 } else {
                     $db = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
                     //$db->query("SET NAMES 'utf8'");
@@ -257,6 +262,9 @@ class Initialize
 //                    $settings = $this->db->query($sql);
                     //$settings = models___Settings::all(array('select' => 'settings_name, settings_value'));
                 }
+                
+                //TODO 
+                // definitely want to cache off these settings to either file or memcache
                 
                 if(!$settings) { 
                     $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false);
