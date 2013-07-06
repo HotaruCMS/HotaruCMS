@@ -65,6 +65,9 @@ class Hotaru
         protected $messageRole          = '';       // the Role that this message will display for
 	protected $messages             = array();  // for multiple messages
 	
+        // global cache
+        protected $memcache;                        // memcache object
+        
 	// miscellaneous
         protected $vars                 = array();  // multi-purpose        
     
@@ -103,9 +106,10 @@ class Hotaru
 			$init = new Initialize($this);
 
 			$this->db           = $init->db;            // database object
-                        $this->mdb          = $init->mdb;            // meekro database object
+                        $this->mdb          = $init->mdb;           // meekro database object
 			$this->cage         = $init->cage;          // Inspekt cage
 			$this->isDebug      = $init->isDebug;       // set debug		
+                        $this->memCache     = $init->memCache;      // memcache global object
 			$this->currentUser  = new UserAuth();       // the current user
                         $this->plugin       = new Plugin();         // instantiate Plugin object
 			$this->post         = new Post();           // instantiate Post object

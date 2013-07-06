@@ -52,26 +52,20 @@ class Category
                 // TODO 
                 // could definitely do with some caching here. This function gets called a lot but data is rarely updated
             
-                // set $h->mem so we know globaly whether memcache is available from initialize
-                if (class_exists('memcache')) {
-                    $mem = new myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
-                    //print "new memcache";
-                }
-            
                 if ($cat_id == 0 && $cat_safe_name != '') {
                         // Use safe name
                         $key = 'table_category';
-                        if (!$mem || ($mem && !$categories = $mem->read($key))) {
+                        if (!$h->memCache || ($h->memCache && !$categories = $h->memCache->read($key))) {
                             $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
                             $cat_name = (!MEEKRODB) ? $h->db->get_var($h->db->prepare($sql, $cat_safe_name)) : $h->mdb->queryFirstField($sql, $cat_safe_name);
                             
                            // save all cats for next time in cache
-                            if ($mem) {
+                            if ($h->memCache) {
                                 $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES;
                                 $allCats = (!MEEKRODB) ? $h->db->query($h->db->prepare($sql)) : $h->mdb->queryArray($sql);
                                 
                                 //print_r($allCats);    
-                                $mem->write($key, $allCats, 10000);
+                                $h->memCache->write($key, $allCats, 10000);
                             }
                         } else {
                             $cat_name = "";
@@ -84,7 +78,7 @@ class Category
                 } else {
                         // Use id
                         $key = 'table_category';
-                        if ($mem && $categories = $mem->read($key)) {
+                        if ($h->memCache && $categories = $h->memCache->read($key)) {
                             
                             $cat_name = "";
                             //print "read from memcache<br/>";
@@ -99,12 +93,12 @@ class Category
                             $cat_name = (!MEEKRODB) ? $h->db->get_var($h->db->prepare($sql, $cat_id)) : $h->mdb->queryFirstField($sql, $cat_id);                        
                         
                             // save all cats for next time in cache
-                            if ($mem) {
+                            if ($h->memCache) {
                                 $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES;
                                 $allCats = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql), ARRAY_A) : $h->mdb->queryArray($sql);
                                 
                                 //print_r($allCats);    
-                                $mem->write($key, $allCats, 10000);
+                                $h->memCache->write($key, $allCats, 10000);
                             }
                         }
                 }

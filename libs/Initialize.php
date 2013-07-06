@@ -29,6 +29,7 @@ class Initialize
         protected $mdb;                         // meekro database object
 	protected $cage;                        // Inspekt object
 	protected $isDebug          = false;    // show db queries and page loading time
+        protected $memCache;                    // memcache global object
 	
 	/**
 	 * Initialize Hotaru with the essentials
@@ -51,6 +52,7 @@ class Initialize
 		$this->cage = $this->initInspektCage();
 		$this->db = $this->initDatabase();
                 $this->mdb = $this->initDatabase('mdb');
+                $this->memCache = $this->setMemCache();
 
 		$this->errorReporting();
 
@@ -245,6 +247,23 @@ class Initialize
 		
 		return $cage;
 	}
+        
+        
+        /**
+         *  et global memcache object
+         */
+        protected function setMemCache() {
+            
+            if (!class_exists('memcache')) return false;
+            
+            // if !settings'' MEM_CACHE return false;
+                
+            // TODO allow the following settings to be manually adjusted
+            $memCache = new myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
+            //print "new memcache";            
+            
+            return $memCache;
+        }
 	
 	
 	/**
