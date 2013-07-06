@@ -238,7 +238,7 @@
 				}
 				else
 				{
-					return null;
+					return array();
 				}
 			}
 		}
@@ -323,8 +323,8 @@
 			if ( $this->use_disk_cache && file_exists($cache_file) )
 			{
 				// Only use this cache file if less than 'cache_timeout' (hours)
-				if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) && 
-					!(file_exists($cache_file . ".updating") && (time() - filemtime($cache_file . ".updating") < 60)) ) 
+				if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) &&
+					!(file_exists($cache_file . ".updating") && (time() - filemtime($cache_file . ".updating") < 60)) )
 				{
 					touch($cache_file . ".updating"); // Show that we in the process of updating the cache
 				}
@@ -566,25 +566,32 @@
 		*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
 		*/
 	
-		function get_set($parms)
-		{		
-			$sql = '';
-			foreach ( $parms as $field => $val )
+		function get_set($params)
+		{
+			if( !is_array( $params ) )
 			{
-				if ( $val === 'true' ) $val = 1;
-				if ( $val === 'false' ) $val = 0;
-			
-				if ( $val == 'NOW()' )
-				{
-					$sql .= "$field = ".$this->escape($val).", ";
-				}
-				else
-				{
-					$sql .= "$field = '".$this->escape($val)."', ";
+				$this->register_error( 'get_set() parameter invalid. Expected array in '.__FILE__.' on line '.__LINE__);
+				return;
+			}
+			$sql = array();
+			foreach ( $params as $field => $val )
+			{
+				if ( $val === 'true' || $val === true )
+					$val = 1;
+				if ( $val === 'false' || $val === false )
+					$val = 0;
+
+				switch( $val ){
+					case 'NOW()' :
+					case 'NULL' :
+					  $sql[] = "$field = $val";
+						break;
+					default :
+						$sql[] = "$field = '".$this->escape( $val )."'";
 				}
 			}
-		
-			return substr($sql,0,-2);
+
+			return implode( ', ' , $sql );
 		}
                 
                 /**********************************************************************

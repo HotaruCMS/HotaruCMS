@@ -221,15 +221,12 @@
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
-			// Count how many queries there have been
-			$this->num_queries++;
 			
-			// Start timer
-			$this->timer_start($this->num_queries);
 
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
 			{
+                                //print "#### USING CACHE ######<br/>" . $query . '##############<br/>';
 				// Keep tack of how long all queries have taken
 				$this->timer_update_global($this->num_queries);
 
@@ -241,90 +238,129 @@
 				
 				return $cache;
 			}
+                        
+                        $memcache = false;
+                        
+                        if ($memcache) {
+                            // memcache
+                            $memcache = new myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
 
-			// If there is no existing database connection then try to connect
-			if ( ! isset($this->dbh) || ! $this->dbh )
-			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->selectDB($this->dbname,$this->encoding);
-			}
+                            $key = md5($query);
+                            //$key = $query;
+                            $result_cache = ($memcache) ? $memcache->read($key) : '';  // might want to also add on the query method to this so if we call same sql in different way it is differently held
+                            
+                            if ($result_cache) {
+                                
+                                //echo "<br/><br/>### DATA FROM CACHE: " . $query . '   <br/> '; 
+                                //print_r($result_cache);
+                            
+                                $this->col_info = $result_cache['col_info'];
+                                $this->last_result = $result_cache['last_result'];
+                                $this->num_rows = $result_cache['num_rows'];
 
-			// Perform the query via std mysql_query function..
-			$this->result = @$this->dbh->query($query);
+                                
+                                // convert results to array, store num_rows and cleanup
+                                //$this->storeQueryResults();
 
-			// If there is an error then take note of it..
-			if ( $str = @$this->dbh->error )
-			{
-				$is_insert = true;
-				$this->register_error($str);
-				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
-				return false;
-			}
-
-			// Query was an insert, delete, update, replace
-			$is_insert = false;
+                                // Count how many queries there have been for cache
+                                $this->num_cache_queries++;
+                                
+                                // Return number of rows selected
+                                return $this->num_rows;   // $return_val
+                            }
+                        }
+                        
+                        // since we already returned a value if memcache is on and result found
+                        // anything below here is in the case of either no result or no memcache set
+                        
+                        
+                        // Count how many queries there have been
+			$this->num_queries++;
 			
-			//if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback)/i",$query) )
-			{
-				$this->rows_affected = @$this->dbh->affected_rows;
+			// Start timer
+			$this->timer_start($this->num_queries);
+                                               
+                        // If there is no existing database connection then try to connect
+                        if ( ! isset($this->dbh) || ! $this->dbh )
+                        {
+                                $this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+                                $this->selectDB($this->dbname,$this->encoding);
+                        }
 
-				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
-				{
-					$this->insert_id = @$this->dbh->insert_id;
-				}
+                        // Perform the query via std mysql_query function..
+                        $this->result = @$this->dbh->query($query);
 
-				// Return number fo rows affected
-				$return_val = $this->rows_affected;
-			}
-			// Query was a select
-			else
-			{
+                        // If there is an error then take note of it..
+                        if ( $str = @$this->dbh->error )
+                        {
+                                $is_insert = true;
+                                $this->register_error($str);
+                                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+                                return false;
+                        }
 
-				// Take note of column info
-				$i=0;
-				while ($i < @$this->result->field_count)
-				{
-					$this->col_info[$i] = @$this->result->fetch_field();
-					$i++;
-				}
+                        // Query was an insert, delete, update, replace
+                        $is_insert = false;
 
-				// Store Query Results
-				$num_rows=0;
-				while ( $row = @$this->result->fetch_object() )
-				{
-					// Store relults as an objects within main array
-					$this->last_result[$num_rows] = $row;
-					$num_rows++;
-				}
+                        //if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
+                        if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set)/i",$query) )
+                        {
+                                $this->rows_affected = @$this->dbh->affected_rows;
 
-				@$this->result->free_result();
+                                // Take note of the insert_id
+                                if ( preg_match("/^(insert|replace)\s+/i",$query) )
+                                {
+                                        $this->insert_id = @$this->dbh->insert_id;
+                                }
 
-				// Log number of rows the query returned
-				$this->num_rows = $num_rows;
+                                // Return number fo rows affected
+                                $return_val = $this->rows_affected;
+                        }
+                        // Query was a select
+                        else
+                        {
+                                //print "##### FRESH QUERY" . $query . "<br/>";
+                                
+                                 // convert results to array, store num_rows and cleanup
+                                $this->storeQueryResults();
+                                
+                                $result_cache = array(
+                                        'col_info' => $this->col_info,
+                                        'last_result' => $this->last_result,
+                                        'num_rows' => $this->num_rows,
+                                        'return_value' => $this->num_rows,
+                                );
+                                
+                               
+                                
+                                // memcache the result only if it was a select
+                                // and only if memcache is set on
+                                if ($memcache) $memcache->write($key, $result_cache, 20); 
 
-				// Return number of rows selected
-				$return_val = $this->num_rows;
-			}
+//                                print_r($result_cache); 
+//                                print "<br/>************<br/><br/>";
 
-			// disk caching of queries
-			$this->store_cache($query,$is_insert);
+                                // Return number of rows selected
+                                $return_val = $this->num_rows;
+                        }
 
-			// If debug ALL queries
-			$this->trace || $this->debug_all ? $this->debug() : null ;
+                        // disk caching of queries
+                        //$this->store_cache($query,$is_insert);
 
-			// Keep tack of how long all queries have taken
-			$this->timer_update_global($this->num_queries);
+                        // If debug ALL queries
+                        $this->trace || $this->debug_all ? $this->debug() : null ;
 
-			// Trace all queries
-			if ( $this->use_trace_log )
-			{
-				$this->trace_log[] = $this->debug(false);
-			}
+                        // Keep tack of how long all queries have taken
+                        $this->timer_update_global($this->num_queries);
 
-			return $return_val;
-
+                        // Trace all queries
+                        if ( $this->use_trace_log )
+                        {
+                                $this->trace_log[] = $this->debug(false);
+                        }
+                        
+                        
+                        return $return_val;
 		}
 		
 		/**********************************************************************
@@ -336,5 +372,31 @@
 			@$this->dbh->close();
 		}
 
+                
+                private function storeQueryResults()
+                {
+                    // Take note of column info
+                    $i=0;
+                    while ($i < @$this->result->field_count)
+                    {
+                            $this->col_info[$i] = @$this->result->fetch_field();
+                            $i++;
+                    }
+                                
+                    $num_rows=0;
+                    while ( $row = @$this->result->fetch_object() )
+                    {
+                            // Store results as an object within main array
+                            $this->last_result[$num_rows] = $row;
+                            $num_rows++;
+                    }
+
+                    @$this->result->free_result();
+
+                    // Log number of rows the query returned
+                    $this->num_rows = $num_rows;
+                    
+                    //echo "rows: " . $this->num_rows . '<br/>';
+                }
                
 	}
