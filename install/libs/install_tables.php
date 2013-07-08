@@ -456,6 +456,11 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'FTP_PASSWORD', '', '', ''));
 
+                // REST API
+		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
+		$db->query($db->prepare($sql, 'REST_API', 'false', 'false', ''));
+		
+                
 		echo $lang['install_step2_adding_data'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
 
 	}

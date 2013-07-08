@@ -361,6 +361,22 @@ function do_upgrade($h, $old_version)
         // 1.5.1 to 1.5.2
         if (version_compare($old_version, "1.5.2", '<=') > 0) { // this will also cover 1.5.2.b1 etc but need an upper limit
         
+                // Add a few new settings
+		$exists = $h->db->column_exists('settings', 'settings_id');
+		if ($exists) {
+                    $newSettings = array('REST_API');   // add more to array as requird
+                    foreach($newSettings as $setting) {                        
+                        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+                        $result = $h->db->get_var($h->db->prepare($sql, $setting));
+                        
+                        if(!$result) {
+                            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
+                            $h->db->query($h->db->prepare($sql, $setting, 'false', 'false', ' ', 1));                            
+                        }
+                        
+                    }						
+		}
+                
                 $h->messages['Updated from 1.5.2'] = 'green';
                 // update "old version" for next set of upgrades
 		$old_version = "1.6.0.b";

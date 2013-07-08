@@ -155,21 +155,16 @@ class Hotaru
                         case 'api':
                                 $this->adminPage = false;
                                 if (SITE_OPEN == 'false') { return true; }
+                                if (!defined(REST_API) || REST_API == false) { return false; }
+
                                 // dont check cookies, dont set session
                                 // check access by http access
                                 
                                 // go to api class to extract data for this call
+                                $this->apiCall();
                                 
-                                $method = $this->cage->get->noTags('method'); 
                                 
-                                $apiArray = explode('.', $method);
-                                // check that we have 3 parts
-                                $class = isset($apiArray[0]) ? $apiArray[0] : '';
-                                $method = isset($apiArray[1]) ? $apiArray[1] : '';
-                                $action = isset($apiArray[2]) ? $apiArray[2] : '';
-                                if ($class !== 'hotaru') return false;
                                 
-                                $this->pluginHook('api_start', $method, $action);
                                 break;
 			default:
 				$this->adminPage = false;
@@ -368,7 +363,52 @@ class Hotaru
 	{                
 		$this->pageHandling->render($this, $page, $data);
 	}
-    
+        
+        
+        /**
+         * 
+         * @return boolean
+         */
+        protected function apiCall()
+        {
+                $urlMethod = $this->cage->get->noTags('method'); 
+                                
+                $apiArray = explode('.', $urlMethod);
+                // check that we have 3 parts
+                $class = isset($apiArray[0]) ? $apiArray[0] : '';
+                $method = isset($apiArray[1]) ? $apiArray[1] : '';
+                $action = isset($apiArray[2]) ? $apiArray[2] : '';
+                
+                if ($class !== 'hotaru') return false;
+                if (!$method || !$action ) return false;
+
+                $result = $this->pluginHook('api_call', $method, $action);
+                
+                // got to extract the right array and items for this call
+                // we should try catch this to make sure no problems exist
+                $arrayName = ucfirst($method) . '_api_call';  
+                
+                try {
+                    if (isset($result[$arrayName]) && isset($result[$arrayName]->items))
+                        $result = array('error' => '', 'items' => $result[$arrayName]->items);
+                    else {
+                        $result = array('error' => 'data error');
+                    }
+                } catch (Exception $e) {
+                    // send to debug log
+                    $result = array('error' => 'data error');
+                }                
+                
+                // return json
+                if ($result) {
+                    sendResponse(200,json_encode($result), 'application/json');
+                } else {
+                    sendResponse(501, sprintf(
+                        'Mode <b>%s</b> is not implemented for <b>%s</b>',
+                        $action, $this->folder) );
+                }
+        }
+        
     
 	/**
 	 * Checks if current page (in url or form) matches the page parameter
