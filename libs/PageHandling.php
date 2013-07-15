@@ -128,16 +128,19 @@ class PageHandling
 	{
 		if ($h->pageName) { return $h->pageName; }
 		
-		// Try GET...
+		// Try GET...                
 		$page = $h->cage->get->testPage('page');
 		if (!$page) {
-			/*  Possibly a post with multi-byte characters? 
-				Try sanitizeTags... */
+			/*  Possibly a post with multi-byte characters?  Try sanitizeTags... */
 			$page = $h->cage->get->sanitizeTags('page');
 		}
 		
 		// Try POST...
 		if (!$page) { $page = $h->cage->post->testPage('page'); }
+                if (!$page) {
+			/*  Possibly a post with multi-byte characters?  Try sanitizeTags... */
+			$page = $h->cage->post->sanitizeTags('page');
+		}
 
 		// Analyze the URL:
 		if (!$page) {
@@ -167,6 +170,9 @@ class PageHandling
 		} 
 		
 		if ($page) {
+                        if ($page === 'page') {                            
+                            $page = ltrim($h->cage->server->sanitizeTags('REQUEST_URI'), '/page/');                            
+                        }
 			$page = str_replace('..', '', $page); // prevents access outside the current folder
 			$page = rtrim($page, '/');
 			return $page;
