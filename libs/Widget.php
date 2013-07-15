@@ -125,13 +125,9 @@ class Widget
 		if (!$exists) { return false; }
 		
                 // Get settings from the database if they exist...
-                if (!MEEKRODB) {
-                    $sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';
-                    $widgets_settings = $h->db->get_results($h->db->prepare($sql));
-                } else {
-                    $widgets_settings = models___Widgets::all();
-                }				
-		
+                $sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';                    
+                $widgets_settings = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql)) : $h->mdb->queryObj($sql);
+                     
                 if (!$widgets_settings) { return false; }                
                 return $widgets_settings;
 	}
