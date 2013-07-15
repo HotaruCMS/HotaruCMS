@@ -91,9 +91,7 @@ class Hotaru
 			define("PLUGINS", dirname(__FILE__).'/content/plugins/');
 			define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
 			define("SITEURL", BASEURL);
-		}
-                
-                if (!defined('MEEKRODB')) define('MEEKRODB', false);
+		}                                
 
 		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
 //                require_once(EXTENSIONS . 'SmartLoader/autoload.php');                
@@ -2181,6 +2179,12 @@ class Hotaru
  *
  * *********************************************************** */
 
+        public function getCatFullData($cat_id = 0, $cat_safe_name = '')
+	{
+		$category = new Category();
+		return $category->getCatFullData($this, $cat_id, $cat_safe_name);
+	}
+        
 	/**
 	 * Returns the category id for a given category safe name.
 	 *
@@ -2312,6 +2316,13 @@ class Hotaru
 		return $category->deleteCategory($this, $delete_category);
 	}
 
+        
+        function setCatMemCache()
+        {
+            $category = new Category();
+            $category->setCatMemCache($this);
+        }
+        
 
 /* *************************************************************
  *

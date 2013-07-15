@@ -26,6 +26,112 @@
 
 class Category
 {
+        /**
+         * write the data to memcache for categories
+         * 
+         * @param type $h
+         */
+         public function setCatMemCache($h)
+         {
+                $key = 'table_category';
+             
+                // save all cats for next time in cache
+                $sql = "SELECT category_id, category_name, category_safe_name, category_parent, category_desc, category_keywords FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
+                $allCats = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql)) : $h->mdb->queryObj($sql);
+ 
+                $h->memCache->write($key, $allCats, 10000);
+         }
+         
+         /**
+          * get the data from memcache for categories
+          * 
+          * @param type $h
+          * @return type
+          */
+         public function getCatMemCache($h)
+         {
+                $key = 'table_category';
+                return $h->memCache->read($key);
+         }
+         
+         
+         /**
+          * Retrieve all data for cats
+          * 
+          * @param type $h
+          * @param type $cat_id
+          * @param type $cat_safe_name
+          * @return type
+          */
+         public function getCatFullData($h, $cat_id = 0, $cat_safe_name = '')
+         {                 
+                $categories = $h->memCache ? $this->getCatMemCache($h) : NULL;
+                $catInfo = NULL;
+
+                // set categories if not already set
+                if ($h->memCache && !$categories) {
+                    $this->setCatMemCache($h);
+                    $categories = $this->getCatMemCache($h);
+                }
+                
+                // if no id and no safename then return all
+                if ($cat_id == 0 && $cat_safe_name == '') {
+                    if ($h->memCache) {
+                        $allCats = $categories;
+                    } else {
+                        $sql = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
+                            
+                        if (!MEEKRODB) {
+                            $query = $h->db->prepare($sql);
+                            $h->smartCache('on', 'categories', 60, $query); // start using cache
+                            $allCats = $h->db->get_results($query);
+                            $h->smartCache('off'); // stop using cache
+                        } else{
+                            $allCats = $h->mdb->queryObj($sql); 
+                        }                                                
+                    }
+                    return $allCats;
+                }
+                
+                // Use safe name
+                if ($cat_id == 0 && $cat_safe_name != '') {                    
+
+                    if ($h->memCache) {
+                        foreach ($categories as $cat) {
+                            $name = urldecode($cat->category_safe_name);     // have this to avoid old tables which have encoded data                       
+                            if ($name == $cat_safe_name) {
+                                $catInfo = $cat;
+                                break;
+                            }
+                        }                        
+                    } else {
+                        //print "manually get category using safe name";
+                        $sql = "SELECT category_id, category_name, category_safe_name, category_parent, category_desc, category_keywords FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
+                        $catInfo = (!MEEKRODB) ? $h->db->get_row($h->db->prepare($sql, $cat_safe_name)) : $h->mdb->queryFirstRow($sql, $cat_safe_name);                  
+                    }
+                    
+                } else {
+                // Use cat id
+                    
+                    if ($h->memCache) {
+                        foreach ($categories as $cat) {
+                            if ($cat->category_id == $cat_id) {
+                                $catInfo = $cat;
+                                break;
+                            }
+                        }
+                    } else {
+                        //print "manually get category using id";
+                        $sql = "SELECT category_id, category_name, category_safe_name, category_parent, category_desc, category_keywords FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+                        $catInfo = (!MEEKRODB) ? $h->db->get_row($h->db->prepare($sql, $cat_id)) : $h->mdb->queryFirstRow($sql, $cat_id);                        
+                    }
+                                        
+                }               
+                
+                return $catInfo;
+         }
+    
+         
 	/**
 	 * Returns the category id for a given category safe name.
 	 *
@@ -49,20 +155,19 @@ class Category
 	 */
 	public function getCatName($h, $cat_id = 0, $cat_safe_name = '')
 	{
-                // TODO 
-                // could definitely do with some caching here. This function gets called a lot but data is rarely updated
-            
+                $key = 'table_category';
+
                 if ($cat_id == 0 && $cat_safe_name != '') {
                         // Use safe name
-                        $key = 'table_category';
-                        if (!$h->memCache || ($h->memCache && !$categories = $h->memCache->read($key))) {
+                        
+                        if (!$h->memCache || ($h->memCache && !$categories = $this->getCatMemCache($h))) {
                             $sql = "SELECT category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s";
                             $cat_name = (!MEEKRODB) ? $h->db->get_var($h->db->prepare($sql, $cat_safe_name)) : $h->mdb->queryFirstField($sql, $cat_safe_name);
                             
                            // save all cats for next time in cache
                             if ($h->memCache) {
                                 $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES;
-                                $allCats = (!MEEKRODB) ? $h->db->query($h->db->prepare($sql)) : $h->mdb->queryArray($sql);
+                                $allCats = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql)) : $h->mdb->queryObj($sql);
                                 
                                 //print_r($allCats);    
                                 $h->memCache->write($key, $allCats, 10000);
@@ -71,20 +176,17 @@ class Category
                             $cat_name = "";
                             //print "read from memcache<br/>";
                             foreach ($categories as $cat) {
-                                if ($cat['category_safe_name'] === $cat_id) { $cat_name = $cat['category_name']; }
+                                if ($cat->category_safe_name === $cat_id) { $cat_name = $cat->category_name; break; }
                             }
                             
                         }
                 } else {
-                        // Use id
-                        $key = 'table_category';
-                        if ($h->memCache && $categories = $h->memCache->read($key)) {
+                        // Use id                        
+                        if ($h->memCache && $categories = $this->getCatMemCache($h)) {
                             
                             $cat_name = "";
-                            //print "read from memcache<br/>";
-                            //print_r($categories);
                             foreach ($categories as $cat) {
-                                if ($cat['category_id'] === $cat_id) { $cat_name = $cat['category_name']; }
+                                if ($cat->category_id === $cat_id) { $cat_name = $cat->category_name; break; }
                             }
                             // increment number of cache queries 
                             //print_r($cat);
@@ -95,7 +197,7 @@ class Category
                             // save all cats for next time in cache
                             if ($h->memCache) {
                                 $sql = "SELECT category_id, category_name, category_safe_name FROM " . TABLE_CATEGORIES;
-                                $allCats = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql), ARRAY_A) : $h->mdb->queryArray($sql);
+                                $allCats = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql)) : $h->mdb->queryObj($sql);
                                 
                                 //print_r($allCats);    
                                 $h->memCache->write($key, $allCats, 10000);
@@ -306,6 +408,11 @@ class Category
 		
 		$this->rebuildTree($h, 1, 0);
 		
+                // refresh data in memcache
+                if ($h->memCache) {
+                    $this->setCatMemCache($h);                    
+                }
+                
 		return true;
 	}
 
@@ -364,6 +471,12 @@ class Category
 		// Third, delete the category
 		$sql = "DELETE FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
 		$h->db->query($h->db->prepare($sql, $delete_category));
+                
+                // refresh data in memcache
+                if ($h->memCache) {
+                    $this->setCatMemCache($h);                    
+                }
+                
 		return true;
 	} 
 

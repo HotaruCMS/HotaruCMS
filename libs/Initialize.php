@@ -41,6 +41,8 @@ class Initialize
 			@session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
+                
+                if (!defined('MEEKRODB')) define('MEEKRODB', false);
 
 		// The order here is important!
 		$this->setDefaultTimezone();
@@ -217,7 +219,7 @@ class Initialize
                     
                 } else {
                     $db = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-                    //$db->query("SET NAMES 'utf8'");
+                    $db->query("SET NAMES 'utf8'");
                     //mysqli_set_charset($link, "utf8");    
                 }
 
@@ -254,9 +256,9 @@ class Initialize
          */
         protected function setMemCache() {
             
-            if (!class_exists('memcache')) return false;
+            if (!defined('MEMCACHE') || !MEMCACHE) return false;
             
-            // if !settings'' MEM_CACHE return false;
+            if (!class_exists('memcache')) return false;                        
                 
             // TODO allow the following settings to be manually adjusted
             $memCache = new myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
