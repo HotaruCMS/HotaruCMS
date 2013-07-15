@@ -161,8 +161,6 @@ class Hotaru
                                 // go to api class to extract data for this call
                                 $this->apiCall();
                                 
-                                
-                                
                                 break;
 			default:
 				$this->adminPage = false;
