@@ -97,12 +97,8 @@ class Widget
 	public function addWidget($h, $plugin = '', $function = '', $args = '')
 	{
                 // Check if it exists so we don't add a duplicate
-                if (!MEEKRODB) {
-                    $sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";
-                    $result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));		
-                } else {
-                    $result = models___Widgets::count_by_widget_plugin_and_widget_function_and_widget_args($plugin, $function, $args);
-                }
+                $sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";                    
+                $result = (!MEEKRODB) ? $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args)) : $h->mdb->queryFirstField($sql, $plugin, $function, $args);
                 		
 		if (!$result) {
 			$sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
