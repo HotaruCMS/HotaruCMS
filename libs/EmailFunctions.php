@@ -80,7 +80,7 @@ class EmailFunctions
 
 			// set content type to work with French accents, etc.
 			if (!isset($this->headers['Content-Type'])) {
-				$this->headers['Content-Type'] = 'text/plain; charset=UTF-8';
+				$this->headers['Content-Type'] = 'text/hmtl; charset=UTF-8';
 			}
 		}
 		else 
