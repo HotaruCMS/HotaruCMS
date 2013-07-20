@@ -85,6 +85,7 @@ $lang['error_csrf'] = "CSRF error. Please try again.";
 /* navigation */
 $lang["main_theme_navigation_home"] = "Home";
 $lang["main_theme_navigation_admin"] = "Admin";
+$lang["main_theme_navigation_debug"] = "Debug";
 $lang["main_theme_navigation_login"] = "Login";
 $lang["main_theme_navigation_logout"] = "Logout";
 

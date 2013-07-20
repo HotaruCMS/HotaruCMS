@@ -247,7 +247,6 @@ $lang["admin_theme_menu_logout"] = "Logout";
 /* navigation */
 $lang["admin_theme_navigation_home"] = "Home";
 $lang["admin_theme_navigation_admin"] = "Admin";
-$lang["main_theme_navigation_debug"] = "Debug";
 $lang["admin_theme_navigation_login"] = "Login";
 $lang["admin_theme_navigation_logout"] = "Logout";
 
