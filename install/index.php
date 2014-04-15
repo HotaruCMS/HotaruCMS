@@ -382,11 +382,11 @@ function register_admin()
 	if ($h->cage->post->getInt('step') == 4)
 	{
 		// Test CSRF
-		if (!$h->csrf()) {
-			$h->message = $lang['install_step3_csrf_error'];			;
-			$h->messages[$lang['install_step3_csrf_error']] = 'red';
-			$error = 1;
-		}
+		// if (!$h->csrf()) {
+		//	$h->message = $lang['install_step3_csrf_error'];			;
+		//	$h->messages[$lang['install_step3_csrf_error']] = 'red';
+		//	$error = 1;
+		//}
 
 		// Test username
 		$name_check = $h->cage->post->testUsername('username');
