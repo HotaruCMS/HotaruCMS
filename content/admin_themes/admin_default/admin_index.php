@@ -54,7 +54,7 @@ if (!$result) {
     <div class="row-fluid">
                     
         <?php if ($h->sidebars) { ?>
-            <div class="span3">
+            <div class="col-md-3">
                 <!-- SIDEBAR -->
                 <?php                
                         // plugin hook
@@ -67,7 +67,7 @@ if (!$result) {
         <?php } ?>	
         
             <!-- MAIN -->
-            <div class="span9">
+            <div class="col-md-9">
             <?php
             // plugin hook
             $result = $h->pluginHook('admin_theme_index_main');

@@ -28,7 +28,7 @@
 
 ?>
 
-<div class="span9">
+<div class="col-md-9">
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
@@ -49,7 +49,7 @@
          </div>
 </div>
 
-<div class="span3">
+<div class="col-md-3">
 
     <div class="well sidebar-nav">
 	

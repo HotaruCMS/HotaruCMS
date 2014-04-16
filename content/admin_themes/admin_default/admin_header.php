@@ -33,19 +33,14 @@
 <head profile="http://gmpg.org/xfn/11">
 
         <title><?php echo $h->getTitle(); ?></title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
-        <!-- Bootstrap -->
-        <?php $h->getFramework(); ?>	
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
          <link rel='stylesheet' href='<?php echo SITEURL; ?>content/admin_themes/admin_default/css/bootstrapSwitch.css' type='text/css'>
         
         <!-- include this CSS last so it gets priority -->
-        <!-- Bootstrap Responsive -->
-        <?php $h->getFramework('bootstrap-responsive'); ?>
-		
+        <?php $h->getFramework('bootstrap3'); ?>		
         
 <!--       
         <!-- Include merged files for all the plugin css and javascript (if any) -->
