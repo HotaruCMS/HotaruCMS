@@ -46,13 +46,13 @@
             <hr style="margin:10px 0;"/>
 
 	
-        <li><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="icon-home"></i> <?php echo $h->lang("admin_theme_navigation_home"); ?></a></li>
+        <li><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="fa fa-home"></i> <?php echo $h->lang("admin_theme_navigation_home"); ?></a></li>
 	
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="icon-wrench"></i> <?php echo $h->lang("admin_theme_settings"); ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="icon-pencil"></i> <?php echo $h->lang("admin_theme_maintenance"); ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="icon-flag"></i> <?php echo $h->lang("admin_theme_blocked_list"); ?></a></li>
-	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="icon-file"></i> <?php echo $h->lang("admin_theme_pages"); ?></a></li>	
-        <li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="icon-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="fa fa-wrench"></i> <?php echo $h->lang("admin_theme_settings"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="fa fa-edit"></i> <?php echo $h->lang("admin_theme_maintenance"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="fa fa-flag"></i> <?php echo $h->lang("admin_theme_blocked_list"); ?></a></li>
+	<li><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="fa fa-file"></i> <?php echo $h->lang("admin_theme_pages"); ?></a></li>	
+        <li><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="fa fa-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
 	
         <?php 
         $pluginFunc = new PluginFunctions();

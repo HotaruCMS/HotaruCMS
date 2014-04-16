@@ -1233,7 +1233,7 @@ class Hotaru
 
                         // for old themes that dont split between loading js and css
                         if ($this->vars['framework']['bootstrap-js'])
-                            $this->includeJs(LIBS . 'frameworks/bootstrap/js/', 'bootstrap.min');                 
+                            $this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');                 
                             
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1241,7 +1241,7 @@ class Hotaru
                         
                         // only load jquery if we havent already loaded it
                         if (!isset($h->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>';             
                             $h->vars['framework']['jquery'] = true;                            
                         }
                         
@@ -1250,7 +1250,7 @@ class Hotaru
                         
                         // for better caching we should send this js file separately to hotarus combined js
                         if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js'])
-                            echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap/js/bootstrap.min.js' /></script>\n";
+                            echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
                           
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);                               	                        
@@ -1262,7 +1262,7 @@ class Hotaru
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
                         // only load jquery if we havent already loaded it
                         if (!isset($h->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>';             
                             $h->vars['framework']['jquery'] = true;                            
                         }
                         
@@ -1338,8 +1338,15 @@ class Hotaru
                 //js files first unless prohibited
                 $this->vars['framework']['bootstrap-js'] = $jsInclude ? true : false;  
                           
+                // font-awesome
+                echo '<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">';
+                
                 // then css files
                 switch ($file) {
+                    case 'bootstrap3':                        
+                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap3/css/bootstrap.min.css' type='text/css' />\n";
+                        $this->vars['framework']['bootstrap'] = true;
+                         break;
                     case 'bootstrap':                        
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
