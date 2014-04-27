@@ -12,6 +12,8 @@
 	*  ezSQL error strings - mySQL
 	*/
 
+        global $ezsql_mysql_str;
+
 	$ezsql_mysql_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
@@ -36,6 +38,7 @@
 		var $dbname = false;
 		var $dbhost = false;
 		var $encoding = false;
+                var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the
@@ -144,6 +147,7 @@
 			else
 			{
 				$this->dbname = $dbname;
+                                if ( $encoding == '') $encoding = $this->encoding;
 				if($encoding!='')
 				{
 					$encoding = strtolower(str_replace("-","",$encoding));
@@ -201,6 +205,7 @@
 			// This keeps the connection alive for very long running scripts
 			if ( $this->num_queries >= 500 )
 			{
+                                $this->num_queries = 0;
 				$this->disconnect();
 				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
 			}
@@ -246,6 +251,9 @@
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
 				$this->selectDB($this->dbname,$this->encoding);
+				// No existing connection at this point means the server is unreachable
+				if ( ! isset($this->dbh) || ! $this->dbh )
+					return false;
 			}
 
 			// Perform the query via std mysql_query function..
@@ -288,10 +296,10 @@
 				return false;
 			}
 
-			// Query was an insert, delete, update, replace
-			$is_insert = false;
+			// Query was an insert, delete, update, replace			
 			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|set)\s+/i",$query) )
 			{
+                                $is_insert = true;
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
 
 				// Take note of the insert_id
@@ -306,7 +314,8 @@
 			// Query was a select
 			else
 			{
-
+                                $is_insert = false;
+                                
 				// Take note of column info
 				$i=0;
 				while ($i < @mysql_num_fields($this->result))

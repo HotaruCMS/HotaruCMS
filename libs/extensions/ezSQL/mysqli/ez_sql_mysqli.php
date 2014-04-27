@@ -12,6 +12,8 @@
 	*  ezSQL error strings - mySQLi
 	*/
 
+        global $ezsql_mysqli_str;
+
 	$ezsql_mysqli_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
@@ -34,6 +36,7 @@
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+                var $dbport = false;
 		var $encoding = false;
 		var $rows_affected = false;
 
@@ -47,7 +50,7 @@
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
-			$this->dbhost = $dbhost;
+			list( $this->dbhost, $this->dbport ) = $this->get_host_port( $dbhost, 3306 );
 			$this->encoding = $encoding;
 		}
 
@@ -87,6 +90,11 @@
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
 
+                        // If port not specified (new connection issued), get it
+			if( ! $dbport ) {
+				list( $dbhost, $dbport ) = $this->get_host_port( $dbhost, 3306 );
+			}
+                        
 			// Must have a user and a password
 			if ( ! $dbuser )
 			{
@@ -94,20 +102,26 @@
 				$this->show_errors ? trigger_error($ezsql_mysqli_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword) )
-			{
-				$this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
-			}
-			else
-			{
-				$this->dbuser = $dbuser;
-				$this->dbpassword = $dbpassword;
-				$this->dbhost = $dbhost;
-				$return_val = true;
-			}
-
-			return $return_val;
+			else 
+                        {
+                                $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport);
+                                // Check for connection problem
+                                if( $this->dbh->connect_errno )				
+                                {
+                                        $this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
+                                        $this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
+                                }
+                                else
+                                {
+                                        $this->dbuser = $dbuser;
+                                        $this->dbpassword = $dbpassword;
+                                        $this->dbhost = $dbhost;
+                                        $this->dbport = $dbport;
+                                        $return_val = true;
+                                }
+                        }
+                        
+                        return $return_val;
 		}
 
 		/**********************************************************************
@@ -283,28 +297,28 @@
                         // If there is no existing database connection then try to connect
                         if ( ! isset($this->dbh) || ! $this->dbh )
                         {
-                                $this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-                                $this->selectDB($this->dbname,$this->encoding);
-                        }
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
+				$this->selectDB($this->dbname,$this->encoding);
+				// No existing connection at this point means the server is unreachable
+				if ( ! isset($this->dbh) || ! $this->dbh || $this->dbh->connect_errno )
+					return false;
+			}
 
                         // Perform the query via std mysql_query function..
                         $this->result = @$this->dbh->query($query);
 
                         // If there is an error then take note of it..
                         if ( $str = @$this->dbh->error )
-                        {
-                                $is_insert = true;
+                        {                               
                                 $this->register_error($str);
                                 $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
                                 return false;
                         }
 
                         // Query was an insert, delete, update, replace
-                        $is_insert = false;
-
-                        //if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
                         if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set)/i",$query) )
                         {
+                                $is_insert = true;
                                 $this->rows_affected = @$this->dbh->affected_rows;
 
                                 // Take note of the insert_id
@@ -319,17 +333,24 @@
                         // Query was a select
                         else
                         {
-                                //print "##### FRESH QUERY" . $query . "<br/>";
+                                $is_insert = false;
                                 
-                                 // convert results to array, store num_rows and cleanup
-                                $this->storeQueryResults();
+                                // Take note of column info
+				$i=0;
+				while ($i < @$this->result->field_count)
+				{
+					$this->col_info[$i] = @$this->result->fetch_field();
+					$i++;
+				}
                                 
-                                $result_cache = array(
-                                        'col_info' => $this->col_info,
-                                        'last_result' => $this->last_result,
-                                        'num_rows' => $this->num_rows,
-                                        'return_value' => $this->num_rows,
-                                );
+                                // Store Query Results
+				$num_rows=0;
+				while ( $row = @$this->result->fetch_object() )
+				{
+					// Store relults as an objects within main array
+					$this->last_result[$num_rows] = $row;
+					$num_rows++;
+				}
                                 
                                
                                 
@@ -345,7 +366,7 @@
                         }
 
                         // disk caching of queries
-                        //$this->store_cache($query,$is_insert);
+                        $this->store_cache($query,$is_insert);
 
                         // If debug ALL queries
                         $this->trace || $this->debug_all ? $this->debug() : null ;

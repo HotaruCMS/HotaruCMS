@@ -26,7 +26,7 @@
  
 class Database extends ezSQL_mysqli
 {
-	protected $select   = array();
+	protected $select       = array();
 	protected $table         = '';
 	protected $where         = array();
 	protected $orderby       = '';

@@ -5,7 +5,7 @@
 	*  Web...: http://justinvincent.com
 	*  Name..: ezSQL
 	*  Desc..: ezSQL Core module - database abstraction library to make
-	*          it very easy to deal with databases. ezSQLcore can not be used by 
+	*          it very easy to deal with databases. ezSQLcore can not be used by
 	*          itself (it is designed for use by database specific modules).
 	*
 	*/
@@ -33,7 +33,6 @@
 		var $vardump_called   = false;
 		var $show_errors      = true;
 		var $num_queries      = 0;
-                var $num_cache_queries= 0;
 		var $last_query       = null;
 		var $last_error       = null;
 		var $col_info         = null;
@@ -63,6 +62,24 @@
 		{
 		}
 
+		/**********************************************************************
+		*  Get host and port from an "host:port" notation.
+		*  Returns array of host and port. If port is omitted, returns $default
+		*/
+
+		function get_host_port( $host, $default = false )
+		{
+			$port = $default;
+			if ( false !== strpos( $host, ':' ) ) {
+				list( $host, $port ) = explode( ':', $host );
+				$port = (int) $port;
+			}
+			return array( $host, $port );
+		}
+
+		/**********************************************************************
+		*  Print SQL/DB error - over-ridden by specific DB class
+		*/
 
 		function register_error($err_str)
 		{
@@ -448,7 +465,15 @@
 
 				for ( $i=0; $i < count($this->col_info); $i++ )
 				{
-					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type} {$this->col_info[$i]->max_length}</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
+					/* when selecting count(*) the maxlengh is not set, size is set instead. */
+					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type}";
+					if (!isset($this->col_info[$i]->max_length))
+					{
+						echo "{$this->col_info[$i]->size}";
+					} else {
+						echo "{$this->col_info[$i]->max_length}";
+					}
+					echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
 				}
 
 				echo "</tr>";
@@ -544,7 +569,7 @@
 					'time' => $this->timer_elapsed($timer_name)
 				);
 			}
-			
+
 			$this->total_query_time += $this->timer_elapsed($timer_name);
 		}
 
@@ -565,7 +590,7 @@
 		*
 		*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
 		*/
-	
+
 		function get_set($params)
 		{
 			if( !is_array( $params ) )
@@ -593,8 +618,8 @@
 
 			return implode( ', ' , $sql );
 		}
-                
-                /**********************************************************************
+
+	/**********************************************************************
                 * Prepares a SQL query for safe use, using sprintf() syntax.
                 * 
                 * Added for Hotaru
