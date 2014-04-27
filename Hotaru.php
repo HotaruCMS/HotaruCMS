@@ -1333,7 +1333,7 @@ class Hotaru
          }                
 
          
-         public function getFramework($file = 'bootstrap', $jsInclude = true)
+         public function getFramework($file = 'bootstrap3', $jsInclude = true)
 	 {
                 //js files first unless prohibited
                 $this->vars['framework']['bootstrap-js'] = $jsInclude ? true : false;  

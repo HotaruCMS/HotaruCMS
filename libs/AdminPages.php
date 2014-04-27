@@ -531,12 +531,12 @@ class AdminPages
             ?>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_admin"); ?> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="<?php echo $h->url(array(), 'admin'); ?>">Home</a></li>
-                      <li><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>">Plugins</a></li>
-                      <li><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
-                      <li class="divider"></li>
-                      <li class="nav-header">Plugins</li>
+                    <ul class="dropdown-menu" role="menu">
+                      <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>">Home</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>">Plugins</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
+                      <li role="presentation" class="divider"></li>
+                      <li role="presentation" class="dropdown-header">Plugins</li>
                       <?php $h->pluginHook('adminNav_plugins'); ?>
                       
                       <?php // TODO
@@ -544,16 +544,16 @@ class AdminPages
                             // after plugin has been updated for v.1.5.0
                       ?>
                       <?php if ($h->isActive('user_manager')) { ?>
-                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'user_manager'), 'admin'); ?>">User Manager</a></li>
+                        <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'user_manager'), 'admin'); ?>">User Manager</a></li>
                       <?php  } ?>
                         <?php if ($h->isActive('post_manager')) { ?>
-                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'post_manager'), 'admin'); ?>">Post Manager</a></li>
+                        <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'post_manager'), 'admin'); ?>">Post Manager</a></li>
                       <?php  } ?>
                       <?php if ($h->isActive('category_manager')) { ?>
-                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'category_manager'), 'admin'); ?>">Category Manager</a></li>
+                        <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'category_manager'), 'admin'); ?>">Category Manager</a></li>
                       <?php  } ?>
                         <?php if ($h->isActive('widgets')) { ?>
-                        <li><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'widgets'), 'admin'); ?>">Widgets</a></li>
+                        <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'widgets'), 'admin'); ?>">Widgets</a></li>
                       <?php  } ?>
                     </ul>
                   </li>
