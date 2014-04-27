@@ -79,11 +79,11 @@ $sideBarWidth = 12 - $leftSpan;
         </div>
         
 	<div class="container<?php echo $fluid; ?>">
-            <div class="row<?php echo $fluid; ?>">                
+            <div class="row<?php echo $fluid; ?>  clearfix">                
 
 		<div id="content">
 			
-			<div id="main_container" class="span<?php echo $width; ?>">
+			<div id="main_container" class="col-md-<?php echo $width; ?>">
 				<div id="main">
 
 					<!-- BREADCRUMBS -->
@@ -106,7 +106,7 @@ $sideBarWidth = 12 - $leftSpan;
 
 			<!-- SIDEBAR -->
 			<?php if ($h->sidebars) { ?>
-                            <div class="span<?php echo $sideBarWidth; ?>">
+                            <div class="col-md-<?php echo $sideBarWidth; ?>">
                             <?php if (!$h->pluginHook('theme_index_sidebar')) { $h->template('sidebar'); } ?>					
                             </div>
                         <?php } ?>

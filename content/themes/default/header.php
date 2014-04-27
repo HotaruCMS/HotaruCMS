@@ -47,18 +47,13 @@ header('Content-type: text/html; charset=utf-8');
                 if (!$result) { ?>
                         <meta name="description" content="<?php echo $h->lang('header_meta_description'); ?>" />
                         <meta name="keywords" content="<?php echo $h->lang('header_meta_keywords'); ?>" />
-        <?php } ?>
-                        
-	
-        <!-- Bootstrap -->
-        <?php $h->getFramework(); ?>	
+        <?php } ?>	
         
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
         
         <!-- include this CSS last so it gets priority -->
-        <!-- Bootstrap Responsive - only include when required -->
-        <?php $h->getFramework('bootstrap-responsive'); ?>
+        <?php $h->getFramework(); ?>
         
         <!-- Theme CSS from stlye.css in folder for theme -->
         <!-- Include merged files for all the plugin css and javascript (if any) -->
