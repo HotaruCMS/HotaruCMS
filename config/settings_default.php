@@ -16,4 +16,8 @@ define("DB_LANG", 'en');			 			// Database language, e.g. "en"
 define("DB_ENGINE", 'MyISAM');					// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');					// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
+
+define("LANGUAGE_ADMIN", 'en');
+define("LANGUAGE_MAIN", 'en');
+
 ?>
