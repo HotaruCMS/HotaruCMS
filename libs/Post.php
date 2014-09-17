@@ -92,7 +92,7 @@ class Post
 			$this->id = $post_row->post_id;
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;
-                        $this->authorname = $post_row->user_username;
+                        //$this->authorname = $post_row->user_username;
 			$this->date = $post_row->post_date;
                         $this->updatedts = $post_row->post_updatedts;
 			$this->pubDate = $post_row->post_pub_date;
