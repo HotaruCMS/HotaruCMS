@@ -1241,7 +1241,7 @@ class Hotaru
                         
                         // only load jquery if we havent already loaded it
                         if (!isset($h->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
                             $h->vars['framework']['jquery'] = true;                            
                         }
                         
@@ -1262,7 +1262,7 @@ class Hotaru
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
                         // only load jquery if we havent already loaded it
                         if (!isset($h->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
                             $h->vars['framework']['jquery'] = true;                            
                         }
                         
@@ -1326,9 +1326,6 @@ class Hotaru
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
-                    // TODO
-                    // change so other themes dont double up on css code for bootstrap
-                    if (THEME != 'default/') $this->getFramework('bootstrap-lite');
              }                          
          }                
 
@@ -1339,12 +1336,12 @@ class Hotaru
                 $this->vars['framework']['bootstrap-js'] = $jsInclude ? true : false;  
                           
                 // font-awesome
-                echo '<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">';
+                echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
                 
                 // then css files
                 switch ($file) {
                     case 'bootstrap3':                        
-                        echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap3/css/bootstrap.min.css' type='text/css' />\n";
+                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
                          break;
                     case 'bootstrap':                        

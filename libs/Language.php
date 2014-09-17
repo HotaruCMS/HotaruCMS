@@ -34,8 +34,18 @@ class Language
 	public function includeLanguagePack($lang_array = array(), $pack = 'main')
 	{
 		$lang = $this->getLanguageCache();
+                
+                // maybe bring this into db setting
+                if ($pack == 'main')
+                {
+                    $language = (defined('LANGUAGE_MAIN')) ? LANGUAGE_MAIN : 'en'; 
+                }
+                if ($pack == 'admin')
+                {
+                    $language = (defined('LANGUAGE_ADMIN')) ? LANGUAGE_ADMIN : 'en'; 
+                }
 
-		$file = BASE.'content/'.$pack.'_language.php';
+		$file = BASE.'content/languages/'.$pack.'_'.$language.'.php';
 
 		if( file_exists($file) ) {
 		
@@ -44,7 +54,7 @@ class Language
 			}
 
 			// include language file
-			include(BASE.'content/'.$pack.'_language.php');
+			include($file);
 
 			// add to list of included language files
 			$lang['files'][$file] = true;
