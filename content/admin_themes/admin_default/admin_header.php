@@ -32,6 +32,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head profile="http://gmpg.org/xfn/11">
 
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
         <title><?php echo $h->getTitle(); ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         
