@@ -358,7 +358,7 @@ function do_upgrade($h, $old_version)
         }
 
         
-        // 1.5.1 to 1.5.2
+        // 1.5.2 to 1.6.0
         if (version_compare($old_version, "1.5.2", '<=') > 0) { // this will also cover 1.5.2.b1 etc but need an upper limit
         
                 // Add a few new settings
@@ -379,7 +379,7 @@ function do_upgrade($h, $old_version)
                 
                 $h->messages['Updated from 1.5.2'] = 'green';
                 // update "old version" for next set of upgrades
-		$old_version = "1.6.0.b";
+		$old_version = "1.6.0";
             
         }
         
