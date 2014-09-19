@@ -139,7 +139,7 @@ class AdminPages
 		if ($h->cage->post->noTags('settings_update')  == 'true') {
 		
 			// if either the login or forgot password form is submitted, check the CSRF key
-			if (!$h->csrf()) { $error = 1; }
+			//if (!$h->csrf()) { print "csrferror"; die(); $error = 1; }
 			
 			foreach ($loaded_settings as $setting_name) {
 				if ($h->cage->post->keyExists($setting_name->settings_name)) {
@@ -149,13 +149,13 @@ class AdminPages
 					
 					} else {
 						if (!$setting_value) {
-							// empty value 
+							// empty value                                             
 							$error = 1;
 						}
 					}
 				} else {
 					// values that are allowed to be empty:
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD');
+					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD');
 					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
 					if (!in_array($setting_name->settings_name, $exempt)) { 
 						// otherwise flag as an error:
@@ -186,7 +186,7 @@ class AdminPages
 				$h->messageType = 'green alert-success';
 			} else {
 				$h->message = $h->lang('admin_settings_update_failure');
-				$h->messageType = 'red alert-error';
+				$h->messageType = 'red alert-danger';
 			}
 		}
 		
