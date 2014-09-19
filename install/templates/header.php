@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text">
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap.min.css">	
 	<link rel="stylesheet" type="text/css" href="../libs/frameworks/bootstrap/css/bootstrap-responsive.min.css">
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>	
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>	
 	<link href="css/install_style.css" rel="stylesheet">        		
 </head>
 
@@ -25,9 +25,9 @@
                             </button>
                             <a class="brand" href="index.php"><?php echo $lang['admin_theme_header_hotarucms']; ?></a>
                             <ul class="nav">
-                                    <li><a href="index.php?step=1&action=install"><?php echo $lang['install_new2']; ?></a></li>
-                                    <li class="active"><a href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade2']; ?></a></li>
-                                    <li><a href="../templates/instruction.html">Help</a></li>
+                                    <li class="active"><a href="index.php?step=1&action=install"><?php echo $lang['install_new2']; ?></a></li>
+                                    <li><a href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade2']; ?></a></li>
+                                    <li><a href="templates/instruction.htm">Help</a></li>
                                     <li><a href="../index.php">Home</a></li>
                             </ul>
                     </div>
