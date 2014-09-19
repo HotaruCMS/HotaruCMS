@@ -50,7 +50,7 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 	}
 	
 	if ($error) {
-		$h->showMessage($error, 'alert-error');
+		$h->showMessage($error, 'alert-danger');
 	} else {
 		$h->updateThemeSettings($theme_settings, $vTheme);
 		$h->showMessage('Settings updated', 'alert-success');

@@ -172,7 +172,7 @@ class Maintenance
                     $h->messageType = 'green';
                 } catch (Exception $e) {
                     //echo( "Caught exception: " . $e->getMessage() );
-                    $h->messages['admin_maintenance_export_failure'] = "alert-error";
+                    $h->messages['admin_maintenance_export_failure'] = "alert-danger";
                 }
 	}
 	

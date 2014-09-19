@@ -48,7 +48,7 @@ jQuery('document').ready(function($) {
         var length = value.length;
         var check = value.substring(length-1,length);        
         var notes = $(this).parent().parent().children('td:eq(3)');
-        if (check != '/' ) { notes.addClass('alert-error'); } else { notes.removeClass('alert-error');}
+        if (check != '/' ) { notes.addClass('alert-danger'); } else { notes.removeClass('alert-danger');}
     });
 
 

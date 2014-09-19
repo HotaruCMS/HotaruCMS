@@ -1269,7 +1269,7 @@ class PluginManagement
 		if ($result) {
 		    $h->messages[$h->lang('admin_theme_version_check_completed')] = 'alert-success';
 		} else {
-                    $h->messages[$h->lang('admin_theme_version_check_failed')] = 'alert-error';
+                    $h->messages[$h->lang('admin_theme_version_check_failed')] = 'alert-danger';
                 }
 	}
 }
