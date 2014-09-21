@@ -96,7 +96,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 		<td><?php echo $h->lang("admin_theme_blocked_value"); ?></td>
 		<td><?php echo $h->lang("admin_theme_blocked_edit"); ?></td>
 		<td><?php echo $h->lang("admin_theme_blocked_remove"); ?></td>
-	</tr>
+            </tr>
 		<?php if (isset($blocked_items)) { echo $blocked_items; } ?>
 	</table>
 </div>

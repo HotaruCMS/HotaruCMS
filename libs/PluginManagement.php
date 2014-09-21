@@ -105,17 +105,17 @@ class PluginManagement
 				
 				// Conditions for "active"...
 				if ($allplugins[$count]['status'] == 'active') {					
-					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\" checked=\"checked\"></div> </a>";
+					$allplugins[$count]['active'] = "<div class='switch'  id='switch#". $allplugins[$count]['folder'] . "'><input class='theswitch' type=\"checkbox\" data-size='mini' checked=\"checked\" name='switch#". $allplugins[$count]['folder'] . "'></div> </a>";
 				} else {					
-					$allplugins[$count]['active'] = "<div class='switch switch-small' id='switch#". $allplugins[$count]['folder'] . "'><input type=\"checkbox\"></div>";
+					$allplugins[$count]['active'] = "<div class='switch' id='switch#". $allplugins[$count]['folder'] . "'><input class='theswitch' type=\"checkbox\" data-size='mini' name='switch#". $allplugins[$count]['folder'] . "'></div>";
 				}
 				
 				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
-					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"icon-download-alt\"></i> </a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-download\"></i> </a>";
 				} else { 
-					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"icon-trash\"></i> </a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-times-circle\"></i> </a>";
 				}
 				
 				

@@ -144,7 +144,8 @@ class EmailFunctions
 			);
 		
 			require_once "Mail.php";
-			$this->smtp = Mail::factory('smtp', $smtp_array);
+                        $mailFunction = new Mail;
+			$this->smtp = $mailFunction->factory('smtp', $smtp_array);
 		}
 		
 		$mail = $this->smtp->send($this->to, $this->headers, $this->body);

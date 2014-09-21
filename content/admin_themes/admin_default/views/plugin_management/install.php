@@ -5,15 +5,15 @@
 			<td>
 				<strong><?php echo $h->lang("admin_theme_plugins_installed"); ?></strong>
 			</td>
-			<td><i class="icon-info-sign"></i>
+			<td><i class="fa fa-info-circle"></i>
 				<strong><?php echo $h->lang["admin_theme_plugins_details"]; ?></strong>
 			</td>
-			<td><i class="icon-trash"></i>
+			<td><i class="fa fa-times-circle"></i>
 				<strong><?php echo $h->lang["admin_theme_plugins_uninstall"]; ?></strong>
 			</td>
 			<td>
 				<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
-					<i class="icon-refresh"></i>
+					<i class="fa fa-refresh"></i>
 					<strong><?php echo $h->lang("admin_theme_check_latest_plugin_versions"); ?></strong>
 				</a>
 			</td>
@@ -54,7 +54,7 @@
                                     echo "</td>\n";
                                     //echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
                                     echo "<td class='table_uninstall'>\n";
-                                        echo "<a class='table_drop_down' href='#'><i class='icon-info-sign'></i></a>\n";
+                                        echo "<a class='table_drop_down' href='#'><i class='fa fa-info-circle'></i></a>\n";
                                         echo "&nbsp;" . $plug['install'];
                                     echo "</td>\n";                                   
                                 echo "</tr>\n";
@@ -115,10 +115,10 @@
 					<?php echo $h->lang("admin_theme_plugins_not_installed"); ?>
 					<span class='table_key'>
 						&nbsp;&nbsp;
-						<i class="icon-info-sign"></i>
+						<i class="fa fa-info-circle"></i>
 						<?php echo $h->lang("admin_theme_plugins_details"); ?>
 						&nbsp;&nbsp;
-						<i class="icon-download-alt"></i>
+						<i class="fa fa-download"></i>
 						<?php echo $h->lang("admin_theme_plugins_install"); ?>
 					</span>
 				</td>
@@ -151,7 +151,7 @@
 		}
 		echo rtrim($requires, ', ') . "</span></td>\n";
 		echo "<td class='table_install'>\n";
-		echo "<a class='table_drop_down' href='#'><i class='icon-info-sign'></i></a>\n";
+		echo "<a class='table_drop_down' href='#'><i class='fa fa-info-circle'></i></a>\n";
 		echo "&nbsp;" . $plug['install'] . "</td>\n";
 		echo "</tr>\n";
 		echo "<tr class='table_tr_details' style='display:none;'><td class='table_description'>\n";
@@ -161,7 +161,7 @@
 		if (isset($plug['author'])) { echo $plug['author']; }
 		if (isset($plug['authorurl'])) { echo "</a>\n"; }
 		if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
-			echo "<br />" . $h->lang("admin_theme_plugins_more_info");
+			echo "<br />" . $h->lang("admin_theme_plugins_more_info-circle");
 			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
 			echo $h->lang("admin_theme_plugins_readmetxt") . "</a>";			
 		}
@@ -183,9 +183,17 @@
 	</table> <!-- close table which contains three columns of smaller tables -->		
 
         <script>
-            //https://github.com/nostalgiaz/bootstrap-switch
-		$('.switch').on('switch-change', function (e, data) {
-                    var $el = $(data.el), value = data.value
+            $('.theswitch').bootstrapSwitch();
+            
+//            $('input[name="switch#stop_spam"]').on('switchChange.bootstrapSwitch', function(event, state) {
+//  console.log(this); // DOM element
+//  console.log(event); // jQuery event
+//  console.log(state); // true | false
+//});
+            
+		$('.switch').on('switchChange.bootstrapSwitch', function (event, state) {
+                    //alert('clicked');
+                    
                     var id = $(this).attr('id');
                     var $d, $plugin;
                     
@@ -193,9 +201,10 @@
                     var stringParts = id.split("#");
                     $plugin = stringParts[1];
                     //alert($plugin);
-                    console.log(e, $el, value);
+                    console.log(event);
+                    console.log(state); // true | false
                     
-                    if (value) $d = 'activate'; else $d = 'deactivate';
+                    if (state) $d = 'activate'; else $d = 'deactivate';
                     
                     //alert(value, $d);                    
                     
@@ -227,6 +236,7 @@
                     
                     
                 });
-	</script>
+	
+        </script>
         
 </div>

@@ -130,9 +130,9 @@ class Blocked
 				$output .= "<td>" . $block->blocked_type . "</td>\n";
 				$output .= "<td>" . $block->blocked_value . "</td>\n";
 				$output .= "<td>" . "<a class='table_drop_down' href='#'>\n";
-				$output .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a></td>\n";
+				$output .= "<i class='fa fa-edit'>" . "</a></td>\n";
 				$output .= "<td>" . "<a href='" . SITEURL . "admin_index.php?page=blocked&amp;action=remove&amp;id=" . $block->blocked_id . "'>\n";
-				$output .= "<img src='" . SITEURL . "content/admin_themes/" . ADMIN_THEME . "images/delete.png'>" . "</a></td>\n";
+				$output .= "<i class='fa fa-ban'></a></td>\n";
 				$output .= "</tr>\n";
 				$output .= "<tr class='table_tr_details' style='display:none;'>\n";
 				$output .= "<td colspan=3 class='table_description'>\n";

@@ -40,15 +40,15 @@
         
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
-         <link rel='stylesheet' href='<?php echo SITEURL; ?>content/admin_themes/admin_default/css/bootstrapSwitch.css' type='text/css'>
+         <link rel='stylesheet' href='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/css/bootstrap-switch.min.css' type='text/css'>
         
         <!-- include this CSS last so it gets priority -->
         <?php $h->getFramework('bootstrap3'); ?>		
-        
-<!--       
+           
         <!-- Include merged files for all the plugin css and javascript (if any) -->
         <?php $h->doIncludes('css'); ?>		
-
+        <script type='text/javascript' src='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/js/bootstrap-switch.min.js'></script>
+   
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
 	<?php $h->pluginHook('admin_header_include_raw'); ?>

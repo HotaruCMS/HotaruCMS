@@ -48,8 +48,7 @@
 
 <?php $h->pluginHook('pre_close_body'); ?>
 
-<script type='text/javascript' src='<?php echo SITEURL; ?>content/admin_themes/admin_default/javascript/bootstrapSwitch.js'></script>
-<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js'></script>
-<script type='text/javascript' src='http://code.jquery.com/ui/1.10.3/jquery-ui.js'></script>
+<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js'></script>
+<script type='text/javascript' src='http://code.jquery.com/ui/1.11.1/jquery-ui.js'></script>
 <?php $h->doIncludes('js'); ?>
 

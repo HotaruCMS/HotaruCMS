@@ -83,7 +83,7 @@
 		*  Try to connect to mySQL database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbhost='localhost', $dbport=false)
 		{
 			global $ezsql_mysqli_str; $return_val = false;
 			
