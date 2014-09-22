@@ -36,6 +36,9 @@ class DB {
   public static $throw_exception_on_nonsql_error = false;
   public static $nested_transactions = false;
   public static $usenull = true;
+  public static $ssl = array('key' => '', 'cert' => '', 'ca_cert' => '', 'ca_path' => '', 'cipher' => '');
+  public static $connect_options = array(MYSQLI_OPT_CONNECT_TIMEOUT => 30);
+
   
   // internal
   protected static $mdb = null;
@@ -46,20 +49,22 @@ class DB {
     if ($mdb === null) {
       $mdb = DB::$mdb = new MeekroDB();
     }
+    
+    static $variables_to_sync = array('param_char', 'named_param_seperator', 'success_handler', 'error_handler', 'throw_exception_on_error',
+      'nonsql_error_handler', 'throw_exception_on_nonsql_error', 'nested_transactions', 'usenull', 'ssl', 'connect_options');
 
-    if ($mdb->param_char !== DB::$param_char) $mdb->param_char = DB::$param_char;
-    if ($mdb->named_param_seperator !== DB::$named_param_seperator) $mdb->named_param_seperator = DB::$named_param_seperator;
-    if ($mdb->success_handler !== DB::$success_handler) $mdb->success_handler = DB::$success_handler;
-    if ($mdb->error_handler !== DB::$error_handler) $mdb->error_handler = DB::$error_handler;
-    if ($mdb->throw_exception_on_error !== DB::$throw_exception_on_error) $mdb->throw_exception_on_error = DB::$throw_exception_on_error;
-    if ($mdb->nonsql_error_handler !== DB::$nonsql_error_handler) $mdb->nonsql_error_handler = DB::$nonsql_error_handler;
-    if ($mdb->throw_exception_on_nonsql_error !== DB::$throw_exception_on_nonsql_error) $mdb->throw_exception_on_nonsql_error = DB::$throw_exception_on_nonsql_error;
-    if ($mdb->nested_transactions !== DB::$nested_transactions) $mdb->nested_transactions = DB::$nested_transactions;
-    if ($mdb->usenull !== DB::$usenull) $mdb->usenull = DB::$usenull;
+    $db_class_vars = get_class_vars('DB'); // the DB::$$var syntax only works in 5.3+
+
+    foreach ($variables_to_sync as $variable) {
+      if ($mdb->$variable !== $db_class_vars[$variable]) {
+        $mdb->$variable = $db_class_vars[$variable];
+      }
+    }
     
     return $mdb;
   }
   
+  // yes, this is ugly. __callStatic() only works in 5.3+
   public static function get() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'get'), $args); }
   public static function disconnect() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'disconnect'), $args); }
   public static function query() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'query'), $args); }
@@ -127,6 +132,8 @@ class MeekroDB {
   public $throw_exception_on_nonsql_error = false;
   public $nested_transactions = false;
   public $usenull = true;
+  public $ssl = array('key' => '', 'cert' => '', 'ca_cert' => '', 'ca_path' => '', 'cipher' => '');
+  public $connect_options = array(MYSQLI_OPT_CONNECT_TIMEOUT => 30);
   
   // internal
   public $internal_mysql = null;
@@ -160,7 +167,19 @@ class MeekroDB {
     if (!($mysql instanceof MySQLi)) {
       if (! $this->port) $this->port = ini_get('mysqli.default_port');
       $this->current_db = $this->dbName;
-      $mysql = new mysqli($this->host, $this->user, $this->password, $this->dbName, $this->port);
+      $mysql = new mysqli();
+
+      $connect_flags = 0;
+      if ($this->ssl['key']) {
+        $mysql->ssl_set($this->ssl['key'], $this->ssl['cert'], $this->ssl['ca_cert'], $this->ssl['ca_path'], $this->ssl['cipher']);
+        $connect_flags |= MYSQLI_CLIENT_SSL;
+      } 
+      foreach ($this->connect_options as $key => $value) {
+        $mysql->options($key, $value);
+      }
+
+      // suppress warnings, since we will check connect_error anyway
+      @$mysql->real_connect($this->host, $this->user, $this->password, $this->dbName, $this->port, null, $connect_flags);
       
       if ($mysql->connect_error) {
         $this->nonSQLError('Unable to connect to MySQL server! Error: ' . $mysql->connect_error);
@@ -201,7 +220,7 @@ class MeekroDB {
     $this->success_handler = $handler;
   }
   
-  public function serverVersion() { return $this->server_info; }
+  public function serverVersion() { $this->get(); return $this->server_info; }
   public function transactionDepth() { return $this->nested_transactions_count; }
   public function insertId() { return $this->insert_id; }
   public function affectedRows() { return $this->affected_rows; }
@@ -281,7 +300,7 @@ class MeekroDB {
     $params = array_shift($args);
     $where = array_shift($args);
     
-    $query = "UPDATE %b SET %? WHERE " . $where;
+    $query = str_replace('%', $this->param_char, "UPDATE %b SET %? WHERE ") . $where;
     
     array_unshift($args, $params);
     array_unshift($args, $table);
@@ -309,17 +328,23 @@ class MeekroDB {
     
     if (isset($options['update']) && is_array($options['update']) && $options['update'] && strtolower($which) == 'insert') {
       if (array_values($options['update']) !== $options['update']) {
-        return $this->query("INSERT INTO %b %lb VALUES %? ON DUPLICATE KEY UPDATE %?", $table, $keys, $values, $options['update']);
+        return $this->query(
+          str_replace('%', $this->param_char, "INSERT INTO %b %lb VALUES %? ON DUPLICATE KEY UPDATE %?"), 
+          $table, $keys, $values, $options['update']);
       } else {
         $update_str = array_shift($options['update']);
-        $query_param = array("INSERT INTO %b %lb VALUES %? ON DUPLICATE KEY UPDATE $update_str", $table, $keys, $values);
+        $query_param = array(
+          str_replace('%', $this->param_char, "INSERT INTO %b %lb VALUES %? ON DUPLICATE KEY UPDATE ") . $update_str, 
+          $table, $keys, $values);
         $query_param = array_merge($query_param, $options['update']);
         return call_user_func_array(array($this, 'query'), $query_param);
       }
       
     } 
     
-    return $this->query("%l INTO %b %lb VALUES %?", $which, $table, $keys, $values);
+    return $this->query(
+      str_replace('%', $this->param_char, "%l INTO %b %lb VALUES %?"), 
+      $which, $table, $keys, $values);
   }
   
   public function insert($table, $data) { return $this->insertOrReplace('INSERT', $table, $data); }
@@ -361,7 +386,7 @@ class MeekroDB {
   }
   
   public function columnList($table) {
-    return $this->queryOneColumn('Field', "SHOW COLUMNS FROM $table");
+    return $this->queryOneColumn('Field', "SHOW COLUMNS FROM %b", $table);
   }
   
   public function tableList($db = null) {
@@ -562,7 +587,6 @@ class MeekroDB {
   }
   
   protected function prependCall($function, $args, $prepend) { array_unshift($args, $prepend); return call_user_func_array($function, $args); }
-  public function queryArray() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'assoc'); }
   public function query() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'object'); }
   public function queryObj() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'object'); }  
   public function queryAllLists() { $args = func_get_args(); return $this->prependCall(array($this, 'queryHelper'), $args, 'list'); }
@@ -586,7 +610,7 @@ class MeekroDB {
       case 'list':
         $row_type = 'list';
         break;
-      case 'object':
+    case 'object':
         $row_type = 'object';
         break;
       case 'full':
@@ -619,12 +643,13 @@ class MeekroDB {
         call_user_func($error_handler, array(
           'type' => 'sql',
           'query' => $sql,
-          'error' => $db->error
+          'error' => $db->error,
+          'code' => $db->errno
         ));
       }
       
       if ($this->throw_exception_on_error) {
-        $e = new MeekroDBException($db->error, $sql);
+        $e = new MeekroDBException($db->error, $sql, $db->errno);
         throw $e;
       }
     } else if ($this->success_handler) {
@@ -658,7 +683,7 @@ class MeekroDB {
         else $infos[] = $info->name;
       }
     }
-    
+
     if ($row_type !== 'object') {
         while ($row = ($row_type == 'assoc' ? $result->fetch_assoc() : $result->fetch_row())) {
           if ($full_names) $row = array_combine($infos, $row);
@@ -684,7 +709,7 @@ class MeekroDB {
   public function queryFirstRow() {
     $args = func_get_args();
     $result = call_user_func_array(array($this, 'query'), $args);
-    if (! $result) return null;
+    if (!$result || !is_array($result)) return null;
     return reset($result);
   }
 
@@ -692,7 +717,7 @@ class MeekroDB {
   public function queryFirstList() {
     $args = func_get_args();
     $result = call_user_func_array(array($this, 'queryAllLists'), $args);
-    if (! $result) return null;
+    if (!$result || !is_array($result)) return null;
     return reset($result);
   }
   
@@ -800,12 +825,11 @@ class WhereClause {
   }
   
   function textAndArgs() {
-    $sql = '';
+    $sql = array();
     $args = array();
     
     if (count($this->clauses) == 0) return array('(1)', $args);
     
-    $sql = array();
     foreach ($this->clauses as $clause) {
       if ($clause instanceof WhereClause) { 
         list($clause_sql, $clause_args) = $clause->textAndArgs();
@@ -818,7 +842,6 @@ class WhereClause {
       $args = array_merge($args, $clause_args);
     }
     
-    $sql = array_unique($sql);
     if ($this->type == 'and') $sql = implode(' AND ', $sql);
     else $sql = implode(' OR ', $sql);
     
@@ -851,9 +874,10 @@ class DBTransaction {
 class MeekroDBException extends Exception {
   protected $query = '';
   
-  function __construct($message='', $query='') {
+  function __construct($message='', $query='', $code = 0) {
     parent::__construct($message);
     $this->query = $query;
+	$this->code = $code;
   }
   
   public function getQuery() { return $this->query; }
@@ -939,5 +963,6 @@ class MeekroDBEval {
     $this->text = $text;
   }
 }
+
 
 ?>
