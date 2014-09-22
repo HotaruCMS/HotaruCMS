@@ -165,7 +165,7 @@ class AdminPages
 			}
 		
 			// cron hook to include SYS_UPDATES job
-			if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
+			//if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
 				$timestamp = time();
 				$recurrence = "daily";
                                 
@@ -173,13 +173,13 @@ class AdminPages
 				foreach ( $hooks as $hook ) {
                                     $h->pluginHook('cron_update_job', 'cron', array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook));
                                 }
-			}
-			else {
-                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
-				foreach ( $hooks as $hook ) {
-                                    $h->pluginHook('cron_delete_job', 'cron', array('hook'=>$hook));
-                                }
-			}
+			//}
+//			else {
+//                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
+//				foreach ( $hooks as $hook ) {
+//                                    $h->pluginHook('cron_delete_job', 'cron', array('hook'=>$hook));
+//                                }
+//			}
 		
 			if ($error == 0) {
 				$h->message = $h->lang('admin_settings_update_success');
