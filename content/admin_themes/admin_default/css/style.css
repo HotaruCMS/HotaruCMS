@@ -12,6 +12,40 @@ body {
   padding: 9px 0;
 }
 
+#admin-sidebar-menu {
+    display: block;
+    height: 100%;
+    left: -80%;
+    position: fixed;
+    top: 0;
+    width: 80%;
+    z-index: 500;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: #2b2b2b;
+}
+
+@media (min-width: 480px) {
+    #admin-sidebar-menu {
+        height: auto;
+        left: 0;
+        overflow: visible;
+        position: absolute;
+        width: 56px;
+    }
+}
+
+@media (min-width: 768px) {
+    #admin-sidebar-menu {
+        overflow: hidden;
+        width: 240px;
+    }
+}
+
 @media (max-width: 980px) {
   /* Enable use of floated navbar text */
   .navbar-text.pull-right {

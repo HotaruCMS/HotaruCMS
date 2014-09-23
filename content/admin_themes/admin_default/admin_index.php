@@ -42,16 +42,7 @@ if (!$result) {
 ?>
 
 <div class="container-fluid">
-    <div class="row-fluid">
-        <!-- BREADCRUMBS -->
-        <div class='breadcrumb'>
-                <?php echo $h->breadcrumbs("/"); ?>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row-fluid">
+    <div class="row">
                     
         <?php if ($h->sidebars) { ?>
             <div class="col-md-3">
@@ -68,6 +59,13 @@ if (!$result) {
         
             <!-- MAIN -->
             <div class="col-md-9">
+                <div class="row-fluid">
+                <!-- BREADCRUMBS -->
+                <div class='breadcrumb'>
+                        <?php echo $h->breadcrumbs("/"); ?>
+                </div>
+            </div>
+                
             <?php
             // plugin hook
             $result = $h->pluginHook('admin_theme_index_main');

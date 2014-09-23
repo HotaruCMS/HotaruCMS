@@ -27,7 +27,7 @@
  */
 
 ?>
-<div class="well sidebar-nav">
+<div id="admin-sidebar-menu" class="sidebar-nav" role="navigation">
 <ul class='nav nav-pills nav-stacked'>
 	<li role="presentation">
             <span>
