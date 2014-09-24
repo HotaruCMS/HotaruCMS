@@ -41,11 +41,11 @@ if (!$result) {
 	}
 ?>
 
-<div class="container-fluid">
-    <div class="row">
+<div id="main-wrapper">
+    
                     
         <?php if ($h->sidebars) { ?>
-            <div class="col-md-3">
+            
                 <!-- SIDEBAR -->
                 <?php                
                         // plugin hook
@@ -54,17 +54,22 @@ if (!$result) {
                                 $h->template('admin_sidebar');                                
                         }
                 ?>
-            </div>           
+                
+                     
         <?php } ?>	
-        
-            <!-- MAIN -->
-            <div class="col-md-9">
-                <div class="row-fluid">
-                <!-- BREADCRUMBS -->
+        <!-- BREADCRUMBS -->
                 <div class='breadcrumb'>
+                    <i class="fa fa-th-large" style="color:gray;"></i>&nbsp;
                         <?php echo $h->breadcrumbs("/"); ?>
+                    <i class="pull-right navbar-icon fa fa-bars"></i>
                 </div>
-            </div>
+            <!-- MAIN -->
+            <div id="main-content">
+                
+                
+            
+                
+                <div>
                 
             <?php
             // plugin hook
@@ -85,9 +90,10 @@ if (!$result) {
                     } 
             }
             ?>
-            </div> 	
-
-    </div>
+            </div>
+            </div>
+            <div id="main-menu-sidebar-bgd">&nbsp;</div>
+           
 </div>
 
 </div> <!--/wrap-->

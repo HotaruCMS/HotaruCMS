@@ -27,7 +27,7 @@
  */
 ?>
 
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">   
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color: #1aaada; border:none;">   
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -37,15 +37,15 @@
               <span class="icon-bar"></span>
             </button>
             <div >
-                <a class="navbar-brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
-                <span class="navbar-brand btn-navbar">
-                  <?php	if ($h->currentUser->loggedIn) {
-                                      if($h->isActive('avatar')) {
-                                              $h->setAvatar($h->currentUser->id, 24, 'g', 'img-circle');
-                                              echo  $h->linkAvatar();
-                                      }
-                              } ?>
-                </span>
+                <a href="#" class="navbar-brand">
+                    
+                    <span class="small">
+                        
+                            <?php echo $h->lang("admin_theme_header_hotarucms"); ?><?php echo $h->version; ?>
+                    </span>
+                </a>
+                
+                
             </div>
         </div>
         <div class="navbar-collapse collapse">         
@@ -54,7 +54,7 @@
                 <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("admin_theme_menu_site_home"); ?></a></li>
 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?> <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle active" data-toggle="dropdown"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <li><a href="http://forums.hotarucms.org/">Top</a></li>
                       <li><a href="http://forums.hotarucms.org/forums/news-and-announcements.2/">News</a></li>
@@ -69,9 +69,16 @@
                 <li><a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><?php echo $h->lang("admin_theme_menu_logout"); ?></a></li>
             </ul>
             <div class="navbar-header navbar-right">
-                <a href="#" class="navbar-brand">
-                    <span class="small"><?php echo $h->lang("admin_theme_header_hotarucms"); ?><?php echo $h->version; ?></span>
-                </a>
+                <span class="navbar-brand btn-navbar">
+                  <?php	if ($h->currentUser->loggedIn) {
+                                      if($h->isActive('avatar')) {
+                                              $h->setAvatar($h->currentUser->id, 24, 'g', 'img-circle');
+                                              echo  $h->linkAvatar();
+                                      }
+                              } ?>
+                </span>
+                
+                <a class="navbar-brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
             </div>
         </div><!--/.nav-collapse -->
     </div>

@@ -27,9 +27,17 @@ body {
     -ms-user-select: none;
     user-select: none;
     background: #2b2b2b;
+    color: #aaa;
+}
+
+#admin-sidebar-menu a {
+    color: #aaa;
 }
 
 @media (min-width: 480px) {
+    #main-wrapper {
+        padding-left: 56px;
+    }
     #admin-sidebar-menu {
         height: auto;
         left: 0;
@@ -37,12 +45,33 @@ body {
         position: absolute;
         width: 56px;
     }
+    #main-menu-sidebar-bgd {
+        width: 56px;
+    }
+    #admin-sidebar-menu .menu-text {
+        display:none;
+    }
+    #admin-sidebar-menu ul.nav>li>a>.menu-icon {
+        margin: 0;
+    }
 }
 
 @media (min-width: 768px) {
+    #main-wrapper {
+        padding-left: 240px;
+    }
     #admin-sidebar-menu {
         overflow: hidden;
         width: 240px;
+    }
+    #main-menu-sidebar-bgd {
+        width: 240px;
+    }
+    #admin-sidebar-menu .menu-text {
+        display:inline;
+    }
+    #admin-sidebar-menu ul.nav>li>a>.menu-icon {
+        margin-right: 6px;
     }
 }
 
@@ -54,7 +83,51 @@ body {
     padding-right: 5px;
   }
 }
+
+#main-content {
+    left: 0;
+    padding: 0px 18px 18px;
+    width: 100%;
+    position: relative;
+}
+
+#main-menu-sidebar-bgd {
+    background: #2b2b2b;
+    overflow: hidden;
+    left:0;
+    display: block;
+    height: 100%;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    z-index: 299;
+}
+
+#admin-sidebar-menu li {
+    border-top: 1px solid #313131;
+    border-bottom: 1px solid #1f1f1f;
+}
+
+#admin-sidebar-menu .nav
+{
+    -webkit-box-shadow: 0 1px 0 #313131;
+    box-shadow: 0 1px 0 #313131;
+}
     
+.navbar-nav>li>a, .navbar-brand {
+    color: white !important;
+}
+
+#admin-sidebar-menu .menu-icon {
+    display: inline-block;
+    margin-right: 5px;
+    line-height: 20px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
 /* globals */
 
 

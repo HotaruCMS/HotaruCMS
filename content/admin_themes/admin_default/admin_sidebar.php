@@ -28,8 +28,7 @@
 
 ?>
 <div id="admin-sidebar-menu" class="sidebar-nav" role="navigation">
-<ul class='nav nav-pills nav-stacked'>
-	<li role="presentation">
+    <div role="presentation" style="height:46px; padding:10px; margin-top:46px;">
             <span>
             <?php
 	     if($h->isActive('avatar')) {
@@ -40,30 +39,28 @@
                &nbsp;<a style="vertical-align:bottom;" href="<?php echo SITEURL; ?>admin_index.php?page=admin_account"><?php echo $h->currentUser->name; ?></a>
  
                 </span>
-            </li>
-            <hr style="margin:10px 0;"/>
-
+            </div>
+<ul class='nav nav-pills nav-stacked'>
 	
-        <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="fa fa-home"></i> <?php echo $h->lang("admin_theme_navigation_home"); ?></a></li>
+           
 	
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="fa fa-wrench"></i> <?php echo $h->lang("admin_theme_settings"); ?></a></li>
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="fa fa-edit"></i> <?php echo $h->lang("admin_theme_maintenance"); ?></a></li>
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="fa fa-flag"></i> <?php echo $h->lang("admin_theme_blocked_list"); ?></a></li>
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="fa fa-file"></i> <?php echo $h->lang("admin_theme_pages"); ?></a></li>	
-        <li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="fa fa-check"></i> <?php echo $h->lang("admin_theme_plugins"); ?></a></li>
+    <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="menu-icon fa fa-home"></i><span class="menu-text"><?php echo $h->lang("admin_theme_navigation_home"); ?></span></a></li>
+	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="menu-icon fa fa-wrench"></i><span class="menu-text"><?php echo $h->lang("admin_theme_settings"); ?></span></a></li>
+	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="menu-icon fa fa-edit"></i><span class="menu-text"><?php echo $h->lang("admin_theme_maintenance"); ?></span></a></li>
+	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="menu-icon fa fa-flag"></i><span class="menu-text"><?php echo $h->lang("admin_theme_blocked_list"); ?></span></a></li>
+	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
+        <li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
 	
         <?php 
         $pluginFunc = new PluginFunctions();
         $sb_links = $pluginFunc->getAllActivePluginNames($h);
         ?>        
         
-        <hr style="margin:10px 0;"/>	         
-        
 	<!-- Plugins -->       
         
         <?php
         if ($h->isActive('user_manager')) {
-            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang("admin_theme_users");
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list"><a href="#">' . $h->lang("admin_theme_users") . '</a>';
                 echo '<div id="admin_users_list" class="collapse out">';  
                     echo '<ul id="users_list">';
                     
@@ -75,14 +72,14 @@
                     echo '</ul>';
                 echo '</div>';
             echo '</li>';
-            echo '<hr style="margin:10px 0;"/>';
+            
         }
         ?>
         
         
         <?php
         if ($h->isActive('post_manager')) {
-            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list">' . $h->lang("admin_theme_posts");
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list"><a href="#">' . $h->lang("admin_theme_posts") . '</a>';
                 echo '<div id="admin_posts_list" class="collapse out">';  
                     echo '<ul id="posts_list">';
                     
@@ -94,7 +91,7 @@
                     echo '</ul>';
                 echo '</div>';
             echo '</li>';
-            echo '<hr style="margin:10px 0;"/>';
+            
         }
         ?>
         
@@ -102,8 +99,12 @@
         
         <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
 
-        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list"><?php echo $h->lang("admin_theme_plugin_settings"); ?>
-            &nbsp;&nbsp;<span class="badge badge-info pull-right"><?php echo $pluginsCount; ?></span>
+        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list">
+            <a href="#">
+                <?php echo $h->lang("admin_theme_plugin_settings"); ?>
+                <span class="label label-success pull-right"><?php echo $pluginsCount; ?></span>
+            </a>
+            
 
             <div id="admin_plugins_list" class="collapse out">    
                 <ul id="plugin_settings_list">
@@ -119,13 +120,14 @@
             </div> 
         </li>
 	
-        <hr style="margin:10px 0;"/>
+        
             
         <!-- Themes -->	
         <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
         <?php $themesCount = ($themes) ? count($themes) : 0; ?>
-        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><?php echo $h->lang("admin_theme_theme_settings"); ?>
+        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><a href="#"><?php echo $h->lang("admin_theme_theme_settings"); ?>
             &nbsp;&nbsp;<span class="badge badge-info pull-right"><?php echo $themesCount; ?></span>
+            </a>
             <div id="themes_list" class="collapse out">
                 <ul id="plugin_settings_list">
                 <?php 
