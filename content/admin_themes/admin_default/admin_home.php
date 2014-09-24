@@ -46,7 +46,7 @@ foreach($stats as $key=>$extClass){
     
     $c = new Comment();	   
     $comments_today = $c->stats($h, 'today');
-    var_dump($comments_today);
+    
 ?>
 <div>
     <div class="row">
