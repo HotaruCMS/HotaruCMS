@@ -1,0 +1,29 @@
+/* user manager */
+
+#table_list td.um_id 	  { width: 7%; font-size: 0.8em;}
+#table_list td.um_role    { width: 15%; }
+#table_list td.um_joined  { width: 16%; font-size: 0.9em;}
+#table_list td.um_username    { width: 25%; text-align: left;}
+#table_list td.um_description { line-height: 1.6em; border-right-width: 0.2em;}
+#table_list td.um_account { width: 8%; }
+#table_list td.um_perms   { width: 8%; }
+#table_list td.um_check   { width: 5%; }
+
+#user_man_navigation        { margin-top: 0.6em; padding: 8px; text-align: center; background-color: #CBE2FF; } 
+#user_man_usergroup_links   { margin-top: 0.6em; margin-left: 0; padding: 0.4em; background-color: #D4FFBF; }
+#user_man_usergroup_links li { margin: 0; padding: 0 0 0 0.3em; line-height: 1.5em; display: inline; white-space: nowrap; }
+#user_man_perms_revert_links { background-color: #ececec; padding: 1.0em; font-size: 0.9em; }
+#user_man_perms_existing_users_note { background-color: #FFFF99; margin-top: 0.4em; padding: 1.0em; font-size: 0.9em; }
+#user_man_submit  { margin: 1.0em; padding: 0.4em; }
+
+#manage_custom_roles { float: right; padding: 0.4em; }
+.custom_role_form { background-color: #D4FFBF; }
+.custom_role_form h3 { margin-left: 0.6em; }
+
+.user_man_pre_submit	{ padding: 1.0em; }
+.user_man_pre_submit_instruct	{ padding-top: 0; font-size: 0.8em;}
+.user_man_submit_button { padding: 1.0em; text-align: right;}
+
+.user_manager_name_icons { padding: 0.4em; display:none;}
+
+#user_man_add_user form { border-bottom: 1px solid #ccc; }

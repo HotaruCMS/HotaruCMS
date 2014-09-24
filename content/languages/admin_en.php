@@ -251,7 +251,7 @@ $lang["admin_theme_navigation_login"] = "Login";
 $lang["admin_theme_navigation_logout"] = "Logout";
 
 /* main */
-$lang["admin_theme_main_admin_cp"] = "Admin Control Panel";
+$lang["admin_theme_main_admin_cp"] = "Admin Dashboard";
 $lang["admin_theme_main_admin_home"] = "Admin Home";
 $lang["admin_theme_main_latest"] = "Latest from Hotaru CMS";
 $lang["admin_theme_main_stats"] = "Stats";

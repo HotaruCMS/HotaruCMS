@@ -29,7 +29,7 @@
 ?>
 <?php if ($h->currentUser->adminAccess) { ?>
 	<div id="ft" role="contentinfo">
-            <div class="container">
+            <div class="">
                 <hr/>
 		<?php
 			$h->pluginHook('admin_footer');

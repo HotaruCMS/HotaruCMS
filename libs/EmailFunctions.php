@@ -143,17 +143,42 @@ class EmailFunctions
 				'password' => SMTP_PASSWORD
 			);
 		
-			require_once "Mail.php";
-                        $mailFunction = new Mail;
-			$this->smtp = $mailFunction->factory('smtp', $smtp_array);
+			require EXTENSIONS. 'phpMailer/PHPMailerAutoload.php';
+			$mail = new PHPMailer;
+			
+			$mail->isSMTP();                                // Set mailer to use SMTP
+			$mail->Host = SMTP_HOST;			// Specify main and backup SMTP servers
+			$mail->SMTPAuth = true;                         // Enable SMTP authentication
+			$mail->Username = SMTP_USERNAME;                // SMTP username
+			$mail->Password = SMTP_PASSWORD;                // SMTP password
+			$mail->SMTPSecure = 'tls';                      // Enable TLS encryption, `ssl` also accepted
+			$mail->Port = SMTP_PORT;                        // TCP port to connect to
+
+			//require_once "Mail.php";
+                        //$mailFunction = new Mail;
+			//$this->smtp = $mailFunction->factory('smtp', $smtp_array);
 		}
 		
-		$mail = $this->smtp->send($this->to, $this->headers, $this->body);
+		$mail->Body = $this->body;
+		$mail->addAddress($this->headers['To']);
+		$mail->Subject = $this->headers['Subject'];
+		$mail->From = SITE_EMAIL;
+		$mail->FromName = $this->headers['From'];
 		
-		if (PEAR::isError($mail)) {
-			echo("<p>" . $mail->getMessage() . "</p>");
-			exit;
-		} 
+		if(!$mail->send()) {
+		    echo 'Message could not be sent.';
+		    echo 'Mailer Error: ' . $mail->ErrorInfo;
+		} else {
+		    //echo 'Message has been sent';
+		}
+
+		
+//		$mail = $this->smtp->send($this->to, $this->headers, $this->body);
+//		
+//		if (PEAR::isError($mail)) {
+//			echo("<p>" . $mail->getMessage() . "</p>");
+//			exit;
+//		} 
 	}
 }
 

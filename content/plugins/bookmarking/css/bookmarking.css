@@ -1,0 +1,32 @@
+/* bookmarking */
+
+/* ******* SORT LINKS ******** */
+ 
+#sort_box { font-size: 0.9em; margin-bottom: 1.0em;}
+.sort_menu li { display: inline; margin: 0 0.3em 0 0.3em; padding: 0;}
+.sort_menu li a, .sort_menu li.active a { padding: 0.2em; }
+.sort_menu li.active { font-weight: bold; background-color: #262626; padding: 0.2em; }
+.sort_menu li.active a {color: #fff; }
+.sort_menu li a:hover { background-color: #262626; color: #fff; padding: 0.2em; }
+
+/* ******* POST CSS ******** */
+
+.show_post { margin-bottom: 1.0em; }
+
+.avatar_wrapper a, .avatar_wrapper span { float: left; padding: 0 0.6em 0.2em 0; } /* span for anonymous avatars */
+
+.show_post_title { font-size: 1.2em; font-weight: bold; }
+.show_post_author_date { font-size: 0.825em; font-style: italic; }
+.show_post_content { margin: 0.4em 0 0.4em 0; overflow: hidden; width: 100%; }
+
+.show_post_edit	{	
+	background-repeat: no-repeat; background-position: 0 0px; 
+	font-weight: normal; color:#848484; 
+	margin-left: 0.8em; padding: 0.2em 0 0.2em 1.8em;;
+	background-image: url(../../../content/themes/default/images/edit.png);
+}
+.show_post_edit:hover { background-position: 0 -32px; color:#000; }
+
+.show_post_extra_fields ul li { padding-right: 0.4em; display: inline; color:#848484; margin-right: 1.0em;}
+.show_post_extra_fields ul li a { background-repeat: no-repeat; background-position: 0 0px; font-weight: normal; color:#848484; }
+.show_post_extra_fields ul li a:hover { background-position: 0 -32px; color:#000; }

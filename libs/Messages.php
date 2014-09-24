@@ -100,7 +100,7 @@ class Messages
                                 }
 
                                 // for older hotaru plugins
-                                if ($msg_type == 'red') $msg_type .= ' alert-error';
+                                if ($msg_type == 'red') $msg_type .= ' alert-danger';
                                 if ($msg_type == 'green') $msg_type .= ' alert-success';
                                 if ($msg_type == 'blue') $msg_type .= ' alert-info';
                 

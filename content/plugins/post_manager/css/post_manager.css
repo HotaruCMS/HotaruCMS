@@ -1,0 +1,29 @@
+/* post manager */
+
+#post_man_table { margin-top: 1.0em; }
+#post_man_table table { margin: auto; width: 96%; }
+#post_man_table tr.table_a td, #post_man_table tr.table_b td { font-size: 1.2em; font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; text-align: left; }
+#post_man_table tr.table_a td {	background-color: #D4FFBF; }
+#post_man_table tr.table_b td {	background-color: #CBE2FF; }
+#post_man_table tr.table_headers td { font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; background-color: #e0e0e0; 
+                        text-align: center; border-right: 1px solid #d0d0d0; }
+#post_man_table tr.table_row_0 td { background-color: #f0f0f0; padding: 0.4em 0.5em 0.4em 0.5em; border-right: 1px solid #e0e0e0; }
+#post_man_table tr.table_row_1 td {	background-color: #f6f6f6; padding: 0.4em 0.5em 0.4em 0.5em; border-right: 1px solid #e0e0e0; }
+#post_man_table .table_text { font-size: 1.2em; font-weight: bold; }
+#post_man_table td.table_description { background-color: #fefefe; border-style:solid; border-width: 0.2em 0 0.2em 0.2em; border-color: #e0e0e0; }
+#post_man_table td.table_description_close { background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0;
+	                            border-color: #e0e0e0; text-align: center; }
+	                            
+#post_man_table td.pm_id 	  { width: 7%; font-size: 0.8em; text-align: center; }
+#post_man_table td.pm_status  { width: 10%; font-size: 0.9em; text-align: center; }
+#post_man_table td.pm_date 	  { width: 10%; font-size: 0.8em; text-align: center;}
+#post_man_table td.pm_author 	{ font-size: 0.9em; }
+#post_man_table td.pm_title a  { text-align: left; font-size: 0.9em;}
+#post_man_table td.pm_description   { line-height: 1.6em; border-right-width: 0.2em;}
+#post_man_table td.pm_edit   { width: 6%; }
+#post_man_table td.pm_check   { width: 5%; text-align: center;}
+
+.post_man_user_icons { display: inline; }
+.post_man_user_icons img { vertical-align: middle; padding: 0 0.4em 0 0.4em; }
+
+.post_man_submit_button { padding: 1.0em; float: right;}

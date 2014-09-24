@@ -312,12 +312,19 @@ class UserInfo extends UserBase
 	 * @return int
 	 */
 	public function stats($h, $period = '')
-	{		
+	{			    
                 if ($period == 'today') {
-                    $end = date('Ymd');
-                    
+                    $end = date('Y-m-d');                    
                     $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " WHERE user_date >= %s GROUP BY user_role";
                     $query = $h->db->prepare($sql, $end);
+		} elseif ($period == 'week') {
+                    $end = date('Y-m-d', strtotime('last Sunday', time()));
+                    $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " WHERE user_date >= %s GROUP BY user_role";
+                    $query = $h->db->prepare($sql, $end);   		    
+		} elseif ($period == 'month') {
+                    $end = $first_second = date('Y-m-01');   		   
+                    $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " WHERE user_date >= %s GROUP BY user_role";
+                    $query = $h->db->prepare($sql, $end);    		   
                 } else {
                     $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " GROUP BY user_role";
                     $query = $h->db->prepare($sql);

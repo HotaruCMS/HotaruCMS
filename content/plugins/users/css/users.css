@@ -1,0 +1,68 @@
+/* users */
+
+.profile_navigation {
+    width: 18%;
+    margin-right: 2%;
+    float: left; 
+    display: inline; 
+}
+
+.users_content {
+    width: 80%;
+    float: left;
+}
+
+#users_edit_profile.users_content table, .users_content textarea { 
+	width: 100%;
+}
+
+.users_content table td {
+	vertical-align: top;
+}
+
+#users_posts_filter#sort_box.sort_menu li { display: block; margin: 0;}
+#users_posts_filter#sort_box.sort_menu li.active { background-color: #f8f8f8; }
+#users_posts_filter#sort_box.sort_menu li.active a { color: #000; font-weight: bold; }
+
+#profile_avatar {  margin: 0.6em 1.0em 1.0em 0; }
+#profile_bio { float: left; margin: 0.6em 0 1.0em 0; width: 80%; }
+#profile_usage { margin: 0 1.0em 1.0em 0; }
+
+
+
+#userProfilePixBox {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06);
+    border: 1px solid #BCBCBC;
+    background: none repeat scroll 0 0 #FAFAFA;
+    margin-right: 8px;
+    height: 190px;
+}
+
+#userProfilePixBox img {
+    height: 100%;
+}
+
+#profileAvatarOverlay {
+    margin-top: 0px;
+}
+#profileAvatarOverlay img {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #EEEEEE;
+    margin-left: 10px;
+    margin-top: 20px;
+    padding: 2px;
+}
+
+#userProfilePixBox {
+    position:relative;
+}
+
+.profile_pix {
+    position:absolute;
+    width:100%;
+    height:100%;
+}
+
+#user_profile_navigation .nav {
+    margin-bottom: 0px;
+}

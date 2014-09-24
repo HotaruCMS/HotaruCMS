@@ -587,7 +587,15 @@ class Post
                         $h->smartCache('on', 'posts', 60, $query); // start using cache
                         $posts = $h->db->get_var($query);
                         break;
+		case 'totalweek':
+			$end = date('Y-m-d', strtotime('last Sunday', time()));
+			$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_status <> %s AND post_archived = %s AND post_date >= %s";
+                        $query = $h->db->prepare($sql, 'pending', 'N', $end);                        
+                        $h->smartCache('on', 'posts', 60, $query); // start using cache
+                        $posts = $h->db->get_var($query);						
+			break;
 		}
+		
 
 		$h->smartCache('off'); // stop using cache
 

@@ -576,6 +576,13 @@ class Comment
 			$h->smartCache('on', 'comments', 60, $query); // start using cache
 			$comments = $h->db->get_var($query);
 			break;
+		    case 'today':			
+			$end = date('Y-m-d');                    
+			$sql = "SELECT count(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_archived = %s AND comment_date > %s";
+			$query = $h->db->prepare($sql, 'N', $end);
+			$h->smartCache('on', 'comments', 60, $query); // start using cache
+			$comments = $h->db->get_var($query);
+			break;
 		}
 
 		$h->smartCache('off'); // stop using cache
