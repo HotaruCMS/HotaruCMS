@@ -48,6 +48,7 @@
         <!-- Include merged files for all the plugin css and javascript (if any) -->
         <?php $h->doIncludes('css'); ?>		
         <script type='text/javascript' src='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/js/bootstrap-switch.min.js'></script>
+	<script type='text/javascript' src='<?php echo SITEURL; ?>libs/extensions/flotcharts/jquery.flot.min.js'></script>
    
         <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
 	
@@ -61,16 +62,7 @@
         <?php if ($h->currentUser->adminAccess) {
             echo $h->template('admin_navigation');
                            
-            $announcements = $h->checkAnnouncements();
-            if ($announcements && $h->currentUser->adminAccess) { 
-
-                echo '<div id="announcement">';
-                        $h->pluginHook('admin_announcement_first');
-                        foreach ($announcements as $announcement) { echo $announcement . "<br/>"; }
-                        $h->pluginHook('admin_announcement_last');
-                echo '</div>';
-
-             } 
+            
          } 
         
         ?>

@@ -71,16 +71,16 @@ $loaded_settings = $h->vars['admin_settings'];
 			<td>
 				<?php
 				if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
-					echo '<input type="radio" name="' . $ls->settings_name .'" value="true" ';
+					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="true" ';
 					if ($ls->settings_value == 'true') { echo ' checked'; }
 					echo ' >&nbsp;ON&nbsp;&nbsp;';
-					echo '<input type="radio" name="' . $ls->settings_name .'" value="false" ';
+					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="false" ';
 					if ($ls->settings_value == 'false') { echo ' checked'; }
 					echo ' >&nbsp;OFF';
 				}
 				else {
 					if ($ls->settings_name == 'SMTP_PASSWORD') { $type = 'password'; } else { $type = 'text'; }
-					echo '<input type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
+					echo '<input class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
 				}
 				?>
 			</td>

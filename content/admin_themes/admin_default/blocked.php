@@ -27,31 +27,40 @@
  */
 extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 ?>
-
-<!-- TITLE FOR ADMIN NEWS -->
-<h2><?php echo $h->lang("admin_theme_blocked_list"); ?></h2>
-
-<?php echo $h->lang("admin_theme_blocked_desc"); ?>
-
 <?php echo $h->showMessage(); ?>
 
-<form name='blocked_list_new_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
-	<h3><?php echo $h->lang("admin_theme_blocked_new"); ?></h3>
-	<table>
-		<tr class='table_headers'>
-			<td><select name='blocked_type'>
-				<option value='ip'><?php echo $h->lang("admin_theme_blocked_ip"); ?></option>
-				<option value='url'><?php echo $h->lang("admin_theme_blocked_url"); ?></option>
-				<option value='email'><?php echo $h->lang("admin_theme_blocked_email"); ?></option>
-				<option value='user'><?php echo $h->lang("admin_theme_blocked_username"); ?></option>
-			</select></td>
-			<td><input type='text' size=30 name='value' value='' /></td>
-			<td><input class='submit' type='submit' value='<?php echo $h->lang('admin_theme_blocked_submit_add'); ?>' /></td>
-		</tr>
-	</table>
+
+<!-- TITLE FOR ADMIN NEWS -->
+<h3><?php echo $h->lang("admin_theme_blocked_list"); ?></h3>
+
+<div class="help-block">
+    <?php echo $h->lang("admin_theme_blocked_desc"); ?>
+</div>
+
+<div class="well">
+    <h4><?php echo $h->lang("admin_theme_blocked_new"); ?></h4>
+    <form role="form" name='blocked_list_new_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
+	<div class="form-group">
+	    <label for="formInputName">Type</label>
+	    <select class="form-control" name='blocked_type'>
+		    <option value='ip'><?php echo $h->lang("admin_theme_blocked_ip"); ?></option>
+		    <option value='url'><?php echo $h->lang("admin_theme_blocked_url"); ?></option>
+		    <option value='email'><?php echo $h->lang("admin_theme_blocked_email"); ?></option>
+		    <option value='user'><?php echo $h->lang("admin_theme_blocked_username"); ?></option>
+	    </select>
+	</div>
+	<div class="form-group">
+	    <label for="formInputName">Value</label>
+	    <input type="text" class="form-control" id="formName" placeholder="" size=30 name='value' value=''>	    
+	</div>
+			
+		
 	<input type='hidden' name='type' value='new' />
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+	 <button type="submit" class="btn btn-default" ><?php echo $h->lang('admin_theme_blocked_submit_add'); ?></button>    
 </form>
+
+</div>
 
 <table><tr><td>
 

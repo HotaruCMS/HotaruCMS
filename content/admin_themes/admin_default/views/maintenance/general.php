@@ -1,3 +1,4 @@
+<br/>
 <ul class="">
 	<?php if (SITE_OPEN == "true") { ?>
 	<li><a class="btn btn-warning" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=close">

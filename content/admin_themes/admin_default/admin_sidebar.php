@@ -28,25 +28,14 @@
 
 ?>
 <div id="admin-sidebar-menu" class="sidebar-nav" role="navigation">
-    <div role="presentation" style="height:46px; padding:10px; margin-top:46px;">
-            <span>
-            <?php
-	     if($h->isActive('avatar')) {
-                    $h->setAvatar($h->currentUser->id, 24, 'g', 'img-polaroid left');
-                    echo  $h->linkAvatar();
-            }
-            ?>
-               &nbsp;<a style="vertical-align:bottom;" href="<?php echo SITEURL; ?>admin_index.php?page=admin_account"><?php echo $h->currentUser->name; ?></a>
- 
-                </span>
-            </div>
+    
 <ul class='nav nav-pills nav-stacked'>
 	
            
 	
     <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="menu-icon fa fa-home"></i><span class="menu-text"><?php echo $h->lang("admin_theme_navigation_home"); ?></span></a></li>
 	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=settings"><i class="menu-icon fa fa-wrench"></i><span class="menu-text"><?php echo $h->lang("admin_theme_settings"); ?></span></a></li>
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="menu-icon fa fa-edit"></i><span class="menu-text"><?php echo $h->lang("admin_theme_maintenance"); ?></span></a></li>
+	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=maintenance"><i class="menu-icon fa fa-refresh"></i><span class="menu-text"><?php echo $h->lang("admin_theme_maintenance"); ?></span></a></li>
 	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=blocked"><i class="menu-icon fa fa-flag"></i><span class="menu-text"><?php echo $h->lang("admin_theme_blocked_list"); ?></span></a></li>
 	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
         <li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
@@ -60,7 +49,7 @@
         
         <?php
         if ($h->isActive('user_manager')) {
-            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list"><a href="#">' . $h->lang("admin_theme_users") . '</a>';
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list"><a href="#"><i class="menu-icon fa fa-user"></i><span class="menu-text">' . $h->lang("admin_theme_users") . '</span></a>';
                 echo '<div id="admin_users_list" class="collapse out">';  
                     echo '<ul id="users_list">';
                     
@@ -79,7 +68,7 @@
         
         <?php
         if ($h->isActive('post_manager')) {
-            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list"><a href="#">' . $h->lang("admin_theme_posts") . '</a>';
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list"><a href="#"><i class="menu-icon fa fa-edit"></i><span class="menu-text">' . $h->lang("admin_theme_posts") . '</span></a>';
                 echo '<div id="admin_posts_list" class="collapse out">';  
                     echo '<ul id="posts_list">';
                     

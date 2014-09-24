@@ -1,0 +1,93 @@
+/* comments */
+
+.comment_link       { padding-left: 1.5em; background-image: url(../../../content/plugins/comments/images/comment.png); background-repeat: no-repeat; }
+.comment_reply_link { padding-left: 1.9em; background-image: url(../../../content/plugins/comments/images/comment.png); background-repeat: no-repeat; background-position: 0 0;}
+.comment_edit_link { padding-left: 1.9em; padding-top:0.1em; background-image: url(../../../content/plugins/comments/images/edit.png); background-repeat: no-repeat;  background-position: 0 0;}
+.comment_reply_wrapper a:hover  { background-position: 0 -32px;}
+
+.comments_wrapper h2 {
+	padding-bottom: 0em;
+}
+
+.comment_header .avatar_wrapper a {	
+	padding: 0 0.6em 0.6em 0;
+}
+
+.comment {
+	background-color: #fff;
+	margin-top: 1.0em;	
+	border: 0;
+}
+
+.comment_reply_wrapper {
+	padding-bottom:1em;
+	padding-top: 0.8em;
+	text-align:right;
+	margin-right: 0.6em;
+}
+
+.comment_reply_link, .comment_edit_link {
+	font-size: 8pt;
+	text-decoration: none;
+	color:#444444;
+	font-weight:bold;
+}
+
+.comment_author {
+
+}
+
+.comment_author_date {
+    margin-top: 0.6em;
+	font-size: 0.8em;
+	float: right;
+}
+
+.comment_form textarea {
+	width: 100%;
+}
+
+.comment_form_off {
+	margin-top: 2.0em;
+	text-align: center;
+}
+
+.comment_status {
+	float: right;
+	text-align: right;
+}
+
+#post_comments_admin {
+	float: right;
+	text-align: right;
+}
+
+#post_comments_admin li {
+	padding: 0;
+}
+
+.comment_header {
+	border: 1px solid #d0d0d0;
+	padding: 0.4em;
+	background-color: #f9f9f9;
+	margin-bottom: 0.4em;
+	height:16px;
+	display:block;
+}
+
+.comment_content {
+	margin: 0.6em 0 0 0.8em;
+	overflow: hidden;
+	width: 96%;
+}
+
+.comment_header_left {
+	float:left;
+	width: 70%;
+}
+
+.comment_post_link {margin: 0.6em 0.6em 0.4em; text-align:right;}
+
+.comment_show_hide  { margin-left: 2.0em; font-size: 0.8em; }
+
+.clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */

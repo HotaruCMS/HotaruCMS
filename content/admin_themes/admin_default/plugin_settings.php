@@ -44,7 +44,7 @@ if (version_compare($plugin_latest_version, $pluginData->plugin_version) == 1) {
 }
 
 if ($plugin_latest_version == '0.0') {     
-    $h->showMessage('No version information could be found on the plugin server ', ''); 
+    $h->showMessage('No version information could be found on the plugin server ', 'alert-info'); 
     // show version number in the message
 }
 
@@ -67,7 +67,7 @@ if ($plugin_latest_version == '0.0') {
                   echo '</ul>';
 
                 echo '<div class="tab-content">';
-                
+                echo '<br/>';
                     $h->pluginHook('admin_plugin_tabContent_pre_first', $plugin);
                 
                     echo '<div class="tab-pane" id="home">';

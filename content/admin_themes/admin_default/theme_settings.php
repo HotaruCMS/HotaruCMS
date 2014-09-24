@@ -50,9 +50,11 @@ $meta = $h->readThemeMeta($theme);
                         </ul>';
 
                 echo '<div class="tab-content">';
-                
+                echo '<br/>';
                     echo '<div class="tab-pane active" id="home">';
                         
+			
+		     
                         if ($theme == rtrim(THEME, '/')) {
 				$span = "current";
 				$instruct = $h->lang('admin_theme_theme_activate_current');

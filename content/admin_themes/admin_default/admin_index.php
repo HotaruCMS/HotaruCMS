@@ -58,16 +58,13 @@ if (!$result) {
                      
         <?php } ?>	
         <!-- BREADCRUMBS -->
-                <div class='breadcrumb'>
+                <div id="admin-breadcrumb" class='breadcrumb'>
                     <i class="fa fa-th-large" style="color:gray;"></i>&nbsp;
                         <?php echo $h->breadcrumbs("/"); ?>
                     <i class="pull-right navbar-icon fa fa-bars"></i>
                 </div>
             <!-- MAIN -->
             <div id="main-content">
-                
-                
-            
                 
                 <div>
                 
@@ -94,9 +91,9 @@ if (!$result) {
             </div>
             <div id="main-menu-sidebar-bgd">&nbsp;</div>
            
-</div>
 
-</div> <!--/wrap-->
+
+
 <!-- FOOTER -->
 <?php
 	// plugin hook
@@ -105,6 +102,8 @@ if (!$result) {
 		$h->template('admin_footer');
 	}
 ?>
+</div>
+</div> <!--/wrap-->
 </body>
 </html>
 <?php } ?>

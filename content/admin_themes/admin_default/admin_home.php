@@ -26,9 +26,153 @@
  * @link      http://www.hotarucms.org/
  */
 
-?>
+// stats
+$ui = new UserInfo();
+$stats = $ui->stats($h, 'month');
 
-<div class="col-md-9">
+$users = 0;
+foreach($stats as $key=>$extClass){ 
+	//print_r($extClass); print "<br/>";
+        if(in_array('member', $extClass))
+        {
+//	    print_r($extClass); print "**<br/>";
+//	    print $extClass[1];
+            $users = $extClass[1];
+        }
+    }    
+    
+    $postsAll = $h->post->stats($h, 'total');
+    $posts_week = $h->post->stats($h, 'totalweek');
+    
+    $c = new Comment();	   
+    $comments_today = $c->stats($h, 'today');
+    var_dump($comments_today);
+?>
+<div>
+    <div class="row">
+	
+	<div class="col-md-3">
+	    <?php if ($stats  != null)  { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-success pull-right">Monthly</span>
+			<h5><i class="fa fa-users"></i>&nbsp;Users</h5>
+		    </div>
+		    <div class="content">
+			<h1 class="no-margins"><?php echo $users; ?></h1>
+    <!--                                <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>-->
+			<small>New members</small>
+		    </div>
+		</div>
+	    <?php } else { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-warning pull-right"><i class='fa fa-info-circle'></i></span>
+			<h5><i class="fa fa-users"></i>&nbsp;Users</h5>
+		    </div>
+		    <div class="content">
+			<h3 class="no-margins">Users plugin is not active</h3>
+<!--			<div class="stat-percent font-bold text-navy">24% <i class="fa fa-level-up"></i></div>-->
+<!--			<small></small>-->
+		    </div>
+		</div>
+	    <?php } ?>
+	</div>
+	
+	<div class="col-md-3">
+	    <?php if ($posts_week  != null)  { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-info pull-right">Weekly</span>
+			<h5>Posts</h5>
+		    </div>
+		    <div class="content">
+			<h1 class="no-margins"><?php echo $posts_week; ?></h1>
+<!--                        <div class="stat-percent font-bold text-info"><?php echo $newpostpercent; ?>% <i class="fa fa-level-up"></i></div>-->
+			<small>New posts</small>
+		    </div>
+		</div>
+	    <?php } else { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-warning pull-right"><i class='fa fa-info-circle'></i></span>
+			<h5>Posts</h5>
+		    </div>
+		    <div class="content">
+			<h3 class="no-margins">Post plugin is not active</h3>
+<!--			<div class="stat-percent font-bold text-navy">24% <i class="fa fa-level-up"></i></div>-->
+<!--			<small></small>-->
+		    </div>
+		</div>
+	    <?php } ?>
+	</div>
+	
+	<div class="col-md-3">
+	    <?php if ($comments_today != null)  { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-primary pull-right">Today</span>
+			<h5>Comments</h5>
+		    </div>
+		    <div class="content">
+			<h1 class="no-margins"><?php echo $comments_today; ?></h1>
+<!--			<div class="stat-percent font-bold text-navy">24% <i class="fa fa-level-up"></i></div>-->
+			<small>Comments</small>
+		    </div>
+		</div>
+	    <?php } else { ?>
+		<div class="statbox">
+		    <div class="title">
+			<span class="label label-warning pull-right"><i class='fa fa-info-circle'></i></span>
+			<h5>Comments</h5>
+		    </div>
+		    <div class="content">
+			<h3 class="no-margins">Comment plugin is not active</h3>
+<!--			<div class="stat-percent font-bold text-navy">24% <i class="fa fa-level-up"></i></div>-->
+<!--			<small></small>-->
+		    </div>
+		</div>
+	    <?php } ?>
+	</div>
+                    
+	<div class="col-md-3">
+	    <?php
+			               
+	    $hotaru_latest_version = $h->miscdata('hotaru_latest_version');                
+	    if (version_compare($hotaru_latest_version, $h->version) == 1) {
+		?>			
+		<div class="statbox danger">
+		    <div class="title">
+			<span class="label label-danger pull-right">Update</span>
+			<h5>Software</h5>
+		    </div>
+		    <div class="content">
+			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#">upgrade now</a>', 'alert-info');   ?>
+		    </div>
+		</div>
+			
+	    <?php			                                                 
+	    } else {
+		?>			
+		<div class="statbox danger">
+		    <div class="title">        
+			<span class="label label-success pull-right"><i class='fa fa-check'></i></span>
+			<h5>Software</h5>
+		    </div>
+		    <div class="content">
+			<div>Hotaru CMS <?php echo $h->version; ?></div>   
+			<?php echo $h->lang("admin_theme_version_latest_version_installed"); ?>
+		    </div>
+		</div>			
+	    <?php	                            
+	    }
+	    ?>
+	</div>
+    </div>
+</div>
+
+
+<div id="rss-latest" class="col-md-9 well">
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>

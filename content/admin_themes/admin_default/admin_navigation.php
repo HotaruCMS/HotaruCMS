@@ -37,15 +37,11 @@
               <span class="icon-bar"></span>
             </button>
             <div >
-                <a href="#" class="navbar-brand">
-                    
-                    <span class="small">
-                        
+                <a href="#" class="navbar-brand">                    
+                    <span class="small">                        
                             <?php echo $h->lang("admin_theme_header_hotarucms"); ?><?php echo $h->version; ?>
                     </span>
                 </a>
-                
-                
             </div>
         </div>
         <div class="navbar-collapse collapse">         
@@ -66,20 +62,89 @@
                     </ul>
                 </li>
                 <li><a href="http://docs.hotarucms.org"><?php echo $h->lang("admin_theme_menu_help"); ?></a></li>
-                <li><a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><?php echo $h->lang("admin_theme_menu_logout"); ?></a></li>
+               
+            </ul> 
+            <ul class="nav navbar-header navbar-nav navbar-right">
+		
+		<?php
+		$announcements = $h->checkAnnouncements();
+           
+		if ($announcements != null  && $h->currentUser->adminAccess)
+		{
+		    ?>		
+		    <li class="dropdown">
+			<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+			    <i class="fa fa-bell"></i>  <span class="label label-danger"><?php echo count($announcements)?></span>
+			</a>
+			<ul class="dropdown-menu dropdown-alerts">
+
+			    <?php
+			     $h->pluginHook('admin_announcement_first');
+			    foreach ($announcements as $announcement) 
+				{
+				?>
+				    <li>
+					<a href="/admin_index.php?page=settings">
+					    <div>
+						<i class="fa fa-info-circle fa-fw"></i> <?php echo $announcement; ?>
+	    <!--                                    <span class="pull-right text-muted small">4 minutes ago</span>-->
+					    </div>
+					</a>
+				    </li>				
+				     <li class="divider"></li>
+				<?php
+				}
+			    $h->pluginHook('admin_announcement_last');
+			    ?>			
+			</ul>
+		    </li>
+		    <?php
+		}
+		else
+		{
+		    ?>
+		    <li class="">                    
+			    <i class="fa fa-bell"></i>  <span class="label label-primary">                    
+		    </li>
+		    <?php
+		}   
+		?>
+		    
+		<li class="dropdown">
+		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">
+			<?php   if($h->isActive('avatar')) {
+					    $h->setAvatar($h->currentUser->id, 20, 'g', 'img-circle');
+					    echo  $h->getAvatar();                                       
+				    }
+				?>
+		    </a>
+		    <ul class="dropdown-menu">
+			<li class="dropdown-caret">
+			  <span class="caret-outer"></span>
+			  <span class="caret-inner"></span>
+			</li>
+
+			<li class="current-user" data-name="profile">			    
+			    <b class="fullname" style="padding:8px;"><?php echo $h->currentUser->name; ?></b>				      
+			</li>
+			<li class="divider"></li>
+			<li>
+			    <a href="<?php echo $h->url(array('page'=>'admin'), 'user'); ?>">Profile</a>
+			</li>
+			<li>                    
+			    <a href="/admin_index.php?page=admin_account">Account</a>
+			</li>
+			<li class="divider"></li>
+			<li>
+			    <a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>"><i class="fa fa-sign-out"></i>&nbsp;Sign out</a>                   
+			</li>
+		    </ul>
+		</li>
+		    
+                <li>
+		    <a class="" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
+		</li>
             </ul>
-            <div class="navbar-header navbar-right">
-                <span class="navbar-brand btn-navbar">
-                  <?php	if ($h->currentUser->loggedIn) {
-                                      if($h->isActive('avatar')) {
-                                              $h->setAvatar($h->currentUser->id, 24, 'g', 'img-circle');
-                                              echo  $h->linkAvatar();
-                                      }
-                              } ?>
-                </span>
-                
-                <a class="navbar-brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
-            </div>
         </div><!--/.nav-collapse -->
     </div>
 </div>
