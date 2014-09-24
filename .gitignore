@@ -1,2 +1,14 @@
 /nbproject/private/
 nbproject/project.xml
+
+config/settings.php
+
+.htaccess
+
+memcacheadmin.php
+
+content/pages/test/abc.php
+
+content/themes/modern/images/alert.png
+/content/themes/neat/
+/content/themes/modern/
