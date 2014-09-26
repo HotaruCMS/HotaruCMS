@@ -88,7 +88,7 @@ foreach($stats as $key=>$extClass){
 		    </div>
 		    <div class="content">
 			<h1 class="no-margins"><?php echo $posts_week; ?></h1>
-<!--                        <div class="stat-percent font-bold text-info"><?php echo $newpostpercent; ?>% <i class="fa fa-level-up"></i></div>-->
+<!--                        <div class="stat-percent font-bold text-info"><?php //echo $newpostpercent; ?>% <i class="fa fa-level-up"></i></div>-->
 			<small>New posts</small>
 		    </div>
 		</div>
