@@ -22,8 +22,8 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
 	}
         
         // full width UI:
-        if ($h->cage->post->keyExists('fullWidth')) { 
-            $theme_settings['fullWidth'] = 'checked';
+        if ($h->cage->post->keyExists('fullWidth')) {           
+            $theme_settings['fullWidth'] = 'checked';            
         } else {
             $theme_settings['fullWidth'] = '0';  // must be something otherwise it wont save
 	}
@@ -32,7 +32,7 @@ if ($h->cage->post->getAlpha('submitted') == 'true')
         if ($h->cage->post->keyExists('leftSpan')) {
 		$theme_settings['leftSpan'] = $h->cage->post->getInt('leftSpan');
 	} else {
-		$error = 'Invalid integer for left column span';
+		$theme_settings['leftSpan'] = '9';
 	}
         
         // link color
@@ -79,23 +79,42 @@ if (!$theme_settings) {
 
 ?>
  
-<form class="form" name='theme_settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>#tab_settings' method='post'>
+<form role="form" class="form" name='theme_settings_form' action='<?php echo BASEURL; ?>admin_index.php?page=theme_settings&amp;theme=<?php echo $vTheme; ?>#tab_settings' method='post'>
 
-<p>Tagline: <input type='text' size="70" name='tagline' value='<?php echo $theme_settings['tagline']; ?>'/></p>
- 
-<p><label for="site_color">Base color for your Site&nbsp;#</label><input id='site_color' type='text' name='link_color' value='<?php echo $theme_settings['link_color']; ?>' <?php echo $theme_settings['link_color']; ?>>
-&nbsp;&nbsp;<a href="http://www.colorpicker.com/" target="blank">Online color picker.</a></p>
+    <div class="form-group">
+        <label for="tagline">Tagline</label>
+        <input class="form-control" type='text' size="70" name='tagline' value='<?php echo $theme_settings['tagline']; ?>'/>
+    </div>
 
-<p><input type='checkbox' name='fullWidth' value='<?php echo $theme_settings['fullWidth']; ?>' />&nbsp;Full width UI&nbsp;&nbsp;
+    <div class="form-group">
+        <label for="site_color">Base color for your Site</label>
+        <div class="input-group">
+            <span class="input-group-addon">#</span>
+            <input id='site_color' class="form-control" type='text' name='link_color' value='<?php echo $theme_settings['link_color']; ?>' <?php echo $theme_settings['link_color']; ?>>
+        </div>
+        <div class="help-block"><a href="http://www.colorpicker.com/" target="blank">Online color picker</a></div>
+    </div>
 
-<p><input type='checkbox' name='userProfile_tabs' value='<?php echo $theme_settings['userProfile_tabs']; ?>' />&nbsp;Tabs on user profile&nbsp;&nbsp;
-    
-<p>Left Column Span: <input type='text' size="20" name='leftSpan' value='<?php echo $theme_settings['leftSpan']; ?>'/>
-<br/>Note: The default setting is 9, the max is 12
-</p>
- 
-    
-<br />
+    <div class="checkbox">
+        <label>
+            <input type='checkbox' id='fullWidth' name='fullWidth' value='fullWidth' <?php echo $theme_settings['fullWidth']; ?> />
+            Full width UI
+        </label>
+    </div>
+
+    <div class="checkbox">
+        <label>
+            <input type='checkbox' id='userProfile_tabs' name='userProfile_tabs' value='userProfile_tabs' <?php echo $theme_settings['userProfile_tabs']; ?> />
+            Tabs on user profile
+        </label>
+    </div>
+     
+    <div class="form-group">
+        <label for="left_col">Left Column Ratio</label>
+        <input class="form-control" type='text' size="20" name='leftSpan' value='<?php echo $theme_settings['leftSpan']; ?>'/>
+        <div class="help-block">Note: The default setting is 9, the max is 12</div>
+    </div>
+
     <div class="form-actions">
         <input type='hidden' name='submitted' value='true' />
         <input type='submit' class="btn btn-primary"value='<?php echo $h->lang("main_form_save"); ?>' />
