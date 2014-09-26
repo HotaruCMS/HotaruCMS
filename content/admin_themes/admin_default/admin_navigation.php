@@ -103,8 +103,8 @@
 		else
 		{
 		    ?>
-		    <li class="">                    
-			    <i class="fa fa-bell"></i>  <span class="label label-primary">                    
+		    <li class="">
+                        <a href="#"><i class="fa fa-bell"></i></a>                  
 		    </li>
 		    <?php
 		}   

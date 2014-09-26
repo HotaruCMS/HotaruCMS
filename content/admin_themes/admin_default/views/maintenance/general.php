@@ -13,7 +13,7 @@
 	
 	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php?action=announcement#tab_home' method='post'>    
 	<div>
-            <div style='width:80%;'>
+            <div class="form-group" style='width:80%;'>
 		<textarea style='width:100%;' name='announcement_text' rows=3><?php echo $h->vars['admin_announcement']; ?></textarea>
                 
                     <input type='checkbox' name='announcement_enabled' value='announcement_enabled' <?php echo $h->vars['admin_announcement_enabled']; ?>>
@@ -22,7 +22,7 @@
                     <?php echo $h->lang("admin_theme_maintenance_announcement_tags"); ?>
                     </div>
             </div>
-            <input class='btn' type='submit' value='<?php echo $h->lang('main_form_submit'); ?>' />
+            <input class='btn btn-primary' type='submit' value='<?php echo $h->lang('main_form_submit'); ?>' />
 
 	</div>	
 	<input type='hidden' name='page' value='maintenance'>
