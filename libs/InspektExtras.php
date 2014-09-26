@@ -169,9 +169,9 @@ class getHtmLawed extends AccessorAbstract
           If the last plugin didn't send an array, then ignore it and use the default $config array
          */
 
-         $h = new Hotaru();
-         $results = $h->pluginHook('hotaru_inspekt_htmlawed_config', 'htmlawed_config');
-         if (isset($results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'])) $results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'];
+         //$h = new Hotaru();
+         //$results = $h->pluginHook('hotaru_inspekt_htmlawed_config', 'htmlawed_config');
+         //if (isset($results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'])) $results['HtmlawedConfig_hotaru_inspekt_htmlawed_config'];
 
          // use default $config if not set above:
          if (!isset($config) || !is_array($config))

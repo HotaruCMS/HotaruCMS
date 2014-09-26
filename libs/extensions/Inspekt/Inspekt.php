@@ -264,14 +264,14 @@ class Inspekt
 		 */
 		static $_instance;
 
-		if (!isset($_SESSION)) {
-			return NULL;
-		}
-
-		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage_Session::Factory($_SESSION, $config_file, '_SESSION', $strict);
-		}
-		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
+//		if (!isset($_SESSION)) {
+//			return NULL;
+//		}
+//
+//		if (!isset($_instance)) {
+//			$_instance = Inspekt_Cage_Session::Factory($_SESSION, $config_file, '_SESSION', $strict);
+//		}
+//		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
 		return $_instance;
 	}
 

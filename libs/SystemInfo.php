@@ -43,9 +43,8 @@ class SystemInfo
 			'method' => 'hotaru.systemFeedback.add',
 			'args' => serialize($report)
 		);
-		
 		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
-		
+
 		return true;
 	}
         
@@ -180,7 +179,7 @@ class SystemInfo
                 //curl_setopt( $ch, CURLOPT_TIMEOUT, 5 );
 		$response = curl_exec($ch);
 		curl_close ($ch);
-		
+		//print $url . ' ** ' . $response . "</br>";
 		return json_decode($response, true);
 	}
 

@@ -141,7 +141,7 @@ class EmailFunctions
 				'auth' => true, 
 				'username' => SMTP_USERNAME, 
 				'password' => SMTP_PASSWORD
-			);
+			); 
 		
 			require EXTENSIONS. 'phpMailer/PHPMailerAutoload.php';
 			$mail = new PHPMailer;
