@@ -252,7 +252,7 @@ class Initialize
         
         
         /**
-         *  et global memcache object
+         *  set global memcache object
          */
         protected function setMemCache() {
             

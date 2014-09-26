@@ -397,11 +397,8 @@ class PageHandling
 			foreach ($parameters as $key => $value) {
 			
 				if ($key == 'page' && is_numeric($value) ) {
-				
-					// must be a post, let's get the post_url after we've read the post (if necessary)
-					if (!$h->post->url) {
-						$h->readPost($value);
-					}
+                                        // find the url
+                                        $h->readPost($value);
 					$value = $h->post->url;
 					
 					// if we're using categories and the category is not "all"...

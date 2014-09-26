@@ -302,10 +302,9 @@ class Maintenance
 	 */
 	public function addSiteAnnouncement($h)
 	{   
-                if (!$h->csrf()) { 
-                        $h->messages[$h->lang['error_csrf']] = 'red';
+                if (!$h->csrf()) {                      
                         return false;
-                }
+                }            
                 
 		$allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><del><br><br/>";
 		$h->vars['admin_announcement'] = sanitize($h->cage->post->getHtmLawed('announcement_text'), 'tags', $allowable_tags);

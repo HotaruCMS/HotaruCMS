@@ -111,6 +111,15 @@ class Debug
                         echo '<li class="divider"></li>';
                         echo '<li><a href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
                         
+                        // show csrf token
+                        if (isset($_SESSION["csrf"]))
+                        {
+                                $token = $_SESSION["csrf"];
+                                if (strlen($token) > 7) $token = '..' . substr($token, strlen($token)-7, 7);
+                        }
+                        else {  $token = "none"; }
+                        
+                        echo '<li><a href="#">csrf: ' . $token . '</a></li>'
 //                 $h->lang('main_hotaru_page_load_time') => timer_stop(2) . $h->lang('main_times_secs'),
 //                 $h->lang('main_hotaru_memory_usage') => display_filesize(memory_get_usage()),
 //                 '$h->vars: ' => array('(' . count($h->vars) . ') ' . display_filesize(strlen(serialize($h->vars))), $h->url(array('debug'=>'hvars' ,'admin'))),
