@@ -154,4 +154,7 @@ $lang["main_welcome_looking_forward"] = "We are looking forward to seeing what y
 $lang["main_welcome_getting_started"] = "It looks like you are just getting started with your new website";
 $lang["main_welcome_install_plugins"] = "Time to install some plugins and open your site";
 
+/* Debug */
+$lang['debug_success_csrf'] = "DEBUG : CSRF Success";
+
 ?>
