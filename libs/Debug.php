@@ -112,9 +112,9 @@ class Debug
                         echo '<li><a href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
                         
                         // show csrf token
-                        if (isset($_SESSION["csrf"]))
+                        if (isset($_SESSION["csrf-form"]))
                         {
-                                $token = $_SESSION["csrf"];
+                                $token = $_SESSION["csrf-form"];
                                 if (strlen($token) > 7) $token = '..' . substr($token, strlen($token)-7, 7);
                         }
                         else {  $token = "none"; }
