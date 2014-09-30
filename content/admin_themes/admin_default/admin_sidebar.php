@@ -85,6 +85,30 @@
             
         }
         ?>
+	
+	<?php
+        if ($h->isActive('category_manager')) {
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_categories_list"><a href="#"><i class="menu-icon fa fa-bars"></i><span class="menu-text">' . $h->lang("admin_theme_categories") . '</span></a>';
+                echo '<div id="admin_categories_list" class="collapse out">';  
+                    echo '<ul id="categories_list">';
+                    
+                        $pluginResult = $h->pluginHook('admin_sidebar_categories');
+                        
+                        $adminPages = new AdminPages();
+                        echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
+                        
+                    echo '</ul>';
+                echo '</div>';
+            echo '</li>';
+            
+        }
+        ?>
+	
+	<?php
+        if ($h->isActive('widgets')) {
+            echo '<li role="presentation"><a href="' . SITEURL . 'admin_index.php?page=plugin_settings&plugin=widgets#tab_settings"><i class="menu-icon fa fa-square-o"></i><span class="menu-text">' . $h->lang("admin_theme_widgets") . '</span></a></li>';            
+        }
+        ?>
         
         <?php $h->pluginHook('admin_sidebar_stats'); ?>
         
