@@ -235,6 +235,9 @@ function create_table($table_name)
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			`plugin_latestversion` varchar(8) NOT NULL DEFAULT '0.0',
+                        `plugin_resourceId` int(11) NOT NULL DEFAULT 0,
+                        `plugin_resourceVersionId` int(11) NOT NULL DEFAULT 0,
+                        `plugin_rating` varchar(8) NOT NULL DEFAULT '0.0',
 			UNIQUE KEY `key` (`plugin_folder`)
 		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
 		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
@@ -444,7 +447,7 @@ function create_table($table_name)
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		$db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
                 
-                // SYS UPDATES password
+                // SYS UPDATES
 		//$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
 		//$db->query($db->prepare($sql, 'SYS_UPDATES', 'false', 'false', 'Hotaru updates'));
 

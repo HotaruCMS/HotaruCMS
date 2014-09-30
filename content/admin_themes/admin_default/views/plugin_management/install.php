@@ -41,15 +41,15 @@
                             foreach ($the_plugins as $plug) {	    
                                 $alt++;                                                                
                                 $update = false; $update_class = '';
-                                if (isset($plug['latestversion']) && $plug['latestversion'] > $plug['version']) {$update=true; $update_class='info'; }
+                                if (isset($plug['latestversion']) && $plug['latestversion'] > $plug['version']) { $updateVersion = ' <i class="fa fa-long-arrow-right"></i> ' . $plug['latestversion'] ; $update=true; $update_class='danger'; } else { $updateVersion = ''; }
                                 echo "<tr id='sort_" . $plug['id'] . "' class='" . $update_class . "'>\n";
                                     echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
                                     echo "<td class='table_installed_plugin'>";
                                         if ($plug['settings']) {
                                                 echo "<a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plug['folder'] . "' title='" . $h->lang("admin_theme_plugins_settings") . "'>";
-                                                echo $plug['name'] . " " . $plug['version'] . "</a>\n";
+                                                echo $plug['name'] . " " . $plug['version'] . $updateVersion . "</a>\n";
                                         } else {
-                                                echo $plug['name'] . " " . $plug['version'];
+                                                echo $plug['name'] . " " . $plug['version'] . $updateVersion;
                                         }
                                     echo "</td>\n";
                                     //echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";

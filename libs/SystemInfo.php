@@ -78,6 +78,8 @@ class SystemInfo
 		    }	
 		    return $info['version'];
 		}
+                
+                print_r($info);
 
 		return 0;
 		
@@ -96,26 +98,56 @@ class SystemInfo
 		    'method' => 'hotaru.plugin.version.getAll'
 		);
 
-		 $info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+		 //$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
 
-		 if ($info) {
+$query_vals2 = array(
+		    'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+		    'format' => 'json',
+		    'action' => 'getResources',
+                    'category_id' => 3
+		);
+$info2 = $this->sendApiRequest($h, $query_vals2, 'http://forums.hotarucms.org/api.php');
+
+
+
+		 if ($info2) {
+                     
+                     $resources = $info2['resources'];
+                     
+                     $index = 0;
+                     foreach ($resources as $resource) {  
+                         //print $resource['title'];                       
+                         $resourceName[$resource['title']] = $index;
+                         $index++;
+                     }
+                     
+                    // print_r($resourceName);
 		    // save the updated version numbers to the local db so we can display it on the plugin management panel
 		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
 		    $plugins = $h->db->get_results($h->db->prepare($sql));
 
 		    if ($plugins) {
-			foreach ($plugins as $plugin) {                            
-			    if (array_key_exists($plugin->plugin_name, $info)) {
-				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s WHERE (plugin_id = %d)";
-				$h->db->query($h->db->prepare($sql, $info[$plugin->plugin_name], $plugin->plugin_id));
-				//print $plugin->plugin_name . ' ' . $info[$plugin->plugin_name] . '<br/>';
+			foreach ($plugins as $plugin) {        
+                            //print $plugin->plugin_name . ' -  ';
+			    if (array_key_exists($plugin->plugin_name, $resourceName)) {
+                                $resourceIndex = $resourceName[$plugin->plugin_name];
+                                //print "resource index :" . $resourceIndex . "<br/>";
+                                $resource = $resources[$resourceIndex];
+				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_version = %s, plugin_latestversion = %s, plugin_resourceId = %d, plugin_resourceVersionId = %d, plugin_rating = %d  WHERE (plugin_id = %d)";
+				$h->db->query($h->db->prepare($sql, '0.1', $resource['version_string'], $resource['id'], $resource['version_id'], $resource['rating_avg'], $plugin->plugin_id));
+				//print $plugin->plugin_name . ' ' . $resource['version_string'] . '<br/>';
 			    }
+                            else
+                            {
+                                //echo 'not found<br/>';
+                            }
+                                
 			}
                         
                         return true;
 		    }                                        
 		 }
-
+                 
 		return false;
 	}
 

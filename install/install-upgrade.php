@@ -383,6 +383,33 @@ function do_upgrade($h, $old_version)
             
         }
         
+        // 1.6.0 to 1.7.0
+        if (version_compare($old_version, "1.6.0", '<=') > 0)  // this will also cover other versions in between but need an upper limit
+        {
+                // Add columns to plugins table for resources from forum to plugin into
+		$exists = $h->db->column_exists('plugins', 'plugin_resourceId');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD Column `plugin_resourceId` int(11) NOT NULL DEFAULT 0";
+                    $h->db->query($sql);
+                }
+                
+                $exists = $h->db->column_exists('plugins', 'plugin_resourceVersionId');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD Column `plugin_resourceVersionId` int(11) NOT NULL DEFAULT 0";
+                    $h->db->query($sql);
+                }
+                
+                $exists = $h->db->column_exists('plugins', 'plugin_rating');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_PLUGINS . " ADD Column `plugin_rating` varchar(8) NOT NULL DEFAULT '0.0'";
+                    $h->db->query($sql);
+                }
+                
+                $h->messages['Updated from 1.6.0'] = 'green';
+                // update "old version" for next set of upgrades
+		//$old_version = "1.7.0";
+        }
+        
         /*
          * 
          * Update Hotaru version number to the database (referred to when upgrading)

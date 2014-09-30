@@ -858,17 +858,20 @@ class PluginManagement
 	 */
 	public function update($h)
 	{
-		$url = "http://hotaruplugins.com/zip/";
+             
+      
+
+		//$url = "http://hotaruplugins.com/zip/";
+                $url = "http://forums.hotarucms.org/resources/";
+                
 		$folder = $h->plugin->folder;
-		$version= $h->cage->get->getHtmLawed('version');
+		$version = $h->cage->get->getHtmLawed('versionId');
+                $resourceId= $h->cage->get->getHtmLawed('resourceId');
 		$findfolder = str_replace('_', '-', $folder);
+                $resourceVersionId = $version;
 		$version = str_replace('.', '-', $version);		
 		
-                // pluginmanagement so its a plugin
-                $url .= 'plugins';
-                // add pluginfoler to the url as well
-                $url .= '/' . $findfolder . '/';
-                //print $url;
+                $resourceFile = $resourceId . "/download?version=" . $resourceVersionId;
                 
                 // TODO
                 // make temp folder the copy directory and unzip files here first
@@ -895,20 +898,21 @@ class PluginManagement
                 if ($h->debug) $h->messages['setting copy directory as ' . $copydir] = 'alert-info';
 
 		//$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
-
+//$h->messages[$resourceFile] = 'alert-success';
 		// check that we can access the remote plugin repo site via curl
-		if ($this->fileCheckCurlConnection($url, $file) == 200) {
+                $h->messages['returnv value: ' . $this->fileCheckCurlConnection($url, $resourceFile)] = 'alert-success';
+		if ($this->fileCheckCurlConnection($url, $resourceFile) == 200) {
                     $h->messages['File succesfully located on remote plugin server'] = 'alert-success';
 		    if ($write = is_writeable($copydir)) {			
                         //if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
-			$this->filePhpWrite($h, $url, $file, $findfolder, $copydir);
+			$this->filePhpWrite($h, $url, $resourceFile, $file, $findfolder, $copydir);
 		    } else {			
                         //if ($h->debug) $h->messages['we will use ftp for file copy'] = 'alert-info';
                         $h->messages['ftp copy not operational yet in this version of Hotaru CMS'] = 'red';
 			//$this->fileFtpWrite($h, $url, $ftp_url, $file, $findfolder, $copydir);
 		    }
 		} else {		    
-		    $h->messages[$file . $h->lang('admin_theme_fileexist_error')] = 'red';
+		    $h->messages[$url . $resourceFile . $h->lang('admin_theme_fileexist_error')] = 'red';
 		}
 
 		// unzip		
@@ -944,8 +948,33 @@ class PluginManagement
 
 	public function fileCheckCurlConnection($url, $file)
 	{
+            // temp loc
+                $username = "shibuya246";
+                $password = "charles1001";
+                $loginUrl = "http://forums.hotarucms.org/index.php?login/login";
+
+                $ch = curl_init ();
+                curl_setopt($ch, CURLOPT_NOBODY, false);
+                curl_setopt($ch, CURLOPT_URL, $loginUrl);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+                curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+                curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
+                curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+                curl_setopt ($ch, CURLOPT_COOKIEFILE, 'cookie.txt');
+
+                curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($ch, CURLOPT_HEADER, 1);
+                curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0");
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+                $post_array = array('login' => $username, 'password' => $password, 'cookie_check' => 1, 'redirect' => 'http://forums.hotarucms.org/index.php', 'register' => 0, 'remember' => 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_array));
+                $output = curl_exec ($ch);
+                
 		// create a new CURL resource
-		$ch = curl_init();
+		//$ch = curl_init();
 
 		// set URL and other appropriate options
 		curl_setopt($ch, CURLOPT_URL, $url . $file);
@@ -969,32 +998,41 @@ class PluginManagement
 	}
 
 
-	public function filePhpWrite($h, $url, $file, $findfolder, $copydir )
-	{			
-           // we can only get file if hotaruplugins is letting us access the zip folder
-            // check for access first
-            
-//$h->messages['url = ' . $url . $file] = 'alert-info';
-//$ch = curl_init($url . $file);
-//$fp = fopen($copydir . $file, "w");
-//
-//curl_setopt($ch, CURLOPT_FILE, $fp);
-//curl_setopt($ch, CURLOPT_HEADER, 0);
-//
-//curl_exec($ch);
-//curl_close($ch);
-//fclose($fp);
+	public function filePhpWrite($h, $url, $resourceFile, $file, $findfolder, $copydir )
+	{	
+                // temp loc
+                $username = "shibuya246";
+                $password = "charles1001";
+                $loginUrl = "http://forums.hotarucms.org/index.php?login/login";
 
-           
-            if (1==1) {
-            
-            
+                $ch = curl_init ();
+                curl_setopt($ch, CURLOPT_NOBODY, false);
+                curl_setopt($ch, CURLOPT_URL, $loginUrl);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+                curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+                curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
+                curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+                curl_setopt ($ch, CURLOPT_COOKIEFILE, 'cookie.txt');
+
+                curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($ch, CURLOPT_HEADER, 1);
+                curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0");
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+                $post_array = array('login' => $username, 'password' => $password, 'cookie_check' => 1, 'redirect' => 'http://forums.hotarucms.org/index.php', 'register' => 0, 'remember' => 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_array));
+                $output = curl_exec ($ch);
+
+                //Now logged in
+                //
 		// create a new CURL resource
-		$ch = curl_init();
+		//$ch = curl_init();
 
 		// set URL and other appropriate options
-		curl_setopt($ch, CURLOPT_URL, $url . $file);
-		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_URL, $url . $resourceFile);
+		//curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -1027,8 +1065,7 @@ class PluginManagement
 		} else {
 		    $h->messages[$h->lang('admin_theme_fileexist_error' . $file)] = 'red';
 		}
-		curl_close($ch);
-            }
+		curl_close($ch);           
 	}
 
 	public function fileUnzip($h, $file, $to)
