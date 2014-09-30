@@ -29,13 +29,14 @@
 ?>
 <div id="admin-sidebar-menu" class="sidebar-nav" role="navigation">
     
-    <div style="border-top: 1px solid #313131;border-bottom: 1px solid #1f1f1f; padding: 20px 25px; margin-left:2px;">	
-	<a class="btn btn-default" style="margin-right:6px;background-color:transparent;border-color:gray;" href="<?php echo $h->url(array(), 'admin'); ?>" title="<?php echo $h->lang("admin_theme_navigation_home"); ?>"><i class="fa fa-home"></i></a>
-	<a class="btn btn-default" style="margin-right:6px;background-color:transparent;border-color:gray;" href="<?php echo SITEURL; ?>admin_index.php?page=settings" title="<?php echo $h->lang("admin_theme_settings"); ?>"><i class="fa fa-wrench"></i></a>
-	<a class="btn btn-default" style="margin-right:6px;background-color:transparent;border-color:gray;" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance" title="<?php echo $h->lang("admin_theme_maintenance"); ?>"><i class="fa fa-cog"></i></a>
-	<a class="btn btn-default" style="background-color:transparent;border-color:gray;" href="<?php echo SITEURL; ?>admin_index.php?page=blocked" title="<?php echo $h->lang("admin_theme_blocked_list"); ?>"><i class="fa fa-flag"></i></a>
+    <div id="admin-sidebar-nav">	
+	<a class="btn btn-default" href="<?php echo $h->url(array(), 'admin'); ?>" title="<?php echo $h->lang("admin_theme_navigation_home"); ?>"><i class="fa fa-home"></i></a>
+	<a class="btn btn-default" href="<?php echo SITEURL; ?>admin_index.php?page=settings" title="<?php echo $h->lang("admin_theme_settings"); ?>"><i class="fa fa-cog"></i></a>
+	<a class="btn btn-default" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance" title="<?php echo $h->lang("admin_theme_maintenance"); ?>"><i class="fa fa-wrench"></i></a>
+	<a class="btn btn-default" href="<?php echo SITEURL; ?>admin_index.php?page=blocked" title="<?php echo $h->lang("admin_theme_blocked_list"); ?>"><i class="fa fa-flag"></i></a>
     </div>
     
+    <h5 class="sidebar-title">Navigation</h5>
     <ul class='nav nav-pills nav-stacked'>	          
 	
 	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
