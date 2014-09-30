@@ -64,7 +64,7 @@ if (!$result) {
                     <i class="pull-right navbar-icon fa fa-bars"></i>
                 </div>
             <!-- MAIN -->
-            <div id="main-content">
+            <div id="main-content" class="container">
                 
                 <div>
                 
