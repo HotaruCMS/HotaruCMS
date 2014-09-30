@@ -38,7 +38,7 @@ $pluginData = $h->readPlugin($plugin);
 $plugin_latest_version = isset($pluginData->plugin_latestversion ) ? $pluginData->plugin_latestversion : '0.0';
 
 if (version_compare($plugin_latest_version, $pluginData->plugin_version) == 1) { 
-    $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($pluginData->plugin_folder) . "&version=" . $pluginData->plugin_latestversion . "#tab_updates";
+    $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($pluginData->plugin_folder) . "&resourceId=" . $pluginData->plugin_resourceId . "&versionId=" . $pluginData->plugin_resourceVersionId . "#tab_updates";
     $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="' . $href . '">upgrade now</a>', 'alert-info'); 
     // show version number in the message
 }
@@ -110,7 +110,7 @@ if ($plugin_latest_version == '0.0') {
                     echo '</div>';
                   
                     echo '<div class="tab-pane" id="support">';                        
-                        echo 'Rating: N/A<br/><br/>';
+                        echo 'Rating: ' . $pluginData->plugin_rating . '<br/><br/>';
                                                 
                         // Plugin hook for adding content to support tab
                         echo $h->pluginHook('admin_plugin_support', $plugin);

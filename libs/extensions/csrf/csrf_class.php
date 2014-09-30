@@ -52,7 +52,7 @@ class csrf
         $cleanKey = preg_replace('/[^a-z0-9]+/','',$key);
         $checkToken = $this->csrfguard_validate_token($h, "csrf-form", $cleanKey);
         
-        //$h->messages["key: " . $cleanKey] = 'red';
+        $h->messages["key: " . $cleanKey] = 'red';
         
         if (strcmp($key,$cleanKey) != 0 || !$checkToken) 
         {
