@@ -116,6 +116,7 @@
 
         <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list">
             <a href="#">
+		<i class="menu-icon fa fa-sliders"></i>
                 <?php echo $h->lang("admin_theme_plugin_settings"); ?>
                 <span class="label label-success pull-right"><?php echo $pluginsCount; ?></span>
             </a>
@@ -125,7 +126,6 @@
                 <ul id="plugin_settings_list">
                         <?php                                     
                                 if ($sb_links) {
-                                        //$sb_links = sksort($sb_links, $subkey="name", $type="char", true);
                                         foreach ($sb_links as $plugin) { 
                                                 echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin->plugin_folder . "#tab_settings'>" . $plugin->plugin_name . "</a></li>\n";
                                         }
@@ -140,8 +140,11 @@
         <!-- Themes -->	
         <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
         <?php $themesCount = ($themes) ? count($themes) : 0; ?>
-        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list"><a href="#"><?php echo $h->lang("admin_theme_theme_settings"); ?>
-            &nbsp;&nbsp;<span class="badge badge-info pull-right"><?php echo $themesCount; ?></span>
+        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list">
+	    <a href="#">
+		<i class="menu-icon fa fa-picture-o"></i>
+		<?php echo $h->lang("admin_theme_theme_settings"); ?>
+		<span class="badge badge-info pull-right"><?php echo $themesCount; ?></span>
             </a>
             <div id="themes_list" class="collapse out">
                 <ul id="plugin_settings_list">

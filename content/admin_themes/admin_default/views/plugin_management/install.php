@@ -38,46 +38,57 @@
 <?php
                         $alt = 0;	
                         if ($the_plugins){
-                            foreach ($the_plugins as $plug) {	    
+                            foreach ($the_plugins as $plugin) {	    
                                 $alt++;                                                                
                                 $update = false; $update_class = '';
-                                if (isset($plug['latestversion']) && $plug['latestversion'] > $plug['version']) { $updateVersion = ' <i class="fa fa-long-arrow-right"></i> ' . $plug['latestversion'] ; $update=true; $update_class='danger'; } else { $updateVersion = ''; }
-                                echo "<tr id='sort_" . $plug['id'] . "' class='" . $update_class . "'>\n";
-                                    echo "<td class='table_active'>" . $plug['active'] . "</td>\n";
+                                if (isset($plugin['latestversion']) && $plugin['latestversion'] > $plugin['version']) {
+				    $updateVersion = ' <i class="fa fa-long-arrow-right"></i> ' . $plugin['latestversion'] ;
+				    $update=true;
+				    $update_class='danger';
+				    $updateHref= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($plugin['folder']) . "&resourceId=" . $plugin['resourceId'] . "&versionId=" . $plugin['resourceVersionId'] . "#tab_install";
+				} else {
+				    $updateVersion = ''; 				    
+				}
+                                echo "<tr id='sort_" . $plugin['id'] . "' class='" . $update_class . "'>\n";
+                                    echo "<td class='table_active'>" . $plugin['active'] . "</td>\n";
                                     echo "<td class='table_installed_plugin'>";
-                                        if ($plug['settings']) {
-                                                echo "<a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plug['folder'] . "' title='" . $h->lang("admin_theme_plugins_settings") . "'>";
-                                                echo $plug['name'] . " " . $plug['version'] . $updateVersion . "</a>\n";
-                                        } else {
-                                                echo $plug['name'] . " " . $plug['version'] . $updateVersion;
-                                        }
+                                        //if ($plug['settings']) {
+                                                echo "<a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin['folder'] . "' title='" . $h->lang("admin_theme_plugins_settings") . "'>";
+                                                echo $plugin['name'] . " " . $plugin['version'] . $updateVersion . "</a>\n";
+                                        //} else {
+                                        //        echo $plug['name'] . " " . $plug['version'] . $updateVersion;
+                                        //}
+						if ($update)
+						{
+						    echo "<a class='pull-right btn btn-warning btn-xs' href='" . $updateHref . "'>update</a>&nbsp;";
+						}
                                     echo "</td>\n";
                                     //echo "<td class='table_order'>" . $plug['order_output'] . "</td>\n";
                                     echo "<td class='table_uninstall'>\n";
                                         echo "<a class='table_drop_down' href='#'><i class='fa fa-info-circle'></i></a>\n";
-                                        echo "&nbsp;" . $plug['install'];
+                                        echo "&nbsp;" . $plugin['install'];
                                     echo "</td>\n";                                   
                                 echo "</tr>\n";
 
                                 echo "<tr class='table_tr_details' style='display:none;'>";
                                     echo "<td colspan=2 class='table_description'>\n";
-                                        echo $plug['description'] . "<br />";
+                                        echo $plugin['description'] . "<br />";
                                         $requires = "";
-                                        foreach ($plug['requires'] as $key=>$value) {
+                                        foreach ($plugin['requires'] as $key=>$value) {
                                                 $requires .= $key . " " . $value . ", ";
                                         }
                                         if ($requires != "") { echo $h->lang("admin_theme_plugins_requires") . " " . rstrtrim($requires, ", "); } else { echo $h->lang("admin_theme_plugins_no_plugins"); }
-                                        if (isset($plug['author'])) { echo "<br />" . $h->lang("admin_theme_plugins_author") . ": \n"; }
-                                        if (isset($plug['authorurl'])) { echo "<a href='" . $plug['authorurl'] . "' title='" . $plug['authorurl'] . "'>"; }
-                                        if (isset($plug['author'])) { echo $plug['author']; }
-                                        if (isset($plug['authorurl'])) { echo "</a>\n"; }
-                                        if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
+                                        if (isset($plugin['author'])) { echo "<br />" . $h->lang("admin_theme_plugins_author") . ": \n"; }
+                                        if (isset($plugin['authorurl'])) { echo "<a href='" . $plugin['authorurl'] . "' title='" . $plugin['authorurl'] . "'>"; }
+                                        if (isset($plugin['author'])) { echo $plugin['author']; }
+                                        if (isset($plugin['authorurl'])) { echo "</a>\n"; }
+                                        if (file_exists(PLUGINS . $plugin['folder'] . "/readme.txt")) {
                                                 echo "<br />" . $h->lang("admin_theme_plugins_more_info");
-                                                echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
+                                                echo ": <a href='" . SITEURL . "content/plugins/" . $plugin['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
                                                 echo $h->lang("admin_theme_plugins_readmetxt") . "</a>";
                                         }
 
-                                        if ($update) { echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plug['folder'] . "&version=" . $plug['latestversion'] . "' title=''>Update this plugin</a>"; }
+                                        if ($update) { echo "<br/><a href='" . SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=". $plugin['folder'] . "&version=" . $plugin['latestversion'] . "' title=''>Update this plugin</a>"; }
                                     echo "</td>";
                                     echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
                                         echo $h->lang("admin_theme_plugins_close") . "</a>";
