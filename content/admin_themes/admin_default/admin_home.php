@@ -147,7 +147,7 @@ foreach($stats as $key=>$extClass){
 			<h5>Software</h5>
 		    </div>
 		    <div class="content">
-			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#">upgrade now</a>', 'alert-info');   ?>
+			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#" class="alert-link">upgrade now</a>', 'alert-info');   ?>
 		    </div>
 		</div>
 			
@@ -205,7 +205,7 @@ foreach($stats as $key=>$extClass){
                         $hotaru_latest_version = $h->miscdata('hotaru_latest_version');                
 			if (version_compare($hotaru_latest_version, $h->version) == 1) {
 			    //echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang('admin_theme_version_update_to') .  $hotaru_latest_version . "</a></li>";
-                            $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#">upgrade now</a>', 'alert-info');                                                 
+                            $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#" class="alert-link">upgrade now</a>', 'alert-info');                                                 
                         } else {
                             echo $h->lang("admin_theme_version_latest_version_installed");
                         }

@@ -12,6 +12,10 @@ body {
   padding: 9px 0;
 }
 
+.navbar-nav>li:first-child {
+    margin-left:16px;
+}
+
 #admin-sidebar-menu {
     display: block;
     height: 100%;
@@ -37,6 +41,11 @@ body {
     
 }
 
+#admin-sidebar-menu ul
+{
+    margin:0 2px;
+}
+
 #admin-sidebar-nav>a{
     margin:4px 2px;
     background-color:transparent;
@@ -48,6 +57,11 @@ body {
 }
 
 #admin-sidebar-nav>a:hover, #admin-sidebar-nav>a:focus {
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+#admin-sidebar-menu .nav-pills a:hover, #admin-sidebar-menu .nav-pills a:focus{
     background-color: #2c3e50;
     color: #fff;
 }

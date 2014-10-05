@@ -39,7 +39,7 @@ $plugin_latest_version = isset($pluginData->plugin_latestversion ) ? $pluginData
 
 if (version_compare($plugin_latest_version, $pluginData->plugin_version) == 1) { 
     $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($pluginData->plugin_folder) . "&resourceId=" . $pluginData->plugin_resourceId . "&versionId=" . $pluginData->plugin_resourceVersionId . "#tab_updates";
-    $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a href="' . $href . '">upgrade now</a>', 'alert-info'); 
+    $h->showMessage('There is a newer version of this plugin, version ' . $pluginData->plugin_latestversion . '. <a class="alert-link" href="' . $href . '">upgrade now</a>', 'alert-info'); 
     // show version number in the message
 }
 

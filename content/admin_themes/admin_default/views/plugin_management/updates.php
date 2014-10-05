@@ -28,12 +28,14 @@
     if ($the_plugins) {
         foreach ($the_plugins as $plugin) {             
             if (isset($plugin['latestversion']) && $plugin['latestversion'] > $plugin['version'])
-                { ?>
+                { 
+                $href= SITEURL . "admin_index.php?page=plugin_management&action=update&plugin=" . strtolower($plugin['folder']) . "&resourceId=" . $plugin['resourceId'] . "&versionId=" . $plugin['resourceVersionId'] . "#tab_updates";
+                ?>
                     <tr>
                         <td><?php echo $plugin['name']; ?></td>
                         <td><?php echo $plugin['version']; ?></td>
                         <td><?php echo $plugin['latestversion']; ?></td>
-                        <td><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management&action=update&plugin=<?php echo strtolower($plugin['folder']);?>&resourceId=<?php echo $plugin['resourceId'];?>&version=<?php echo $plugin['resourceVersionId'];?>#tab_updates" class="button">Update</button></a></td>
+                        <td><a href="<?php echo $href; ?>" class="button">Update</button></a></td>
                     </tr>
                 <?php } ?>
         <?php } 
