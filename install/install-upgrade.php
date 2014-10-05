@@ -405,6 +405,22 @@ function do_upgrade($h, $old_version)
                     $h->db->query($sql);
                 }
                 
+                // Add a few new settings
+		$exists = $h->db->column_exists('settings', 'settings_id');
+		if ($exists) {
+                    $newSettings = array('FORUM_USERNAME', 'FORUM_PASSWORD');   // add more to array as requird
+                    foreach($newSettings as $setting) {                        
+                        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+                        $result = $h->db->get_var($h->db->prepare($sql, $setting));
+                        
+                        if(!$result) {
+                            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s)";                        
+                            $h->db->query($h->db->prepare($sql, $setting, '', '', 'Need for auto updates', 1));                            
+                        }
+                        
+                    }						
+		}
+                
                 $h->messages['Updated from 1.6.0'] = 'green';
                 // update "old version" for next set of upgrades
 		//$old_version = "1.7.0";
