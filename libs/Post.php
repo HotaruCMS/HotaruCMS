@@ -69,7 +69,7 @@ class Post
 	
 	
 	/**
-	 * Get all the settings for the current post
+	 * Get all the settings for the current post from an array of posts
 	 *
 	 * @param int $post_id - Optional row from the posts table in the database
 	 * @param array $post_row - a post already fetched from the db, just needs reading
@@ -92,7 +92,7 @@ class Post
 			$this->id = $post_row->post_id;
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;
-                        //$this->authorname = $post_row->user_username;
+                        $this->authorname = isset($post_row->user_username) ? $post_row->user_username : '';
 			$this->date = $post_row->post_date;
                         $this->updatedts = $post_row->post_updatedts;
 			$this->pubDate = $post_row->post_pub_date;
@@ -224,8 +224,20 @@ class Post
 		return true;
 	}
 	
-	
-	/**
+        /**
+         * Update a post with image data
+         * 
+         * @param type $h
+         * @param type $postId
+         * @param type $img
+         */
+        public function imageUpdate($h, $postId, $img)
+        {
+            $sql = "UPDATE " . TABLE_POSTS . " SET post_img = %s WHERE post_id = %d";
+            $h->db->query($h->db->prepare($sql, $img, $postId));
+        }
+
+        /**
 	 * Physically delete a post from the database 
 	 *
 	 * There's a plugin hook in here to delete their parts, e.g. votes, coments, tags, etc.

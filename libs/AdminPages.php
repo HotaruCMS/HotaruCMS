@@ -63,7 +63,8 @@ class AdminPages
                         case "pages_management":
                                 $h->vars['admin_pages_array'] = $this->getPages($h);
 				break;
-			case "plugin_management":				
+			case "plugin_management":
+                                $h->vars['admin_settings'] = $this->settings($h);
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
@@ -155,7 +156,7 @@ class AdminPages
 					}
 				} else {
 					// values that are allowed to be empty:
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD');
+					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD', 'FORUM_USERNAME', 'FORUM_PASSWORD');
 					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
 					if (!in_array($setting_name->settings_name, $exempt)) { 
 						// otherwise flag as an error:
@@ -425,7 +426,7 @@ class AdminPages
 	 * Call functions based on user actions in Plugin Management
 	 */
 	public function adminPlugins($h)
-	{
+	{     
 		$pfolder = $h->cage->get->testAlnumLines('plugin');
 		$h->plugin->folder = $pfolder;   // assign this plugin to Hotaru
 		

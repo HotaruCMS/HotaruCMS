@@ -49,8 +49,8 @@ class Messages
                         if ($msg_type == 'green') $msg_type .= ' alert-success';
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
-			echo "<div class='alert message " . $msg_type . "'>";
-                            echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "'>";
+                            echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                             echo $msg;
                         echo "</div>";
 		} elseif ($h->message != '') {
@@ -61,8 +61,8 @@ class Messages
                         if ($msg_type == 'green') $msg_type .= ' alert-success';
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
-			echo "<div class='alert message " . $msg_type . "'>";
-                            echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "'>";
+                            echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                             echo $h->message;
                         echo "</div>";
 		}
@@ -104,8 +104,8 @@ class Messages
                                 if ($msg_type == 'green') $msg_type .= ' alert-success';
                                 if ($msg_type == 'blue') $msg_type .= ' alert-info';
                 
-				echo "<div class='alert message " . $msg_type . "'>";
-                                echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+				echo "<div class='alert alert-dismissible " . $msg_type . "'>";
+                                echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                                 echo $msg . "</div>";
 			}
 		}
