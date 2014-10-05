@@ -56,31 +56,38 @@ class SystemInfo
 	 */
 	public function hotaru_version($h)
 	{
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.version.get'
+//		);
+		
 		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.version.get'
-		);
-
-		$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResource',
+                        'value' => 4
+                    );
+                    
+		$info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);
 
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
-		if (isset($info['version'])) {
+		if (isset($info['version_string'])) {
 		    $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
 		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
 		    
 		    if ($query) {
 			// update existing db record
 			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
-			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));
+			$h->db->query($h->db->prepare($sql, $info['version_string'], 'hotaru_latest_version'));
 		    } else {			
 			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_value, miscdata_key) VALUES (%s, %s)";
-			$h->db->query($h->db->prepare($sql, $info['version'], 'hotaru_latest_version'));	
+			$h->db->query($h->db->prepare($sql, $info['version_string'], 'hotaru_latest_version'));	
 		    }	
-		    return $info['version'];
+		    return $info['version_string'];
 		}
                 
-                print_r($info);
+                //print_r($info);
 
 		return 0;
 		
