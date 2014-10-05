@@ -50,8 +50,9 @@
                 <li><a href="<?php echo SITEURL; ?>"><?php echo $h->lang("admin_theme_menu_site_home"); ?></a></li>
 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle active" data-toggle="dropdown"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?> <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle active" data-toggle="dropdown"><?php echo $h->lang("admin_theme_menu_help"); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
+                        <li class="dropdown-header"><?php echo $h->lang("admin_theme_menu_hotaru_forums"); ?></li>
                       <li><a href="http://forums.hotarucms.org/">Top</a></li>
                       <li><a href="http://forums.hotarucms.org/forums/news-and-announcements.2/">News</a></li>
                       <li><a href="http://forums.hotarucms.org/find-new/posts?recent=1">Latest</a></li>
@@ -61,7 +62,7 @@
                       <li><a href="http://github.com/hotarucms/coreplugins">Core Plugins</a></li>
                     </ul>
                 </li>
-                <li><a href="http://docs.hotarucms.org"><?php echo $h->lang("admin_theme_menu_help"); ?></a></li>
+                <li><a href="http://docs.hotarucms.org"><?php echo $h->lang("admin_theme_menu_docs"); ?></a></li>
                
             </ul> 
             <ul class="nav navbar-header navbar-nav navbar-right">

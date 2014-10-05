@@ -13,7 +13,7 @@
         $directory = CONTENT . 'pages';
 
         if ( ! is_dir($directory)) {
-            exit('Invalid diretory path');
+            exit('Invalid directory path');
         }
 
         $files = array();
@@ -25,7 +25,7 @@
 
             $files[] = $file;
             $page = trim($file, '.php');
-            echo "<li><a href='" . $h->url(array($page)) . "' target='_blank'>" . $page . '</a></li>';
+            echo "<li><a href='" . $h->urlPage($page) . "' target='_blank'>" . $page . '</a></li>';
         }
         echo '</ul>';
         

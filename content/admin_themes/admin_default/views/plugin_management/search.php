@@ -9,7 +9,7 @@
 	$tags = $sysinfo->pluginTagCloud($h, 20);
 	$plugins = null;
     }
-
+    //print_r($tags);
 ?>
 
 
@@ -37,8 +37,8 @@ if ($plugins) {
 } else {
     if (isset($tags)) {
    //var_dump($tags);
-        foreach ($tags as $tag) {	
-            echo "<div class='plugin_col'><a href=''>" . urldecode($tag['tags_word']) . "</a> " . urldecode($tag['CNT']) . "</div>";
+        foreach ($tags['resources'] as $tag) {	
+            echo "<div class='plugin_col'><a href=''>" . urldecode($tag['title']) . "</a> " . ($tag['author_username']) . ' - ver. ' . ($tag['version_string']) . "</div>";
             //post_content
         }
     } else {
