@@ -25,7 +25,7 @@
  */
 class Hotaru
 {
-	protected $version              = '1.6.2';  // Hotaru CMS version
+	protected $version              = '1.6.4';  // Hotaru CMS version
 	protected $isDebug              = false;    // show db queries and page loading time
         protected $isTest               = false;    // show page files for testing
 	protected $adminPage            = false;    // flag to tell if we are in Admin or not
@@ -469,6 +469,17 @@ class Hotaru
 		return $this->pageHandling->url($this, $parameters, $head);
 	}
     
+        /**
+         * 
+         * @param type $page
+         * @return type
+         */
+        public function urlPage($page = '')
+        {
+            // POPULAR LINK
+            $url = $this->url(array('page'=>$page));
+            return $url;
+        }
     
 	/**
 	 * Pagination with query and row count (better for large sets of data)
@@ -1907,8 +1918,21 @@ class Hotaru
 	 */
 	public function csrf($type = 'check', $script = '', $life = 60)
 	{
-		$csrf = new csrf();
-		return $csrf->csrfInit($this, $type, $script, $life);
+                // check whether we are specifically being told not to create a newToken first
+                // this is required for many js scripts ajaxing back Hotaru and accidentaly setting a new token in session state, preventing form from posting correctly on csrf check
+//                if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {    
+//                    return true;
+//                }
+
+                // above ajax test didnt work so use this hard set test
+                $newToken = $this->cage->post->testAlnum('newToken'); 
+                if ($newToken == 'false') 
+                {
+                    return true;
+                }
+                
+                $csrf = new csrf();
+                return $csrf->csrfInit($this, $type, $script, $life);  
 	}
     
     
@@ -1964,6 +1988,17 @@ class Hotaru
 	{
 		$this->post->updatePost($this);
 	}
+        
+        /**
+         * Update a post with image data
+         * 
+         * @param type $postId
+         * @param type $img
+         */
+        public function postImageUpdate($postId, $img)
+        {
+                $this->post->imageUpdate($this, $postId, $img);
+        }
 	
 	
 	/**
