@@ -27,6 +27,7 @@ class SystemInfo
 {
     protected $apiUrl = "http://api.hotarucms.org/index.php?page=api";
     protected $pluginUrl = "http://hotaruplugins.com/index.php?page=api";
+    protected $forumUrl = "http://forums.hotarucms.org/api.php";
 
     /**
 	 * Calls external site to provide system info feedback report
@@ -92,61 +93,61 @@ class SystemInfo
 	 */
 	public function plugin_version_getAll($h)
 	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.version.getAll'
-		);
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.plugin.version.getAll'
+//		);
 
-		 //$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+                //$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+                // temp until api can handle children of resources
+                //  make array
+                $resourceIds = array(1,2,3,4,6,12);
+		$resourceList = array();
+		$index = 0;
+            
+                foreach($resourceIds as $resourceId)
+                {
+                    $query_vals = array(
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResources',
+                        'category_id' => $resourceId
+                    );
+                    $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);
 
-$query_vals2 = array(
-		    'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
-		    'format' => 'json',
-		    'action' => 'getResources',
-                    'category_id' => 3
-		);
-$info2 = $this->sendApiRequest($h, $query_vals2, 'http://forums.hotarucms.org/api.php');
-
-
-
-		 if ($info2) {
-                     
-                     $resources = $info2['resources'];
-                     
-                     $index = 0;
-                     foreach ($resources as $resource) {  
-                         //print $resource['title'];                       
-                         $resourceName[$resource['title']] = $index;
-                         $index++;
-                     }
-                     
-                    // print_r($resourceName);
-		    // save the updated version numbers to the local db so we can display it on the plugin management panel
+                    if ($info) {                     
+			$resources = $info['resources'];					
+                        $resourceList = array_merge($resourceList, $resources);
+			
+			foreach ($resources as $resource) {                       
+			    $resourceName[$resource['title']] = $index;
+			    $index++;
+			}						
+		   }
+		}
+                
+		    // get plugins from hotaru db
 		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
 		    $plugins = $h->db->get_results($h->db->prepare($sql));
 
 		    if ($plugins) {
 			foreach ($plugins as $plugin) {        
-                            //print $plugin->plugin_name . ' -  ';
 			    if (array_key_exists($plugin->plugin_name, $resourceName)) {
+                                // save the updated version numbers to the local db so we can display it on the plugin management panel
                                 $resourceIndex = $resourceName[$plugin->plugin_name];
-                                //print "resource index :" . $resourceIndex . "<br/>";
-                                $resource = $resources[$resourceIndex];
-				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_version = %s, plugin_latestversion = %s, plugin_resourceId = %d, plugin_resourceVersionId = %d, plugin_rating = %d  WHERE (plugin_id = %d)";
-				$h->db->query($h->db->prepare($sql, '0.1', $resource['version_string'], $resource['id'], $resource['version_id'], $resource['rating_avg'], $plugin->plugin_id));
-				//print $plugin->plugin_name . ' ' . $resource['version_string'] . '<br/>';
+                                $resource = $resourceList[$resourceIndex];
+				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s, plugin_resourceId = %d, plugin_resourceVersionId = %d, plugin_rating = %d  WHERE (plugin_id = %d)";
+                                $h->db->query($h->db->prepare($sql, $resource['version_string'], $resource['id'], $resource['version_id'], $resource['rating_avg'], $plugin->plugin_id));
 			    }
                             else
                             {
                                 //echo 'not found<br/>';
-                            }
-                                
+                            }  
 			}
-                        
                         return true;
 		    }                                        
-		 }
+		 
                  
 		return false;
 	}
@@ -158,16 +159,33 @@ $info2 = $this->sendApiRequest($h, $query_vals2, 'http://forums.hotarucms.org/ap
 	 */
 	public function pluginSearch($h, $search)
 	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.search',
-		    'args' => $search
-		);
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.plugin.search',
+//		    'args' => $search
+//		);
+                $resourceIds = array(1,2,3,4,6,12);
+		$resourceList = array();
+            
+                foreach($resourceIds as $resourceId)
+                {
+                    $query_vals = array(
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResources',
+                        'category_id' => $resourceId
+                    );
 
-		 $plugins = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
+                    $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);
 
-		 return $plugins;
+                    if ($info) {
+                        $resources = $info['resources'];					
+                        $resourceList = array_merge($resourceList, $resources);
+		    }
+                }    
+				
+		return $resourceList;
 	}
 
 	/**
@@ -175,16 +193,34 @@ $info2 = $this->sendApiRequest($h, $query_vals2, 'http://forums.hotarucms.org/ap
 	 */
 	public function pluginTagCloud($h, $number = 20)
 	{
-		$query_vals = array(
-		    'api_key' => '',
-		    'format' => 'json',
-		    'method' => 'hotaru.plugin.tagcloud',
-		    'args' => $number
-		);
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.plugin.tagcloud',
+//		    'args' => $number
+//		);
+                
+                $resourceIds = array(1,2,3,4,6,12);
+		$resourceList = array();
+	    
+                foreach($resourceIds as $resourceId)
+                {
+                    $query_vals = array(
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResources',
+                        'category_id' => $resourceId
+                    );
 
-		 $result = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
-
-		 return $result;
+		    $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);		    
+		    
+		    if ($info) {
+                        $resources = $info['resources'];					
+                        $resourceList = array_merge($resourceList, $resources);
+		    }
+		}
+		
+		return array("count" => count($resourceList), "resources" => $resourceList);
 	}
 
 
