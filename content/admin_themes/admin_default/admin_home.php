@@ -199,17 +199,7 @@ foreach($stats as $key=>$extClass){
 	
 	<ul id="site-stats" class="nav nav-list">
             <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang("admin_theme_main_stats"); ?></li>
-		<li>Hotaru CMS <?php echo $h->version; ?></li>   
-                               
-		<?php                
-                        $hotaru_latest_version = $h->miscdata('hotaru_latest_version');                
-			if (version_compare($hotaru_latest_version, $h->version) == 1) {
-			    //echo "<li><a href='http://hotarucms.org/forumdisplay.php?23-Download-Hotaru-CMS'>" . $h->lang('admin_theme_version_update_to') .  $hotaru_latest_version . "</a></li>";
-                            $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#" class="alert-link">upgrade now</a>', 'alert-info');                                                 
-                        } else {
-                            echo $h->lang("admin_theme_version_latest_version_installed");
-                        }
-		?>       
+		    
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
 		<?php $h->pluginHook('admin_theme_main_stats', 'users', array('users' => array('all', 'admin', 'supermod', 'moderator', 'member', 'undermod', 'pending', 'banned', 'killspammed'))); ?>

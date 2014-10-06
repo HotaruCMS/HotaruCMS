@@ -39,12 +39,12 @@
     <h5 class="sidebar-title">Navigation</h5>
     <ul class='nav nav-pills nav-stacked'>	          
 	
-	<li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
-        <li role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
+        <li <?php if($h->pageTitle == 'Pages Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
+        <li <?php if($h->pageTitle == 'Plugin Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
 	
         <?php 
         $pluginFunc = new PluginFunctions();
-        $sb_links = $pluginFunc->getAllActivePluginNames($h);
+        $pluginLinks = $pluginFunc->getAllActivePluginNames($h);
         ?>        
         
 	<!-- Plugins -->       
@@ -112,7 +112,7 @@
         
         <?php $h->pluginHook('admin_sidebar_stats'); ?>
         
-        <?php $pluginsCount = ($sb_links) ? count($sb_links) : 0; ?>
+        <?php $pluginsCount = ($pluginLinks) ? count($pluginLinks) : 0; ?>
 
         <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_plugins_list">
             <a href="#">
@@ -125,8 +125,8 @@
             <div id="admin_plugins_list" class="collapse out">    
                 <ul id="plugin_settings_list">
                         <?php                                     
-                                if ($sb_links) {
-                                        foreach ($sb_links as $plugin) { 
+                                if ($pluginLinks) {
+                                        foreach ($pluginLinks as $plugin) { 
                                                 echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin->plugin_folder . "#tab_settings'>" . $plugin->plugin_name . "</a></li>\n";
                                         }
                                 }
