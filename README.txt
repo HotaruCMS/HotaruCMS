@@ -1,5 +1,7 @@
 HOTARU CMS
 ==========
+Version 1.6.4 - October 2014
+
 Version 1.6.0 - September 2014
 
 Version 1.5.2 - June 2013
