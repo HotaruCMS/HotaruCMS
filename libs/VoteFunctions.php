@@ -23,8 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+use HotaruModels2\Vote as Vote;
 
-class VoteFunctions
+namespace Libs;
+
+class VoteFunctions extends Prefab
 {
 	/**
 	 * Get Individual Vote Rating 
@@ -35,42 +38,21 @@ class VoteFunctions
 	 * @param bool $anon
 	 * @return int - vote rating e.g. 10, -10
 	 */
-	public function getVoteRating($h, $post_id = 0, $user_id = 0, $ip = '', $anon = FALSE)
+	public function getVoteRating($h, $postId = 0, $userId = 0, $ipAddress = '', $anon = FALSE)
 	{
 		if ($anon && !$h->currentUser->loggedIn)
-		{
-			/*  include user_id = 0 since if registered user votes after anon at same ip, 
-				we dont want to delete both votes later if anon user unvotes*/
-			$user_id = 0;
-                                                        
-                        if (!MEEKRODB) {
-                            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d LIMIT 1";
-                            $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, $ip, -999)); // exclude flags                            
-                        } else {
-                            $voted = models___Postvotes::find('first', array(
-                                'select' => 'vote_rating',
-                                'conditions' => array('vote_post_id=? and vote_user_id=? and vote_user_ip=? and vote_rating != ?', $post_id, $user_id, $ip, -999)
-                            ));
-                        }
+		{	
+                    $voted = Vote::getForAnonUser($postId, $ipAddress);
 		}
 		else 
 		{
-			// Only proceed if the user is logged in
-			if (!$h->currentUser->loggedIn) { return FALSE; }
-			if (!$user_id) { $user_id = $h->currentUser->id; }
-		
-			// get vote history for this post:                        
-                        if (!MEEKRODB) {
-                            $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating != %d LIMIT 1";
-                            $voted = $h->db->get_var($h->db->prepare($sql, $post_id, $user_id, -999)); // exclude flags
-                        } else {
-                            $voted = models___Postvotes::find('first', array(
-                                'select' => 'vote_rating',
-                                'conditions' => array('vote_post_id=? and vote_user_id=? and and vote_rating != ?', $post_id, $user_id, -999)
-                            ));
-                        }    
+                    if (!$h->currentUser->loggedIn) { return FALSE; }
+                    
+                    if (!$userId) { $userId = $h->currentUser->id; }
+                    
+                    $voted = Vote::getForUser($postId, $userId);
 		}
-
+                
 		return ($voted) ? $voted : FALSE;
 	}
 
@@ -84,17 +66,9 @@ class VoteFunctions
 	public function getPostVoteInfo($h, $post_id = 0)
 	{
 		if (!$post_id) { return FALSE; }
-
-                if (!MEEKRODB) {
-                    $sql = "SELECT post_votes_up, post_votes_down, post_status, post_date FROM " . TABLE_POSTS . " WHERE post_id = %d LIMIT 1";
-                    $info = $h->db->get_row($h->db->prepare($sql, $post_id));
-                } else {
-                    $info = models___Postvotes::find('first', array(
-                        'select' => 'post_votes_up, post_votes_down, post_status, post_date',
-                        'conditions' => array('vote_post_id=?', $post_id)
-                     ));                
-                }
-
+                
+                $info = Vote::getForUser($post_id);
+                
 		return ($info) ? $info : FALSE;
 	}
 
@@ -170,8 +144,8 @@ class VoteFunctions
 	{
 		if (!$post_id || !$rating) { return FALSE; }
 
-        $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d)";
-        $h->db->query($h->db->prepare($sql, $post_id, $user_id, $ip, $type, $rating, $user_id));
+                $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d)";
+                $h->db->query($h->db->prepare($sql, $post_id, $user_id, $ip, $type, $rating, $user_id));
 	}
 
 
@@ -232,12 +206,10 @@ class VoteFunctions
 				$vote_rating = -999;
 		}
 
-                if (!MEEKRODB) {
+                
                     $sql = "SELECT count(vote_rating) FROM " . TABLE_POSTVOTES . " WHERE vote_user_id = %d AND " . $rating;
                     $votes = $h->db->get_var($h->db->prepare($sql, $user_id, $vote_rating));
-                } else {
-                    $votes = models___Postvotes::count_by_vote_user_id_and_rating($user_id, $vote_rating);
-                }                		
+                             		
 
 		return ($votes) ? $votes : FALSE;
 	}

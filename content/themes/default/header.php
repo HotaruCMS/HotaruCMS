@@ -58,8 +58,9 @@ header('Content-type: text/html; charset=utf-8');
         <!-- Theme CSS from stlye.css in folder for theme -->
         <!-- Include merged files for all the plugin css and javascript (if any) -->
         <?php $h->doIncludes('css'); ?>				        
-        
-        <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico" /> -->
+                
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
 	        

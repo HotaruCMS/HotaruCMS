@@ -23,65 +23,101 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class UserAuth extends UserBase
+namespace Libs;
+
+class Authorization
 {
-	/**
+        /**
 	 * check cookie and log in
 	 *
 	 * @return bool
 	 */
-	public function checkCookie($h)
-	{
-		// Check for a cookie. If present then the user is logged in.
-		$h_user = $h->cage->cookie->testUsername('hotaru_user');
+	public static function checkSession($h)
+	{       
+                // Check Session first
+                $user = isset($_SESSION["hotaru_user"]) ? $_SESSION["hotaru_user"] : false;
+                if ($user) {
+                    // If found then user is logged in and clear for all non-secure user functions
+                    // i.e. dont let them change password and notificaton settings without inputting their password again first
+
+                    //$h->currentUser = new CurrentUser();
+                    //$h->currentUser->setCurrentUser($h, $user);
+                    $h->currentUser = $user;  // TODO we should send it to a mapping function with error checking
+                    $h->currentUser->loggedIn = true;
+                    return true; 
+                }
+                //$h->messages['no session'] = 'red';
+                $cookie = self::getCookieHotaruKey($h);
 		
-		if((!$h_user) || (!$h->cage->cookie->keyExists('hotaru_key'))) { 
-		    $this->setLoggedOutUser($h);
+                if(!$cookie) { 
+                    //$h->messages['no cookie'] = 'red';
+		    self::setLoggedOutUser($h);
 		    return false; 
 		}
+                
+                //deprecated old cookie
+                $deprecateCookieUsername = $h->cage->cookie->testUsername('hotaru_user');
+		if($deprecateCookieUsername) {
+                    $oldCookieToken = self::deprecatedOldPasswordHash($deprecateCookieUsername, md5(SITEURL));
+                    if ($cookie->token == $oldCookieToken) {
+                        // expire old cookie
+                        setcookie("hotaru_user", "", time()-3600, "/");
+                        $user = $h->getUser(0, $deprecateCookieUsername);
+                        if (!$user) { return false; }
+                        self::setCookie($h, true);
+                        $cookie = self::getCookieHotaruKey($h);
+                    }
+                }
+                
+                // load as currentUser. this will get us userid etc
+                $user = $h->getUser(0, $cookie->username);
+                //$h->messages['getuser: ' . $cookie->username . ', id: ' . $h->currentUser->id . ', token: ' . $cookie->token] = 'green';
+                // Check if token matches db login
+                $login = \HotaruModels2\UserLogin::getLogin($h, $h->currentUser->id, $cookie->token);
+                
+                if (!$login) {
+                    //$h->messages['no match for cookie login'] = 'red';
+                    self::setLoggedOutUser($h);
+                    return false;
+                }
+                
+                self::setAsLoggedIn($h, "cookie");
+                
+                // remove old login
+                self::removeLoginFromDb($h, $h->currentUser->id, $cookie->token);
+                //$h->messages['removed old cookie login from db'] = 'red';
+                
+                // set new cookie for next time we need it, update timestamp in db
+                self::setCookie($h, true);
+                $h->updateUserLastVisit();
+                //$h->messages['added new cookie and login'] = 'red';
+                
+                // user_signin throws out killspammed, banned and suspended users
+                $h->pluginHook('userauth_checkcookie_success');
 		
-		$user_info=explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
-		
-		if (($h_user != $user_info[0]) || ($h->currentUser->generateHash($h_user, md5(SITEURL)) != $user_info[1])) {
-		    $this->setLoggedOutUser($h);
-		    return false; 
-		}
-		
-		$this->name = $h_user;
-		if ($h_user)
-		{
-			$valid = false;
-			
-			// Read the user from the database
-			$user_exists = $this->getUser($h, 0, $this->name);
-                        if (!$user_exists) return false;
-                        
-			// validate the user's password
-			if ($user_info[2] != md5($user_exists->user_password)) {
-				$user_exists = false;
-			} else {
-				$valid = true;
-			}
-			
-			// Log the user in if valid
-			if ($valid) {
-				$this->loggedIn = true;
-				if (!session_id()) { $this->updateUserLastVisit($h); } // update user_lastvisit field when a new session is created
-				$h->pluginHook('userauth_checkcookie_success'); // user_signin throws out killspammed, banned and suspended users
-				
-				// SUCCESS!!!
-				return true;
-			} else {
-				$h->currentUser->destroyCookieAndSession(); // removes cookie and session for physically deleted users
-			}
-		}
-		
-		// otherwise, give them "logged out" permissions
-		$this->setLoggedOutUser($h);
-		return false; 
+                return true;
 	}
-	
-	
+        
+        
+        /**
+         * Password check for methods like updatePassword that dont want to login but just need to confirm the password
+         * 
+         * @param type $h
+         * @param type $username
+         * @param type $password
+         * @return boolean
+         */
+        public static function passwordCheck($h, $password = '')
+	{
+                $result = password_verify($password, $h->currentUser->password);
+                if ($result) {
+                    return true;
+                }
+                
+                return false;
+        }
+        
+        
 	/**
 	 * Log a user in if their username and password are valid
 	 *
@@ -89,44 +125,170 @@ class UserAuth extends UserBase
 	 * @param string $password
 	 * @return bool
 	 */
-	public function loginCheck($h, $username = '', $password = '')
+	public static function passwordSignIn($h, $username = '', $password = '', $rememberMe = false, $shouldLockout = false)
 	{
-		// Read the current user's basic details
-		$userX = $this->getUser($h, 0, $username);
-		if (!$userX) { return false; }
+                // a non logged in user can still be a currentUser
+		$user = $h->getUser(0, $username);
+                
+		if (!$user) {
+                    return false; 
+                }
 		
-		// destroy the cookie for the following usergroups:
+                // test
+                //print_r($h->currentUser);
+//                if ($h->currentUser->name == 'acm2001') {
+//                    $h->currentUser->password = $password;
+//                    $h->currentUser->updateUserBasic($h, $h->currentUser->id, 1); 
+//                    //print_r($h->currentUser);
+//                }
+                
+                // end test
+                
+                if (self::isUserLockedOut($h, $username)) {
+                    // provide message that user is locked out
+                    $h->messages['User is locked out'] = 'red';
+                    return false;
+                }
+		
+                // destroy the cookie for the following usergroups:
 		$no_cookie = array('killspammed', 'banned', 'suspended');
-		if (in_array($userX->user_role, $no_cookie)) {
-			$this->destroyCookieAndSession();
+		if (in_array($user->user_role, $no_cookie)) {
+			self::destroyCookieAndSession($h);
 			return false;
 		}
 		
-		$salt_length = 9;
 		$result = '';
 		
 		// Allow plugin to bypass the password check with their own methods, e.g. RPX
 		$plugin_result = $h->pluginHook('userbase_logincheck', '', array($username, $password));
 		
-		if (!$plugin_result)
-		{
-			// nothing or (false) was returned from the plugins, so confirm the username and password match:
-			$password = $this->generateHash($password, substr($userX->user_password, 0, $salt_length));
-			$sql = "SELECT user_username, user_password FROM " . TABLE_USERS . " WHERE user_username = %s AND user_password = %s";
-			$result = $h->db->get_row($h->db->prepare($sql, $username, $password));
-		} 
-		elseif ($plugin_result)
-		{
+		if (!$plugin_result) {
+                    
+                        if ($user->password_version == '1') {
+                            // old deprecated passwords
+                            $deprecatedPassword = self::deprecatedOldPasswordHash($password, substr($user->user_password, 0, 9));
+                            $result = ($deprecatedPassword == $user->user_password) ? true : false;
+                            if ($result) {
+                                $h->currentUser->password = $password;
+				$h->currentUser->savePassword($h, $h->currentUser->id); 
+                            }
+                        } else {
+                            // new password version - we can test for version 2,3,4,5 etc later if required but for now anything not a 1 is new
+                            $result = password_verify($password, $user->user_password);
+                        }
+                        
+                        if ($result) {
+                            $h->messages['Password correct'] = 'green';
+                            //signInOrTwoFactor($user, $rememberMe);
+                            
+                            // TODO once we have got this far we dont need the password
+                            // remove it - do not keep it in $h->currentUser ever
+                            self::destroyCookieAndSession($h);
+                            
+                            self::setAsLoggedIn($h, "password");
+                            
+                            // delete old cookie if exists
+                            $cookie = self::getCookieHotaruKey($h);
+                            if ($cookie && isset($cookie->token)) {
+                                self::removeLoginFromDb($h, $h->currentUser->id, $cookie->token);
+                            }
+                            
+                            // save cookie
+                            self::setCookie($h, $rememberMe);
+                        } else {
+                            $h->messages['Could not login'] = 'red';
+                        }
+
+                }  elseif ($plugin_result) {
 			// a positive result was returned from the plugin(s)
-			// let's hope the plugin did its own authentication because we've skipped the usual username/password check!
+			// let's hope the plugin did its own authentication and session setting because we've skipped the usual username/password check!
 			$result = true;
 		} 
 		
-		if ($result) { return true; } else { return false; }
+                // add to lockout count
+                if ($shouldLockout) {
+                    // self::incrementLockoutCount($user->id);
+                    // if (self::isLockedOut($user->id) {
+                    //      return false;
+                    // }
+                }
+                
+		if ($result) {
+                    //print "here";die();
+                    self::updateUserLastLogin($h);
+                    return true;
+                }
+                
+                return false; 
 	}
 	
+        
+        private static function isUserLockedOut($h, $username = '')
+        {
+                if (!$username) {
+                    return false;
+                }
+            
+                $status = \HotaruModels2\User::isLockedOut($h, $username);
+                return $status;
+        }
+        
+        
+        private function signInOrTwoFactor($user, $rememberMe = false)
+        {
+//            if (UserManager.GetTwoFactorEnabled(user.Id) &&
+//                AuthenticationManager.TwoFactorBrowserRemembered(user.Id))
+//            {
+//                var identity = new ClaimsIdentity(DefaultAuthenticationTypes.TwoFactorCookie);
+//                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+//                AuthenticationManager.SignIn(identity);
+//                return SignInStatus.RequiresTwoFactorAuthentication;
+//            }
+//            SignIn(user, isPersistent, false);
+            return true;
+        }
+    
+        
+        public function externalSignIn($loginInfo, $rememberMe = false)
+        {
+            $user = $h->getUserBasic($loginInfo->login);
+            $h->setCurrentUser($user);
+            
+            if (!user) {
+                return false;
+            }
+
+            if ($user->isLockedOut) {
+                return false;  // or a locked out status
+            }
+
+            //return self::SignInOrTwoFactor($user, $rememberMe);
+        }
+        
+        
+        public function externalLoginCallback($returnUrl = '')
+        {         
+//            $loginInfo = AuthenticationManager.GetExternalLoginInfoAsync();
+//            if (!$loginInfo) {
+//                return RedirectToAction("Login");
+//            }
+
+            // Sign in the user with this external login provider if the user already has a login
+            //$user = $h->userBasic($loginInfo->login);
+            //if ($user != null) {
+              //  self::SignInAsync($user, false);
+                //return RedirectToLocal(returnUrl);
+            //} else {
+                // If the user does not have an account, then prompt the user to create an account
+                //
+                //$loginProvider = $loginInfo->login.LoginProvider;
+                //return array("externalLoginConfirmation" => new externalLoginConfirmationViewModel { UserName = loginInfo.DefaultUserName });
+            //}
+        }
+        
 	
 	/**
+         * Deprecated - used only to bring old passwords up to new format
 	 * Generate a hash for the password
 	 *
 	 * @param string $plainText - the password
@@ -134,7 +296,7 @@ class UserAuth extends UserBase
 	 *
 	 * Note: Adapted from SocialWebCMS
 	 */
-	public function generateHash($plainText, $salt = null)
+	public static function deprecatedOldPasswordHash($plainText, $salt = null)
 	{
 		$salt_length = 9;
 		if ($salt === null) {
@@ -144,16 +306,30 @@ class UserAuth extends UserBase
 		}
 		return $salt . sha1($salt . $plainText);
 	}
+        
 	
+        
+        private static function setAsLoggedIn($h, $loginType = '')
+        {
+            $h->currentUser->loggedIn = true;
+            $h->currentUser->loginType = $loginType;
+
+            // remove old and create new session object for user
+            //unset($_SESSION["hotaru_user"]);
+            @session_start();
+            $_SESSION["hotaru_user"] = $h->currentUser;
+            //print_r($_SESSION);
+            //$h->messages['new session set'] = 'green';
+        }
 	
 	/**
 	 * Give logged out user default permissions
 	 */    
-	public function setLoggedOutUser($h)
+	public static function setLoggedOutUser($h)
 	{
-		$default_perms = $this->getDefaultPermissions($h);
+		$default_perms = $h->currentUser->getDefaultPermissions($h);
 		unset($default_perms['options']);  // don't need this for individual users
-		$this->setAllPermissions($default_perms);
+		$h->currentUser->setAllPermissions($default_perms);
 	}
 	
 	
@@ -162,17 +338,20 @@ class UserAuth extends UserBase
 	 *
 	 * @return bool
 	 */
-	public function updateUserLastLogin($h)
+	private static function updateUserLastLogin($h)
 	{
-		if ($this->id != 0)
-		{
-			$ip = $h->cage->server->testIp('REMOTE_ADDR');
-			$sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP, user_ip = %s WHERE user_id = %d";
-			$h->db->query($h->db->prepare($sql, $ip, $this->id));
-			return true;
-		} else {
-			return false;
-		}
+		if ($h->currentUser->id == 0) {
+                    return false;
+                }
+		
+                // TODO only save IP if settings tell us to, for performance reasons
+                //if ($settings->save_ip_address) {
+                    $ip = $h->cage->server->testIp('REMOTE_ADDR');
+                //}
+                $sql = "UPDATE " . TABLE_USERS . " SET user_lastlogin = CURRENT_TIMESTAMP, user_lastvisit = CURRENT_TIMESTAMP, user_ip = %s WHERE user_id = %d";
+                $h->db->query($h->db->prepare($sql, $ip, $h->currentUser->id));
+                
+                return true;
 	}
 	
 	
@@ -181,16 +360,20 @@ class UserAuth extends UserBase
 	 *
 	 * @return bool
 	 */
-	public function updateUserLastVisit($h, $user_id = 0)
+	public static function updateUserLastVisit($h, $user_id = 0)
 	{
-		if ($this->id != 0) {
-			if (!$user_id) { $user_id = $this->id; }
-			$sql = "UPDATE " . TABLE_USERS . " SET user_lastvisit = CURRENT_TIMESTAMP WHERE user_id = %d";
-			$h->db->query($h->db->prepare($sql, $user_id));
-			return true;
-		} else {
-			return false;
-		}
+                if ($user_id == 0) {
+                    $user_id = $h->currentUser->id == 0 ? 0 : $h->currentUser->id; 
+                }
+            
+		if ($user_id == 0) { 
+                    return false;
+                }
+                
+                $sql = "UPDATE " . TABLE_USERS . " SET user_lastvisit = CURRENT_TIMESTAMP WHERE user_id = %d";
+                $h->db->query($h->db->prepare($sql, $user_id));
+                
+                return true;
 	}
 	
 	
@@ -200,56 +383,91 @@ class UserAuth extends UserBase
 	 * @param string $remember checkbox with value "checked" or empty
 	 * @return bool
 	 */
-	public function setCookie($h, $remember)
+	public static function setCookie($h, $rememberMe)
 	{
-		if (!$this->name)
-		{ 
-			echo $h->lang('main_userbase_cookie_error');
-			return false;
+                if (!$rememberMe) { 
+                    return false;
+                }
+            
+		if (!$h->currentUser->name) { 
+                    $h->messages['main_userbase_cookie_error'] = 'green';
+                    return false;
 		} else {
-			$strCookie=base64_encode(
-				join(':', array($this->name, 
-				$h->currentUser->generateHash($this->name, md5(SITEURL)),
-				md5($this->password)))
-			);
-			
-			if ($remember) { 
-				// 2592000 = 60 seconds * 60 mins * 24 hours * 30 days
-				$month = 2592000 + time(); 
-			} else { 
-				$month = 0; 
-			}
-			
-			if (strpos(SITEURL, "localhost") !== false) {
-				setcookie("hotaru_user", $this->name, $month, "/");
-				setcookie("hotaru_key", $strCookie, $month, "/");
-			} else {				
-                                /*
-                                 * http://no2.php.net/setcookie
-                                 * bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path [, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
-                                 * 
-                                 * The domain that the cookie is available to.
-                                 * Setting the domain to 'www.example.com' will make the cookie available in the www subdomain and higher subdomains.
-                                 * Cookies available to a lower domain, such as 'example.com' will be available to higher subdomains, such as 'www.example.com'.
-                                 * Older browsers still implementing the deprecated » RFC 2109 may require a leading . to match all subdomains.
-                                 * Since we dont want the cookie set on one subdomain to pass to another, we call setcookie without the domain paramater :'get a cookie with "subdomain.example.net" (and not ".subdomain.example.net")'
-                                 */                    
+                    // just need random token here. no real reason to pass name in. just easy to use password_hash to create it
+                    $cookieToken = password_hash($h->currentUser->name, PASSWORD_DEFAULT);
+                    \HotaruModels2\UserLogin::addLogin($h, $h->currentUser->id, $cookieToken);
+                    
+                    $strCookie=base64_encode(
+                            join(':', array(
+                                $h->currentUser->name,
+                                $cookieToken
+                            ))
+                    );
+                    
+                    // 2592000 = 60 seconds * 60 mins * 24 hours * 30 days
+                    $month = 2592000 + time();
+                    
+                    if (strpos(SITEURL, "localhost") !== false) {
+                            setcookie("hotaru_key", $strCookie, $month, "/");
+                    } else {				
+                            /*
+                             * http://no2.php.net/setcookie
+                             * bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path [, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
+                             * 
+                             * The domain that the cookie is available to.
+                             * Setting the domain to 'www.example.com' will make the cookie available in the www subdomain and higher subdomains.
+                             * Cookies available to a lower domain, such as 'example.com' will be available to higher subdomains, such as 'www.example.com'.
+                             * Older browsers still implementing the deprecated » RFC 2109 may require a leading . to match all subdomains.
+                             * Since we dont want the cookie set on one subdomain to pass to another, we call setcookie without the domain paramater :'get a cookie with "subdomain.example.net" (and not ".subdomain.example.net")'
+                             */                    
 
-				setcookie("hotaru_user", $this->name, $month, "/");
-				setcookie("hotaru_key", $strCookie, $month, "/");
-			}
-			return true;
+                            setcookie("hotaru_key", $strCookie, $month, "/");
+                    }
+                    return true;
 		}
 	}
 	
+        private static function getCookieHotaruKey($h)
+        {
+            if(!$h->cage->cookie->keyExists('hotaru_key')) { 
+                return false;
+            }
+            
+            $user_info = explode(":", base64_decode($h->cage->cookie->getRaw('hotaru_key')));
+		
+            $cookie = new \stdClass();
+            $cookie->username = isset($user_info[0]) ? $user_info[0] : '';
+            $cookie->token = isset($user_info[1]) ? $user_info[1] : '';
+            
+            return $cookie;
+        }
+        
+        
+        private static function removeLoginFromDb($h, $userId, $cookieToken)
+        {
+                \HotaruModels2\UserLogin::removeLogin($h, $userId, $cookieToken);
+        }
 	
 	/**
 	 * Delete cookie and destroy session
 	 */
-	public function destroyCookieAndSession()
+	public static function destroyCookieAndSession($h)
 	{
+                // remove cookieToken from db
+                $user = isset($_SESSION["hotaru_user"]) ? $_SESSION["hotaru_user"] : false;
+                $cookie = self::getCookieHotaruKey($h);
+                //$h->messages['got cookie and user ready to destroy cookie'] = 'green';
+                if ($cookie) {
+                    if (!$user) {
+                        $user = $h->getUser(0, $cookie->username);
+                    }
+                    if ($user) {
+                        // make sure we have $user because cookie could have been old, fake or deleted from db
+                        self::removeLoginFromDb($h, $user->user_id, $cookie->token);
+                    }
+                }
+            
 		// setting a cookie with a negative time expires it
-		
 		if (strpos(SITEURL, "localhost") !== false) {
 			setcookie("hotaru_user", "", time()-3600, "/");
 			setcookie("hotaru_key", "", time()-3600, "/");
@@ -258,322 +476,11 @@ class UserAuth extends UserBase
 			setcookie("hotaru_key", "", time()-3600, "/");
 		}
 		
+                // sessions are used in CSRF and for currentUser
                 if (session_id()) {
-                    session_destroy(); // sessions are used in CSRF
+                    session_destroy(); 
                 }
-		
-		$this->loggedIn = false;
-	}
-	
-	
-	 /**
-	 * Change username or email
-	 *
-	 * @param int $userid
-	 * @return bool
-	 */
-	public function updateAccount($h, $userid = 0)
-	{
-		// $viewee is the person whose account is being modified
-		
-		$viewee = new UserBase($h);
-		
-		// Get the details of the account to show.
-		// If no account is specified, assume it's your own.
-		
-		if (!$userid) {
-		    $userid = $this->id; 
-		}
-		
-		$viewee->getUser($h, $userid);
-		
-		$error = 0;
-		
-		// fill checks
-		$checks['userid_check'] = '';
-		$checks['username_check'] = '';
-		$checks['email_check'] = '';
-		$checks['role_check'] = '';
-		$checks['password_check_old'] = '';
-		$checks['password_check_new'] = '';
-		$checks['password_check_new2'] = '';
-		
-		// Updating account info (username and email address)
-		if ($h->cage->post->testAlnumLines('update_type') == 'update_general') {
-		
-			// check CSRF key
-			if (!$h->csrf()) {
-				$h->messages[$h->lang('error_csrf')] = 'red';
-				$error = 1;
-			}
-			
-			$username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-			if (!$username_check) {
-				$h->messages[$h->lang('main_user_account_update_username_error')] = 'red';
-				$error = 1;
-			} elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
-				$h->messages[$h->lang('main_user_account_update_username_exists')] = 'red';
-				$error = 1;
-			} else {
-				//success
-				$viewee->name = $username_check;
-			}
-			
-			$email_check = $h->cage->post->testEmail('email');
-			if (!$email_check) {
-				$h->messages[$h->lang('main_user_account_update_email_error')] = 'red';
-				$error = 1;
-			} elseif($h->emailExists($email_check, '', $viewee->id) || $h->isBlocked('email', $email_check)) {
-				$h->messages[$h->lang('main_user_account_update_email_exists')] = 'red';
-				$error = 1;
-			} else {
-				//success
-				$viewee->email = $email_check;
-			}
-			
-			$role_check = $h->cage->post->testUsername('user_role'); // from Users plugin account page
-			// compare with current role and update if different
-			if (!$error && $role_check && ($role_check != $viewee->role)) {
-				$viewee->role = $role_check;
-				$new_perms = $viewee->getDefaultPermissions($h, $role_check);
-				$viewee->setAllPermissions($new_perms);
-				$viewee->updatePermissions($h);
-				if ($role_check == 'killspammed' || $role_check == 'deleted') {
-					$h->deleteComments($viewee->id); // includes child comments from *other* users
-					$h->deletePosts($viewee->id); // includes tags and votes for self-submitted posts
-					
-					$h->pluginHook('userbase_killspam', '', array('target_user' => $viewee->id));
-					
-					if ($role_check == 'deleted') { 
-						$h->deleteUser($viewee->id); 
-						$checks['username_check'] = 'deleted';
-						$h->message = $h->lang("users_account_deleted");
-						$h->messageType = 'red';
-						return $checks; // This will then show a red "deleted" notice
-					}
-				}
-			}
-			
-			// If we've just edited our own account, let's refresh the cookie so it uses our latest username:
-			if ($h->currentUser->id == $h->cage->post->testInt('userid')) {
-				$h->currentUser->setCookie($h, false);           // delete the cookie
-				$h->currentUser->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
-				$h->currentUser->setCookie($h, true);            // create a new, updated cookie
-			}
-		}
-		
-		if (!isset($username_check) && !isset($email_check)) {
-			$username_check = $viewee->name;
-			$email_check = $viewee->email;
-			$role_check = $viewee->role;
-			// do nothing
-		} elseif ($error == 0) {
-			$exists = $h->userExists(0, $username_check, $email_check);
-			if (($exists != 'no') && ($exists != 'error')) { // user exists
-				//success
-				$viewee->updateUserBasic($h, $userid);
-				// only update the cookie if it's your own account:
-				if ($userid == $this->id) { 
-				$h->currentUser->setCookie($h, false);           // delete the cookie
-				$h->currentUser->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
-				$h->currentUser->setCookie($h, true);            // create a new, updated cookie
-				}
-				$h->messages[$h->lang('main_user_account_update_success')] = 'green';
-			} else {
-				//fail
-				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
-			}
-		} else {
-			// error must = 1 so fall through and display the form again
-		}
-		
-		//update checks
-		$this->updatePassword($h, $userid);
-		$userid_check = $viewee->id; 
-		$checks['userid_check'] = $userid_check;
-		$checks['username_check'] = $username_check;
-		$checks['email_check'] = $email_check;
-		$checks['role_check'] = $role_check;
-		
-		return $checks;
-	}
-	
-	
-	 /**
-	 * Enable a user to change their password
-	 *
-	 * @return bool
-	 */
-	public function updatePassword($h, $userid)
-	{
-		// we don't want to edit the password if this isn't our own account.
-		if ($userid != $this->id) { return false; }
-		
-		$error = 0;
-		
-		// Updating password
-		if ($h->cage->post->testAlnumLines('update_type') == 'update_password') {
-		
-			// check CSRF key
-			if (!$h->csrf()) {
-				$h->messages[$h->lang('error_csrf')] = 'red';
-				$error = 1;
-			}
-			
-			
-			$password_check_old = $h->cage->post->noTags('password_old');
-			
-			if ($this->loginCheck($h, $this->name, $password_check_old)) {
-				// safe, the old password matches the password for this user.
-			} else {
-				$h->messages[$h->lang('main_user_account_update_password_error_old')] = 'red';
-				$error = 1;
-			}
-			
-			$password_check_new = $h->cage->post->testPassword('password_new');    
-			if ($password_check_new) {
-				$password_check_new2 = $h->cage->post->testPassword('password_new2');    
-				if ($password_check_new2) { 
-					if ($password_check_new == $password_check_new2) {
-						// safe, the two new password fields match
-					} else {
-						$h->messages[$h->lang('main_user_account_update_password_error_match')] = 'red';
-						$error = 1;
-					}
-				} else {
-					$h->messages[$h->lang('main_user_account_update_password_error_new')] = 'red';
-					$error = 1;
-				}
-			} else {
-				$h->messages[$h->lang('main_user_account_update_password_error_not_provided')] = 'red';
-				$error = 1;
-			}
-		
-		}
-		
-		if (!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
-			$password_check_old = "";
-			$password_check_new = "";
-			$password_check_new2 = "";
-			// do nothing
-		} elseif ($error == 0) {
-			$exists = $h->userExists(0, $this->name, $this->email);
-			if (($exists != 'no') && ($exists != 'error')) { // user exists
-				//success
-				$this->password = $this->generateHash($password_check_new);
-				$this->updateUserBasic($h, $this->id); // update the database record for this user
-				$this->setCookie($h, false);           // delete the cookie
-				$this->getUser($h, $this->id, '', true);    // re-read the database record to get updated info
-				$this->setCookie($h, true);            // create a new, updated cookie
-				$h->messages[$h->lang('main_user_account_update_password_success')] = 'green';
-			} else {
-				//fail
-				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
-			}
-		} else {
-			// error must = 1 so fall through and display the form again
-		}
-	}
-	
-	
-	 /**
-	 * Send a confirmation code to a user who has forgotten his/her password
-	 *
-	 * @param string $email - already validated above
-	 */
-	public function sendPasswordConf($h, $userid, $email)
-	{
-		// generate the email confirmation code
-		$pass_conf = md5(crypt(md5($email),md5($email)));
-		
-		// store the hash in the user table
-		$sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_id = %d";
-		$h->db->query($h->db->prepare($sql, $pass_conf, $userid));
-		
-		$line_break = "\r\n\r\n";
-		$next_line = "\r\n";
-		
-		if ($h->isActive('signin')) { 
-			$url = SITEURL . 'index.php?page=login&plugin=user_signin&userid=' . $userid . '&passconf=' . $pass_conf; 
-		} else { 
-			$url = SITEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
-		}
-		
-		// send email
-		$subject = $h->lang('main_user_email_password_conf_subject');
-		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $h->getUserNameFromId($userid);
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_welcome');
-		$body .= $h->lang('main_user_email_password_conf_body_click');
-		$body .= $line_break;
-		$body .= $url;
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_no_request');
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_regards');
-		$body .= $next_line;
-		$body .= $h->lang('main_user_email_password_conf_body_sign');
-		$to = $email;
-		
-		$h->email($to, $subject, $body);    
-		
-		return true;
-	}
-	
-	
-	 /**
-	 * Reset the user's password to soemthing random and email it.
-	 *
-	 * @param string $passconf - confirmation code clicked in email
-	 */
-	public function newRandomPassword($h, $userid, $passconf)
-	{
-		$email = $h->getEmailFromId($userid);
-		
-		// check the email and confirmation code are a pair
-		$pass_conf_check = md5(crypt(md5($email),md5($email)));
-		if ($pass_conf_check != $passconf) {
-			return false;
-		}
-		
-		// update the password to something random
-		$temp_pass = random_string(10);
-		$sql = "UPDATE " . TABLE_USERS . " SET user_password = %s WHERE user_id = %d";
-		$h->db->query($h->db->prepare($sql, $this->generateHash($temp_pass), $userid));
-		$line_break = "\r\n\r\n";
-		$next_line = "\r\n";
-		
-		if ($h->isActive('signin')) { 
-			$url = SITEURL . 'index.php?page=login&plugin=user_signin'; 
-		} else { 
-			$url = SITEURL . 'admin_index.php?page=admin_login'; 
-		}
-		
-		$username = $h->getUserNameFromId($userid);
-		
-		// send email
-		$subject = $h->lang('main_user_email_new_password_subject');
-		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $username;
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_requested');
-		$body .= $line_break;
-		$body .= $username;
-		$body .= $next_line;
-		$body .= $temp_pass;
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_remember');
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_pass_change');
-		$body .= $line_break;
-		$body .= $url; 
-		$body .= $line_break;
-		$body .= $h->lang('main_user_email_password_conf_body_regards');
-		$body .= $next_line;
-		$body .= $h->lang('main_user_email_password_conf_body_sign');
-		$to = $email;
-		
-		$h->email($to, $subject, $body);    
-		
-		return true;
+
+		$h->currentUser->loggedIn = false;
 	}
 }

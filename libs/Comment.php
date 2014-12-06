@@ -23,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-    
-class Comment
+namespace Libs;    
+
+class Comment extends Prefab
 {
 	protected $id           = 0;
 	protected $parent       = 0;
@@ -80,20 +81,8 @@ class Comment
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-                $sql = "SELECT COUNT(comment_id) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_status = %s";
-                    
-                if (!MEEKRODB) {
-                    $query = $h->db->prepare($sql, $h->post->id, 'approved');
-
-                    $h->smartCache('on', 'comments', 60, $query); // start using cache
-                    $num_comments = $h->db->get_var($query);
-                    $h->smartCache('off'); // stop using cache		
-                } else {   
-                    $num_comments = $h->mdb->queryFirstField($sql, $h->post->id, 'approved');
-//                  $num_comments = models___Comments::count(array(
-//                        'conditions' => array('comment_post_id = ? AND comment_status = ?', $h->post->id, 'approved'))
-//                     );;
-                }
+                //$num_comments = \HotaruModels\Comment::countByPost($h->post->id);
+                $num_comments = \HotaruModels2\Comment::countByPost($h, $h->post->id);                
                 
 		if ($digits_only) { return $num_comments; } // just return the number
 		
@@ -178,12 +167,8 @@ class Comment
 	 */
 	function getComment($h, $comment_id = 0)
 	{
-		$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_id = %d";
-		$query = $h->db->prepare($sql, $comment_id);
-		
-		$h->smartCache('on', 'comments', 60, $query); // start using cache
-		$comment = $h->db->get_row($query);
-		$h->smartCache('off'); // stop using cache
+                //$comment = \HotaruModels\Comment::getWithDetails($comment_id);  // this query was wrong anyway
+                $comment = \HotaruModels2\Comment::getWithDetailsForComment($h, $comment_id);
 		
 		if($comment) { return $comment; } else { return false; }
 	}
@@ -202,18 +187,24 @@ class Comment
 		
 		if ($post_id) {
 			// get all comments from specified post
-			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_post_id = %d AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order;
-			$query = $h->db->prepare($sql, $post_id, 'approved', 'buried', 'pending');
-			$h->smartCache('on', 'comments', 60, $query); // start using cache
-			$comments = $h->db->get_results($query);
+                        //$comments = \HotaruModels\Comment::getWithDetails($post_id);
+                        $comments = \HotaruModels2\Comment::getWithDetails($h, $post_id);
+                        
+                        // TODO this search crteria is different to the one above getComment
+			//$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_post_id = %d AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order;
+			//$query = $h->db->prepare($sql, $post_id, 'approved', 'buried', 'pending');
+			//$h->smartCache('on', 'comments', 60, $query); // start using cache
+			//$comments = $h->db->get_results($query);
 		} else {
 			// get all comments
+                    
 			if ($userid) { 
 				$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_archived = %s AND C.comment_status = %s AND C.comment_user_id = %d AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order . $limit;
 				$query = $h->db->prepare($sql, 'N', 'approved', $userid, 'buried', 'pending');
 				$h->smartCache('on', 'comments', 60, $query); // start using cache
 				$comments = $h->db->get_results($query);
 			} else {
+                            
 				$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_archived = %s AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order . $limit;
 				$query = $h->db->prepare($sql, 'N', 'approved', 'buried', 'pending');
 				$h->smartCache('on', 'comments', 60, $query ); // start using cache
@@ -258,18 +249,20 @@ class Comment
 	 * @param int $post_id - you can limit comments to a single post
 	 * @return array|false
 	 */
-	function getAllCommentsQuery($h, $order = "ASC", $userid = 0)
+	function getAllCommentsQuery($h, $order = "ASC", $userId = 0)
 	{
-		// get all comments
-		if ($userid) { 
-			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_status = %s AND C.comment_user_id = %d ORDER BY C.comment_date " . $order;
-			$query = $h->db->prepare($sql, 'approved', $userid);
+		if ($userId) { 
+                        //$comments = \HotaruModels\Comment::getAllForUserWithDetails($userId, $order);
+                        // Cant use above yet because we dont have a new paging solution yet
+                        $comments = \HotaruModels2\Comment::getAllForUserWithDetails($h, $userId, $order);
+                        
 		} else {
-			$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_status = %s ORDER BY C.comment_date " . $order;
-			$query = $h->db->prepare($sql, 'approved');
+                        //$comments = \HotaruModels\Comment::getAllWithDetails($order);
+                        // Cant use above yet because we dont have a new paging solution yet
+                        $comments = \HotaruModels2\Comment::getAllWithDetails($h, $order);
 		}
 		
-		if($query) { return $query; } else { return false; }
+		if($comments) { return $comments; } else { return false; }
 	}
 	
 	
@@ -284,7 +277,8 @@ class Comment
 		$this->parent = $comment->comment_parent;
 		$this->postId = $comment->comment_post_id;
                 $this->postTitle = isset($comment->post_title) ? stripslashes(urldecode($comment->post_title)) : '';
-		$this->author = $comment->comment_user_id;
+		$this->postUrl = isset($comment->post_url) ? $comment->post_url: null;
+                $this->author = $comment->comment_user_id;
                 $this->authorname = isset($comment->user_username) ? $comment->user_username : '';
 		$this->date = $comment->comment_date;
 		$this->status = $comment->comment_status;
@@ -307,13 +301,16 @@ class Comment
 	function addComment($h)
 	{
 		$sql = "INSERT INTO " . TABLE_COMMENTS . " SET comment_post_id = %d, comment_user_id = %d, comment_parent = %d, comment_date = CURRENT_TIMESTAMP, comment_status = %s, comment_content = %s, comment_subscribe = %d, comment_updateby = %d";
-		
+
 		$h->db->query($h->db->prepare($sql, $this->postId, $this->author, $this->parent, $this->status, urlencode(trim(stripslashes($this->content))), $this->subscribe, $h->currentUser->id));
                 $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
 		
 		$this->id = $last_insert_id;
 		$h->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
-		
+
+                // update the comment count on post table as well
+                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                
 		$h->pluginHook('comment_post_add_comment');
 	}
 
@@ -330,6 +327,9 @@ class Comment
 		
 		$h->comment->id = $this->id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_update_comment');
+                
+                //\HotaruModels\Post::updateCommentCount($this->postId);
+                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
 		
 		return true;
 	}
@@ -353,6 +353,9 @@ class Comment
 		
 		$h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_delete_comment');
+                
+                //\HotaruModels\Post::updateCommentCount($this->postId);
+                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
 		
 		// Need to clear both these caches to be sure related items are updated in widgets, etc.:
 		$h->clearCache('html_cache', false); 
@@ -381,6 +384,9 @@ class Comment
 			}
 		}
 		
+                //\HotaruModels\Post::updateCommentCount($this->postId);
+                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                
 		return true;
 	}
 	
@@ -438,7 +444,10 @@ class Comment
 	 */
 	function formStatus($h, $type)
 	{
-		if ($type == 'select') {
+            //TODO could consider reading off post, but post is not loaded into page yet
+            
+            
+                if ($type == 'select') {
 			$sql = "SELECT post_comments FROM " . TABLE_POSTS . " WHERE post_id = %d";
 			$form_status = $h->db->get_var($h->db->prepare($sql, $h->post->id));
 			

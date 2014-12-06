@@ -30,7 +30,9 @@
 
 <?php $h->pluginHook('footer'); ?>
 
-<p><a href="http://hotarucms.org" title='<?php echo $h->lang("main_theme_footer_hotaru_link"); ?>'><img src='<?php echo SITEURL; ?>content/themes/<?php echo THEME; ?>images/hotarucms.png' width='80' height='15' alt='<?php echo $h->lang("main_theme_footer_hotaru_link"); ?>' /></a></p>
+<a href="http://hotarucms.org" title='<?php echo $h->lang("main_theme_footer_hotaru_link"); ?>'>
+    <div id="hotaruFooterImg"></div>
+</a>
 
 <?php $h->doIncludes('js'); ?>
 

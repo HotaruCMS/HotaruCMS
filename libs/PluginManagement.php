@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class PluginManagement
+namespace Libs;
+
+class PluginManagement extends Prefab
 {
 	/**
 	 * Get an array of plugins
@@ -42,21 +44,28 @@ class PluginManagement
 		$allplugins = array();
 		
 		if ($plugins_array) {
+                        $pluginsDb = array();
+                        //$pluginsFromDb = \HotaruModels\Plugin::getAllActiveAndInactiveDetails();
+                        $pluginsFromDb = \HotaruModels2\Plugin::getAllActiveAndInactiveDetails($h);
+                        if ($pluginsFromDb) {
+                            foreach ($pluginsFromDb as $pluginFromDb)
+                            { 
+                                $pluginsDb[$pluginFromDb->plugin_folder] = $pluginFromDb;
+                            }
+                        }
+                        
 			foreach ($plugins_array as $plugin_details) {
 			
 				$allplugins[$count] = array();
-				if ($h->allPluginDetails) {
-					// get details from memory if we have them..
-					$plugin_row = $h->readPlugin($plugin_details['folder']);
-				} else {
-                                        $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-                                        if (!MEEKRODB) {
-                                            $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));
-                                        } else {
-                                            $plugin_row = $h->mdb->queryFirstRow($sql, $plugin_details['folder']);
-                                            //$plugin_row = models___Plugins::first(array('conditions'=>array('plugin_folder = ?', $plugin_details['folder'])));
-                                        }
-				}
+//				if ($h->allPluginDetails) {
+//					// get details from memory if we have them..
+//					$plugin_row = $h->readPlugin($plugin_details['folder']);
+//				} else {
+//                                        $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
+//                                        $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));       
+//				}
+
+                                $plugin_row = isset( $pluginsDb[$plugin_details['folder']] ) ? $pluginsDb[$plugin_details['folder']] : null;
 				
 				if ($plugin_row) 
 				{
@@ -70,7 +79,6 @@ class PluginManagement
 					$allplugins[$count]['resourceId'] = urldecode($plugin_row->plugin_resourceId);
 					$allplugins[$count]['resourceVersionId'] = urldecode($plugin_row->plugin_resourceVersionId);
 					
-                                        
 					if ($plugin_row->plugin_enabled) {
 						$allplugins[$count]['status'] = 'active';
 					} else {
@@ -116,7 +124,7 @@ class PluginManagement
 				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
-					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-download\"></i> </a>";
+					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-upload\"></i> </a>";
 				} else { 
 					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-times-circle\"></i> </a>";
 				}
@@ -165,6 +173,26 @@ class PluginManagement
 		return $allplugins;
 	}
 	
+        
+        public function getPluginsArray($h, $sort = true)
+        {
+                $plugins = $this->getPlugins($h);
+            
+                if (!$plugins) { return false; }
+                
+                $pluginArray = array();
+                
+                foreach ($plugins as $plugin) {
+                    $pluginArray[] = $plugin['folder'];
+                }
+                
+                if ($sort) {
+                    sort($pluginArray);
+                }
+                
+                return $pluginArray;
+        }
+        
 	
 	/**
 	 * Used by array_filter to keep only installed plugins
@@ -213,7 +241,7 @@ class PluginManagement
 		
 		// Include the generic_pmd class that reads post metadata from the a plugin
 		require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
-		$metaReader = new generic_pmd();
+		$metaReader = new \generic_pmd();
 		$plugin_metadata = $metaReader->read(PLUGINS . $plugin_file . "/" . $plugin_file . ".php");
 		
 		if ($plugin_metadata) { return $plugin_metadata; } else { return false; }
@@ -246,23 +274,27 @@ class PluginManagement
 	 *
 	 * @param int $upgrade flag to indicate we need to show "Upgraded!" instead of "Installed!" message
 	 */
-	public function install($h, $upgrade = 0)
+	public function install($h, $upgrade = 0, $clearCache = true)
 	{
-		// Clear the database cache to ensure stored plugins and hooks 
-		// are up-to-date.
-		$h->deleteFiles(CACHE . 'db_cache');
-		
-		// Clear the css/js cache to ensure any new ones get included
-		$h->deleteFiles(CACHE . 'css_js_cache');
-		
-		// Clear the language cache to ensure any new language files get included
-		$h->clearCache('lang_cache', false);
-                
-                $h->messages['db, css, language caches cleared'] = 'alert-info'; 
-		
+                if ($clearCache) {
+                    // Clear the database cache to ensure stored plugins and hooks 
+                    // are up-to-date.
+                    $h->deleteFiles(CACHE . 'db_cache');
+
+                    // Clear the css/js cache to ensure any new ones get included
+                    $h->deleteFiles(CACHE . 'css_js_cache');
+
+                    // Clear the language cache to ensure any new language files get included
+                    $h->clearCache('lang_cache', false);
+
+                    $h->messages['db, css, language caches cleared'] = 'alert-info'; 
+                }
+            
 		// Read meta from the top of the plugin file
 		$plugin_metadata = $this->readPluginMeta($h->plugin->folder);
 		
+                if (!$plugin_metadata) { return false; }
+                
 		$h->plugin->enabled  = 1;    // Enable it when we add it to the database.
 		$this->assignPluginMeta($h, $plugin_metadata);
 		
@@ -330,6 +362,8 @@ class PluginManagement
 				$h->messages[$h->lang("admin_plugins_upgrade_done")] = 'green';
 			}
 		}
+                
+                return true;
 	}
 	
 	
@@ -378,8 +412,7 @@ class PluginManagement
 		$pvalues = array();
 		$pvalues[0] = "temp"; // will be filled with $sql
 
-		foreach ($h->plugin->hooks as $hook)
-		{
+		foreach ($h->plugin->hooks as $hook) {
 			$exists = $this->isHook($h, trim($hook));
 			
 			if (!$exists) {
@@ -442,24 +475,27 @@ class PluginManagement
 	 *
 	 * @param int $upgrade flag to disable message
 	 */
-	public function uninstall($h, $upgrade = 0)
+	public function uninstall($h, $upgrade = 0, $clearCache = true)
 	{
-		// Clear the database cache to ensure plugins and hooks are up-to-date.
-		$h->deleteFiles(CACHE . 'db_cache');
-		
-		// Clear the css/js cache to ensure this plugin's files are removed
-		$h->deleteFiles(CACHE . 'css_js_cache');
-		
-		// Clear the language cache to ensure any new language files get included
-		$h->clearCache('lang_cache', false);
+                if ($clearCache) {
+                    // Clear the database cache to ensure plugins and hooks are up-to-date.
+                    $h->deleteFiles(CACHE . 'db_cache');
+
+                    // Clear the css/js cache to ensure this plugin's files are removed
+                    $h->deleteFiles(CACHE . 'css_js_cache');
+
+                    // Clear the language cache to ensure any new language files get included
+                    $h->clearCache('lang_cache', false);
+
+                    $h->messages['db, css, language caches cleared'] = 'alert-info'; 
+                }
                 
-                $h->messages['db, css, language caches cleared'] = 'alert-info'; 
-		
 		if ($upgrade == 0) { // don't delete plugin when we're upgrading
 			$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
 		}
 		
-		$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $h->plugin->folder));
+                \HotaruModels2\Pluginhook::removeHook($h, $h->plugin->folder);
+		//$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $h->plugin->folder));
 		
 		// Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
 		//$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINSETTINGS . " WHERE plugin_folder = %s", $h->plugin->folder));
@@ -581,31 +617,33 @@ class PluginManagement
 	 * @param int $enabled 
 	 * Note: This function does not uninstall/delete a plugin.
 	 */
-	public function activateDeactivate($h, $enabled = 0, $ajax = false)
-	{	// 0 = deactivate, 1 = activate
+	public function activateDeactivate($h, $newStatus = 0, $clearCache = true)
+	{	
+                // 0 = deactivate, 1 = activate
 		
-		// Clear the database cache to ensure plugins and hooks are up-to-date.
-		$h->deleteFiles(CACHE . 'db_cache');
-		
-		// Clear the css/js cache to ensure any new ones get included
-		$h->deleteFiles(CACHE . 'css_js_cache');
+                if ($clearCache) {
+                    // Clear the database cache to ensure plugins and hooks are up-to-date.
+                    $h->deleteFiles(CACHE . 'db_cache');
+
+                    // Clear the css/js cache to ensure any new ones get included
+                    $h->deleteFiles(CACHE . 'css_js_cache');
+
+                    $h->messages['db, css caches cleared'] = 'alert-info'; 
+                }
                 
-                $h->messages['db, css caches cleared'] = 'alert-info'; 
-		
 		// Get the enabled status for this plugin...
-		$plugin_row = $h->db->get_row($h->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
+                //$plugin = \HotaruModels\Plugin::getEnabledStatus($h->plugin->folder);
+                $plugin = \HotaruModels2\Plugin::getEnabledStatus($h, $h->plugin->folder);
 		
-		// If no result, then it's obviously not installed...
-		if (!$plugin_row) 
-		{
+                // if not installed
+		if (!$plugin) {
 			// If the user is activating the plugin, go and install it...
-			if ($enabled == 1) { $this->install($h); }
-		} 
-		else 
-		{
-			$result = $this->activateDeactivateDo($h, $plugin_row, $enabled);
-                        return $result;
+                        $result = ($newStatus == 1) ? $this->install($h) : true;
+		} else {
+			$result = $this->activateDeactivateDo($h, $plugin, $newStatus);
 		}
+                
+                return $result;
 	}
 	
 	
@@ -616,7 +654,8 @@ class PluginManagement
 	 * Note: This function does not uninstall/delete a plugin.
 	 */
 	public function activateDeactivateAll($h, $enabled = 0)
-	{	// 0 = deactivate, 1 = activate
+	{	
+                // 0 = deactivate, 1 = activate
 		
                 // Clear the database cache to ensure plugins and hooks are up-to-date.
 		$h->deleteFiles(CACHE . 'db_cache');
@@ -636,7 +675,9 @@ class PluginManagement
 		}
 
 		// if you want to activate, find all the inactive plugins
-		if ($enabled == 1) { $active_plugins = $this->activePlugins($h->db, '*', 0); }
+		if ($enabled == 1) { 
+                    $active_plugins = $this->activePlugins($h->db, '*', 0);
+                }
 		
 		if (!$active_plugins) { return false; }
 		        
@@ -644,8 +685,7 @@ class PluginManagement
 			therefore half the plugins can't be upgraded if the upgrade is attempted in a 
 			random order. So let's minimize the problem by sorting the plugins by number of 
 			requirements, i.e. plugins that have no requirements (Users, Submit, Sidebar Widgets)
-			are upgraded first, then plugins with one requirement... and finally Pligg Importer,
-			which has about 7 requirements. */ 
+			are upgraded first, then plugins with one requirement. */ 
 		$i = 0;
 		foreach ($active_plugins as $active) {
 			$h->plugin->folder = $active->plugin_folder;
@@ -674,23 +714,26 @@ class PluginManagement
 	 * @param int $enabled 
 	 * Note: This function does not uninstall/delete a plugin.
 	 */
-	public function activateDeactivateDo($h, $plugin, $enabled = 0)
+	public function activateDeactivateDo($h, $plugin, $newStatus = 0)
 	{	// 0 = deactivate, 1 = activate
 		// The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
-		if ($plugin->plugin_enabled == $enabled) { return false; }  // only update if we're changing the enabled value.
+		if ($plugin->plugin_enabled == $newStatus) { return false; }  // only update if we're changing the enabled value.
+ 
+                //$result = \HotaruModels\Plugin::updateEnabled($h->plugin->folder, $newStatus, $h->currentUser->id);
+                $result = \HotaruModels2\Plugin::updateEnabled($h, $plugin->plugin_folder, $newStatus, $h->currentUser->id);
 		
-		$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_enabled = %d, plugin_updateby = %d WHERE plugin_folder = %s";
-		$h->db->query($h->db->prepare($sql, $enabled, $h->currentUser->id, $h->plugin->folder));
-		
-		if ($enabled == 1) { // Activating now...
+                if ($newStatus == 1) { // Activating now...
 		
 			// Get plugin version from the database...
-			$db_version = $h->getPluginVersion($h->plugin->folder);
+                        $db_version = \HotaruModels2\Plugin::getVersionNumber($h, $plugin->plugin_folder);
+			//$db_version = $h->getPluginVersion($plugin->plugin_folder);
 			
 			// Get plugin version from the file....
-			$plugin_metadata = $this->readPluginMeta($h->plugin->folder);
-			$file_version = $plugin_metadata['version'];
+			$plugin_metadata = $this->readPluginMeta($plugin->plugin_folder);
+                        if (!$plugin_metadata) { return false; }
 			
+                        $file_version = $plugin_metadata['version'];
+
 			// If file version is newer the the current plugin version, then upgrade...
 			if (version_compare($file_version, $db_version, '>')) {
 				$this->upgrade($h); // runs the install function and shows "upgraded!" message instead of "installed".
@@ -704,13 +747,14 @@ class PluginManagement
 			$h->includeLanguage();
 		}
 		
-		if ($enabled == 0) { 
+		if ($newStatus == 0) { 
 			$h->messages[$h->lang("admin_plugins_deactivated")] = 'green'; 
 		}
 		
-		$h->pluginHook('activate_deactivate', '', array('enabled' => $enabled));
+		//$h->pluginHook('activate_deactivate', '', array('enabled' => $newStatus));
                 
-                return $enabled;
+                // if save fails then return error
+                return true;
 	}
 	
 	
@@ -843,17 +887,6 @@ class PluginManagement
 	}
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         /**
 	 * Update Plugins
 	 *
@@ -861,7 +894,6 @@ class PluginManagement
 	 */
 	public function update($h)
 	{
-		//$url = "http://hotaruplugins.com/zip/";
                 $url = "http://forums.hotarucms.org/resources/";
                 
 		$folder = $h->plugin->folder;
@@ -895,10 +927,10 @@ class PluginManagement
 //		$ftppath   = "/public_html/api/content/";
 //		$ftpuser   = "hotarorg";
 //		$ftppass   = "";
-                if ($h->debug) $h->messages['setting copy directory as ' . $copydir] = 'alert-info';
+                if ($h->debug) { $h->messages['setting copy directory as ' . $copydir] = 'alert-info'; }
 
 		//$ftp_url = "ftp://" . $ftpuser . ":" . stripslashes($ftppass) . "@" . $ftpserver . $ftppath . $folder . "/"  ;
-//$h->messages[$resourceFile] = 'alert-success';
+                //$h->messages[$resourceFile] = 'alert-success';
 		// check that we can access the remote plugin repo site via curl
                 
                 $settings = $h->vars['admin_settings'];
@@ -1009,7 +1041,6 @@ class PluginManagement
 		return $statusCode;                                
 	}
 
-
 	public function filePhpWrite($h, $url, $resourceFile, $file, $findfolder, $copydir, $username, $password )
 	{	
                 // create a new CURL resource and login to forum for cookie
@@ -1061,8 +1092,8 @@ class PluginManagement
 		//$h->messages[$file . $h->lang('admin_theme_filecopy_success')] = 'green';
             //$file = '/home/ipadrank/public_html/content/temp/metatags-0-3.zip';
 
-                $z = new ZipArchive();
-	        $zopen = $z->open($file, ZIPARCHIVE::CHECKCONS);                           
+                $z = new \ZipArchive();
+	        $zopen = $z->open($file, \ZIPARCHIVE::CHECKCONS);                           
 
                 //if ($h->debug) $h->messages['Attempt to unzip ' . $file] = 'alert-info';
                 
@@ -1104,8 +1135,8 @@ class PluginManagement
 	        asort($needed_dirs);
 	
 	        // Create those directories if need be:
-	        foreach ( $needed_dirs as $_dir ) {  
-	                if (! is_dir($dir) && ! mkdir($_dir, 0777))  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
+	        foreach ( $needed_dirs as $dir ) {  
+	                if (!is_dir($dir) && !mkdir($dir, 0777))  {// Only check to see if the Dir exists upon creation failure. Less I/O this way.	                        
                                 $h->messages['Could not create directory.' . $dir] = 'red';
                                 return false;
                         }
@@ -1160,7 +1191,6 @@ class PluginManagement
                     $h->messages['old folder deleted successfully'] = 'green';
                 }
         }
-        
         
 	public function filePhpDelete($h, $file, $copydir)
 	{
@@ -1286,10 +1316,9 @@ class PluginManagement
 	    return $length;
 	}
 
-
-	public function versionCheck($h)
+        public function versionCheck($h)
 	{
-		$systeminfo = New SystemInfo();
+		$systeminfo = SystemInfo::instance();
 		$result = $systeminfo->plugin_version_getAll($h);
 		if ($result) {
 		    $h->messages[$h->lang('admin_theme_version_check_completed')] = 'alert-success';
@@ -1298,4 +1327,3 @@ class PluginManagement
                 }
 	}
 }
-?>

@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Plugin
+namespace Libs;
+
+class Plugin extends Prefab
 {
 	protected $id               = 0;
 	protected $folder           = '';

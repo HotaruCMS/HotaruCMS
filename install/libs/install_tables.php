@@ -28,6 +28,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+const DB_ENGINE_MYISAM = "MyISAM";
+const DB_ENGINE_INNODB = "InnoDB";
 /**
  * Create database tables
  *
@@ -52,8 +54,8 @@ function create_table($table_name)
 			`blocked_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`blocked_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`blocked_type`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Blocked IPs, users, emails, etc';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 
 	}
@@ -76,8 +78,8 @@ function create_table($table_name)
 			`category_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`category_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`category_name`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Categories';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>";
 		$db->query($sql);
 		
 		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (category_name, category_safe_name) VALUES (%s, %s)";
@@ -109,8 +111,8 @@ function create_table($table_name)
 			INDEX  (`comment_status`),
                         INDEX  (`comment_user_id`),
                         INDEX  (`comment_parent`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_MYISAM . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Comments';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -130,8 +132,8 @@ function create_table($table_name)
 			`cvote_rating` smallint(11) NOT NULL DEFAULT '0',
 			`cvote_reason` tinyint(3) NOT NULL DEFAULT 0,
 			`cvote_updateby` int(20) NOT NULL DEFAULT 0
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Comment Votes';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -145,8 +147,8 @@ function create_table($table_name)
 			`following_user_id` int(20) NOT NULL default '0',
 			`friends_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			PRIMARY KEY (follower_user_id, following_user_id)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Friends';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 		}
 		
@@ -170,8 +172,8 @@ function create_table($table_name)
 			`message_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`message_archived`),
                         INDEX  (`message_to`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Messaging';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 		}
 
@@ -186,8 +188,8 @@ function create_table($table_name)
 			`miscdata_default` text NULL,
 			`miscdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`miscdata_updateby` int(20) NOT NULL DEFAULT 0
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Miscellaneous Data';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 		
 		// Add Hotaru version number to the database (referred to when upgrading)
@@ -239,8 +241,8 @@ function create_table($table_name)
                         `plugin_resourceVersionId` int(11) NOT NULL DEFAULT 0,
                         `plugin_rating` varchar(8) NOT NULL DEFAULT '0.0',
 			UNIQUE KEY `key` (`plugin_folder`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Plugins';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 	}
 	
@@ -251,11 +253,11 @@ function create_table($table_name)
 			`phook_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`plugin_folder` varchar(64) NOT NULL DEFAULT '',
 			`plugin_hook` varchar(128) NOT NULL DEFAULT '',
-			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			`plugin_hook_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`plugin_folder`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Hooks';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 	}
 	
@@ -270,8 +272,8 @@ function create_table($table_name)
 			`plugin_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`plugin_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`plugin_folder`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Plugins Settings';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 	}
 	
@@ -298,16 +300,19 @@ function create_table($table_name)
 			`post_content` text NULL,
 			`post_votes_up` smallint(11) NOT NULL DEFAULT '0',
 			`post_votes_down` smallint(11) NOT NULL DEFAULT '0',
+                        `post_comments_count` smallint(11) NOT NULL DEFAULT '0',
 			`post_comments` enum('open', 'closed') NOT NULL DEFAULT 'open',
+                        `post_img` varchar(255) NULL,
 			`post_subscribe` tinyint(1) NOT NULL DEFAULT '0',
 			`post_updateby` int(20) NOT NULL DEFAULT 0,
 			FULLTEXT (`post_title`, `post_domain`, `post_url`, `post_content`, `post_tags`),
 			INDEX  (`post_archived`),
 			INDEX  (`post_status`),
 			INDEX  (`post_type`),
+                        INDEX  (`post_category`),
                         INDEX  (`post_author`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_MYISAM . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Story Posts';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -325,8 +330,8 @@ function create_table($table_name)
 			`postmeta_value` text NULL,
 			`postmeta_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`postmeta_postid`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Meta';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Meta';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -347,8 +352,8 @@ function create_table($table_name)
 			`vote_reason` tinyint(3) NOT NULL DEFAULT 0,
 			`vote_updateby` int(20) NOT NULL DEFAULT 0,
 			INDEX  (`vote_post_id`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Votes';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Votes';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	} 
 
@@ -358,6 +363,8 @@ function create_table($table_name)
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`settings_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`settings_name` varchar(64) NOT NULL,
+                        `settings_type` varchar(32) NULL,
+                        `settings_subType` varchar(32) NULL,
 			`settings_value` text NULL,
 			`settings_default` text NULL,
 			`settings_note` text NULL,
@@ -365,118 +372,53 @@ function create_table($table_name)
 			`settings_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`settings_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`settings_name`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Application Settings';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql);
 		
 		// Default settings:
-		
-		// Site open
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SITE_OPEN', 'true', 'true', ''));
-		
-		// Site name
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SITE_NAME', 'Hotaru CMS', 'Hotaru CMS', ''));
-		
-		// Main theme
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'THEME', 'default/', 'default/', 'You need the "\/"'));
-		
-		// Admin theme
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'ADMIN_THEME', 'admin_default/', 'admin_default/', 'You need the "\/"'));
-		
-		// Debug
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'DEBUG', 'true', 'true', ''));
-		
-		// Friendly urls
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FRIENDLY_URLS', 'false', 'false', ''));
-		
-		// Database cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'DB_CACHE', 'false', 'false', ''));
-		
-		// Database cache duration (hours)
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES (%s, %d, %d, %s, %s)";
-		$db->query($db->prepare($sql, 'DB_CACHE_DURATION', 12, 12, 'Hours', 'N')); // 'N' means Not shown on Admin Settings page
-		
-		// CSS/JavaScript cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'CSS_JS_CACHE', 'true', 'true', ''));
-		
-		// HTML cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'HTML_CACHE', 'true', 'true', ''));
-		
-		// Language cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'LANG_CACHE', 'true', 'true', ''));
-		
-		// RSS cache
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'RSS_CACHE', 'true', 'true', ''));
-		
-		// RSS cache duration (hours)
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note, settings_show) VALUES (%s, %d, %d, %s, %s)";
-		$db->query($db->prepare($sql, 'RSS_CACHE_DURATION', 60, 60, 'Minutes', 'N')); // 'N' means Not shown on Admin Settings page
-		
-		// Site email
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SITE_EMAIL', 'email@example.com', 'email@example.com', 'Must be changed'));
-		
-		// SMTP on
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SMTP', 'false', 'false', 'Email auth'));
-		
-		// SMTP host
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SMTP_HOST', 'mail.example.com', 'mail.example.com', ''));
-		
-		// SMTP port
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SMTP_PORT', '25', '25', ''));
-		
-		// SMTP username
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SMTP_USERNAME', '', '', ''));
-		
-		// SMTP password
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'SMTP_PASSWORD', '', '', ''));
                 
-                // SYS UPDATES
-		//$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		//$db->query($db->prepare($sql, 'SYS_UPDATES', 'false', 'false', 'Hotaru updates'));
+                $defaultSettings = array(
+                    array('SITE_OPEN', '', '', 'true', 'true', ''),
+                    array('SITE_NAME', '', '', 'Hotaru CMS', 'Hotaru CMS', ''),
+                    array('THEME', '', '', 'default/', 'default/', 'You need the "\/"'),
+                    array('ADMIN_THEME', '', '', 'admin_default/', 'admin_default/', 'You need the "\/"'),
+                    array('DEBUG', '', '', 'true', 'true', ''),
+                    array('FRIENDLY_URLS', '', '', 'false', 'false', ''),
+                    array('DB_CACHE', 'Perf', 'Cache', 'false', 'false', ''),
+                    array('DB_CACHE_DURATION', 'Perf', 'Cache', 12, 12, 'Hours', 'N'),
+                    array('CSS_JS_CACHE', 'Perf', 'Cache', 'true', 'true', ''),
+                    array('HTML_CACHE', 'Perf', 'Cache', 'true', 'true', ''),
+                    array('LANG_CACHE', 'Perf', 'Cache', 'true', 'true', ''),
+                    array('RSS_CACHE', 'Perf', 'Cache', 'true', 'true', ''),
+                    array('RSS_CACHE_DURATION', 'Perf', 'Cache', 60, 60, 'Minutes', 'N'),
+                    array('SITE_EMAIL', '', '', 'email@example.com', 'email@example.com', 'Must be changed'),
+                    array('SMTP', 'Mail', '', 'false', 'false', 'Email auth'),
+                    array('SMTP_HOST', 'Mail', '', 'mail.example.com', 'mail.example.com', ''),
+                    array('SMTP_PORT', 'Mail', '', '25', '25', ''),
+                    array('SMTP_USERNAME', 'Mail', '', '', '', ''),
+                    array('SMTP_PASSWORD', 'Mail', '', '', '', ''),
+                    //array('SYS_UPDATES', '', '', 'false', 'false', 'Hotaru updates'),
+                    array('FTP_SITE', 'Security', '', ' ', ' ', 'Optional'),
+                    array('FTP_USERNAME', 'Security', '', '', '', 'Optional'),
+                    array('FTP_PASSWORD', 'Security', '', '', '', 'Optional'),
+                    array('REST_API', 'Security', '', 'false', 'false', ''),
+                    array('FORUM_USERNAME', 'Security', '', '', '', '', 'Need for auto updates'),
+                    array('FORUM_PASSWORD', 'Security', '', '', '', '', 'Need for auto updates'),
+                    array('JQUERY_PATH', 'Perf', 'Files', '', '', '', ''),
+                    array('BOOTSTRAP_PATH', 'Perf', 'Files', '', '', '', ''),   
+                    array('MINIFY_JS', 'Perf', 'Scripts', 'false', 'false', ''),
+                    array('MINIFY_CSS', 'Perf', 'Scripts', 'false', 'false', ''),
+                );
 
-                // FTP port
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FTP_SITE', ' ', ' ', 'Optional'));
+                $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_type, settings_subType, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s, %s, %s)";
 		
-		// FTP username
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FTP_USERNAME', '', '', 'Optional'));
-		
-		// FTP password
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FTP_PASSWORD', '', '', 'Optional'));
-
-                // REST API
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'REST_API', 'false', 'false', ''));
-		
-                // FORUM username
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FORUM_USERNAME', '', '', 'Need for auto updates'));
-		
-		// FORUM password
-		$sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s)";
-		$db->query($db->prepare($sql, 'FORUM_PASSWORD', '', '', 'Need for auto updates'));
-                
-		echo $lang['install_step2_adding_data'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
-
+		foreach ($defaultSettings as $default)
+                {
+                    $db->query($db->prepare($sql, $default[0], $default[1], $default[2], $default[3], $default[4], $default[5]));                
+                }
+                 
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_adding_data'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 	}
 	
 	// TAGS TABLE - tags
@@ -492,8 +434,8 @@ function create_table($table_name)
 			`tags_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `tags_post_id` (`tags_post_id`,`tags_word`),
 			INDEX  (`tags_archived`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Post Tags';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -508,53 +450,69 @@ function create_table($table_name)
 			`tempdata_value` text NULL,
 			`tempdata_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 			`tempdata_updateby` int(20) NOT NULL DEFAULT 0
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Temporary Data';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Temporary Data';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
-	
-	
-	// TOKENS TABLE - used to prevent against CSRF attacks
-	
-	if ($table_name == "tokens") {
-		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
-			`token_sid` varchar(32) NULL,
-			`token_key` CHAR(32) NULL,
-			`token_stamp` INT(11) NOT NULL default '0',
-			`token_action` varchar(64),
-			INDEX  (`token_key`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Tokens for CSRF protection';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
-		$db->query($sql);
-	}
-	
 	
 	// USERS TABLE
 	
 	if ($table_name == "users") {    
 		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
 			`user_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			`user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`user_username` varchar(32) NULL,
 			`user_role` varchar(32) NOT NULL DEFAULT 'member',
 			`user_date` timestamp NULL,
 			`user_password` varchar(64) NOT NULL DEFAULT '',
 			`user_password_conf` varchar(128) NULL,
+                        `password_version` tinyint(1) NOT NULL DEFAULT 2,
 			`user_email` varchar(128) NOT NULL DEFAULT '',
 			`user_email_valid` tinyint(3) NOT NULL DEFAULT 0,
 			`user_email_conf` varchar(128) NULL,
+                        `user_is_locked_out` tinyint(1) NOT NULL DEFAULT 0,
 			`user_permissions` text NULL,
 			`user_ip` varchar(32) NOT NULL DEFAULT '0',
+                        `user_access_failed_count` tinyint(1) NOT NULL DEFAULT 0,
 			`user_lastlogin` timestamp NULL,
 			`user_lastvisit` timestamp NULL,
+                        `user_last_password_changed_date` timestamp NULL,
+                        `user_lockout_date` timestamp NULL,
+                        `user_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			`user_updateby` int(20) NOT NULL DEFAULT 0,
 			UNIQUE KEY `key` (`user_username`),
 			KEY `user_email` (`user_email`)			
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Users and Roles';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
+        
+        // USERLOGINS TABLE - 3rd party provider login information
 	
+	if ($table_name == "userlogin") {
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			`user_id` int(20) NOT NULL,
+			`login_provider` varchar(128) NULL,
+			`provider_key` varchar(128) NULL,
+                        `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        INDEX  (`user_id`)
+                ) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='3rd Party UserLogin Providers';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
+		$db->query($sql); 
+        }
+        
+        // USERCLAIMS TABLE - claim for user login status
+	
+	if ($table_name == "userclaim") {
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			`claim_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`user_id` int(20) NOT NULL,
+			`claim_type` TEXT NULL,
+                        `claim_value` TEXT NULL,
+                        INDEX  (`user_id`)
+                ) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='UserClaim for login';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
+		$db->query($sql); 
+        }
 	
 	// USERMETA TABLE - extra information for posts
 	
@@ -569,8 +527,8 @@ function create_table($table_name)
 			`usermeta_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`usermeta_userid`),
 			INDEX  (`usermeta_key`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Meta';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Meta';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -592,8 +550,8 @@ function create_table($table_name)
 			`useract_date` timestamp NULL,
 			`useract_updateby` int(20) NOT NULL DEFAULT 0, 
 			INDEX  (`useract_userid`)
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Activity';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='User Activity';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 	
@@ -609,10 +567,9 @@ function create_table($table_name)
 			`widget_function` varchar(255) NULL, 
 			`widget_args` varchar(255) NULL, 
 			`widget_updateby` int(20) NOT NULL DEFAULT 0
-		) ENGINE=" . DB_ENGINE . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
-		echo $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...<br />\n";
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='Widgets';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
 		$db->query($sql); 
 	}
 
 }
-?>

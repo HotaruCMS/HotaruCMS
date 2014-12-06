@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Maintenance
+namespace Libs;
+
+class Maintenance extends Prefab
 {
 	/** 
 	 * System Report is in libs/Debug.php 
@@ -339,6 +341,10 @@ class Maintenance
 	 */    
 	public function getFiles($dir, $exclude = array())
 	{
+                if (!file_exists($dir)) {
+                    return false; 
+                }
+            
 		$files = array();
 		$exceptions = array('.svn', '.', '..', 'placeholder.txt');
 		$exceptions = array_merge($exceptions, $exclude);
@@ -355,4 +361,3 @@ class Maintenance
 		if ($files) { return $files; } else { return false; }
 	}
 }
-?>

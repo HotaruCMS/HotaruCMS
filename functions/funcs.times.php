@@ -25,6 +25,7 @@
  * @link      http://www.hotarucms.org/
  */
 
+
 /**
  * Start timer for calculating page loading time
  *
@@ -32,13 +33,12 @@
  *
  * Note: Function borrowed from Wordpress.org
  */
-function timer_start()
+function timer_start($name = 'default')
 {
 	global $timestart;
 
-	$timestart = microtime(TRUE);
+	$timestart[$name] = microtime(TRUE);
 	return TRUE;
-
 }
 
 /**
@@ -49,13 +49,12 @@ function timer_start()
  * 
  *  Notes: Measured in seconds / Function borrowed from Wordpress.org
  */
-function timer_stop($precision = 4)
+function timer_stop($precision = 4, $name = 'default')
 {
-	//if called like timer_stop(1), will echo $timetotal
-
 	global $timestart;
 
-	$timetotal = microtime(TRUE) - $timestart;
+	$timetotal = microtime(TRUE) - $timestart[$name];
+        
 	$r = (function_exists('number_format_i18n')) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
 	return $r;
 
@@ -165,4 +164,10 @@ function time_ago($i){
     return $o;
 }
 
+
+function sizeofvar($var) {
+    $start_memory = memory_get_usage();
+    $var = unserialize(serialize($var));
+    return display_filesize(memory_get_usage() - $start_memory - PHP_INT_SIZE * 8);
+}
 ?>

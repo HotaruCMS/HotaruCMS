@@ -38,6 +38,8 @@ function fetchMeta($url = '')
     
 function hotaru_http_request($url)
 {
+        $response = "";
+        
 	if(substr($url, 0, 4) != 'http')
 	{
 		return 'The URL provided is missing the "http", can not continue with request';

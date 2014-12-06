@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class IncludeCssJs
+namespace Libs;
+
+class IncludeCssJs extends Prefab
 {
 	protected $cssIncludes          = array();  // a list of css files to include
 	protected $cssIncludesAdmin     = array();  // a list of css files to include in Admin
@@ -331,19 +333,19 @@ class IncludeCssJs
 		$aLastModifieds = array();
 		
 		// if not in debug mode, get the Jsmin class
-		if (!$h->isDebug) {
-			require_once(EXTENSIONS . 'Jsmin/Jsmin.php');
-		}
+//		if (!$h->isDebug) {
+//			require_once(EXTENSIONS . 'JShrink/Minifier.php');
+//		}
 		
 		foreach ($includes as $sFile) {
 			if ($sFile) {
 				$aLastModifieds[] = filemtime($sFile);
-				if ($h->isDebug) {
+				if (($type == 'css' && MINIFY_CSS == 'true') ||  ($type == 'js' && MINIFY_JS == 'true')) {
+                                    $sCode .= \JShrink\Minifier::minify(file_get_contents($sFile)); // minify files
+				} else {
 					$sCode .= "/* Open: " . $sFile . " */\n\n";
 					$sCode .= file_get_contents($sFile); // don't minify files when debugging
 					$sCode .= "\n\n/* Close: " . $sFile . " */\n\n";
-				} else {
-					$sCode .= JSMin::minify(file_get_contents($sFile)); // minify files
 				}
 			}
 		}
@@ -386,10 +388,12 @@ class IncludeCssJs
 		if ($admin) { $prefix = 'hotaru_admin_'; } else { $prefix = 'hotaru_'; }
 		
 		if ($version_js > 0) {
+                    
 			echo "<script type='text/javascript' async src='" . SITEURL . "cache/css_js_cache/" . $prefix  . "js_" . $version_js . ".js'></script>\n";
 		}
 		
 		if ($version_css > 0) {
+                        //echo '<link rel="stylesheet" type="text/css" href="/minify/css?files=base.css,theme.css" />'; 
 			echo "<link rel='stylesheet' href='" . SITEURL . "cache/css_js_cache/" . $prefix  . "css_" . $version_css . ".css' type='text/css' />\n";
 		}
 		

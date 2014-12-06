@@ -221,7 +221,7 @@
 
 			// Log how the function was called
 			$this->func_call = "\$db->get_results(\"$query\", $output)";
-
+//print $query;
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
 			{
@@ -335,7 +335,7 @@
 
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
-
+//print $cache_file . '<br/>';
 			// Try to get previously cached version
 			if ( $this->use_disk_cache && file_exists($cache_file) )
 			{
@@ -357,7 +357,7 @@
 
 					// If debug ALL queries
 					$this->trace || $this->debug_all ? $this->debug() : null ;
-
+//print_r($result_cache);
 					return $result_cache['return_value'];
 				}
 			}

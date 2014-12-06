@@ -1,30 +1,5 @@
 <?php
-/* **************************************************************************************************** 
- * ADMIN LANGUAGE
- *
- * PHP version 5
- *
- * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
- * modify it under the terms of the GNU General Public License as 
- * published by the Free Software Foundation, either version 3 of 
- * the License, or (at your option) any later version. 
- *
- * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE. 
- *
- * You should have received a copy of the GNU General Public License along 
- * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
- * 
- * @category  Content Management System
- * @package   HotaruCMS
- * @author    Hotaru CMS Team
- * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
- * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
- */
 
-/* Title */
 $lang["admin"] = "Admin";
 
 /* Breadcrumbs */
@@ -295,7 +270,7 @@ $lang["admin_theme_filecopy_permission_error"] = "The files could not be copied 
 $lang["admin_theme_check_latest_plugin_versions"] = "check updates";
 $lang["admin_theme_search"] = "Search";
 $lang["admin_theme_version_check_completed"] = "The version numbers have been updated";
-$lang["admin_theme_version_check_failed"] = "Version numbers could not be updated";
+$lang["admin_theme_version_check_failed"] = "Version numbers could not be updated.<br/> Make sure you have Forum Username/Pwd set in <a href='/admin_index.php?page=settings'>settings page</a>";
 $lang["admin_theme_version_latest_version_installed"] = "Latest version installed";
 $lang["admin_theme_version_update_to"] = "Update to ";
 
@@ -306,7 +281,14 @@ $lang["admin_theme_plugin_search_submit"] = "Search";
 /* Plugins */
 $lang["admin_theme_users"] = "Users";
 $lang["admin_theme_posts"] = "Posts";
+$lang["admin_theme_comments"] = "Comments";
 $lang["admin_theme_categories"] = "Categories";
 $lang["admin_theme_widgets"] = "Widgets";
 
+/* Media */
+$lang["admin_theme_media"] = "Media";
+
+/* Themes */
+$lang["admin_theme_management_installed"] = "Installed"; 
+$lang["admin_theme_management_add_new"] = "Add New"; 
 ?>

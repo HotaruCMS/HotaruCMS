@@ -52,6 +52,7 @@ jQuery('document').ready(function($) {
     });
 
 
+
     $('#admin_theme_theme_activate').click(function() {        
         var theme = $(this).attr("name");       
         var formdata = 'admin=theme_settings&theme='  + theme;
@@ -84,7 +85,50 @@ jQuery('document').ready(function($) {
 		});
     });
     
+    
+    
+    
+    
 });	
+
+function doSearch() {
+        var q = document.getElementById("q");
+        var v = q.value.toLowerCase();
+        var t1 = document.getElementsByClassName("table_col_0")[0];
+        var t2 = document.getElementsByClassName("table_col_1")[0];
+        var rows = t1.getElementsByClassName("table_plugin_item");
+        var rows2 = t2.getElementsByClassName("table_plugin_item");
+        //var rows = rows1.concat(rows2);
+        
+        // cant get the merge of objects to work with $.extend so making 2 loops ;(
+        var on = 0;
+        for ( var i = 0; i < rows.length; i++ ) {
+          var fullname = rows[i].getElementsByTagName("td");
+          fullname = fullname[0].innerHTML.toLowerCase();
+          if ( fullname ) {
+              if ( v.length == 0 || (v.length < 2 && fullname.indexOf(v) == 0) || (v.length >= 2 && fullname.indexOf(v) > -1 ) ) {
+              rows[i].style.display = "";
+              on++;
+            } else {
+              rows[i].style.display = "none";
+            }
+          }
+        }
+        
+        var on = 0;
+        for ( var i = 0; i < rows2.length; i++ ) {
+          var fullname = rows2[i].getElementsByTagName("td");
+          fullname = fullname[0].innerHTML.toLowerCase();
+          if ( fullname ) {
+              if ( v.length == 0 || (v.length < 2 && fullname.indexOf(v) == 0) || (v.length >= 2 && fullname.indexOf(v) > -1 ) ) {
+              rows2[i].style.display = "";
+              on++;
+            } else {
+              rows2[i].style.display = "none";
+            }
+          }
+        }
+      }
 
 
 $(function() {

@@ -24,7 +24,9 @@
  * @link      http://www.hotarucms.org/
  *
  */
-class UserActivity
+namespace Libs;
+
+class UserActivity extends Prefab
 {
 	/**
 	 * Get the latest site activity
@@ -46,7 +48,7 @@ class UserActivity
                 
 		if (!$userid)
 		{
-                        $select = ($type == 'count') ? 'count(useract_id)' : 'UA.*, U.user_username';
+                        $select = ($type == 'count') ? 'count(useract_id)' : 'UA.*, U.user_username, U.user_email';
 			//$sql = "SELECT " . $select . " FROM " . TABLE_USERACTIVITY . " AS UA LEFT OUTER JOIN " . TABLE_USERS . " AS U ON UA.useract_userid = U.user_id WHERE UA.useract_archived = %s AND UA.useract_status = %s AND UA.useract_id > %d AND P.post_status <> %s AND P.post_status <> %s ORDER BY UA.useract_date DESC " . $limit;
 			//$query = $h->db->prepare($sql, 'N', 'show', $fromId, 'pending', 'buried');
                         

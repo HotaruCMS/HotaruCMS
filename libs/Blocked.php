@@ -23,13 +23,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Blocked
+namespace Libs;
+
+class Blocked extends Prefab
 {
-		/**
-		* Prepare a list of blocked items for the Admin "Blocked List" page
-		*/
-		public function buildBlockedList($h)
-		{
+        /**
+        * Prepare a list of blocked items for the Admin "Blocked List" page
+        */
+        public function buildBlockedList($h)
+        {
 		$h->pageTitle = $h->lang("admin_theme_blocked_list"); // set page title as "Blocked List"
 		
 		$safe = true; // CSRF flag

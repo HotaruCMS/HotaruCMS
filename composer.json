@@ -1,0 +1,11 @@
+{
+    "require": {        
+        
+    },
+    "autoload": {
+        "classmap": [
+            "models/mdb",
+            "libs"
+        ]
+    }
+}

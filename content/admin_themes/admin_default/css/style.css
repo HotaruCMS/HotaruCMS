@@ -2,10 +2,13 @@
  *	ADMIN DEFAULT THEME CSS         *
  ************************************** */
 
-
 body {
   padding-top: 50px;
   padding-bottom: 50px;
+}
+
+.ui-sortable-handle {
+    cursor:  move;
 }
 
 .sidebar-nav {
@@ -126,6 +129,7 @@ body {
     #admin-sidebar-menu {
         overflow: hidden;
         width: 240px;
+        margin-bottom: 20px;
     }
     #main-menu-sidebar-bgd {
         width: 240px;
@@ -184,7 +188,7 @@ body {
 
 #main-menu-sidebar-bgd {
     background: #2b2b2b;
-    overflow: hidden;
+    overflow-x: hidden;
     left:0;
     display: block;
     height: 100%;
@@ -326,18 +330,18 @@ ul { list-style-type: none;}
 ************************************** */
 
 #plugin_management table { margin: auto; width: 100%; }
-#plugin_management tr.table_a td, #plugin_management tr.table_b td { font-size: 1.2em; font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; text-align: left; }
+/*#plugin_management tr.table_a td, #plugin_management tr.table_b td { font-size: 1.2em; font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; text-align: left; }
 #plugin_management tr.table_a td img, #plugin_management tr.table_b td img { vertical-align: middle; padding: 0 0.4em 0.2em 0;}
 #plugin_management tr.table_a td span, #plugin_management tr.table_b td span { font-size: 0.8em; }
 #plugin_management tr.table_a td {	background-color: #D4FFBF; }
 #plugin_management tr.table_b td {	background-color: #CBE2FF; }
 #plugin_management tr.table_headers td { font-weight: bold; padding: 0.4em 0.5em 0.4em 0.5em; background-color: #e0e0e0; 
-                        text-align: center; border-right: 1px solid #d0d0d0; }
+                        text-align: center; border-right: 1px solid #d0d0d0; }*/
 #plugin_management tr.table_row_0 td { background-color: #f0f0f0; padding: 0.3em 0.6em 0.3em 0.6em; border-right: 1px solid #e0e0e0; }
 #plugin_management tr.table_row_1 td { background-color: #f6f6f6; padding: 0.3em 0.6em 0.3em 0.6em; border-right: 1px solid #e0e0e0; }
 
 #plugin_management td.table_active { width: 5%; }
-#plugin_management td.table_installed_plugin { width: 50%; font-size: 0.9em; font-weight: bold; }
+/*#plugin_management td.table_installed_plugin { width: 50%; font-size: 0.9em; font-weight: bold; }*/
 #plugin_management td.table_order { width: 16%; }
 #plugin_management td.table_uninstall { width: 17%; font-size: 0.8em;}
 
@@ -348,6 +352,8 @@ ul { list-style-type: none;}
 #plugin_management td.table_description_close { font-size: 0.8em; background-color: #fefefe; border-style:solid; border-width: 0.2em 0.2em 0.2em 0; border-color: #e0e0e0; text-align: center; }
 #plugin_management .plugin_management_right {float:right; font-weight:bold;}
 #plugin_management a:hover {text-decoration: none;}
+
+#plugintable_installed { min-height:300px;  }
 
 /* *************************************
 *  Site Settings  *
@@ -363,6 +369,10 @@ ul { list-style-type: none;}
 ************************************** */
 
 #pagination {
+    text-align: center;
+}
+
+/*#pagination {
 	margin-top: 2.0em;
 	text-align: right;
 	font-size: 0.9em;
@@ -372,9 +382,9 @@ ul { list-style-type: none;}
 	display: inline;
 	padding: 0.3em 0.7em 0.3em 0.7em;
 	border:solid 1px #F0F0F0;
-}
+}*/
 
-#pagination .pagi_current {
+/*#pagination .pagi_current {
 	background-color: #BBB;
 	font-weight: bold;
 	padding: 0.3em 0.7em 0.3em 0.7em;
@@ -384,7 +394,7 @@ ul { list-style-type: none;}
 #pagination a:hover {
 	border:solid 1px #444444;
 	text-decoration: none;
-}
+}*/
 
 .debug  { font-size: 0.8em; }
 
@@ -418,4 +428,57 @@ ul { list-style-type: none;}
     -webkit-box-shadow: 0px 0px 10px #888;
     -moz-box-shadow: 0px 0px 10px #888;
     box-shadow: 0px 0px 10px #888;
+}
+
+
+.plugin-card {
+    float: left;
+    margin: 0 8px 16px;
+    background-color: #fff;
+    border: 1px solid #dedede;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-right: 0 !important;
+    padding-left:0 !important;
+}
+
+.plugin-card-top {
+/*    min-height: 135px;*/
+    padding: 20px 20px 10px;
+}
+.plugin-card-bottom {
+    position: relative;
+    padding: 20px 20px 10px;
+}
+
+.plugin-card-bottom {
+    clear: both;
+    padding: 12px 20px;
+    background-color: #fafafa;
+    border-top: 1px solid #dedede;
+    overflow: hidden;
+}
+
+.plugin-card .desc, .plugin-card .name {
+    margin-left: 104px;
+    margin-right: 110px;
+}
+
+.plugin-card .name {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.plugin-icon {
+
+    top: 20px;
+    left: 20px;
+    width: 128px;
+    
+    margin: 0 20px 20px 0;
+}
+
+.star-rating .fa-star {
+    color:orange;
 }

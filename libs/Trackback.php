@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Trackback
+namespace Libs;
+
+class Trackback extends Prefab
 {
 	/**
 	 * Prepares and calls functions to send a trackback

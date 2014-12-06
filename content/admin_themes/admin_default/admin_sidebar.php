@@ -26,6 +26,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+$adminPages = \Libs\AdminPages::instance();
+
 ?>
 <div id="admin-sidebar-menu" class="sidebar-nav" role="navigation">
     
@@ -40,11 +42,12 @@
     <ul class='nav nav-pills nav-stacked'>	          
 	
         <li <?php if($h->pageTitle == 'Pages Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=pages_management"><i class="menu-icon fa fa-file"></i><span class="menu-text"><?php echo $h->lang("admin_theme_pages"); ?></span></a></li>	
-        <li <?php if($h->pageTitle == 'Plugin Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
+        <li <?php if($h->pageTitle == 'Plugin Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=plugin_management"><i class="menu-icon fa fa-puzzle-piece"></i><span class="menu-text"><?php echo $h->lang("admin_theme_plugins"); ?></span></a></li>
 	
         <?php 
-        $pluginFunc = new PluginFunctions();
-        $pluginLinks = $pluginFunc->getAllActivePluginNames($h);
+        $pluginFunc = new \Libs\PluginFunctions();
+        //$pluginLinks = \HotaruModels\Plugin::getAllActiveNamesOrderByName();
+        $pluginLinks = \HotaruModels2\Plugin::getAllActiveNamesOrderByName($h);
         ?>        
         
 	<!-- Plugins -->       
@@ -56,10 +59,9 @@
                     echo '<ul id="users_list">';
                     
                         $pluginResult = $h->pluginHook('admin_sidebar_users');
-                        
-                        $adminPages = new AdminPages();
                         echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
                         
+                        echo '<li><a href="/admin_index.php?page=stats_users">Stats</a></li>';
                     echo '</ul>';
                 echo '</div>';
             echo '</li>';
@@ -75,8 +77,6 @@
                     echo '<ul id="posts_list">';
                     
                         $pluginResult = $h->pluginHook('admin_sidebar_posts');
-                        
-                        $adminPages = new AdminPages();
                         echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
                         
                     echo '</ul>';
@@ -85,18 +85,31 @@
             
         }
         ?>
+        
+        <?php
+        if ($h->isActive('comment_manager')) {
+            echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_comments_list"><a href="#"><i class="menu-icon fa fa-comments"></i><span class="menu-text">' . $h->lang("admin_theme_comments") . '</span></a>';
+                echo '<div id="admin_comments_list" class="collapse out">';  
+                    echo '<ul id="posts_list">';
+                        $pluginResult = $h->pluginHook('admin_sidebar_comments');
+                        echo $adminPages->sidebarPluginsList($h, $pluginResult); 
+                    echo '</ul>';
+                echo '</div>';
+            echo '</li>';
+            
+        }
+        ?>
+        
+        <li <?php if($h->pageTitle == 'Media') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=media"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_media"); ?></span></a></li>
+	
 	
 	<?php
         if ($h->isActive('category_manager')) {
             echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_categories_list"><a href="#"><i class="menu-icon fa fa-bars"></i><span class="menu-text">' . $h->lang("admin_theme_categories") . '</span></a>';
                 echo '<div id="admin_categories_list" class="collapse out">';  
                     echo '<ul id="categories_list">';
-                    
                         $pluginResult = $h->pluginHook('admin_sidebar_categories');
-                        
-                        $adminPages = new AdminPages();
-                        echo $adminPages->sidebarPluginsList($h, $pluginResult);                        
-                        
+                        echo $adminPages->sidebarPluginsList($h, $pluginResult); 
                     echo '</ul>';
                 echo '</div>';
             echo '</li>';
@@ -124,13 +137,13 @@
 
             <div id="admin_plugins_list" class="collapse out">    
                 <ul id="plugin_settings_list">
-                        <?php                                     
-                                if ($pluginLinks) {
-                                        foreach ($pluginLinks as $plugin) { 
-                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin->plugin_folder . "#tab_settings'>" . $plugin->plugin_name . "</a></li>\n";
-                                        }
-                                }
-                        ?>
+                    <?php                                     
+                        if ($pluginLinks) {
+                            foreach ($pluginLinks as $plugin) { 
+                                    echo "<li><a href='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=" . $plugin->plugin_folder . "#tab_settings'>" . $plugin->plugin_name . "</a></li>\n";
+                            }
+                        }
+                    ?>
                 </ul>
             </div> 
         </li>
@@ -140,26 +153,13 @@
         <!-- Themes -->	
         <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
         <?php $themesCount = ($themes) ? count($themes) : 0; ?>
-        <li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#themes_list">
-	    <a href="#">
+        <li <?php if($h->pageTitle == 'Theme Management') { echo 'class="active"'; } ?> role="presentation"  style="cursor:pointer;">
+	    <a href="<?php echo SITEURL; ?>admin_index.php?page=theme_management">
 		<i class="menu-icon fa fa-picture-o"></i>
 		<?php echo $h->lang("admin_theme_theme_settings"); ?>
 		<span class="badge badge-info pull-right"><?php echo $themesCount; ?></span>
             </a>
-            <div id="themes_list" class="collapse out">
-                <ul id="plugin_settings_list">
-                <?php 
-
-                        if ($themes) {
-                                sort($themes); // sort alphabetically
-                                foreach ($themes as $theme) { 
-                                        if ($theme == rtrim(THEME, '/')) { $active = ' <i><small>(current)</small></i>'; } else { $active = ''; } 
-                                                echo "<li><a href='" . SITEURL . "admin_index.php?page=theme_settings&amp;theme=" . $theme . "'>" . make_name($theme, '-') . "</a>" . $active . "</li>\n";
-                                }
-                        }
-                ?>
-                </ul>
-            </div>
+            
         </li>	
 	
 	<?php $h->pluginHook('admin_sidebar'); ?>

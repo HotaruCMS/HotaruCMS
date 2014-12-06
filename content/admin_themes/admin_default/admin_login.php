@@ -28,53 +28,91 @@
 
 ?>
 
-<?php $h->showMessage(); ?>
+<div class="signin-container" style="width:650px; margin: 40px auto;">
+    <div class="row">
+        <?php $h->showMessage(); ?>
+        
+        <!-- Right side -->
+        <div class="col-md-9 signin-form">
 
-<?php //echo $h->lang("admin_theme_login_instructions"); ?>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        Hotaru CMS
+                    </div>
+                    <div class="panel-body">
+                        
+                        <div class="row" style="margin-bottom: 30px;">
+                            <div class="col-md-3">
+                                <img src="<?php echo BASEURL; ?>content/admin_themes/admin_default/images/hotaru-80px.png" alt=""/>
+                            </div>
+                            <div class="col-md-8">
+                                <h2>Admin Login</h2>
+                            </div>
+                        </div>
+                        
+                <!-- Form -->
+                <form role="form" name='login_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>
 
-<div id ="login_form">
+                    <div class="form-group" style="">
+                        <div class="input-group">
+                            <div class="input-group-addon">&nbsp;<span class="fa fa-user signin-form-icon"></span>&nbsp;</div>
+                            <input type='text' name='username' id='admin_login_name' class="form-control input-lg" placeholder="<?php echo $h->lang("admin_theme_login_username"); ?>" value='<?php echo $username_check; ?>' />
+                        </div>
+                    </div> <!-- / Username -->
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">&nbsp;<span class="fa fa-lock signin-form-icon"></span>&nbsp;</div>
+                            <input type='password' name='password' id='admin_login_password' class="form-control input-lg" placeholder="<?php echo $h->lang("admin_theme_login_password"); ?>" value='<?php echo $password_check; ?>' />
+                        </div>
+                    </div> <!-- / Password -->
+<hr>
+                    <div class="form-actions text-center">
+                        <button type="submit" class="btn btn-primary"><?php echo $h->lang('admin_theme_login_form_submit'); ?></button>
+                    </div>
+                    
+                    <input type='hidden' name='login_attempted' value='true'>
+                    <input type='hidden' name='page' value='admin_login'>
+                    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+        
+                </form>
+                <!-- / Form -->
+
+                <!-- "Sign In with" block -->
+<!--			<div class="signin-with">
+                         Facebook 
+                        <a href="index.html" class="signin-with-btn" style="background:#4f6faa;background:rgba(79, 111, 170, .8);">Sign In with <span>Facebook</span></a>
+                </div>-->
+                <!-- / "Sign In with" block -->
+                    </div>
+                </div>
+
     <center>
-
-    <form name='login_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>
-        <h3>Admin Login</h3>
-        
-	<table>
-		<tr>
-		<td><?php echo $h->lang("admin_theme_login_username"); ?>&nbsp; </td>
-		<td><input id='admin_login_name' type='text' size=20 name='username' value='<?php echo $username_check; ?>' /></td>
-		</tr>
-		<tr>
-		<td><?php echo $h->lang("admin_theme_login_password"); ?>&nbsp; </td>
-		<td><input id='admin_login_password' type='password' size=20 name='password' value='<?php echo $password_check; ?>' /></td>
-		</tr>
-		<tr>
-		<td>&nbsp; </td>
-		<td style='text-align:right;'><input id='admin_login_button' type='submit' value='<?php echo $h->lang('admin_theme_login_form_submit'); ?>'  /></td>
-		</tr>
-	</table>
-
-	<input type='hidden' name='login_attempted' value='true'>
-	<input type='hidden' name='page' value='admin_login'>
-	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    </form>
-        
         <p><a href="<?php echo SITEURL; ?>">Back to Site</a></p>
-
-    <a href="#" class="forgot_password"><?php echo $h->lang("admin_theme_login_forgot_password"); ?></a>
- </div>
-
-<form style="display: none;" id='forgot_password_form' name='forgot_password_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
-	<?php echo $h->lang('admin_theme_login_forgot_password_submit_instruct_1'); ?>
-<table>
-	<tr>
-	<td><?php echo $h->lang("admin_theme_update_email"); ?>&nbsp; </td>
-	<td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td>
-	<td><input type='submit' value='<?php echo $h->lang('admin_theme_login_forgot_password_submit'); ?>' /></td>
-	</tr>
-</table>
-<input type='hidden' name='forgotten_password' value='true'>
-<input type='hidden' name='page' value='admin_login'>
-<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-	<?php echo $h->lang('admin_theme_login_forgot_password_submit_instruct_2'); ?>
-</form>
-</center>
+        <a href="#" class="forgot_password"><?php echo $h->lang("admin_theme_login_forgot_password"); ?></a>
+    </center>
+    <br/><br/>
+        <form style="display: none;" id='forgot_password_form' name='forgot_password_form' action='<?php echo SITEURL; ?>admin_index.php' method='post'>    
+            <?php echo $h->lang('admin_theme_login_forgot_password_submit_instruct_1'); ?>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon">&nbsp;<span class="fa fa-envelope"></span>&nbsp;</div>
+                    <input type='text' name='email' id='admin_login_password' class="form-control input-lg" placeholder="<?php echo $h->lang("admin_theme_update_email"); ?>" value='<?php echo $email_check; ?>' />
+                </div>
+            </div>
+            
+            <input type='submit' class="btn btn-primary" value='<?php echo $h->lang('admin_theme_login_forgot_password_submit'); ?>' />
+            
+            <input type='hidden' name='forgotten_password' value='true'>
+            <input type='hidden' name='page' value='admin_login'>
+            <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+            <br/>
+            <hr/>
+            <?php echo $h->lang('admin_theme_login_forgot_password_submit_instruct_2'); ?>
+        </form>
+    
+    </div>
+        <!-- Right side -->
+    </div>
+</div>

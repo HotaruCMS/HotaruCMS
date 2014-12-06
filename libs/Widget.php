@@ -23,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+namespace Libs;
 
-class Widget
+class Widget extends Prefab
 {
 	/**
 	 * Initialize widgets
@@ -98,7 +99,7 @@ class Widget
 	{
                 // Check if it exists so we don't add a duplicate
                 $sql = "SELECT count(widget_id) FROM " . DB_PREFIX . "widgets WHERE widget_plugin = %s AND widget_function = %s AND widget_args = %s";                    
-                $result = (!MEEKRODB) ? $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args)) : $h->mdb->queryFirstField($sql, $plugin, $function, $args);
+                $result = $h->db->get_var($h->db->prepare($sql, $plugin, $function, $args));
                 		
 		if (!$result) {
 			$sql = "INSERT INTO " . DB_PREFIX . "widgets (widget_plugin, widget_function, widget_args, widget_updateby) VALUES(%s, %s, %s, %d)";
@@ -122,7 +123,7 @@ class Widget
 		
                 // Get settings from the database if they exist...
                 $sql = "SELECT widget_plugin, widget_function, widget_args FROM " . DB_PREFIX . 'widgets';                    
-                $widgets_settings = (!MEEKRODB) ? $h->db->get_results($h->db->prepare($sql)) : $h->mdb->queryObj($sql);
+                $widgets_settings = $h->db->get_results($h->db->prepare($sql));
                      
                 if (!$widgets_settings) { return false; }                
                 return $widgets_settings;
@@ -223,17 +224,10 @@ class Widget
 	 */
 	public function getPluginFromFunction($h, $function)
 	{
-		// Get settings from the database if they exist...
-                //if (!MEEKRODB) {
-                    $sql = "SELECT widget_plugin FROM " . TABLE_WIDGETS . ' WHERE widget_function = %s LIMIT 1';
-                    $widget_plugin = $h->db->get_var($h->db->prepare($sql, $function));
-                //} else {
-                //    $widget_plugin = models___Widgets::find_by_widget_function($function);
-                //}                
-		
+                //$widget_plugin = HotaruModels\Widget::getPluginNameFromWidget($function);
+                $widget_plugin = \HotaruModels2\Widget::getPluginNameFromWidget($h, $function);
+                
 		return $widget_plugin;
 	}
 
 }
-
-?>

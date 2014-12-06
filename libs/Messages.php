@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Messages
+namespace Libs;
+
+class Messages extends Prefab
 {
 	/**
 	 * Display a SINGLE success or failure message
@@ -49,7 +51,7 @@ class Messages
                         if ($msg_type == 'green') $msg_type .= ' alert-success';
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
-			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "'>";
+			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "' role='alert'>";
                             echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                             echo $msg;
                         echo "</div>";
@@ -61,7 +63,7 @@ class Messages
                         if ($msg_type == 'green') $msg_type .= ' alert-success';
                         if ($msg_type == 'blue') $msg_type .= ' alert-info';
                     
-			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "'>";
+			echo "<div role='alert' class='alert alert-dismissible " . $msg_type . "' role='alert'>";
                             echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                             echo $h->message;
                         echo "</div>";
@@ -104,7 +106,7 @@ class Messages
                                 if ($msg_type == 'green') $msg_type .= ' alert-success';
                                 if ($msg_type == 'blue') $msg_type .= ' alert-info';
                 
-				echo "<div class='alert alert-dismissible " . $msg_type . "'>";
+				echo "<div class='alert alert-dismissible " . $msg_type . "' role='alert'>";
                                 echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
                                 echo $msg . "</div>";
 			}
@@ -118,4 +120,3 @@ class Messages
                 return true;
         }
 }
-?>

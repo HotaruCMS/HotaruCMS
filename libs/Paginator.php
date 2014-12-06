@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Paginator
+namespace Libs;
+
+class Paginator extends Prefab
 {
 	protected $limit       = 0;    // start (limit X)
 	protected $itemsPerPage = 10;   // range (limit Y)
@@ -56,11 +58,12 @@ class Paginator
 		$this->limit = ($this->itemsPerPage * ($this->pg - 1));  // e.g. page 1 will start at 0, page 2 will start at 10, etc.
 		
 		$query .= " LIMIT " . $this->limit . ", " . $this->itemsPerPage;
-		
+		//print $query . '<br/>';
+                
 		if ($cache_table) { $h->smartCache('on', $cache_table, 60, $query); } // start using cache
 		$this->items = $h->db->get_results($query);
 		if ($cache_table) { $h->smartCache('off'); } // stop using cache
-		
+                
 		return $this;
 	}
 	
@@ -135,7 +138,7 @@ class Paginator
 			$previousPage = $currentPage - 1;
 			$link = $path . '&pg=' . $previousPage;
 			$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-			$str .= "<a class='pagi_previous' href='" . $link . "' title='" . $h->lang('pagination_previous') . "'>&laquo; " . $h->lang('pagination_previous') . "</a> \n";
+			$str .= "<li><a class='pagi_previous' href='" . $link . "' title='" . $h->lang('pagination_previous') . "'>&laquo; " . $h->lang('pagination_previous') . "</a></li> \n";
 		}
 		
 		// NOT FIRST PAGE
@@ -143,9 +146,9 @@ class Paginator
 			if ($currentPage != 1) {
 				$link = $path . '&pg=1';
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_first' href='" . $link . "'  title='" . $h->lang('pagination_first') . "'>1</a> \n";
+				$str .= "<li><a class='pagi_first' href='" . $link . "'  title='" . $h->lang('pagination_first') . "'>1</a></li> \n";
 				if ($currentPage > ($before+1)) {
-					$str .= " <span class='dots'>...</span> \n";
+					$str .= "<li class='disabled'><a href='#' class='pagi_dots'>...</a></li> \n";
 				}
 			}
 		}
@@ -161,23 +164,24 @@ class Paginator
 			}
 			
 			if ($i == $currentPage) {
-				$str .= "<span class='pagi_current'>$i</span>\n";
+				$str .= "<li class='active'><a href='#' class='pagi_current'>$i</a></li>\n";
 			}
 			else {
 				$link = $path . '&pg=' . $i;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_page pagination' href='" . $link . "'>$i</a>\n";
+				$str .= "<li><a class='pagi_page' href='" . $link . "'>$i</a></li>\n";
 			}
 			if ($i != $currentPage + $after && $i != $this->totalPages) { $str .= ' '; }
 		} //end for
 		
 		if (!$this->isLastPage() && ($currentPage <= ($this->totalPages - $after))) {
-			if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $after)
-			{
-				if ($currentPage < ($this->totalPages - ($after + 1))) { $str .= " <span class='pagi_dots'>...</span> \n"; }
+			if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $after) {
+				if ($currentPage < ($this->totalPages - ($after + 1))) {
+                                    $str .= "<li class='disabled'><a href='#' class='pagi_dots'>...</a></li> \n"; 
+                                }
 				$link = $path . '&pg=' . $this->totalPages;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-				$str .= "<a class='pagi_last' href='" . $link . "'  title='" . $h->lang('pagination_last') . "'>".$this->totalPages."</a> \n";
+				$str .= "<li><a class='pagi_last' href='" . $link . "'  title='" . $h->lang('pagination_last') . "'>".$this->totalPages."</a></li> \n";
 			}
 		}
 		
@@ -186,12 +190,14 @@ class Paginator
 			$nextPage = $currentPage + 1;
 			$link = $path . '&pg=' . $nextPage;
 			$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
-			$str .= "<a class='pagi_next' href='" . $link . "' title='" . $h->lang('pagination_next') . "'>" . $h->lang('pagination_next') . " &raquo;</a> \n";
+			$str .= "<li><a class='pagi_next' href='" . $link . "' title='" . $h->lang('pagination_next') . "'>" . $h->lang('pagination_next') . " &raquo;</a></li> \n";
 		}
 	
 		// Wrap in a div
 		$pagination = "<div id='pagination'>\n";
+                $pagination .= "<ul class='pagination'>\n";
 		$pagination .= $str;
+                $pagination .= "</ul>";
 		$pagination .= "</div>\n";
 		
 		return $pagination;

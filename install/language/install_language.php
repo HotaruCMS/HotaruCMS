@@ -26,18 +26,23 @@
 /* Upgrade Step 1 */
 $lang["upgrade_title"] = "Hotaru CMS Upgrade";
 
-$lang["upgrade_step1"] = "Step 1/3: Checking your existing setup";
+$lang["upgrade_step1"] = "Step 1/4: Checking your existing setup";
 $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
 $lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
 $lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
 $lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
 
 /* Upgrade Step 2 */
-$lang["upgrade_step2"] = "Step 2/3: Upgrade Database";
+$lang["upgrade_step2"] = "Step 2/4: Upgrade Database";
 $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
 
-/* Upgrade Step 2 */
-$lang["upgrade_step3"] = "Step 3/3: Check Plugins, Templates";
+/* Upgrade Step 3 */
+$lang["upgrade_step_plugins"] = "Step 3/4: Refresh Plugins";
+$lang["upgrade_step_plugins_details"] = "Updating your plugins now.";
+$lang["admin_plugins_upgrade_done"] = "Plugins upgraded succesfully";
+
+/* Upgrade Step 3 */
+$lang["upgrade_step3"] = "Step 4/4: Check Files, Templates";
 $lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS.";
 $lang["upgrade_step3_instructions"] = "After clicking \"Finish\" you may find some of your plugins need upgrading. You can check the latest version numbers from the Plugin Management page in your admin dashboard. You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
 $lang["upgrade_step3_go_play"] = "Click \"Finish\" to access your Hotaru site!";
@@ -141,7 +146,7 @@ $lang["install_step3_form_update"] = "Update";
 
 /* Install Step 5 */
 $lang["install_step4"] = "Step 4/4: Completion";
-$lang["install_step4_installation_complete"] = "The database has been successfully upgraded";
+$lang["install_step4_installation_complete"] = "Installation is now complete. Optional Settings";
 $lang["install_step4_installation_delete"] = "<span style='color: red;'><b>WARNING:</b> You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!</span>";
 
 $lang["install_step4_form_check_php"] = "Check PHP Setup";

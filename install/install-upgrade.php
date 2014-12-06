@@ -29,39 +29,36 @@
  */
 
 
-$h = new Hotaru('start'); // must come before language inclusion
+$h = new \Libs\Hotaru('start'); // must come before language inclusion
 
 global $lang;
 
 $cage = init_inspekt_cage();
 $step = $cage->get->getInt('step');        // Installation steps.
+$show_next = true;    
 
-        $show_next = true;    
-    
-        $db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-        $db->show_errors = false;
-	$database_exists = $db->quick_connect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);	
-	if (!$database_exists) {
-	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
-            $old_version = '';
-            $show_next = false;
-            $step = 1;  // rest to step if db not available
-	} else {        
-            $table_exists = $db->table_exists('miscdata');
-            if (!$table_exists) {
-                $h->messages[$lang['install_step1_no_table_exists_failure']] = 'red';
-                $old_version = '';
-                $show_next = false;
-                $step = 1;  // rest to step if db not available
-            } else {
-                $h = new Hotaru();  // replace start one with full one
-                $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-                $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
-            }
-        }
-        
+$db = new ezSQL_mysql(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+$db->show_errors = false;
+$database_exists = $db->quick_connect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);	
 
-
+if (!$database_exists) {
+    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
+    $old_version = '';
+    $show_next = false;
+    $step = 1;  // rest to step if db not available
+} else {        
+    $table_exists = $db->table_exists('miscdata');
+    if (!$table_exists) {
+        $h->messages[$lang['install_step1_no_table_exists_failure']] = 'red';
+        $old_version = '';
+        $show_next = false;
+        $step = 1;  // rest to step if db not available
+    } else {
+        $h = new \Libs\Hotaru();  // replace start one with full one
+        $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+        $old_version = $h->db->get_var($h->db->prepare($sql, "hotaru_version"));
+    }
+}
 
 switch ($step) {
 	case 0:		
@@ -71,10 +68,13 @@ switch ($step) {
 		break;
 	case 2:
 		do_upgrade($h, $old_version);
-		upgrade_complete($h);    // Delete "install" folder. Visit your site"
+		upgrade_database($h);    // Delete "install" folder. Visit your site"
 		break;
 	case 3:
-		upgrade_plugins($h);
+		upgrade_step_3($h);
+		break;
+        case 4:
+		upgrade_finish($h);
 		break;
 	default:		
 		upgrade_welcome();
@@ -105,9 +105,9 @@ function upgrade_check($h, $old_version, $show_next)
 
     
 /**
- * Step 2 of upgrade - shows completion.
+ * Step 2 of upgrade
  */
-function upgrade_complete($h)
+function upgrade_database($h)
 {
         template($h, 'upgrade/upgrade_step_2.php');          
 }
@@ -271,7 +271,7 @@ function do_upgrade($h, $old_version)
         }
         
         // 1.5.0 to 1.5.1
-	if (version_compare("1.4.2", $old_version) < 1) { // should set an upper limit here later
+	if (version_compare($old_version, "1.4.2") < '<=') { // should set an upper limit here later
                          
                 // Need to cover all of the 1.5.0.RCx verson as well
                 // Add a few new settings
@@ -293,7 +293,7 @@ function do_upgrade($h, $old_version)
                 // drop joint primary key to postvotes table if exists
                 // should not be there
                 $sql = "SHOW INDEX FROM " . TABLE_POSTVOTES . " WHERE KEY_NAME = %s";
-		$result = $h->db->query($h->db->prepare($sql, 'PRIMARY'));
+		$result = $h->db->get_row($h->db->prepare($sql, 'PRIMARY'));
                 if ($result) {                   
 			$sql = "ALTER TABLE " . TABLE_POSTVOTES . " DROP PRIMARY KEY";
 			$h->db->query($h->db->prepare($sql));
@@ -308,28 +308,28 @@ function do_upgrade($h, $old_version)
         if (version_compare($old_version, "1.5.2", '<=') > 0) { // this will also cover 1.5.2.b1 etc but need an upper limit
                         
                 $sql = "SHOW INDEX FROM `" . TABLE_POSTS . "` WHERE KEY_NAME = %s";
-		$result = $h->db->query($h->db->prepare($sql, 'post_author'));                
+		$result = $h->db->get_row($h->db->prepare($sql, 'post_author'));                
                 if (!$result) {
                     $sql = "ALTER TABLE `" . TABLE_POSTS . "` ADD INDEX (`post_author`)";
                     $h->db->query($sql);
                 }
                 
                 $sql = "SHOW INDEX FROM " . TABLE_COMMENTS . " WHERE KEY_NAME = %s";
-		$result = $h->db->query($h->db->prepare($sql, 'comment_user_id'));
+		$result = $h->db->get_row($h->db->prepare($sql, 'comment_user_id'));
                 if (!$result) {
                     $sql = "ALTER TABLE `" . TABLE_COMMENTS . "` ADD INDEX (`comment_user_id`)";
                     $h->db->query($sql);
                 }
                 
                 $sql = "SHOW INDEX FROM " . TABLE_COMMENTS . " WHERE KEY_NAME = %s";
-		$result = $h->db->query($h->db->prepare($sql, 'comment_parent'));
+		$result = $h->db->get_row($h->db->prepare($sql, 'comment_parent'));
                 if (!$result) {
                     $sql = "ALTER TABLE `" . TABLE_COMMENTS . "` ADD INDEX (`comment_parent`)";
                     $h->db->query($sql);
                 }   
                 
                 $sql = "SHOW INDEX FROM " . TABLE_MESSAGING . " WHERE KEY_NAME = %s";
-		$result = $h->db->query($h->db->prepare($sql, 'message_to'));
+		$result = $h->db->get_row($h->db->prepare($sql, 'message_to'));
                 if (!$result) {
                     $sql = "ALTER TABLE `" . TABLE_MESSAGING . "` ADD INDEX (`message_to`)";
                     $h->db->query($sql);
@@ -383,7 +383,7 @@ function do_upgrade($h, $old_version)
             
         }
         
-        // 1.6.0 to 1.7.0
+        // 1.6.0 to 1.6.6
         if (version_compare($old_version, "1.6.0", '<=') > 0)  // this will also cover other versions in between but need an upper limit
         {
                 // Add columns to plugins table for resources from forum to plugin into
@@ -421,10 +421,218 @@ function do_upgrade($h, $old_version)
                     }						
 		}
                 
-                $h->messages['Updated from 1.6.0'] = 'green';
+                $h->messages['Updated from 1.6.*'] = 'green';
                 // update "old version" for next set of upgrades
-		//$old_version = "1.7.0";
         }
+        
+        // 1.6.6 to 1.7.0
+        if (version_compare($old_version, "1.7.0.beta1", '<=') > 0)  // this will also cover other versions in between but need an upper limit
+        {
+                $sql = "SHOW INDEX FROM " . TABLE_POSTS . " WHERE Key_name = %s";
+                $result = $h->db->get_row($h->db->prepare($sql, 'post_category'));
+                if (!$result) {
+                    $sql = "ALTER TABLE `" . TABLE_POSTS . "` ADD INDEX (`post_category`)";
+                    $h->db->query($sql);
+                }
+                
+                // delete out any surplus indices from Post table
+                $sql = "SHOW INDEX FROM " . TABLE_POSTS . " WHERE KEY_NAME like %s";
+		$result = $h->db->get_results($h->db->prepare($sql, 'post_category_%'));
+                if ($result) {
+                    foreach ($result as $item) {
+                        $sql = "DROP INDEX `" . $item->Key_name . "` ON " . TABLE_POSTS;
+                        $h->db->query($sql);
+                    }
+                }
+                
+                // delete out any surplus indices from Messaging table
+                $sql = "SHOW INDEX FROM " . TABLE_MESSAGING . " WHERE KEY_NAME like %s";
+		$result = $h->db->get_results($h->db->prepare($sql, 'message_to_%'));
+                if ($result) {
+                    foreach ($result as $item) {
+                        $sql = "DROP INDEX `" . $item->Key_name . "` ON " . TABLE_MESSAGING;
+                        $h->db->query($sql);
+                    }
+                } 
+                
+                // delete out any surplus indices from Comments table
+                $sql = "SHOW INDEX FROM " . TABLE_COMMENTS . " WHERE KEY_NAME like %s";
+                $result = $h->db->get_results($h->db->prepare($sql, 'comment_user_id_%'));
+                if ($result) {
+                    foreach ($result as $item) {
+                        $sql = "DROP INDEX `" . $item->Key_name . "` ON " . TABLE_COMMENTS;
+                        $h->db->query($sql);
+                    }
+                }
+                
+                // delete out any surplus indices from Comments table
+                $sql = "SHOW INDEX FROM " . TABLE_COMMENTS . " WHERE KEY_NAME like %s";
+                $result = $h->db->get_results($h->db->prepare($sql, 'comment_parent_%'));
+                if ($result) {
+                    foreach ($result as $item) {
+                        $sql = "DROP INDEX `" . $item->Key_name . "` ON " . TABLE_COMMENTS;
+                        $h->db->query($sql);
+                    }
+                }
+                
+                
+                // Add userlogin table
+                $table_name = "userlogin";
+                $exists = $h->db->table_exists($table_name);
+                if (!$exists) {
+                    $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+                            `user_id` int(20) NOT NULL,
+                            `login_provider` varchar(128) NULL,
+                            `provider_key` varchar(128) NULL,
+                            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            INDEX  (`user_id`)
+                    ) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='3rd Party UserLogin Providers';";
+                    $h->db->query($sql); 
+                }
+                
+                // Add user_claim table
+                $table_name = "userclaim";
+                $exists = $h->db->table_exists($table_name);
+                if (!$exists) {
+                    $sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+                            `claim_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            `user_id` int(20) NOT NULL,
+                            `claim_type` TEXT NULL,
+                            `claim_value` TEXT NULL,
+                            INDEX  (`user_id`)
+                    ) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='UserClaim for login';";
+                    $h->db->query($sql); 
+                }
+                
+                // Add or change type in Posts table for post_img
+                $exists = $h->db->column_exists('posts', 'post_img');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_POSTS . " ADD Column `post_img` varchar(255) NULL";
+                    $h->db->query($sql);
+                } else {                    
+                    // make sure it is a varchar not a text field
+                    $sql = "ALTER TABLE " . TABLE_POSTS . " MODIFY `post_img` varchar(255) NULL";
+                    $h->db->query($sql);
+                }
+                
+                // Add column to POSTS table for comment_count
+                $exists = $h->db->column_exists('posts', 'post_comments_count');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_POSTS . " ADD Column `post_comments_count` smallint(11) NOT NULL DEFAULT '0'";
+                    $h->db->query($sql);
+                } 
+                
+                // Add column to SETTINGS table for setting_type
+                $exists = $h->db->column_exists('settings', 'settings_type');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_SETTINGS . " ADD Column `settings_type` varchar(32) NULL";
+                    $h->db->query($sql);
+                }   
+                
+                // Add column to SETTINGS table for setting_subType
+                $exists = $h->db->column_exists('settings', 'settings_subType');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_SETTINGS . " ADD Column `settings_subType` varchar(32) NULL";
+                    $h->db->query($sql);
+                } 
+                
+                // Add column to USERS table for `user_is_locked_out`
+                $exists = $h->db->column_exists('users', 'user_is_locked_out');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " ADD Column `user_is_locked_out` tinyint(1) NOT NULL DEFAULT 0 AFTER `user_email_conf`";
+                    $h->db->query($sql);
+                }
+                
+                // Add column to USERS table for `user_access_failed_count`
+                $exists = $h->db->column_exists('users', 'user_access_failed_count');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " ADD Column `user_access_failed_count` tinyint(1) NOT NULL DEFAULT 0";
+                    $h->db->query($sql);
+                }
+                
+                // Add column to USERS table for `user_last_password_changed_date`
+                $exists = $h->db->column_exists('users', 'user_last_password_changed_date');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " ADD Column `user_last_password_changed_date` timestamp NULL";
+                    $h->db->query($sql);
+                }
+                
+                // Add column to USERS table for `user_lockout_date`
+                $exists = $h->db->column_exists('users', 'user_lockout_date');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " ADD Column `user_lockout_date` timestamp NULL";
+                    $h->db->query($sql);
+                }
+                
+                // Add column to USERS table for `password_version`. set default as 1 to populate all current data as version 1
+                $exists = $h->db->column_exists('users', 'password_version');
+		if (!$exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " ADD Column `password_version` tinyint(1) NOT NULL DEFAULT 1  AFTER `user_email_conf`";
+                    $h->db->query($sql);
+                }
+                
+                // modify default value to 2 for new paswords from now on
+                $exists = $h->db->column_exists('users', 'password_version');
+		if ($exists) {
+                    $sql = "ALTER TABLE " . TABLE_USERS . " MODIFY Column `password_version` tinyint(1) NOT NULL DEFAULT 2";
+                    $h->db->query($sql);
+                }
+                
+                // Add a few new settings
+		$exists = $h->db->column_exists('settings', 'settings_id');
+		if ($exists) {
+                    $newSettings = array('JQUERY_PATH', 'BOOTSTRAP_PATH');   // add more to array as requird
+                    foreach($newSettings as $setting) {                        
+                        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+                        $result = $h->db->get_var($h->db->prepare($sql, $setting));
+                        
+                        if(!$result) {
+                            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_type, settings_subType, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s, %s, %s)";                        
+                            $h->db->query($h->db->prepare($sql, $setting, 'Perf', 'Files', 'local', 'local', 'Local/CDN', 1));                            
+                        }
+                    }
+                    
+                    $newSettings = array('MINIFY_CSS', 'MINIFY_JS');   // add more to array as requird
+                    foreach($newSettings as $setting) {                        
+                        $sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE settings_name = %s";
+                        $result = $h->db->get_var($h->db->prepare($sql, $setting));
+                        
+                        if(!$result) {
+                            $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_type, settings_subType, settings_value, settings_default, settings_note, settings_show) VALUES(%s, %s, %s, %s, %s, %s, %s)";                        
+                            $h->db->query($h->db->prepare($sql, $setting, 'Perf', 'Scripts', 'false', 'false', '', 1));                            
+                        }
+                    }	
+		}
+                
+                $sql = "SHOW INDEX FROM " . TABLE_COMMENTS . " WHERE KEY_NAME = %s";
+		$result = $h->db->get_row($h->db->prepare($sql, 'comment_post_id'));
+                if (!$result) {
+                    $sql = "ALTER TABLE `" . TABLE_COMMENTS . "` ADD INDEX (`comment_post_id`)";
+                    $h->db->query($sql);
+                }  
+                
+                // Change all tabels to have their updatedts named as just updated_at
+                $tablesChangeNameUpdatedCol = array('blocked' => 'blocked', 'categories' => 'category', 'comments' => 'comment', 'commentvotes' => 'cvote', 'friends' => 'friends', 'posts' => 'post', 'messaging' => 'message', 'miscdata' => 'miscdata', 'plugins' => 'plugin', 'pluginhooks' => 'plugin', 'pluginsettings' => 'plugin', 'postmeta' => 'postmeta', 'postvotes' => 'vote', 'settings' => 'settings', 'tags' => 'tags', 'tempdata' => 'tempdata', 'users' => 'user', 'usermeta' => 'usermeta', 'useractivity' => 'useract', 'widgets' => 'widget');
+                foreach ($tablesChangeNameUpdatedCol as $table => $col) {
+                    $newCol = $col . '_updatedts';
+                    $exists = $h->db->column_exists($table, 'updated_at');
+                    if ($exists) {                                           
+                        $sql = "ALTER TABLE " . DB_PREFIX . $table . " CHANGE `updated_at` `" . $newCol . "` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                        $h->db->query($sql);
+                    }
+                }
+                
+                $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_type = 'Mail'  WHERE settings_name like 'SMTP%'";
+                $h->db->query($sql);
+                
+                $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_type = 'Security'  WHERE settings_name like 'FTP%' OR settings_name like 'FORUM%'";
+                $h->db->query($sql);
+                
+                $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_type = 'Perf'  WHERE settings_name like '%CACHE%'";
+                $h->db->query($sql);
+
+                $h->messages['Updated from 1.6.6'] = 'green';
+            }
         
         /*
          * 
@@ -435,5 +643,3 @@ function do_upgrade($h, $old_version)
 	$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_key = %s, miscdata_value = %s, miscdata_default = %s WHERE miscdata_key = %s";
 	$h->db->query($h->db->prepare($sql, 'hotaru_version', $h->version, $h->version, 'hotaru_version'));
 }
-
-?>

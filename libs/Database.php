@@ -23,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+ namespace Libs;
  
-class Database extends ezSQL_mysqli
+class Database extends \ezSQL_mysqli
 {
 	protected $select       = array();
 	protected $table         = '';
@@ -104,8 +105,12 @@ class Database extends ezSQL_mysqli
 	 * @param bool $query_only - return just the query, not the results?
 	 * @return array|false
 	 */
-	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true, $query_only = false)
+	public function select($h, $select = array(), $table = '', $where = array(), $orderby = '', $limit = '', $cache = true, $query_only = false, $return = 'query')
 	{
+                // need to change to fix bookmarking plugin for old users
+                $select = str_replace(', CAT.category_name, CAT.category_safe_name', '', $select);
+                $h->vars['select'] = $select;               
+                
 		// for flexibility, we want to use object properties:
 		$this->fillObject($select, $table, $where, $orderby, $limit, $cache, $query_only);
 		
@@ -117,27 +122,50 @@ class Database extends ezSQL_mysqli
 		
 		// set SELECT:
 		$select = ($this->select) ? $this->buildSelect() : '';
-		
+		$groupby = "";
+                
 		// set TABLE:
-                if ($table == 'posts')
-                    $table = TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id";
-		else 
-                    $table = ($this->table) ? DB_PREFIX . $this->table : TABLE_POSTS; // defaults to TABLE_POSTS
-		
+                $postVotes = '';
+                if ($table == 'posts' && $return != 'count') {
+//                    if ($h->vars['joinPostVotes']) {
+//                        $postVotes = 'LEFT OUTER JOIN hotaru_postvotes AS PV ON P.post_id = PV.vote_post_id ';
+//                        if ($h->currentUser->loggedIn) {
+//                            $table .= "AND vote_user_id = " . $h->currentUser->id . " AND vote_rating != -999 ";
+//                        } else {
+//                            $table .= "AND vote_user_id = 0 AND vote_user_ip = '" . $h->cage->server->testIp('REMOTE_ADDR') . "' AND vote_rating != -999 ";
+//                        }
+//                    }
+                    
+                    $table = TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id " . $postVotes;
+                    // NOTE we are adding to the sql direct here instead of using prepare, but we have control over these variables and/or have Inspkt capturing the ipaddress first                    
+                } else { 
+                    $table = ($this->table) ? DB_PREFIX . $this->table : TABLE_POSTS; // defaults to TABLE_POSTS                                        
+                }
+                
 		// set WHERE
 		$where = ($this->where) ? $this->buildWhere() : '';
 		
 		// set ORDER BY
-		$orderby = ($this->orderby) ? ' ORDER BY ' . $this->orderby : '';
-		
+                if ($return != 'count') {
+                    $orderby = ($this->orderby) ? ' ORDER BY ' . $this->orderby : '';
+                } else {
+                    $orderby = '';  // no orderby if this is a count
+                }
+                
 		// set LIMIT
 		$limit = ($this->limit) ? ' LIMIT ' . $this->limit : '';
 		
 		// Build query:
-		$sql = "SELECT " . $select . " FROM " . $table . $where . $orderby . $limit;
-		
+		$sql = "SELECT " . $select . " FROM " . $table . $where . $groupby . $orderby . $limit;
+
 		$this->prepare_array[0] = $sql;
-		
+		                
+                // clear out the query vars
+                unset($h->vars['select']);
+                unset($h->vars['orderby']);
+                unset($this->select);
+                unset($this->orderby);
+                
 		if ($this->query_only) { return $this->prepare_array; }
 		
 		/*	Example:

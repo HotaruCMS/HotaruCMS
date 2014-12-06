@@ -1,133 +1,77 @@
 <?php
-/**
- * The engine, powers everything :-)
- *
- * PHP version 5
- *
- * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
- * modify it under the terms of the GNU General Public License as 
- * published by the Free Software Foundation, either version 3 of 
- * the License, or (at your option) any later version. 
- *
- * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE. 
- *
- * You should have received a copy of the GNU General Public License along 
- * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
- * 
- * @category  Content Management System
- * @package   HotaruCMS
- * @author    Hotaru CMS Team
- * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
- * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.hotarucms.org/
- */
-class Hotaru
-{
-	protected $version              = '1.6.4';  // Hotaru CMS version
-	protected $isDebug              = false;    // show db queries and page loading time
-        protected $isTest               = false;    // show page files for testing
-	protected $adminPage            = false;    // flag to tell if we are in Admin or not
-	protected $sidebars             = true;     // enable or disable the sidebars
-	protected $csrfToken            = '';       // token for CSRF
-	protected $lang                 = array();  // stores language file content
-	
-	// objects
-	protected $db;                              // database object
-        protected $mdb;                             // meekro database object
-	protected $cage;                            // Inspekt object
-	protected $currentUser;                     // UserBase object
-	protected $plugin;                          // Plugin object
-	protected $post;                            // Post object
-	protected $avatar;                          // Avatar object
-	protected $comment;                         // Comment object
-	protected $includes;                        // for CSS/JavaScript includes
-	protected $debug;                           // Debug object
-	protected $email;                           // Email object
-	protected $pageHandling;                    // PageHandling object
-	
-	// page info
-	protected $home                 = '';       // name for front page
-	protected $pageName             = '';       // e.g. index, category
-	protected $pageTitle            = '';       // e.g. Top Stories
-	protected $pageType             = '';       // e.g. post, list
-	protected $pageTemplate         = '';       // e.g. sb_list, tag_cloud
-	protected $subPage              = '';       // e.g. category (if pageName is "index")
+namespace Libs;
 
-	// ALL plugins
-	protected $pluginSettings       = array();  // contains all settings for all plugins
-	protected $allPluginDetails     = array();  // contains details of all plugins
-	
-	// messages
-	protected $message              = '';       // message to display
-	protected $messageType          = 'green';  // green or red, color of message box
-        protected $messageRole          = '';       // the Role that this message will display for
-	protected $messages             = array();  // for multiple messages
-	
-        // global cache
-        protected $memcache;                        // memcache object
+require_once 'vendor/autoload.php';
+
+class Hotaru extends Initialize
+{    
+        protected $version = '1.7.0.beta1';  // Hotaru CMS version       
         
-	// miscellaneous
-        protected $vars                 = array();  // multi-purpose        
-    
-	/**
+        /**
 	 * CONSTRUCTOR - Initialize
 	 */
 	public function __construct($start = '')
-	{ 
-		// define shorthand paths
+	{   
+            // Managed directives
+		ini_set('default_charset',$charset='UTF-8');
+		ini_set('display_errors',1);
+		// Abort on startup error
+		// Intercept errors/exceptions; PHP5.3-compatible
+		error_reporting(E_ALL|E_STRICT);
+                
+                if(!ini_get('date.timezone'))
+                {
+                    date_default_timezone_set('GMT');
+                }
+            
+                // define shorthand paths
 		if (!defined('BASE')) {
-			define("BASE", dirname(__FILE__). '/');
-			define("CACHE", dirname(__FILE__).'/cache/');
-			define("ADMIN", dirname(__FILE__).'/admin/');
-			define("INSTALL", dirname(__FILE__).'/install/');
-			define("LIBS", dirname(__FILE__).'/libs/');
-			define("EXTENSIONS", dirname(__FILE__).'/libs/extensions/');
-                        define("FRAMEWORKS", dirname(__FILE__).'/libs/frameworks/');
-			define("FUNCTIONS", dirname(__FILE__).'/functions/');
-			define("CONTENT", dirname(__FILE__).'/content/');
-			define("THEMES", dirname(__FILE__).'/content/themes/');
-			define("PLUGINS", dirname(__FILE__).'/content/plugins/');
-			define("ADMIN_THEMES", dirname(__FILE__).'/content/admin_themes/');
+                    $base = dirname(__FILE__). '/';
+			define("BASE", $base);
+			define("CACHE", $base.'cache/');
+			define("ADMIN", $base.'admin/');
+			define("INSTALL", $base.'install/');
+			define("LIBS", $base.'libs/');
+			define("EXTENSIONS", $base.'libs/extensions/');
+                        define("FRAMEWORKS", $base.'libs/frameworks/');
+			define("FUNCTIONS", $base.'functions/');
+			define("CONTENT", $base.'content/');
+			define("THEMES", $base.'content/themes/');
+			define("PLUGINS", $base.'content/plugins/');
+			define("ADMIN_THEMES", $base.'content/admin_themes/');
 			define("SITEURL", BASEURL);
-		}                                
-
-		require_once(EXTENSIONS . 'SmartLoader/smartloader.class.php');
-//                require_once(EXTENSIONS . 'SmartLoader/autoload.php');                
-//                $loader = new SplClassLoader(null, array(rtrim(LIBS, '/'), EXTENSIONS . 'ezSQL/mysqli'));
-//                $loader->register();
-
-		// initialize Hotaru
+		}                        
+                
+                // initialize Hotaru
+                parent::__construct();
+		
 		if (!$start) {
-
-			$init = new Initialize($this);
-
-			$this->db           = $init->db;            // database object
-                        $this->mdb          = $init->mdb;           // meekro database object
-			$this->cage         = $init->cage;          // Inspekt cage
-			$this->isDebug      = $init->isDebug;       // set debug		
-                        $this->memCache     = $init->memCache;      // memcache global object
-			$this->currentUser  = new UserAuth();       // the current user
-                        $this->plugin       = new Plugin();         // instantiate Plugin object
-			$this->post         = new Post();           // instantiate Post object
-			$this->includes     = new IncludeCssJs();   // instantiate Includes object
-			$this->pageHandling = new PageHandling();   // instantiate PageHandling object
-			$this->debug        = new Debug();          // instantiate Debug object
+			
+                        $this->currentUser  = UserBase::instance();       // the current user
+                        $this->displayUser  = DisplayUser::instance();
+                        $this->plugin       = Plugin::instance();         // instantiate Plugin object
+			$this->post         = Post::instance();           // instantiate Post object
+			$this->comment      = Comment::instance();          
+                        $this->includes     = IncludeCssJs::instance();   // instantiate Includes object
+			$this->pageHandling = PageHandling::instance();   // instantiate PageHandling object
+			$this->debug        = Debug::instance();          // instantiate Debug object
 			
 			$this->csrf('set');                         // set a csrfToken
+                        
 			$this->db->setHotaru($this);                // pass $h object to EzSQL for error reporting
-                        $this->mdb->setHotaru($this);               // pass $h object to meekroDb for error reporting
-		}
-	}
+                        //$this->mdb->setHotaru($this);               // pass $h object to meekroDb for error reporting
+                        //print 'time: ' . timer_stop(4,'hotaru');
+                        //roughly here at 0.0040 Nov 2, 2014 tests
+                        // time: 0.0047 Nov11, 2014 after moving a few more functions to init
+                }
+        }
+        
     
-    
-/* *************************************************************
- *
- *  HOTARU FUNCTIONS
- *
- * *********************************************************** */
-
+        /* *************************************************************
+        *
+        *  HOTARU FUNCTIONS
+        *
+        * *********************************************************** */
 
 	/**
 	 * START - the top of "Hotaru", i.e. the page-building process
@@ -135,47 +79,56 @@ class Hotaru
 	public function start($entrance = '')
 	{
 		// include "main" language pack
-		$lang = new Language();
+		$lang = Language::instance();
 		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
 		
 		$this->getPageName();                   // fills $h->pageName
 		
+                // special diversion for api calls to api plugin to avoid session,cookie vars etc
+                if ($this->pageName == 'api') {
+                    $entrance = 'api';
+                }
+                
 		switch ($entrance) {
 			case 'admin':
 				$this->adminPage = true;
 				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');				
-				$admin = new AdminAuth();               // new Admin object
-				$this->checkCookie();                   // check cookie reads user details
-				$this->checkAccess();                   // site closed if no access permitted
-				$page = $admin->adminInit($this);       // initialize Admin & get desired page
+				Authorization::checkSession($this);                   // check cookie reads user details
+				$this->checkSiteAccess();                   // site closed if no access permitted
+				$admin = AdminAuth::instance();               // new Admin object
+                                $page = $admin->adminInit($this);       // initialize Admin & get desired page
 				$this->adminPages($page);               // Direct to desired Admin page
 				break;
                         case 'api':
                                 $this->adminPage = false;
-                                if (SITE_OPEN == 'false') { return true; }
+                                //if (SITE_OPEN == 'false') { return true; }
                                 if (!defined(REST_API) || REST_API == false) { return false; }
 
+                                $this->pluginHook('hotaru_api', 'api');
+                                
                                 // dont check cookies, dont set session
                                 // check access by http access
                                 
                                 // go to api class to extract data for this call
-                                $this->apiCall();
+                                //$this->apiCall();
                                 
                                 break;
 			default:
 				$this->adminPage = false;
-				$this->checkCookie();                   // log in user if cookie
-				$this->checkAccess();                   // site closed if no access permitted
+                                // TODO dont check cookie if we are using the login page or even the register page or forget password page maybe				
+                                Authorization::checkSession($this);     // log in user if session exists
+				$this->checkSiteAccess();                   // site closed if no access permitted
 				if (!$entrance) { return false; }       // stop here if entrance not defined
-				$this->template('index');               // displays the index page
+				//print 'time: ' . timer_stop(4,'hotaru');
+                                // here at 0.02
+                                $this->template('index');               // displays the index page
 		}
 		
 		$lang->writeLanguageCache($this);
 		
 		exit;
 	}
-    
-    
+        
 /* *************************************************************
  *
  *  ACCESS MODIFIERS
@@ -200,13 +153,20 @@ class Hotaru
 	{
 		return $this->$var;
 	}
+        
+        // to get protected properties
+        public function __isset($name)
+        {
+                //echo "Is '$name' set?\n";
+                return isset($this->data[$name]);
+        }
 
-
-/* *************************************************************
- *
- *  DEFAULT PLUGIN HOOK ACTIONS
- *
- * *********************************************************** */
+    
+        /* *************************************************************
+        *
+        *  DEFAULT PLUGIN HOOK ACTIONS
+        *
+        * *********************************************************** */
  
      
 	/**
@@ -343,21 +303,8 @@ class Hotaru
 	 * @param bool $include_once true or false
 	 */
 	public function template($page = '', $plugin = '', $include_once = true)
-	{
+	{ 
 		$this->pageHandling->template($this, $page, $plugin, $include_once);
-	}
-        
-        
-        /**
-	 * Includes a view to display
-	 *
-	 * @param string $page page name
-	 * @param string $plugin optional plugin name
-	 * @param bool $include_once true or false
-	 */
-	public function render($page = '', $data = array())
-	{                
-		$this->pageHandling->render($this, $page, $data);
 	}
         
         
@@ -492,7 +439,7 @@ class Hotaru
 	 */
 	public function pagination($query, $total_items, $items_per_page = 10, $cache_table = '')
 	{
-		$paginator = new Paginator();
+		$paginator = Paginator::instance();
 		return $paginator->pagination($this, $query, $total_items, $items_per_page, $cache_table);
 	}
     
@@ -506,7 +453,7 @@ class Hotaru
 	 */
 	public function paginationFull($data, $items_per_page = 10)
 	{
-		$paginator = new Paginator();
+		$paginator = Paginator::instance();
 		return $paginator->paginationFull($this, $data, $items_per_page);
 	}
     
@@ -519,6 +466,7 @@ class Hotaru
 	 */
 	public function pageBar($paginator = NULL)
 	{
+                $paginator = Paginator::instance();
 		return $paginator->pageBar($this);
 	}
     
@@ -535,7 +483,7 @@ class Hotaru
 	 */
 	public function breadcrumbs($sep = "/")  //&raquo;
 	{
-		$breadcrumbs = new Breadcrumbs();
+		$breadcrumbs = Breadcrumbs::instance();
 		return $breadcrumbs->buildBreadcrumbs($this, $sep);
 	}
     
@@ -549,7 +497,7 @@ class Hotaru
 	 */    
 	public function rssBreadcrumbsLink($status = '', $vars = array())
 	{
-		$breadcrumbs = new Breadcrumbs();
+		$breadcrumbs = Breadcrumbs::instance();
 		return $breadcrumbs->rssBreadcrumbsLink($this, $status, $vars);
 	}
     
@@ -576,9 +524,72 @@ class Hotaru
 	 */
 	public function checkCookie()
 	{
-		$this->currentUser->checkCookie($this);
+		Authorization::checkSession($this);
 	}
+        
+        
+        /**
+	 * set cookie
+	 *
+	 * @return bool
+	 */
+	public function setCookie($remember = false)
+	{
+		Authorization::setCookie($this, $remember);
+	}
+        
+        
+        /**
+         * TODO What are we actually checking here
+         * This is the old loginCheck, the new passwordSignIn
+         * 
+         * @param type $username
+         * @param type $password
+         * @return type
+         */
+        public function loginCheck($username = '', $password = '', $rememberMe = false, $shouldLockout = false)
+        {
+                return Authorization::passwordSignIn($this, $username, $password, $rememberMe, $shouldLockout);   
+        }
+        
+        
+        public function passwordCheck($password = '')
+        {
+                return Authorization::passwordCheck($this, $password);
+        }
+        
+        
+        public function isUserLockedOut($username = '')
+        {
+                return Authorization::isUserLockedOut($this, $username);   
+        }
 	
+        public function destroyCookieAndSession()
+        {
+                return Authorization::destroyCookieAndSession($this);   
+        }
+        
+        
+        public function newUserAuth()
+        {
+            return new UserBase();
+        }
+        
+        
+        /**
+         * set the $user object to be the currentUser using a mapping plan
+         * 
+         * @param type $user
+         */
+        public function setCurrentUser($user)
+        {
+                $userbase = UserBase::instance();
+                $userbase->setCurrentUser($this, $user);
+        }
+        
+        
+        
+        
 	
 	/**
 	 * Get basic user details
@@ -590,10 +601,10 @@ class Hotaru
 	 *
 	 * Note: Needs either userid or username, not both
 	 */
-	public function getUserBasic($userid = 0, $username = '', $no_cache = false)
+	public function getUserBasic($userId = 0, $username = '', $no_cache = false)
 	{
-		$userbase = new UserBase();
-		return $userbase->getUserBasic($this, $userid, $username, $no_cache);
+		$userbase = UserBase::instance();
+		return $userbase->getUserBasic($this, $userId, $username, $no_cache);
 	}
 	
 	
@@ -609,10 +620,15 @@ class Hotaru
 	 */
 	public function getUser($userid = 0, $username = '', $no_cache = false)
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->getUser($this, $userid, $username, $no_cache);
 	}
 	
+        
+        public function getUserLogins($userId)
+        {
+                return \HotaruModels2\UserLogin::getLogins($this, $userId);
+        }
 	
 	/**
 	 * Default permissions
@@ -624,7 +640,7 @@ class Hotaru
 	 */
 	public function getDefaultPermissions($role = '', $defaults = 'site', $options_only = false) 
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->getDefaultPermissions($this, $role, $defaults, $options_only);
 	}
 	
@@ -638,7 +654,7 @@ class Hotaru
 	 */
 	public function updateDefaultPermissions($new_perms = array(), $defaults = 'both', $remove = false) 
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->updateDefaultPermissions($this, $new_perms, $defaults, $remove);
 	}
 	
@@ -651,7 +667,7 @@ class Hotaru
 	 */
 	public function getDefaultSettings($type = 'site')
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->getDefaultSettings($this, $type);
 	}
 	
@@ -665,7 +681,7 @@ class Hotaru
 	 */
 	public function updateDefaultSettings($settings, $type = 'site')
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->updateDefaultSettings($this, $settings, $type);
 	}
 	
@@ -677,7 +693,7 @@ class Hotaru
 	 */
 	public function getProfileSettingsData($type = 'user_profile', $userid = 0, $check_exists_only = false)
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->getProfileSettingsData($this, $type, $userid, $check_exists_only);
 	}
 	
@@ -690,7 +706,7 @@ class Hotaru
 	 */
 	public function deleteUser($user_id = 0) 
 	{
-		$userbase = new UserBase();
+		$userbase = UserBase::instance();
 		return $userbase->deleteUser($this, $user_id);
 	}
 
@@ -702,7 +718,7 @@ class Hotaru
 	 */
 	public function updateUserLastVisit($user_id = 0) 
 	{
-		return $this->currentUser->updateUserLastVisit($this, $user_id);
+		return Authorization::updateUserLastVisit($this, $user_id);
 	}
 	
 
@@ -744,7 +760,7 @@ class Hotaru
 	 */
 	public function getUserNameFromId($id = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->getUserNameFromId($this, $id);
 	}
 	
@@ -757,7 +773,7 @@ class Hotaru
 	 */
 	public function getUserIdFromName($username = '')
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->getUserIdFromName($this, $username);
 	}
 	
@@ -770,7 +786,7 @@ class Hotaru
 	 */
 	public function getEmailFromId($userid = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->getEmailFromId($this, $userid);
 	}
 	
@@ -783,7 +799,7 @@ class Hotaru
 	 */
 	public function getUserIdFromEmail($email = '')
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->getUserIdFromEmail($this, $email);
 	}
 	
@@ -793,10 +809,10 @@ class Hotaru
 	 *
 	 * @return bool
 	 */
-	public function isAdmin($username)
-	{
-		$userInfo = new UserInfo();
-		return $userInfo->isAdmin($this->db, $username);
+	public function isAdmin($username = '')
+	{                
+		$userInfo = UserInfo::instance();
+		return $userInfo->isAdmin($this, $username);
 	}
 	
 	
@@ -811,7 +827,7 @@ class Hotaru
 	 */
 	public function userExists($id = 0, $username = '', $email = '')
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->userExists($this->db, $id, $username, $email);
 	}
 	
@@ -826,7 +842,7 @@ class Hotaru
 	 */
 	public function nameExists($username = '', $role = '', $exclude = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->nameExists($this, $username, $role, $exclude);
 	}
 	
@@ -841,7 +857,7 @@ class Hotaru
 	 */
 	public function emailExists($email = '', $role = '', $exclude = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->emailExists($this, $email, $role, $exclude);
 	}
 	
@@ -855,7 +871,7 @@ class Hotaru
 	 */
 	public function getMods($permission = 'can_access_admin', $value = 'yes')
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->getMods($this, $permission, $value);
 	}
 	
@@ -868,7 +884,7 @@ class Hotaru
 	 */
 	public function userIdNameList($role = '')
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->userIdNameList($this, $role);
 	}
 	
@@ -883,7 +899,7 @@ class Hotaru
 	 */
 	public function userListFull($id_array = array(), $start = 0, $range = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->userListFull($this, $id_array, $start, $range);
 	}
 	
@@ -896,10 +912,16 @@ class Hotaru
 	 */
 	public function userSettingsList($userid = 0)
 	{
-		$userInfo = new UserInfo();
+		$userInfo = UserInfo::instance();
 		return $userInfo->userSettingsList($this, $userid);
 	}
 
+        
+        public function getUsers($limit, $type = '', $fromId = 0)
+        {
+                $users = Users::instance();
+		return $users->getUsers($this, $limit, $type, $fromId);
+        }
     
  /* *************************************************************
  *
@@ -916,7 +938,7 @@ class Hotaru
 	 */
 	public function readPluginMeta($folder = '')
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		return $pluginFunctions->readPluginMeta($this, $folder);
 	}
         
@@ -932,7 +954,7 @@ class Hotaru
 	 */
 	public function pluginHook($hook = '', $folder = '', $parameters = array(), $exclude = array())
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		return $pluginFunctions->pluginHook($this, $hook, $folder, $parameters, $exclude);
 	}
 	
@@ -943,10 +965,10 @@ class Hotaru
 	 * @param string $folder - plugin folder name, else $h->plugin->folder is used
 	 * @return array - $key array object, e.g. $key->plugin_id
 	 */
-	public function readPlugin($folder = '')
+	public function readPlugin($folder = '', $admin = false)
 	{
-		$pluginFunctions = new PluginFunctions();
-		return $pluginFunctions->readPlugin($this, $folder);
+		$pluginFunctions = PluginFunctions::instance();
+		return $pluginFunctions->readPlugin($this, $folder, $admin);
 	}
 	
 	
@@ -959,7 +981,7 @@ class Hotaru
 	 */
 	public function getPluginProperty($property = '', $folder = '', $field = '')
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		return $pluginFunctions->getPluginProperty($this, $property, $folder, $field);
 	}
 	
@@ -971,8 +993,9 @@ class Hotaru
 	 */
 	public function numActivePlugins()
 	{
-		$pluginFunctions = new PluginFunctions();
-		return $pluginFunctions->numActivePlugins($this);
+                return isset($this->plugins['activeFolders']) ? count($this->plugins['activeFolders']) : 0;
+//		$pluginFunctions = PluginFunctions::instance();
+//		return $pluginFunctions->numActivePlugins($this);
 	}
 	
 	
@@ -1008,7 +1031,7 @@ class Hotaru
 	 */
 	public function getPluginFolderFromClass($class = '')
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		$this->plugin->folder = $pluginFunctions->getPluginFolderFromClass($this, $class);
 	}
 	
@@ -1033,11 +1056,24 @@ class Hotaru
 	 */
 	public function isActive($type = '')
 	{
-		$pluginFunctions = new PluginFunctions();
-		//return $pluginFunctions->isActive($this, $type); // dropped in favor of cache:
-		$result = $this->getPluginProperty('plugin_enabled', $type, 'type');
-		if (!$result) { $result = $this->getPluginProperty('plugin_enabled', $type); }
-		return $result;
+                $type = strtolower($type);
+                
+                //print "here for isActive with folder" . $this->plugin->folder . " type " . $type . '<br/>';
+                if (!$type) {
+                    return isset($this->plugins['activeFolders'][$this->plugin->folder]);
+                }
+            
+                if (isset($this->plugins['activeTypes'][$type])) {
+                    return true;
+                }
+                
+                // finally, try the $type param in the $folder name. It is possible a call was made for a plugin by mistake
+                return isset($this->plugins['activeFolders'][$type]);
+                
+                // return from pluginActiveFolders
+                
+                
+                print "could not find active settings for folder: " . $h->plugin->folder . " or type: " . $type;                		
 	}
 	
 	
@@ -1049,7 +1085,7 @@ class Hotaru
 	 */
 	public function isInstalled($folder = '')
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		$result = $this->getPluginProperty('plugin_id', $folder);
 		return $result;
 	}
@@ -1064,7 +1100,7 @@ class Hotaru
 	 */
 	public function hasSettings($folder = '')
 	{
-		$pluginFunctions = new PluginFunctions();
+		$pluginFunctions = PluginFunctions::instance();
 		return $pluginFunctions->hasSettings($this, $folder);
 	}
 
@@ -1088,7 +1124,7 @@ class Hotaru
 	 */
 	public function getSetting($setting = '', $folder = '')
 	{
-		$pluginSettings = new PluginSettings();
+		$pluginSettings = PluginSettings::instance();
 		return $pluginSettings->getSetting($this, $setting, $folder);
 	}
 	
@@ -1103,7 +1139,7 @@ class Hotaru
 	 */
 	public function getSettingsArray($folder = '')
 	{
-		$pluginSettings = new PluginSettings();
+		$pluginSettings = PluginSettings::instance();
 		return $pluginSettings->getSettingsArray($this, $folder);
 	}
 	
@@ -1117,21 +1153,21 @@ class Hotaru
 	 */
 	public function getSerializedSettings($folder = '', $settings_name = '')
 	{
-		$pluginSettings = new PluginSettings();
+		$pluginSettings = PluginSettings::instance();
 		return $pluginSettings->getSerializedSettings($this, $folder, $settings_name);
 	}
 	
 	
 	/**
 	 * Get and store all plugin settings in $h->pluginSettings
-	 *
+	 * $forceUpdate ensures that we will update memcache when calling internally
+         * 
 	 * @return array - all settings
 	 */
-	public function getAllPluginSettings()
+	public function getAllPluginSettings($forceUpdate = true)
 	{
-		$pluginSettings = new PluginSettings();
-		$this->pluginSettings = $pluginSettings->getAllPluginSettings($this);
-		return $this->pluginSettings;
+                // from Initialize
+		$this->readAllPluginSettings($forceUpdate);
 	}
 	
 	
@@ -1144,7 +1180,7 @@ class Hotaru
 	 */
 	public function isSetting($setting = '', $folder = '')
 	{
-		$pluginSettings = new PluginSettings();
+		$pluginSettings = PluginSettings::instance();
 		return $pluginSettings->isSetting($this, $setting, $folder);
 	}
 	
@@ -1158,8 +1194,8 @@ class Hotaru
 	 */
 	public function updateSetting($setting = '', $value = '', $folder = '')
 	{
-		$pluginSettings = new PluginSettings();
-		return $pluginSettings->updateSetting($this, $setting, $value, $folder);
+		$pluginSettings = PluginSettings::instance();
+                return $pluginSettings->updateSetting($this, $setting, $value, $folder);
 	}
 
 
@@ -1177,7 +1213,7 @@ class Hotaru
 	 */
 	public function readThemeMeta($theme = 'default')
 	{
-		$themeSettings = new ThemeSettings();
+		$themeSettings = ThemeSettings::instance();
 		return $themeSettings->readThemeMeta($this, $theme);
 	}
 	
@@ -1191,7 +1227,7 @@ class Hotaru
 	 */
 	public function getThemeSettings($theme = '', $return = 'value')
 	{
-		$themeSettings = new ThemeSettings();
+		$themeSettings = ThemeSettings::instance();
 		return $themeSettings->getThemeSettings($this, $theme, $return);
 	}
 	
@@ -1206,10 +1242,57 @@ class Hotaru
 	 */
 	public function updateThemeSettings($settings = array(), $theme = '', $column = 'value')
 	{
-		$themeSettings = new ThemeSettings();
+		$themeSettings = ThemeSettings::instance();
 		return $themeSettings->updateThemeSettings($this, $settings, $theme, $column);
 	}
 
+        
+        /* SystemJobs
+         * 
+         */
+        
+        public function checkSystemJobs()
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->checkRunCron($this);
+        }
+        
+        public function getCronArray()
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->getCronArray($this);
+        }
+        
+        public function cronGetSchedules()
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->cronGetSchedules($this);
+        }
+        
+        public function cronUpdateJob($data)
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->cronUpdateJob($this, $data);
+        }
+        
+        public function cronDeleteJob($data)
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->cronDeleteJob($this, $data);
+        }
+        
+        public function cronFlushHook($data)
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->cronFlushHook($this, $data);
+        }
+        
+        public function systemJobsRestoreDefaults()
+        {
+            $systemJobs = SystemJobs::instance();
+            return $systemJobs->restoreDefaults($this);
+        }
+        
         
         
 /* *************************************************************
@@ -1220,7 +1303,7 @@ class Hotaru
         
         public function miscdata($key = '', $cache = 'true')
         {
-                $systemInfo = new SystemInfo();
+                $systemInfo = SystemInfo::instance();
 		return $systemInfo->miscdata($this, $key, $cache);
         }
 
@@ -1236,15 +1319,16 @@ class Hotaru
 	 */
 	 public function doIncludes($type = 'all')
 	 {                
-             // Note: careful using async or defer on the js otherwise inline jquery wihch may be in plugins has trouble running
-                              
+              // Note: careful using async or defer on the js otherwise inline jquery wihch may be in plugins has trouble running
              switch ($type) {
                     case 'all':
-                        $this->getFramework('bootstrap-lite');
+                        //$this->getFramework('bootstrap-lite');
 
                         // for old themes that dont split between loading js and css
-                        if ($this->vars['framework']['bootstrap-js'])
-                            $this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');                 
+                        //if ($this->vars['framework']['bootstrap-js'])
+                            //$this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');  
+                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' type='text/css' /></script>";
+                            
                             
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1261,7 +1345,10 @@ class Hotaru
                         
                         // for better caching we should send this js file separately to hotarus combined js
                         if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js'])
-                            echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
+                        {
+                            echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' type='text/css' /></script>";
+                            //echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
+                        }
                           
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);                               	                        
@@ -1280,7 +1367,16 @@ class Hotaru
                         break;
                     default :
                         break;
-             }                                                           
+             }  
+             
+            //$this->includeJs(LIBS . 'extensions/summernote/', 'summernote.min');   
+             
+            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>';             
+                            
+            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
+            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';             
+            
+            
 	 }
 	 
 	/**
@@ -1336,23 +1432,23 @@ class Hotaru
              if ($this->adminPage) {
                     echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
              } else {
-                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';
-             }                          
+                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';                    
+             }        
+             
+             echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
+                
          }                
 
          
          public function getFramework($file = 'bootstrap3', $jsInclude = true)
-	 {
+	 {    
                 //js files first unless prohibited
                 $this->vars['framework']['bootstrap-js'] = $jsInclude ? true : false;  
-                          
-                // font-awesome
-                echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
-                
+                                          
                 // then css files
                 switch ($file) {
                     case 'bootstrap3':                        
-                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' type='text/css' />\n";
+                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
                          break;
                     case 'bootstrap':                        
@@ -1369,10 +1465,22 @@ class Hotaru
                        //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-responsive.min.css' type='text/css' />\n";
                         break;
+                    case 'none':
+                        $h->vars['framework']['bootstrap'] = true;  // trick it into thinking we already have this done
+                        break;
                     default:
-                       echo 'framework css incorrect params : ' . $file;
+                       //echo 'framework css incorrect params : ' . $file;
                        break;
-                }            
+                }   
+                
+                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.css" type="text/css" />';                
+                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote-bs3.css" type="text/css" />';
+                echo '<link href="//cdn.jsdelivr.net/animatecss/3.2.0/animate.min.css" rel="stylesheet">';
+                
+                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/summernote/summernote.css" type="text/css" />';
+                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/summernote/summernote-bs3.css" type="text/css" />';
+                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/animate/animate.css" type="text/css" />';
+                
          }
      
      
@@ -1392,7 +1500,7 @@ class Hotaru
           */
          public function addMessage($msg = '', $msg_type = '', $msg_role = '')
          {
-             $messages = new Messages();
+             $messages = Messages::instance();
              $messages->addMessage($this, $msg, $msg_type, $msg_role);
          }
          
@@ -1405,7 +1513,7 @@ class Hotaru
 	 */
 	public function showMessage($msg = '', $msg_type = 'green')
 	{
-		$messages = new Messages();
+		$messages = Messages::instance();
 		$messages->showMessage($this, $msg, $msg_type);
 	}
 	
@@ -1415,7 +1523,7 @@ class Hotaru
 	 */
 	public function showMessages()
 	{
-		$messages = new Messages();
+		$messages = Messages::instance();
 		$messages->showMessages($this);
 	}
     
@@ -1435,7 +1543,7 @@ class Hotaru
 	 */
 	public function checkAnnouncements($announcement = '') 
 	{
-		$announce = new Announcements();
+		$announce = Announcements::instance();
 		if ($this->adminPage) {
 			return $announce->checkAdminAnnouncements($this);
 		} else {
@@ -1456,7 +1564,7 @@ class Hotaru
 	 */
 	public function showQueriesAndTime()
 	{
-		$this->debug->showQueriesAndTime($this);
+            $this->debug->showQueriesAndTime($this);
 	}
 	
 	/**
@@ -1502,7 +1610,7 @@ class Hotaru
 	public function generateReport($type = 'log', $level = '')
 	{
 		if (!is_object($this->debug)) { 
-			$this->debug = new Debug();
+			$this->debug = Debug::instance();
 		}
 		return $this->debug->generateReport($this, $type, $level);
 	}
@@ -1526,7 +1634,7 @@ class Hotaru
 	 */
 	public function newSimplePie($feed='', $cache=RSS_CACHE, $cache_duration=RSS_CACHE_DURATION)
 	{
-		$feeds = new Feeds();
+		$feeds = Feeds::instance();
 		return $feeds->newSimplePie($feed, $cache, $cache_duration);
 	}
 	
@@ -1540,7 +1648,7 @@ class Hotaru
 	 */
 	public function adminNews($max_items = 10, $items_with_content = 3, $max_chars = 300)
 	{
-		$feeds = new Feeds();
+		$feeds = Feeds::instance();
 		$feeds->adminNews($this->lang, $max_items, $items_with_content, $max_chars);
 	}
 
@@ -1555,7 +1663,7 @@ class Hotaru
 	 */
 	public function rss($title = '', $link = '', $description = '', $items = array())
 	{
-		$feeds = new Feeds();
+		$feeds = Feeds::instance();
 		$feeds->rss($this, $title, $link, $description, $items);
 	}
 	
@@ -1572,7 +1680,7 @@ class Hotaru
 	 */
 	public function adminPages($page = 'admin_login')
 	{
-		$admin = new AdminPages();
+		$admin = AdminPages::instance();
 		$admin->pages($this, $page);
 	}
 	
@@ -1584,7 +1692,7 @@ class Hotaru
 	 */
 	public function adminLoginLogout($action = 'logout')
 	{
-		$admin = new AdminAuth();
+		$admin = AdminAuth::instance();
 		return ($action == 'login') ? $admin->adminLogin($this) : $admin->adminLogout($this);
 	}
 	
@@ -1594,21 +1702,21 @@ class Hotaru
 	 */
 	public function adminLoginForm()
 	{
-		$admin = new AdminAuth();
+		$admin = AdminAuth::instance();
 		$admin->adminLoginForm($this);
 	}
         
         
         public function adminNav()
         {
-                $admin = New AdminPages();
+                $admin = AdminPages::instance();
                 $admin->adminNav($this);
         }
         
         
         public function debugNav()
         {
-                $admin = New Debug();
+                $admin = Debug::instance();
                 $admin->debugNav($this);
         }
     
@@ -1625,16 +1733,16 @@ class Hotaru
 	 *
 	 * @param object $h
 	 */
-	public function checkAccess()
+	public function checkSiteAccess()
 	{
 		if (SITE_OPEN == 'true') { return true; }   // site is open, go back and continue
 		
 		// site closed, but user has admin access so go back and continue as normal
 		if ($this->currentUser->getPermission('can_access_admin') == 'yes') { return true; }
-		
+
 		if ($this->pageName == 'admin_login') { return true; }
 		
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		return $maintenance->siteClosed($this, $this->lang); // displays "Site Closed for Maintenance"
 	}
 	
@@ -1646,7 +1754,7 @@ class Hotaru
 	 */
 	public function openCloseSite($switch = 'open')
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->openCloseSite($this, $switch);
 	}
 	
@@ -1656,7 +1764,7 @@ class Hotaru
 	 */
 	public function optimizeTables()
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->optimizeTables($this);
 	}
         
@@ -1666,7 +1774,7 @@ class Hotaru
 	 */
 	public function exportDatabase()
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->exportDatabase($this);
 	}
 	
@@ -1679,7 +1787,7 @@ class Hotaru
 	 */
 	public function emptyTable($table_name = '', $msg = true)
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->emptyTable($this, $table_name, $msg);
 	}
 	
@@ -1692,7 +1800,7 @@ class Hotaru
 	 */
 	public function dropTable($table_name = '', $msg = true)
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->dropTable($this, $table_name, $msg);
 	}
 	
@@ -1705,7 +1813,7 @@ class Hotaru
 	 */
 	public function removeSettings($folder = '', $msg = true)
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->removeSettings($this, $folder, $msg);
 	}
 	
@@ -1718,7 +1826,7 @@ class Hotaru
 	 */
 	public function deleteSettings($setting = '', $folder = '')
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		$maintenance->deleteSettings($this, $setting, $folder);
 	}
 	
@@ -1731,7 +1839,7 @@ class Hotaru
 	 */    
 	public function deleteFiles($dir = '')
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		return $maintenance->deleteFiles($dir);
 	}
 	
@@ -1744,7 +1852,7 @@ class Hotaru
 	 */
 	public function clearCache($folder = '', $msg = true)
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		return $maintenance->clearCache($this, $folder, $msg);
 	}
 	
@@ -1758,7 +1866,7 @@ class Hotaru
 	 */    
 	public function getFiles($dir = '', $exclude = array())
 	{
-		$maintenance = new Maintenance();
+		$maintenance = Maintenance::instance();
 		return $maintenance->getFiles($dir, $exclude);
 	}
 	
@@ -1792,7 +1900,7 @@ class Hotaru
 	 */
 	public function smartCache($switch = 'off', $table = '', $timeout = 0, $html_sql = '', $label = '')
 	{
-		$caching = new Caching();
+		$caching = Caching::instance();
 		return $caching->smartCache($this, $switch, $table, $timeout, $html_sql, $label);
 	}
 	
@@ -1809,7 +1917,7 @@ class Hotaru
 	 */
 	public function cacheHTML($timeout = 0, $html = '', $label = '')
 	{
-		$caching = new Caching();
+		$caching = Caching::instance();
 		return $caching->cacheHTML($this, $timeout, $html, $label);
 	}
     
@@ -1830,7 +1938,7 @@ class Hotaru
 	 */
 	public function isBlocked($type = '', $value = '', $operator = '=')
 	{
-		$blocked = new Blocked();
+		$blocked = Blocked::instance();
 		return $blocked->isBlocked($this->db, $type, $value, $operator);
 	}
 	
@@ -1845,7 +1953,7 @@ class Hotaru
 	 */
 	public function addToBlockedList($type = '', $value = 0, $msg = false)
 	{
-		$blocked = new Blocked();
+		$blocked = Blocked::instance();
 		return $blocked->addToBlockedList($this, $type, $value, $msg);
 	}
 
@@ -1863,10 +1971,11 @@ class Hotaru
          */
         function lang($title = '')
         {
-            if (isset($this->lang[$title]) || ($this->currentUser->isAdmin && $this->isDebug))
+            if (isset($this->lang[$title])) { // || ($this->currentUser->isAdmin && $this->isDebug)) {
                 return $this->lang[$title];
-            else  
+            } else {
                 return $title;
+            }
         }
         
 
@@ -1881,7 +1990,7 @@ class Hotaru
 	 */
 	public function includeLanguage($folder = '', $filename = '')
 	{
-		$language = new Language();
+		$language = Language::instance();
 		$language->includeLanguage($this, $folder, $filename);
 	}
     
@@ -1896,7 +2005,7 @@ class Hotaru
 	 */    
 	public function includeThemeLanguage($filename = 'main')
 	{
-		$language = new Language();
+		$language = Language::instance();
 		$language->includeThemeLanguage($this, $filename);
 	}
     
@@ -1931,7 +2040,7 @@ class Hotaru
                     return true;
                 }
                 
-                $csrf = new csrf();
+                $csrf = \csrf::instance();
                 return $csrf->csrfInit($this, $type, $script, $life);  
 	}
     
@@ -1952,7 +2061,8 @@ class Hotaru
 	 */    
 	public function readPost($post_id = 0, $post_row = NULL)
 	{
-		return $this->post->readPost($this, $post_id, $post_row);
+                $p = Post::instance();
+		return $p->readPost($this, $post_id, $post_row);
 	}
 	
 	
@@ -2122,6 +2232,21 @@ class Hotaru
 	{
 		return $this->post->isPostUrl($this, $post_url);
 	}
+        
+        
+        /**
+	 * Gets post url of the current comment in $h->comment
+	 *
+	 * @return string - post url
+	 */
+	public function getPostUrlForCurrentComment()
+	{
+                if (!isset($this->comment)) { return false; }
+            
+                // Note: we are passing both the id and the url here to make sure friendly and non-friendly urls work well
+                $postUrl = $this->url(array('postUrl' => $this->comment->postUrl, 'post'=>$this->comment->postId));
+		return $postUrl;
+	}
 	
 	
 	/**
@@ -2141,9 +2266,14 @@ class Hotaru
 	 */
 	public function sendTrackback()
 	{
-		$trackback = new Trackback();
+		$trackback = Trackback::instance();
 		return $trackback->sendTrackback($this);
 	}
+        
+        public function postGetFlags($postId)
+        {
+                return Post::instance()->getFlags($this, $postId);
+        }
         
         /**
 	 * Prepares and calls functions to send a trackback
@@ -2151,11 +2281,28 @@ class Hotaru
 	 */
 	public function postStats($stat_type)
 	{
-		$post = new Post();
+		$post = Post::instance();
 		return $post->stats($this, $stat_type);
 	}
     
-    
+        
+/* *************************************************************
+ *
+ *  SEARCH FUNCTIONS
+ *
+ * *********************************************************** */
+        
+        
+        /**
+         * Prepare search filter
+         */
+        public function prepareSearchFilter($h, $search, $return = 'posts')
+        {
+            $searchFuncs = new Search();
+            return  $searchFuncs->prepareSearchFilter($this, $search, $return);
+        }
+        
+   
 /* *************************************************************
  *
  *  AVATAR FUNCTIONS
@@ -2171,9 +2318,9 @@ class Hotaru
 	 * @param $rating avatar rating (g, pg, r or x in Gravatar)
 	 * @return bool
 	 */
-	public function setAvatar($user_id = 0, $size = 32, $rating = 'g', $img_class = '')
+	public function setAvatar($user_id = 0, $size = 32, $rating = 'g', $img_class = '', $email = '', $username = '')
 	{
-		return $this->avatar = new Avatar($this, $user_id, $size, $rating, $img_class);
+		return $this->avatar = new Avatar($this, $user_id, $size, $rating, $img_class, $email, $username);
 	}
 	
 	
@@ -2218,7 +2365,7 @@ class Hotaru
 
         public function getCatFullData($cat_id = 0, $cat_safe_name = '')
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatFullData($this, $cat_id, $cat_safe_name);
 	}
         
@@ -2230,7 +2377,7 @@ class Hotaru
 	 */
 	public function getCatId($cat_safe_name = '')
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatId($this, $cat_safe_name);
 	}
 	
@@ -2244,7 +2391,7 @@ class Hotaru
 	 */
 	public function getCatName($cat_id = 0, $cat_safe_name = '')
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatName($this, $cat_id, $cat_safe_name);
 	}
 	
@@ -2257,7 +2404,7 @@ class Hotaru
 	 */
 	public function getCatSafeName($cat_id = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatSafeName($this, $cat_id);
 	}
 	
@@ -2270,7 +2417,7 @@ class Hotaru
 	 */
 	public function getCatParent($cat_id = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatParent($this, $cat_id);
 	}
 	
@@ -2283,7 +2430,7 @@ class Hotaru
 	 */
 	public function getCatChildren($cat_parent_id = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatChildren($this, $cat_parent_id);
 	}
 	
@@ -2295,7 +2442,7 @@ class Hotaru
 	 */
 	public function getCategories($args = array())
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCategories($this, $args);
 	}
 	
@@ -2308,7 +2455,7 @@ class Hotaru
 	 */
 	public function getCatMeta($cat_id = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->getCatMeta($this, $cat_id);
 	}
 
@@ -2322,7 +2469,7 @@ class Hotaru
 	 */
 	public function addCategory($parent = 0, $new_cat_name = '')
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->addCategory($this, $parent, $new_cat_name);
 	}
 
@@ -2336,7 +2483,7 @@ class Hotaru
 	 */
 	public function rebuildTree($parent_id = 0, $left = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->rebuildTree($this, $parent_id, $left);
 	}
 
@@ -2349,16 +2496,16 @@ class Hotaru
 	 */
 	function deleteCategory($delete_category = 0)
 	{
-		$category = new Category();
+		$category = Category::instance($this);
 		return $category->deleteCategory($this, $delete_category);
 	}
 
         
-        function setCatMemCache()
-        {
-            $category = new Category();
-            $category->setCatMemCache($this);
-        }
+//        function setCatMemCache()
+//        {
+//            $category = Category::instance($this);
+//            $category->setCatMemCache($this);
+//        }
         
 
 /* *************************************************************
@@ -2376,7 +2523,7 @@ class Hotaru
 	 */
 	function countComments($digits_only = true, $no_comments_text = '')
 	{
-		$comment = new Comment();
+		$comment = Comment::instance();
 		return $comment->countComments($this, $digits_only, $no_comments_text);
 	}
 	
@@ -2389,7 +2536,7 @@ class Hotaru
 	 */
 	function countUserComments($user_id = 0)
 	{
-		$comment = new Comment();
+		$comment = Comment::instance();
 		return $comment->countUserComments($this, $user_id);
 	}
 	
@@ -2402,7 +2549,7 @@ class Hotaru
 	 */
 	public function deleteComments($user_id) 
 	{
-		$comment = new Comment();
+		$comment = Comment::instance();
 		return $comment->deleteComments($this, $user_id);
 	}
 	
@@ -2413,9 +2560,9 @@ class Hotaru
 	 * @param int $comment_id
 	 * @return array|false
 	 */
-	function getComment($comment_id = 0)
+	public function getComment($comment_id = 0)
 	{
-		$comment = new Comment();
+		$comment = Comment::instance();
 		return $comment->getComment($this, $comment_id);
 	}
 	
@@ -2425,11 +2572,17 @@ class Hotaru
 	 *
 	 * @param array $comment_row pulled from database
 	 */
-	function readComment($comment_row = array())
+	public function readComment($comment_row = array())
 	{
-		$comment = new Comment();
+		$comment = Comment::instance();
 		return $comment->readComment($this, $comment_row);
 	}
+        
+        
+        public function updateCommentCountBulk() 
+        {
+            \HotaruModels2\Post::updateCommentCountBulk($this);
+        }
     
     
 /* *************************************************************
@@ -2447,7 +2600,7 @@ class Hotaru
 	 */
 	public function addWidget($plugin = '', $function = '', $args = '')
 	{
-		$widget = new Widget();
+		$widget = Widget::instance();
 		$widget->addWidget($this, $plugin, $function, $args);
 	}
 	
@@ -2463,7 +2616,7 @@ class Hotaru
 	 */
 	public function getArrayWidgets($widget_name = '')
 	{
-		$widget = new Widget();
+		$widget = Widget::instance();
 		return $widget->getArrayWidgets($this, $widget_name);
 	}
 	
@@ -2476,7 +2629,7 @@ class Hotaru
 	 */
 	public function deleteWidget($function = '', $plugin = '')
 	{
-		$widget = new Widget();
+		$widget = Widget::instance();
 		$widget->deleteWidget($this, $function, $plugin);
 	}
 	
@@ -2488,7 +2641,7 @@ class Hotaru
 	 */
 	public function getPluginFromFunction($function)
 	{
-		$widget = new Widget();
+		$widget = Widget::instance();
 		return $widget->getPluginFromFunction($this, $function);
 	}
     
@@ -2509,10 +2662,10 @@ class Hotaru
 	 * @param string $type - default is "email", but you can write to a "log" file, print to "screen" or "return" an array of the content
 	 * @return array|false - only if $type = "return"
 	 */
-	public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email')
+	public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email', $isHtml = false)
 	{
 		if (!is_object($this->email)) { 
-			$this->email = new EmailFunctions();
+			$this->email = EmailFunctions::instance();
 		}
 		
 		$this->email->to = $to;
@@ -2520,6 +2673,7 @@ class Hotaru
 		$this->email->body = $body;
 		$this->email->headers = $headers;
 		$this->email->type = $type;
+                $this->email->isHtml = $isHtml;
 		
 		return $this->email->doEmail();
 	}
@@ -2539,7 +2693,7 @@ class Hotaru
 	 */
 	public function countFollowers($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->countFriends($this, $user_id, 'follower');
 	}
 	
@@ -2552,7 +2706,7 @@ class Hotaru
 	 */
 	public function countFollowing($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->countFriends($this, $user_id, 'following');
 	}
 	
@@ -2566,7 +2720,7 @@ class Hotaru
 	 */
 	public function getFollowers($user_id = 0, $return = 'array')
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->getFriends($this, $user_id, 'follower', $return);
 	}
 	
@@ -2580,7 +2734,7 @@ class Hotaru
 	 */
 	public function getFollowing($user_id = 0, $return = 'array')
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->getFriends($this, $user_id, 'following', $return);
 	}
 	
@@ -2593,7 +2747,7 @@ class Hotaru
 	 */
 	public function isFollower($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->checkFriends($this, $user_id, 'follower');
 	}
 	
@@ -2606,7 +2760,7 @@ class Hotaru
 	 */
 	public function isFollowing($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->checkFriends($this, $user_id, 'following');
 	}
 	
@@ -2619,7 +2773,7 @@ class Hotaru
 	 */
 	public function follow($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->updateFriends($this, $user_id, 'follow');
 	}
 	
@@ -2632,7 +2786,7 @@ class Hotaru
 	 */
 	public function unfollow($user_id = 0)
 	{
-		$friends = new Friends();
+		$friends = Friends::instance();
 		return $friends->updateFriends($this, $user_id, 'unfollow');
 	}
 	
@@ -2647,7 +2801,7 @@ class Hotaru
         {
             print "class = " . 'UserActivity' . '<br/>';
             if (class_exists('UserActivity')) print "class exists<br/>"; else print "class does not exist<br/>";
-            $activity = new UserActivity();
+            $activity = UserActivity::instance();
             
             print "method = " . $method . '<br/>';             
             if (method_exists($activity,$method)) print "method exists<br/>"; else print "method does not exist<br/>";
@@ -2687,7 +2841,7 @@ class Hotaru
 	 */
 	public function getLatestActivity($limit = 0, $userid = 0, $type = '', $fromId = 0)
 	{
-		$activity = new UserActivity();
+		$activity = UserActivity::instance();
 		return $activity->getLatestActivity($this, $limit, $userid, $type, $fromId);
 	}
 	
@@ -2700,7 +2854,7 @@ class Hotaru
 	 */
 	public function activityExists($args = array())
 	{
-		$activity = new UserActivity();
+		$activity = UserActivity::instance();
 		return $activity->activityExists($this, $args);
 	}
 	
@@ -2712,7 +2866,7 @@ class Hotaru
 	 */
 	public function insertActivity($args = array())
 	{
-		$activity = new UserActivity();
+		$activity = UserActivity::instance();
 		return $activity->insertActivity($this, $args);
 	}
 	
@@ -2724,7 +2878,7 @@ class Hotaru
 	 */
 	public function updateActivity($args = array())
 	{
-		$activity = new UserActivity();
+		$activity = UserActivity::instance();
 		return $activity->updateActivity($this, $args);
 	}
 	
@@ -2736,7 +2890,7 @@ class Hotaru
 	 */
 	public function removeActivity($args = array())
 	{
-		$activity = new UserActivity();
+		$activity = UserActivity::instance();
 		return $activity->removeActivity($this, $args);
 	}
 	
@@ -2757,7 +2911,7 @@ class Hotaru
 	 */
 	public function getMessages($box = 'inbox', $type = '')
 	{
-		$pm = new PrivateMessaging();
+		$pm = PrivateMessaging::instance();
 		return $pm->getMessages($this, $box, $type);
 	}
 	
@@ -2770,10 +2924,27 @@ class Hotaru
 	 */
 	public function getMessage($message_id = 0)
 	{
-		$pm = new PrivateMessaging();
+		$pm = PrivateMessaging::instance();
 		return $pm->getMessage($this, $message_id);
 	}
-	 
+        
+        
+        /**
+         * Get unread Message Count for user
+         * 
+         * @param type $userId
+         * @return type
+         */
+	public function getCountMessagesUnread($userId = 0)
+	{
+                if ($userId == 0) {
+                    $userId = $this->currentUser->id;
+                }
+                
+		$pm = PrivateMessaging::instance();
+		return $pm->getCountMessagesUnread($this, $userId);
+	}
+        
 	 
 	/**
 	 * Mark message as read
@@ -2782,7 +2953,7 @@ class Hotaru
 	 */
 	public function markRead($message_id = 0)
 	{
-		$pm = new PrivateMessaging();
+		$pm = PrivateMessaging::instance();
 		$pm->markRead($this, $message_id);
 	}
 	
@@ -2796,7 +2967,7 @@ class Hotaru
 	 */
 	public function deleteMessage($message_id = 0, $box = 'inbox')
 	{
-		$pm = new PrivateMessaging();
+		$pm = PrivateMessaging::instance();
 		$pm->deleteMessage($this, $message_id, $box);
 	}
 	
@@ -2812,7 +2983,7 @@ class Hotaru
 	 */
 	public function sendMessage($to = '', $from = '', $subject = '', $body = '')
 	{
-		$pm = new PrivateMessaging();
+		$pm = PrivateMessaging::instance();
 		return $pm->sendMessage($this, $to, $from, $subject, $body);
 	}
 
@@ -2835,7 +3006,8 @@ class Hotaru
 	 */
 	public function getVoteRating($post_id = 0, $user_id = 0, $ip = '', $anon = false)
 	{
-		return VoteFunctions::getVoteRating($this, $post_id, $user_id, $ip, $anon);
+                $voteFuncs = VoteFunctions::instance();
+		return $voteFuncs->getVoteRating($this, $post_id, $user_id, $ip, $anon);
 	}
 
 
@@ -2908,4 +3080,4 @@ class Hotaru
 		return VoteFunctions::countUserVotes($this, $type, $user_id);
 	}
 }
-?>
+

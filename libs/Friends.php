@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Friends
+namespace Libs;
+
+class Friends extends Prefab
 {
 	/**
 	 * count followers / following
@@ -68,7 +70,7 @@ class Friends
 			$type2 = "follower_user_id"; 
 		}
 		
-		$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " AS USERS JOIN " . TABLE_FRIENDS . " AS FOLLOW on FOLLOW." . $type1 . " = USERS.user_id WHERE FOLLOW." . $type2 . " = %d ORDER BY friends_updatedts DESC";
+		$sql = "SELECT user_id, user_username FROM " . TABLE_USERS . " AS USERS JOIN " . TABLE_FRIENDS . " AS FOLLOW on FOLLOW." . $type1 . " = USERS.user_id WHERE FOLLOW." . $type2 . " = %d ORDER BY FOLLOW.friends_updatedts DESC";
 		$query = $h->db->prepare($sql, $user_id);
 
 		if ($return == 'array') {

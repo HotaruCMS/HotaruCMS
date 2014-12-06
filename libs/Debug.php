@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Debug
+namespace Libs;
+
+class Debug extends Prefab
 {
 	protected $fh = array();    // file handlers
 	protected $log = array();   // file paths
@@ -33,15 +35,21 @@ class Debug
 	 */
 	public function showQueriesAndTime($h)
 	{
-		if ($h->isDebug) { 
-		
+		if ($h->isDebug) {
+                            
 			$mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
-			
+			                        
 			echo "<p class='debug'>";
 			echo $h->lang('main_hotaru_db_queries') . $h->db->num_queries . " | ";
                         echo $h->lang('main_hotaru_cache_queries') . $h->db->num_cache_queries . " | ";
-			echo $h->lang('main_hotaru_page_load_time') . timer_stop(2) . $h->lang('main_times_secs') . " | ";
-			echo $h->lang('main_hotaru_memory_usage') . display_filesize(memory_get_usage()) . " | ";
+			echo $h->lang('main_hotaru_page_load_time') . timer_stop(3, 'hotaru') . $h->lang('main_times_secs') . " | ";
+			
+                        if (function_exists('memory_get_usage')) {
+                            echo $h->lang('main_hotaru_memory_usage') . display_filesize(memory_get_usage(true)) . " | ";
+                            //echo $h->lang('main_hotaru_memory_usage_peak') . display_filesize(memory_get_peak_usage(true)) . " | ";                                                
+                        }
+                        
+                        //echo "h->vars: " . sizeofvar($h->vars) . " | ";
 			echo $h->lang('main_hotaru_php_version') . phpversion() . " | ";
 			echo $h->lang('main_hotaru_mysql_version') . $mysql_version . " | ";
 			echo $h->lang('main_hotaru_hotaru_version') . $h->version; 
@@ -65,6 +73,7 @@ class Debug
                         }
                     }
                 }
+                //print_r($h->currentUser);
                 if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { 
                     //echo $this->hvars($h); 
                 }
@@ -79,11 +88,11 @@ class Debug
          */
          public function debugNav($h)
         {
-             $mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
+             //$mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
 			
              $debug = array(
                  $h->lang('main_hotaru_php_version') => phpversion(),
-                 $h->lang('main_hotaru_mysql_version') => $mysql_version,
+                 //$h->lang('main_hotaru_mysql_version') => $mysql_version,
                  'Hotaru CMS: ' => $h->version,
                  'DB driver: ' => isset($h->vars['debug']['db_driver']) ? $h->vars['debug']['db_driver'] : '',
                   'divider'=>''                 
@@ -93,6 +102,9 @@ class Debug
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_debug"); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu debug">
+                        <li>
+                            <a id="admin_guide_toggle" href="#">Dev points <span class="pull-right label label-primary admin_guide" style="display:none;">ON</span></a>
+                        </li>
                     <?php
                         foreach ($debug as $item => $value) {                      
                             if ($item == 'divider')
@@ -109,7 +121,11 @@ class Debug
                         echo '<li><a href="#">' . $h->lang('main_hotaru_memory_usage') . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
                         //echo '<li><a href="#modal_hvars" data-toggle="modal">' . "h->vars: " . '<strong><span id="debug_nav_memory_usage"></span></strong></a></li>';
                         echo '<li class="divider"></li>';
-                        echo '<li><a href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
+                        //echo '<li><a id="debugLog" href="#" data-toggle="modal" data-target="#myModal">Log</a></li>'; // . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
+                        echo '<li><a id="debugLog" href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php" target="_blank">' . "Error log" . '<strong></strong></a></li>';
+                        
+                        
+
                         
                         // show csrf token
                         if (isset($_SESSION["csrf-form"]))

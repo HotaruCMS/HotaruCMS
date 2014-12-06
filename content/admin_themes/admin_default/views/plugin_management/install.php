@@ -1,30 +1,28 @@
 <div id="plugin_management">
     
 	<table class="table table-bordered">
-		<tr class="success">
-			<td>
-				<strong><?php echo $h->lang("admin_theme_plugins_installed"); ?></strong>
-			</td>
-			<td><i class="fa fa-info-circle"></i>
-				<strong><?php echo $h->lang["admin_theme_plugins_details"]; ?></strong>
-			</td>
-			<td><i class="fa fa-times-circle"></i>
-				<strong><?php echo $h->lang["admin_theme_plugins_uninstall"]; ?></strong>
-			</td>
-			<td>
-				<a href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
-					<i class="fa fa-refresh"></i>
-					<strong><?php echo $h->lang("admin_theme_check_latest_plugin_versions"); ?></strong>
-				</a>
-			</td>
-		</tr>
+            <tr class="success">
+                <td>
+                    <span class="pull-left" style="width:50%;">
+                        <form role="form" action="#" method="get" onsubmit="return false;">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-addon">@</span>
+                                <input class="form-control" type="text" placeholder="Search" name="q" id="q" value="" onkeyup="doSearch();" />                                        
+                            </div>
+                        </form>
+                    </span>
+                        <a class="pull-right btn btn-default btn-xs" href="<?php echo SITEURL ?>admin_index.php?page=plugin_management&action=version_check">
+                                <i class="fa fa-refresh"></i>&nbsp;
+                                <?php echo $h->lang("admin_theme_check_latest_plugin_versions"); ?>
+                        </a>
+                </td>
+            </tr>
 	</table>
 		
-	<table id="plugintable_installed">
+	<table id="plugintable_installed" class=''>
             <tr>
 <?php
-    // for some reason, even though we have passed the array to here it gets lost somehow in the include,so we have to get it again
-	$the_plugins = isset($h->vars['installed_plugins']) ? $h->vars['installed_plugins'] : array();
+        $the_plugins = isset($h->vars['installed_plugins']) ? $h->vars['installed_plugins'] : array();
 	$per_column = count($the_plugins)/2;
 	for($i=0; $i<2; $i++) { 
             $col_name = ($i ==0) ? 'left-col' : 'right-col'; 
@@ -33,7 +31,7 @@
 
             <td style='width: 50%; vertical-align: top;'>
 
-                <table class="table table-bordered table-striped table-hover">                            
+                <table class="table table-bordered table-striped table-hover table_col_<?php echo $i; ?>">                            
                     <tbody id="<?php echo $col_name;?>">   
 <?php
                         $alt = 0;	
@@ -49,7 +47,7 @@
 				} else {
 				    $updateVersion = ''; 				    
 				}
-                                echo "<tr id='sort_" . $plugin['id'] . "' class='" . $update_class . "'>\n";
+                                echo "<tr id='sort_" . $plugin['id'] . "' class='table_plugin_item " . $update_class . "'>\n";
                                     echo "<td class='table_active'>" . $plugin['active'] . "</td>\n";
                                     echo "<td class='table_installed_plugin'>";
                                         //if ($plug['settings']) {
@@ -67,9 +65,32 @@
                                     echo "<td class='table_uninstall'>\n";
                                         echo "<a class='table_drop_down' href='#'><i class='fa fa-info-circle'></i></a>\n";
                                         echo "&nbsp;" . $plugin['install'];
+                                        //echo "&nbsp;<a class='table_drop_settings' href='#'><i class='fa fa-wrench'></i></a>\n";
                                     echo "</td>\n";                                   
                                 echo "</tr>\n";
 
+                                if (1==0) { // the js for this is in hotaru.js not admin
+                                    echo "<tr class='table_tr_settings' style='display:none;'>";
+                                        echo "<td colspan=2 class='table_settings'>\n";
+
+                                        $settings = $h->getSettingsArray($plugin['folder']);
+
+                                        foreach ($settings as $setting => $val) {
+                                            echo $setting . ' : ';
+                                            if (is_array($val)) {
+                                                print_r($val);
+                                            } else {
+                                                print $val;
+                                            }
+                                            print '<br/>';
+                                        }
+                                        echo "</td>";
+                                        echo "<td class='table_description_close'><a class='table_hide_details' href='#'>";
+                                            echo $h->lang("admin_theme_plugins_close") . "</a>";
+                                        echo "</td>";
+                                    echo "</tr>\n";
+                                }
+                                    
                                 echo "<tr class='table_tr_details' style='display:none;'>";
                                     echo "<td colspan=2 class='table_description'>\n";
                                         echo $plugin['description'] . "<br />";
@@ -129,7 +150,7 @@
 						<i class="fa fa-info-circle"></i>
 						<?php echo $h->lang("admin_theme_plugins_details"); ?>
 						&nbsp;&nbsp;
-						<i class="fa fa-download"></i>
+						<i class="fa fa-upload"></i>
 						<?php echo $h->lang("admin_theme_plugins_install"); ?>
 					</span>
 				</td>
@@ -149,8 +170,7 @@
 	$alt = 0;
 	if (!$the_plugins) { $the_plugins = array(); }
 	foreach ($the_plugins as $plug) {
-		$alt++;
-		$info_icon = 'info_16.png';
+		$alt++;		
 		$update = false;
 		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update = true; $info_icon = 'info_green_16.png'; }}
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
@@ -172,7 +192,7 @@
 		if (isset($plug['author'])) { echo $plug['author']; }
 		if (isset($plug['authorurl'])) { echo "</a>\n"; }
 		if (file_exists(PLUGINS . $plug['folder'] . "/readme.txt")) {
-			echo "<br />" . $h->lang("admin_theme_plugins_more_info-circle");
+			echo "<br />" . $h->lang("admin_theme_plugins_more_info");
 			echo ": <a href='" . SITEURL . "content/plugins/" . $plug['folder'] . "/readme.txt' title='" . $h->lang("admin_theme_plugins_readme") . "'>";
 			echo $h->lang("admin_theme_plugins_readmetxt") . "</a>";			
 		}
@@ -249,5 +269,9 @@
                 });
 	
         </script>
+      
         
+       
+
+
 </div>

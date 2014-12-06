@@ -67,6 +67,8 @@ class HotaruHttpRequest
    // download URL to string
    function DownloadToString()
    {
+       $response = "";
+       
        $crlf = "\r\n";
 
        // generate request

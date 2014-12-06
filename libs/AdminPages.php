@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class AdminPages
+namespace Libs;
+
+class AdminPages extends Prefab
 {
 	 /**
 	 * Admin Pages
@@ -34,7 +36,7 @@ class AdminPages
 		$h->sidebars = true;
                 
 		$h->pluginHook('admin_pages');
-                                
+                             
 		switch ($page) {
 			case "admin_login":
 				$h->sidebars = false;
@@ -46,6 +48,10 @@ class AdminPages
                         case "admin_news":
 				echo $h->adminNews(10, 3, 300);
 				die();
+                        case "systeminfo_feedback":
+				$sysInfo = SystemInfo::instance();
+                                $sysInfo->hotaru_feedback($h);
+				die();        
 			case "admin_account":
 				$h->vars['admin_account'] = $this->adminAccount($h);
 				break;
@@ -65,9 +71,21 @@ class AdminPages
 				break;
 			case "plugin_management":
                                 $h->vars['admin_settings'] = $this->settings($h);
-				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				$this->adminPlugins($h);
 				break;
+                        case "plugin_management_beta_search":
+                                break;
+                        case "theme_management":
+				break;
+                        case "ajax_stats":
+                                $this->ajaxStats($h);
+                                die();
+                                break;
+                        case "stats_users":
+                                break;
+                        case "media":
+                                $h->vars['media_folder'] = $h->cage->get->testAlnumLines('folder');
+                                break;
 			case "plugin_search":				
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				//$this->adminPluginSearch($h);				
@@ -133,67 +151,52 @@ class AdminPages
 	 */    
 	public function settings($h)
 	{
-		$loaded_settings = $this->getAllAdminSettings($h->db);    // get all admin settings from the database
-		
+                // get all admin settings from the database
+		//$loaded_settings = \HotaruModels\Setting::all();
+		$loaded_settings = \HotaruModels2\Setting::getAll($h);
+                
 		$error = 0;
+                $updated = false;
 		
 		if ($h->cage->post->noTags('settings_update')  == 'true') {
+                    $updated = true;
 		
-			// if either the login or forgot password form is submitted, check the CSRF key
-			//if (!$h->csrf()) { print "csrferror"; die(); $error = 1; }
-			
-			foreach ($loaded_settings as $setting_name) {
-				if ($h->cage->post->keyExists($setting_name->settings_name)) {
-					$setting_value = $h->cage->post->getRaw($setting_name->settings_name);
-					if (!$error && $setting_value && $setting_value != $setting_name->settings_value) {
-						$this->adminSettingUpdate($h, $setting_name->settings_name, $setting_value);
-					
-					} else {
-						if (!$setting_value) {
-							// empty value                                             
-							$error = 1;
-						}
-					}
-				} else {
-					// values that are allowed to be empty:
-					$exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD', 'FORUM_USERNAME', 'FORUM_PASSWORD');
-					if ($setting_name->settings_show == 'N') { array_push($exempt, $setting_name->settings_name); }
-					if (!in_array($setting_name->settings_name, $exempt)) { 
-						// otherwise flag as an error:
-						$error = 1;
-					} 
-				}
-			}
+                    foreach ($loaded_settings as $setting) {
+                        if ($h->cage->post->keyExists($setting->settings_name)) {
+                            $setting_value = $h->cage->post->getRaw($setting->settings_name);
+                            
+                            if ($setting_value && $setting_value != $setting->settings_value) {
+                                    //\HotaruModels\Setting::makeUpdate($setting->settings_name, $setting_value, $h->currentUser->id);
+                                    \HotaruModels2\Setting::makeUpdate($h, $setting->settings_name, $setting_value, $h->currentUser->id);
+                            } elseif (!$setting_value) {
+                                    // empty value                                             
+                                    $error = 1;
+                            }
+                        }
+//                         else {
+//                                // values that are allowed to be empty:
+//                                $exempt = array('SMTP_USERNAME', 'SMTP_PASSWORD', 'FTP_SITE', 'FTP_USERNAME', 'FTP_PASSWORD', 'FORUM_USERNAME', 'FORUM_PASSWORD');
+//                                if ($setting->settings_show == 'N') { array_push($exempt, $setting->settings_name); }
+//                                if (!in_array($setting->settings_name, $exempt)) { 
+//                                        // otherwise flag as an error:
+//                                        $error = 1;
+//                                } 
+//                        }
+                    }
 		
-			// cron hook to include SYS_UPDATES job
-			//if ($h->cage->post->keyExists('SYS_UPDATES') == 'true' ) {
-				$timestamp = time();
-				$recurrence = "daily";
-                                
-                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
-				foreach ( $hooks as $hook ) {
-                                    $h->pluginHook('cron_update_job', 'cron', array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook));
-                                }
-			//}
-//			else {
-//                                $hooks = array("SystemInfo:hotaru_feedback", "SystemInfo:hotaru_version", "SystemInfo:plugin_version_getAll");
-//				foreach ( $hooks as $hook ) {
-//                                    $h->pluginHook('cron_delete_job', 'cron', array('hook'=>$hook));
-//                                }
-//			}
-		
-			if ($error == 0) {
-				$h->message = $h->lang('admin_settings_update_success');
-				$h->messageType = 'green alert-success';
-			} else {
-				$h->message = $h->lang('admin_settings_update_failure');
-				$h->messageType = 'red alert-danger';
-			}
+                    $h->systemJobsRestoreDefaults();
+
+                    if ($error == 0) {
+                            $h->messages[$h->lang('admin_settings_update_success')] = 'alert-success';
+                    } else {
+                            $h->message[$h->lang('admin_settings_update_failure')] = 'alert-danger';
+                    }
 		}
 		
 		// Activate themes from theme settings pages - called via JavaScript
-		if ($h->cage->post->testAlnumLines('admin') == 'theme_settings' )
-		{
+		if ($h->cage->post->testAlnumLines('admin') == 'theme_settings' ) {
+                        $updated = true;
+                    
 			$theme = strtolower($h->cage->post->testAlnumLines('theme') . "/" );
 			$this->adminSettingUpdate($h, 'THEME', $theme);
 			$h->deleteFiles(CACHE . 'css_js_cache'); // clear the CSS/JS cache
@@ -204,7 +207,10 @@ class AdminPages
 			exit;
 		}
 
-		$loaded_settings = $this->getAllAdminSettings($h->db);
+                if ($updated) {
+                    //$loaded_settings = \HotaruModels\Setting::all();
+                    $loaded_settings = \HotaruModels2\Setting::getAll($h);                    
+                }
 		
 		return $loaded_settings;
 	}
@@ -217,9 +223,10 @@ class AdminPages
 	 */
 	public function getAllAdminSettings($db)
 	{
-		$sql = "SELECT settings_name, settings_value, settings_default, settings_note, settings_show FROM " . TABLE_SETTINGS;
-		$results = $db->get_results($db->prepare($sql));
-		if ($results) { return $results; } else { return false; }
+                //$settings = \HotaruModels\Setting::all();
+                $settings = \HotaruModels2\Setting::getAll();
+                
+                return $settings;
 	}
 	
 	
@@ -231,33 +238,10 @@ class AdminPages
 	 */
 	public function adminSettingUpdate($h, $setting = '', $value = '')
 	{
-		$exists = $this->adminSettingExists($h->db, $setting);
-		
-		if (!$exists) {
-			$sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-			$h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id));
-		} else {
-			$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-			$h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id, $setting));
-		}
+            //$result = \HotaruModels\Setting::makeUpdate($setting, $value, $h->currentUser->id);
+            $result = \HotaruModels2\Setting::makeUpdate($h, $setting, $value, $h->currentUser->id);
 	}
-	
-	
-	/**
-	 * Determine if a setting already exists
-	 *
-	 * Note: The actual value is ignored
-	 *
-	 * @param string $setting
-	 * @return mixed|false
-	 */
-	public function adminSettingExists($db, $setting = '')
-	{
-		$sql = "SELECT settings_name FROM " . TABLE_SETTINGS . " WHERE (settings_name = %s)";
-		$returned_setting = $db->get_var($db->prepare($sql, $setting));
-		if ($returned_setting) { return $returned_setting; } else { return false; }
-	}
-	
+        
 	
 	/* *************************************************************
 	*
@@ -271,7 +255,6 @@ class AdminPages
 	 */
 	public function maintenanceAction($h)
 	{
-		require_once(LIBS . 'Maintenance.php');
 		$maintenance = new Maintenance();
 		$maintenance->getSiteAnnouncement($h);
 		
@@ -329,9 +312,9 @@ class AdminPages
 	public function listPluginSettings($h)
 	{
 		$plugin_settings = array();
-		$sql = "SELECT DISTINCT plugin_folder FROM " . DB_PREFIX . "pluginsettings";
-		$results = $h->db->get_results($h->db->prepare($sql));
-		
+                
+                $results = \HotaruModels2\Setting::getPluginSettings($h);
+                
 		if (!$results) { return false; } 
 		
 		foreach ($results as $item) {
@@ -356,6 +339,7 @@ class AdminPages
 				DB_PREFIX . 'settings',
 				DB_PREFIX . 'users',
 				DB_PREFIX . 'usermeta',
+                                DB_PREFIX . 'userlogin',
 				DB_PREFIX . 'categories',
 				DB_PREFIX . 'comments',
 				DB_PREFIX . 'commentvotes',
@@ -427,12 +411,14 @@ class AdminPages
 	 */
 	public function adminPlugins($h)
 	{     
-		$pfolder = $h->cage->get->testAlnumLines('plugin');
+		$pfolder = $h->cage->get->testAlnumLines('plugin');                
 		$h->plugin->folder = $pfolder;   // assign this plugin to Hotaru
 		
 		$action = $h->cage->get->testAlnumLines('action');
-		$order = $h->cage->get->testAlnumLines('order');                
-				
+		$order = $h->cage->get->testAlnumLines('order'); 
+                $ajax = $h->cage->get->testAlnumLines('ajax') ? true : false;
+		$clearCache = $ajax ? false : true;
+                
 		$plugman = new PluginManagement();
 		
 		switch ($action) {
@@ -442,8 +428,18 @@ class AdminPages
                                 //echo 1; 
                                 die();
 			case "activate":
-				$plugman->activateDeactivate($h, 1);
+				$plugman->activateDeactivate($h, 1, $clearCache);
+                                if ($ajax) {
+                                    echo json_encode(1);
+                                    die(); 
+                                }
 				break;
+                        case "reactivateAjax":
+                                $plugman->uninstall($h, 0, $clearCache);
+                                $result2 = $plugman->install($h, 0, $clearCache);
+                                $result = $result2 ? 1 :0;
+                                echo json_encode($result);
+				die();   
                         case "activateAjax":
 				$result = $plugman->activateDeactivate($h, 1, true);
                                 echo json_encode($result);
@@ -465,7 +461,11 @@ class AdminPages
 				$plugman->uninstallAll($h);
 				break;    
 			case "install":
-				$plugman->install($h);
+                                $plugman->install($h, 0, $clearCache);
+                                if ($ajax) {
+                                    echo json_encode(1);
+                                    die(); 
+                                }
 				break;
 			case "uninstall":
 				$plugman->uninstall($h);
@@ -480,7 +480,7 @@ class AdminPages
 				$plugman->activateDeactivate($h, 0);
 				$plugman->update($h);
 				$plugman->activateDeactivate($h, 1);
-				break;
+                                break;
 			case "version_check":
 				$plugman->versionCheck($h);
 				break;
@@ -523,23 +523,26 @@ class AdminPages
             } catch (Exception $exc) {
                 echo $exc->getTraceAsString();
             }
-            
         }
         
  
         public function adminNav($h)
         {
-            ?>
+            if ($h->currentUser->loggedIn == true && $h->currentUser->getPermission('can_access_admin') == 'yes')
+            {                                    
+                if ($h->isDebug) { print $h->debugNav(); }
+                ?> 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $h->lang("main_theme_navigation_admin"); ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu">
-                      <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>">Home</a></li>
-                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>">Plugins</a></li>
-                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>">Maintenance</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array(), 'admin'); ?>"><i class="fa fa-home"></i>&nbsp;&nbsp;Home</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_management'), 'admin'); ?>"><i class="fa fa-puzzle-piece"></i>&nbsp;&nbsp;Plugins</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'settings'), 'admin'); ?>"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a></li>
+                      <li role="presentation"><a href="<?php echo $h->url(array('page' => 'maintenance'), 'admin'); ?>"><i class="fa fa-wrench"></i>&nbsp;&nbsp;Maintenance</a></li>
                       <li role="presentation" class="divider"></li>
                       <li role="presentation" class="dropdown-header">Plugins</li>
                       <?php $h->pluginHook('adminNav_plugins'); ?>
-                      
+
                       <?php // TODO
                             // Include the following plugins in list by calling them from the plugin
                             // after plugin has been updated for v.1.5.0
@@ -557,8 +560,87 @@ class AdminPages
                         <li role="presentation"><a href="<?php echo $h->url(array('page' => 'plugin_settings', 'plugin' => 'widgets'), 'admin'); ?>">Widgets</a></li>
                       <?php  } ?>
                     </ul>
-                  </li>
-            <?php
+                </li>
+                <?php
+            }
+        }
+        
+        public function ajaxStats($h)
+        {
+            $chart = $h->cage->get->testAlnumLines('chart');
+            
+            switch ($chart)
+            {
+                case 'users_pie':
+                    $this->ajaxStatsPie($h);
+                    break;
+                case 'users_bar';
+                    $this->ajaxStatsUsers($h);
+                    break;
+                default:
+            }
+        }
+        
+        public function ajaxStatsPie($h)
+        {
+            $user = UserBase::instance();
+            $databaseData1 = $user->newUserCountPie($h);
+            
+            $color = array("#4572A7", "#80699B", "#AA4643", "#3D96AE", "#89A54E", "#3D96AE");
+            
+            $x=0;
+            foreach($databaseData1 as $r)
+            {
+                $mergedData[] =  array('label' => $r[0] , 'data' => (int)$r[1], 'color' => $color[$x]);
+                $x++;
+                if ($x > count($color)-1) $x = 0;
+            }
+            
+            //$mergedData[] =  array('label' => "Data 1" , 'data' => $data1, 'color' => '#6bcadb');
+            
+            echo json_encode($mergedData);
+        }
+        
+        public function ajaxStatsUsers($h) {
+            
+            $mergedData = array();
+
+            //Get the first set of data you want to graph from the database
+            //$databaseData1 = array(array('x_value' => 5, 'y_value' =>10), array('x_value' => 15, 'y_value' =>120));// someFunctionToGetDataFromDatabase($id);
+
+            $user = UserBase::instance();
+            $databaseData1 = $user->newUserCount($h);
+            //print_r($databaseData1);
+
+            //loop through the first set of data and pull out the values we want, then format
+            foreach($databaseData1 as $r)
+            {
+                $x = $r[0];
+                $y = $r[1];
+                $data1[] = array ($x, $y);
+            }
+
+            //send our data values to $mergedData, add in your custom label and color
+            $mergedData[] =  array('label' => "Data 1" , 'data' => $data1, 'color' => '#6bcadb');
+
+            ////Get the second set of data you want to graph from the database
+            ////$databaseData2 = someFunctionToGetDataFromDatabase($id);
+            //$databaseData2 = array(array('x_value' => 5, 'y_value' =>50), array('x_value' => 15, 'y_value' =>80));// someFunctionToGetDataFromDatabase($id);
+            // 
+            //
+            //foreach($databaseData2 as $r)
+            //{
+            //    $x = $r['x_value'];
+            //    $y = $r['y_value'];
+            //    $data2[] = array ($x, $y);
+            //}
+
+            //send our data values to $mergedData, add in your custom label and color
+            //$mergedData[] = array('label' => "Data 2" , 'data' => $data2, 'color' => '#6db000');
+
+
+            //now we can JSON encode our data
+            echo json_encode($mergedData);
+
         }
 }
-?>

@@ -40,7 +40,8 @@
         
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
-         <link rel='stylesheet' href='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/css/bootstrap-switch.min.css' type='text/css'>
+        <link rel='stylesheet' href='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/css/bootstrap-switch.min.css' type='text/css'>
+        <link rel='stylesheet' href='<?php echo SITEURL; ?>libs/extensions/superbox/style.css' type='text/css'>
         
         <!-- include this CSS last so it gets priority -->
         <?php $h->getFramework('bootstrap3'); ?>		
@@ -49,8 +50,11 @@
         <?php $h->doIncludes('css'); ?>		
         <script type='text/javascript' src='<?php echo SITEURL; ?>libs/frameworks/bootstrap-switch/js/bootstrap-switch.min.js'></script>
 	<script type='text/javascript' src='<?php echo SITEURL; ?>libs/extensions/flotcharts/jquery.flot.min.js'></script>
+        <script type='text/javascript' src='<?php echo SITEURL; ?>libs/extensions/flotcharts/jquery.flot.pie.min.js'></script>
+        <script type='text/javascript' src='<?php echo SITEURL; ?>libs/extensions/superbox/superbox.min.js'></script>
    
-        <!-- <link rel="shortcut icon" href="<?php echo SITEURL; ?>favicon.ico"> -->
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
 	
 	<?php $h->pluginHook('admin_header_include_raw'); ?>
 
@@ -58,12 +62,9 @@
 
 <body>
 
-    <div id="wrap">        
+    <div id="wrap">   
+        
         <?php if ($h->currentUser->adminAccess) {
             echo $h->template('admin_navigation');
-                           
-            
          } 
-        
-        ?>
         

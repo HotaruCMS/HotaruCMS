@@ -59,7 +59,7 @@
                 */
 
                 function setHotaru($h)
-                {
+                {                    
                     $this->h = $h; 
                     $h->vars['debug']['db_driver'] = 'mysqli';
                 }
@@ -212,7 +212,7 @@
 
 		function query($query)
 		{
-                        if (isset($h->isTest) && $h->isTest) print $query . '<br/>*******<br/>';
+                        //print $query . '<br/>*******<br/>';
 			// This keeps the connection alive for very long running scripts
 			if ( $this->num_queries >= 500 )
 			{
@@ -235,18 +235,18 @@
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
-			
-
+                        // TODO for sql debugging only
+                        //if (str_contains($query, 'hotaru_miscdata')) { print $query . '  **<br/><br/> '; }
+                        //print $query . '  **<br/><br/> ';
+                        
 			// Use core file cache function
-			if ( $cache = $this->get_cache($query) )
-			{
+			if ($cache = $this->get_cache($query)) {
                                 //print "#### USING CACHE ######<br/>" . $query . '##############<br/>';
 				// Keep tack of how long all queries have taken
 				$this->timer_update_global($this->num_queries);
 
 				// Trace all queries
-				if ( $this->use_trace_log )
-				{
+				if ($this->use_trace_log) {
 					$this->trace_log[] = $this->debug(false);
 				}
 				
@@ -286,8 +286,7 @@
                         
                         // since we already returned a value if memcache is on and result found
                         // anything below here is in the case of either no result or no memcache set
-                        
-                        
+                                                
                         // Count how many queries there have been
 			$this->num_queries++;
 			
@@ -311,7 +310,7 @@
                         if ( $str = @$this->dbh->error )
                         {                               
                                 $this->register_error($str);
-                                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+                                $this->show_errors ? trigger_error($str . ' : ' . $query,E_USER_WARNING) : null;
                                 return false;
                         }
 
@@ -334,7 +333,6 @@
                         else
                         {
                                 $is_insert = false;
-                                
                                 // Take note of column info
 				$i=0;
 				while ($i < @$this->result->field_count)
@@ -352,17 +350,20 @@
 					$num_rows++;
 				}
                                 
-                               
-                                
                                 // memcache the result only if it was a select
                                 // and only if memcache is set on
-                                if ($memcache) $memcache->write($key, $result_cache, 20); 
+                                if ($memcache) $memcache->write($key, $this->result, 20); 
+                                
+                                @$this->result->free_result();
+				// Log number of rows the query returned
+				$this->num_rows = $num_rows;
+				// Return number of rows selected
+				$return_val = $this->num_rows;
+                                
+                                
 
 //                                print_r($result_cache); 
 //                                print "<br/>************<br/><br/>";
-
-                                // Return number of rows selected
-                                $return_val = $this->num_rows;
                         }
 
                         // disk caching of queries

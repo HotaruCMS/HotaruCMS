@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class PrivateMessaging
+namespace Libs;
+
+class PrivateMessaging extends Prefab
 {
 	protected $to           = '';
 	protected $from         = '';
@@ -59,23 +61,34 @@ class PrivateMessaging
 	 */
 	public function getMessages($h, $box = 'inbox', $type = '')
 	{
-		$select = ($type == 'count') ? 'count(*)' : '*';
-		
-		if ($box == 'inbox') { $direction = "to"; } else { $direction = "from"; }
-		
-		$sql = "SELECT " . $select . " FROM " . TABLE_MESSAGING . " WHERE message_archived = %s AND message_" . $direction . " = %d AND message_" . $box . " = %d";
-		
-		if ($type != 'count') { $sql .= " ORDER BY message_date DESC"; }
-		
-		$query = $h->db->prepare($sql, 'N', $h->currentUser->id, 1);
-		
-		// if we just want the prepared query, e.g. for pagination, return now
-		if ($type == 'query') { return $query; }
-		
-		// run the query and return either the count or actual results
-		$result = ($type == 'count') ? $h->db->get_var($query) : $h->db->get_results($query);
-		
-		return ($result) ? $result : false;
+            if ($type == 'count') {
+                //$messages = \HotaruModels\Messaging::getCount($box, $h->currentUser->id);
+                $messages = \HotaruModels2\Messaging::getCount($h, $box, $h->currentUser->id);
+                return $messages;
+            } else {
+                //$messages = \HotaruModels\Messaging::getAll($box, $h->currentUser->id);
+                $messages = \HotaruModels2\Messaging::getAll($h, $box, $h->currentUser->id);
+                return $messages;
+            } 
+            
+            
+//		$select = ($type == 'count') ? 'count(*)' : '*';
+//		
+//		if ($box == 'inbox') { $direction = "to"; } else { $direction = "from"; }
+//		
+//		$sql = "SELECT " . $select . " FROM " . TABLE_MESSAGING . " WHERE message_archived = %s AND message_" . $direction . " = %d AND message_" . $box . " = %d";
+//		
+//		if ($type != 'count') { $sql .= " ORDER BY message_date DESC"; }
+//		
+//		$query = $h->db->prepare($sql, 'N', $h->currentUser->id, 1);
+//		
+//		// if we just want the prepared query, e.g. for pagination, return now
+//		if ($type == 'query') { return $query; }
+//		
+//		// run the query and return either the count or actual results
+//		$result = ($type == 'count') ? $h->db->get_var($query) : $h->db->get_results($query);
+//		
+//		return ($result) ? $result : false;
 	}
 	
 	
@@ -95,6 +108,16 @@ class PrivateMessaging
 		return ($message) ? $message : false;
 	}
 	 
+        
+        public function getCountMessagesUnread($h, $userId)
+	{
+		if ($userId == 0) { return false; }
+		
+                $messages = \HotaruModels2\Messaging::getCountUnread($h, $userId);
+		
+		return ($messages) ? $messages : 0;
+	}
+        
 	 
 	/**
 	 * Mark message as read

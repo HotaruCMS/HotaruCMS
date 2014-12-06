@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class TagFunctions
+namespace Libs;
+
+class TagFunctions extends Prefab
 {
         /**
 	 * Retrieve tags from the tags table
@@ -88,4 +90,3 @@ class TagFunctions
         
         
 }
-?>

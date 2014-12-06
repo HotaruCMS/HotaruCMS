@@ -24,11 +24,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+
 // includes
 if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');
-	require_once('Hotaru.php');
-        $h = new Hotaru();
+	require_once('Hotaru.php');   // must be in root folder or some plugins get upset
+        $h = Libs\Hotaru::instance();
         
         // Server Variables
         $apiAuth = $h->cage->get->testAlnumLines('apiAuth');
@@ -37,7 +39,9 @@ if(file_exists('config/settings.php') ) {
 } else {
         	
 	if(file_exists('install/index.php') ) {
-            $msg1 = 'Hotaru is having trouble starting.<br/>You may need to install the system before you can proceed further.<br/><br/>';		
+            header("Location: /install/index.php");
+            exit;
+            //$msg1 = 'Hotaru is having trouble starting.<br/><br/>You may need to create a config.php file before you can proceed further.<br/><br/>';		
 	} else {
             $msg1 = 'Hotaru is having trouble starting.<br/>The install files need to be downloaded before you can proceed further.<br/><br/>';
 	}

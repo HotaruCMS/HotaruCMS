@@ -57,19 +57,19 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 		
 	<input type='hidden' name='type' value='new' />
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-	 <button type="submit" class="btn btn-default" ><?php echo $h->lang('admin_theme_blocked_submit_add'); ?></button>    
+	 <button type="submit" class="btn btn-primary" ><?php echo $h->lang('admin_theme_blocked_submit_add'); ?></button>    
 </form>
 
 </div>
 
 <table><tr><td>
 
-<form name='blocked_list_search_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
-	<h3><?php echo $h->lang("admin_theme_blocked_search"); ?></h3>
+<form role='form' name='blocked_list_search_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
+	<h4><?php echo $h->lang("admin_theme_blocked_search"); ?></h4>
 	<table>
 		<tr class='table_headers'>
 			<td><input type='text' size=30 name='search_value' value='' /></td>
-			<td><input class='submit' type='submit' value='<?php echo $h->lang('admin_theme_blocked_submit_search'); ?>' /></td>
+			<td><input class='btn btn-default btn-xs' type='submit' value='<?php echo $h->lang('admin_theme_blocked_submit_search'); ?>' /></td>
 		</tr>
 	</table>
 	<input type='hidden' name='type' value='search' />
@@ -78,8 +78,8 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 
 </td><td>
 
-<form name='blocked_list_filter_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
-	<h3><?php echo $h->lang("admin_theme_blocked_filter"); ?></h3>
+<form role='form' name='blocked_list_filter_form' action='<?php echo SITEURL; ?>admin_index.php?page=blocked' method='post'>
+	<h4><?php echo $h->lang("admin_theme_blocked_filter"); ?></h4>
 	<table>
 		<tr class='table_headers'>
 			<td><select name='blocked_type'>
@@ -89,7 +89,7 @@ extract($h->vars['admin_blocked_list']); // extracts $output and $pagedResults;
 				<option value='email'><?php echo $h->lang("admin_theme_blocked_email"); ?></option>
 				<option value='user'><?php echo $h->lang("admin_theme_blocked_username"); ?></option>
 			</select></td>
-			<td><input class='submit' type='submit' value='<?php echo $h->lang('admin_theme_blocked_submit_filter'); ?>' /></td>
+			<td><input class='btn btn-default btn-xs' type='submit' value='<?php echo $h->lang('admin_theme_blocked_submit_filter'); ?>' /></td>
 		</tr>
 	</table>
 	<input type='hidden' name='type' value='filter' />

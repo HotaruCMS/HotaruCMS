@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Caching
+namespace Libs;
+
+class Caching extends Prefab
 {
 	/**
 	 * Hotaru CMS Smart Caching
@@ -63,7 +65,7 @@ class Caching
 	 * @param int $timeout timeout in minutes before cache file is deleted
 	 * @return bool
 	 */
-	public function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
+	private function smartCacheHTML($h, $table = '', $timeout = 0, $html = '', $label = '')
 	{ 
 		if (!$table || !$timeout || (HTML_CACHE != 'true')) { return false; }
 		
@@ -126,9 +128,12 @@ class Caching
 	 * @param int $timeout timeout in minutes
 	 * @return bool
 	 */
-	public function smartCacheDB($h, $switch = 'off', $table = '', $sql = '', $timeout = 0)
-	{
-		
+	private function smartCacheDB($h, $switch = 'off', $table = '', $sql = '', $timeout = 0)
+	{//print "switch" . $switch. ' for : ' . $table . ' * ' . $sql . '<br/>';
+		if (DB_CACHE != 'true') {
+                    return false;
+                }
+                
 		// Stop caching?
 		if ($switch != 'on') {
 			$h->db->cache_queries = false;               // stop using cache
@@ -155,17 +160,14 @@ class Caching
 			$h->vars['last_updates'][$table] = $last_update;
 		}
 		
-		// use caching?
-		if (DB_CACHE == 'true') {
-			$h->db->cache_queries = true;    // start using cache
-		} else {
-			return false;   // don't use caching
-		}
+		// start using cache from here
+                $h->db->cache_queries = true;
 		
 		// check existence of a cache file for this query:
-		$cache_file = CACHE . 'db_cache/' . md5($sql) . '.php';
+		$cache_file = CACHE . 'db_cache/' . md5($sql);// . '.php';
 		
 		if (!file_exists($cache_file)) {
+                    //print "no file exists @ " . $cache_file;
 			// no cache file so return and pull data direct from DB, caching the query at the same time.
 			return true; 
 		}
@@ -173,6 +175,7 @@ class Caching
 		// check if the cache file is older than our timeout:
 		$file_modified = filemtime($cache_file);
 		if ($file_modified < (time() - $timeout*60)) {
+                //print "older than our timeout";
 			// delete old cache file so we can make a new one with fresh data
 			if (file_exists($cache_file)) { @unlink($cache_file); }
 			return true; 
@@ -180,12 +183,12 @@ class Caching
 		
 
 		// check if the $last_update is more recent than the cache file:
-		if ($file_modified <= $last_update) { 
+		if ($file_modified <= $last_update) { //print "more recent than the cache";
 			// delete old cache file so we can make a new one with fresh data
 			if (file_exists($cache_file)) { @unlink($cache_file); } 
 			return true; 
 		}
-
+//print "use cache file";
 		// use cache file
 		return true;
 	}
@@ -198,56 +201,64 @@ class Caching
 	 * @param string $table DB table name
 	 * @return int $last_update
 	 */
-	public function smartCacheSQL($h, $table = '')
+	private function smartCacheSQL($h, $table = '')
 	{
+                //print "table = " . $table;
+            
 		/* Get the last time the table was updated */
 		switch ($table) {
 			case 'plugins':
-				$sql = "SELECT plugin_updatedts FROM " . DB_PREFIX . "plugins ORDER BY plugin_updatedts DESC LIMIT 1";
-				break;
-			case 'pluginhooks':
-				$sql = "SELECT plugin_updatedts FROM " . DB_PREFIX . "pluginhooks ORDER BY plugin_updatedts DESC LIMIT 1";
-				break;
-			case 'tags':
-				$sql = "SELECT tags_updatedts FROM " . DB_PREFIX . "tags ORDER BY tags_updatedts DESC LIMIT 1";
-				break;
-			case 'posts':
-				$sql = "SELECT post_updatedts FROM " . DB_PREFIX . "posts ORDER BY post_updatedts DESC LIMIT 1";
-				break;
-			case 'postvotes':
-				$sql = "SELECT vote_updatedts FROM " . DB_PREFIX . "postvotes ORDER BY vote_updatedts DESC LIMIT 1";
-				break;
-			case 'comments':
-				$sql = "SELECT comment_updatedts FROM " . DB_PREFIX . "comments ORDER BY comment_updatedts DESC LIMIT 1";
-				break;
-			case 'commentvotes':
-				$sql = "SELECT cvote_updatedts FROM " . DB_PREFIX . "commentvotes ORDER BY cvote_updatedts DESC LIMIT 1";
-				break;
-			case 'users':
-				$sql = "SELECT user_updatedts FROM " . DB_PREFIX . "users ORDER BY user_updatedts DESC LIMIT 1";
-				break;
-			case 'useractivity':
-				$sql = "SELECT useract_updatedts FROM " . DB_PREFIX . "useractivity ORDER BY useract_updatedts DESC LIMIT 1";
-				break;
-			case 'usermeta':
-				$sql = "SELECT usermeta_updatedts FROM " . DB_PREFIX . "usermeta ORDER BY usermeta_updatedts DESC LIMIT 1";
-				break;
+                            $sql = "SELECT MAX(plugin_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'pluginhooks':
+                            $sql = "SELECT MAX(plugin_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'tags':
+                            $sql = "SELECT MAX(tags_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'posts':
+                            $sql = "SELECT MAX(post_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'postvotes':
+                            $sql = "SELECT MAX(vote_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'comments':
+                            $sql = "SELECT MAX(comment_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'commentvotes':
+                            $sql = "SELECT MAX(cvote_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'users':
+                            $sql = "SELECT MAX(post_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'useractivity':
+                            $sql = "SELECT MAX(useract_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'usermeta':
+                            $sql = "SELECT MAX(usermeta_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
 			case 'miscdata':
-				$sql = "SELECT miscdata_updatedts FROM " . DB_PREFIX . "miscdata ORDER BY miscdata_updatedts DESC LIMIT 1";
-				break;
+                            $sql = "SELECT MAX(miscdata_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
 			case 'blocked':
-				$sql = "SELECT blocked_updatedts FROM " . DB_PREFIX . "blocked ORDER BY blocked_updatedts DESC LIMIT 1";
-				break;
+                            $sql = "SELECT MAX(blocked_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
 			case 'friends':
-				$sql = "SELECT friends_updatedts FROM " . DB_PREFIX . "friends ORDER BY friends_updatedts DESC LIMIT 1";
-				break;
+                            $sql = "SELECT MAX(friends_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'settings':
+                            $sql = "SELECT MAX(settings_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
+                        case 'messaging':
+                            $sql = "SELECT MAX(message_updatedts) FROM " . DB_PREFIX . $table;
+                            break;
 			default:
-				$h->vars['smart_cache_sql'] = '';
-				$h->pluginHook('smart_cache_sql');  // allow plugins to add additional table checks here
-				$sql = $h->vars['smart_cache_sql'];
-				if (!$sql) { return false; }
+                            $h->vars['smart_cache_sql'] = '';
+                            $h->pluginHook('smart_cache_sql');  // allow plugins to add additional table checks here
+                            $sql = $h->vars['smart_cache_sql'];
+                            if (!$sql) { return false; }
 		}
-		
+                
 		// run DB query:		
 		$last_update = unixtimestamp($h->db->get_var($sql));		
 
@@ -307,4 +318,3 @@ class Caching
 		return true; // the calling function already has the HTML to output
 	}
 }
-?>

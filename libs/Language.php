@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Language
+namespace Libs;
+
+class Language extends Prefab
 {
 	/**
 	 * Include language pack
@@ -270,13 +272,9 @@ class Language
 	 */
 	public function writeLanguageCache($h, $timeout = 60)
 	{
-		if( $this->getLanguageCache() ) {
-			// cache already exists. Does it need updating?
-			if( isset($h->vars['update_lang_cache']) && ($h->vars['update_lang_cache'] == true) ) {
-				// update needed, fall through to code below...
-			} else {
-				return false;
-			}
+                // cache already exists. Does it need updating?
+		if ($this->getLanguageCache() && (!isset($h->vars['update_lang_cache']) || !$h->vars['update_lang_cache'])) {
+                        return false;
 		}
 
 		// If doesn't exist, create a new file

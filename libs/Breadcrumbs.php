@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Breadcrumbs
+namespace Libs;
+
+class Breadcrumbs extends Prefab
 {
 	/**
 	 * Build breadcrumbs
@@ -40,15 +42,21 @@ class Breadcrumbs
 			$output .= "<a href='" . SITEURL . "'>" . $h->lang('main_theme_breadcrumbs_home') . "</a>&nbsp;"; 
 		}
 
-
-		
 		// plugin hook:
 		$crumbs = $h->pluginHook('breadcrumbs');
+                // TODO review and tighten OOP
+                //print_r($crumbs);
 		if ($crumbs) {
 			$crumbs = array_reverse($crumbs); // so the last one gets used.
 			foreach ($crumbs as $key => $value) {
                                 $output .=  '<span class="divider">' . $sep . '</span>&nbsp;' . $value. '&nbsp;';
-				return $output; // we only want the first result so return now.
+				
+                                // maybe a hook here so we can add a button on right of breadcrumb
+//                                if ($h->pageType == 'post') {
+//                                    $output .= '<button class="btn btn-xs btn-default pull-right">Next <i class="fa fa-arrow-right"></i><span>';
+//                                }
+                                
+                                return $output; // we only want the first result so return now.
 			}
 		} 
 		
@@ -61,7 +69,6 @@ class Breadcrumbs
 		// theme settings
 		if ($h->cage->get->testAlnumLines('theme')) $output .= '<span class="divider">' . $sep . '</span>&nbsp;' . ucfirst ($h->cage->get->testAlnumLines('theme')) . '&nbsp;';
                 
-		
 		return $output;
 	}
 	
@@ -85,8 +92,8 @@ class Breadcrumbs
 			$url_array[$k] = $v;
 		}
 		$rss = "<a href='" . $h->url($url_array) . "'>";
-		$rss .= " <img src='" . SITEURL . "content/themes/" . THEME . "images/rss_10.png' width='10' height='10' alt='" . $h->pageTitle . " RSS' /></a>";
+		$rss .= '<i class="fa fa-rss-square rss-icon"></i>';
+                $rss .= "</a>";
 		return $rss;
 	}
 }
-?>
