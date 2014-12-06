@@ -19,11 +19,19 @@ class myMemcache
 	 */
 	public function __construct($options)
 	{
-		$this->memcache = new Memcache();
+                if (class_exists('memcached')) {
+                    $this->memcached = new Memcache('hotaru_' . SITENAME);
+                } elseif(class_exists('memcache')) {
+                    $this->memcache = new Memcache();
+                } else {
+                    return false; 
+                }
+                
 		$options['port'] = isset($options['port']) ? $options['port'] : self::DEFAULT_PORT;
 
-		if (!$this->memcache->connect($options['host'],$options['port']))
+		if (!$this->memcache->connect($options['host'],$options['port'])) {
 			throw new Exception("Could not connect to $options[host]:$options[port]");
+                }
 	}
 
 	public function flush()
@@ -48,4 +56,3 @@ class myMemcache
 		$this->memcache->set($key,$value,null,$expire);
 	}
 }
-?>

@@ -59,7 +59,7 @@
                       <li class="divider"></li>
                       <li class="dropdown-header">Github</li>
                       <li><a href="http://github.com/hotarucms/hotarucms">HotaruCMS</a></li>
-                      <li><a href="http://github.com/hotarucms/coreplugins">Core Plugins</a></li>
+                      <li><a href="https://github.com/hotarucms/hotarucms/issues">Issue Reports</a></li>
                     </ul>
                 </li>
                 <li><a href="http://docs.hotarucms.org"><?php echo $h->lang("admin_theme_menu_docs"); ?></a></li>

@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class SystemInfo
+namespace Libs;
+
+class SystemInfo extends Prefab
 {
     protected $apiUrl = "http://api.hotarucms.org/index.php?page=api";
     protected $pluginUrl = "http://hotaruplugins.com/index.php?page=api";
@@ -44,8 +46,8 @@ class SystemInfo
 			'method' => 'hotaru.systemFeedback.add',
 			'args' => serialize($report)
 		);
-		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl);
-
+		$info = $this->sendApiRequest($h, $query_vals, $this->apiUrl, 1);
+                
 		return true;
 	}
         
@@ -73,10 +75,11 @@ class SystemInfo
 
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
 		if (isset($info['version_string'])) {
-		    $sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		    $query = $h->db->get_row($h->db->prepare($sql, 'hotaru_latest_version'));
-		    
-		    if ($query) {
+                    
+                    //$data = \HotaruModels\Miscdata::where('miscdata_key', '=', 'hotaru_latest_version')->first();
+                    $data = \HotaruModels2\Miscdata::getLatestVersion($h, 'miscdata_key');
+                    
+		    if ($data) {
 			// update existing db record
 			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s WHERE miscdata_key = %s";
 			$h->db->query($h->db->prepare($sql, $info['version_string'], 'hotaru_latest_version'));
@@ -86,8 +89,6 @@ class SystemInfo
 		    }	
 		    return $info['version_string'];
 		}
-                
-                //print_r($info);
 
 		return 0;
 		
@@ -109,10 +110,9 @@ class SystemInfo
                 //$info = $this->sendApiRequest($h, $query_vals, $this->pluginUrl);
                 // temp until api can handle children of resources
                 //  make array
-                $resourceIds = array(1,2,3,4,6,12);
+                $resourceIds = array(1,2,3,4,6,12,14,16);
 		$resourceList = array();
-		$index = 0;
-            
+		
                 foreach($resourceIds as $resourceId)
                 {
                     $query_vals = array(
@@ -123,40 +123,20 @@ class SystemInfo
                     );
                     $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);
 
-                    if ($info) {                     
-			$resources = $info['resources'];					
-                        $resourceList = array_merge($resourceList, $resources);
-			
-			foreach ($resources as $resource) {                       
-			    $resourceName[$resource['title']] = $index;
-			    $index++;
+                    if ($info) { 
+			foreach ($info['resources'] as $resource) { 
+			    $resourceList[$resource['title']] = $resource;
 			}						
 		   }
 		}
                 
-		    // get plugins from hotaru db
-		    $sql = "SELECT plugin_id, plugin_name, plugin_latestversion FROM " . TABLE_PLUGINS;
-		    $plugins = $h->db->get_results($h->db->prepare($sql));
-
-		    if ($plugins) {
-			foreach ($plugins as $plugin) {        
-			    if (array_key_exists($plugin->plugin_name, $resourceName)) {
-                                // save the updated version numbers to the local db so we can display it on the plugin management panel
-                                $resourceIndex = $resourceName[$plugin->plugin_name];
-                                $resource = $resourceList[$resourceIndex];
-				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s, plugin_resourceId = %d, plugin_resourceVersionId = %d, plugin_rating = %d  WHERE (plugin_id = %d)";
-                                $h->db->query($h->db->prepare($sql, $resource['version_string'], $resource['id'], $resource['version_id'], $resource['rating_avg'], $plugin->plugin_id));
-			    }
-                            else
-                            {
-                                //echo 'not found<br/>';
-                            }  
-			}
-                        return true;
-		    }                                        
-		 
-                 
-		return false;
+                // Update the plugin in db using resourceName and the array for that from above
+                foreach($resourceList as $plugin) {
+                    //$result = \HotaruModels\Plugin::makeUpdate($plugin['title'], $plugin, $h->currentUser->id);
+                    $result = \HotaruModels2\Plugin::makeUpdate($h, $plugin['title'], $plugin, $h->currentUser->id);
+                }
+                
+		return true;
 	}
 
 
@@ -172,7 +152,42 @@ class SystemInfo
 //		    'method' => 'hotaru.plugin.search',
 //		    'args' => $search
 //		);
-                $resourceIds = array(1,2,3,4,6,12);
+                $resourceIds = array(1,2,3,4,6,12,14,16);
+		$resourceList = array();
+            
+                foreach($resourceIds as $resourceId)
+                {
+                    $query_vals = array(
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResources',
+                        'category_id' => $resourceId
+                    );
+
+                    $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);
+
+                    if ($info) {
+                        $resources = $info['resources'];					
+                        $resourceList = array_merge($resourceList, $resources);
+		    }
+                }    
+				
+		return $resourceList;
+	}
+        
+        /**
+	 *
+	 * @param <type> $search
+	 */
+	public function themeSearch($h, $search)
+	{
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.plugin.search',
+//		    'args' => $search
+//		);
+                $resourceIds = array(5);
 		$resourceList = array();
             
                 foreach($resourceIds as $resourceId)
@@ -207,7 +222,7 @@ class SystemInfo
 //		    'args' => $number
 //		);
                 
-                $resourceIds = array(1,2,3,4,6,12);
+                $resourceIds = array(1,2,3,4,6,12,14);
 		$resourceList = array();
 	    
                 foreach($resourceIds as $resourceId)
@@ -231,13 +246,48 @@ class SystemInfo
 	}
 
 
+        /**
+	 *
+	 */
+	public function themeTagCloud($h, $number = 20)
+	{
+//		$query_vals = array(
+//		    'api_key' => '',
+//		    'format' => 'json',
+//		    'method' => 'hotaru.plugin.tagcloud',
+//		    'args' => $number
+//		);
+                
+                $resourceIds = array(5);
+		$resourceList = array();
+	    
+                foreach($resourceIds as $resourceId)
+                {
+                    $query_vals = array(
+                        'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
+                        'format' => 'json',
+                        'action' => 'getResources',
+                        'category_id' => $resourceId
+                    );
+
+		    $info = $this->sendApiRequest($h, $query_vals, $this->forumUrl);		    
+		    
+		    if ($info) {
+                        $resources = $info['resources'];					
+                        $resourceList = array_merge($resourceList, $resources);
+		    }
+		}
+		
+		return array("count" => count($resourceList), "resources" => $resourceList);
+	}
+        
 	/**
 	 *
 	 * @param <type> $query_vals
 	 * @param <type> $url
 	 * @return <type>
 	 */
-	public function sendApiRequest($h, $query_vals, $url)
+	public function sendApiRequest($h, $query_vals, $url, $timeout = 0)
 	{
 		// Generate the POST string 
 		$ret = '';
@@ -251,7 +301,11 @@ class SystemInfo
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $ret);
-                //curl_setopt( $ch, CURLOPT_TIMEOUT, 5 );
+                //curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+                if ($timeout != 0) {
+                    //too short to make request?
+                    //curl_setopt($ch, CURLOPT_TIMEOUT_MS, 1);
+                }
 		$response = curl_exec($ch);
 		curl_close ($ch);
 		//print $url . ' ** ' . $response . "</br>";
@@ -268,6 +322,8 @@ class SystemInfo
 	public function getSystemData($h, $level = '')
 	{
 		// essentials:
+                //$data = \HotaruModels\Miscdata::getCurrentSettings();
+                //print_r($data);
             
 		$report['hotaru_site_name'] = SITE_NAME;
 		$report['hotaru_SITEURL'] = SITEURL;
@@ -276,7 +332,7 @@ class SystemInfo
 		$report['mysql_version'] = $h->db->get_var("SELECT VERSION() AS VE");
 		$report['hotaru_version'] = $h->version;
 		$report['php_extensions'] = get_loaded_extensions();
-		
+		   
 		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 		$report['hotaru_version_db'] = $h->db->get_var($h->db->prepare($sql, 'hotaru_version'));
 		
@@ -290,9 +346,10 @@ class SystemInfo
 		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
 		$report['hotaru_user_settings'] = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
 		
-                // Settings: Name, value (excluding SMTP PASSWORD)		
-		$sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;
-		$settings = $h->db->get_results($h->db->prepare($sql));
+                // Settings: Name, value (excluding SMTP PASSWORD)
+                $settings = \HotaruModels2\Setting::getValues($h);
+                //$settings = \HotaruModels\Setting::getValues();
+		
 		if ($settings) {
 			foreach ($settings as $setting) {
 				// mask sensitive data
@@ -301,6 +358,7 @@ class SystemInfo
 					case 'SMTP_PORT':
 					case 'SMTP_USERNAME':
 					case 'SMTP_PASSWORD':
+                                        case 'FORUM_PASSWORD':
 						$setting->settings_value = preg_replace("/[a-zA-Z0-9]/", "*", $setting->settings_value);
 						break;
 				}
@@ -398,19 +456,10 @@ class SystemInfo
          * @param type $type
          */
         public function miscdata($h, $key = '', $cache = 'true')
-        {
-                $sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA ." WHERE miscdata_key = %s";
-		$query = $h->db->prepare($sql, $key);                
-                
-                if ($cache)
-                    $h->smartCache('on', 'miscdata_value_' . $key, 60, $query); // start using cache
-                
-                $value = $h->db->get_var($query);
-			
-                if ($cache)
-                    $h->smartCache('off'); // stop using cache
-
-		return $value;
+        {       
+                //$data = \HotaruModels\Miscdata::getCurrentValue($key);
+                $data = \HotaruModels2\Miscdata::getCurrentValue($h, $key, $cache);
+                return $data;
         }
         
         
@@ -434,17 +483,19 @@ class SystemInfo
 		$output .= "\n";
 		
 		$output .= "Default site permissions: \n";
-		$perms = unserialize($report['hotaru_permissions']);
-		unset($perms['options']); // don't need to display these
-		foreach ($perms as $key => $value) {
-			$output .= $key . " => (";
-			foreach ($value as $k => $v) {
-				$output .= $k . ": " . $v . ", ";
-			}
-			$output = rtrim($output, ", ");
-			$output .= ")\n";
-		}
-		
+                if (isset($report['hotaru_permissions'])) {
+                    $perms = unserialize($report['hotaru_permissions']);
+                    unset($perms['options']); // don't need to display these
+                    foreach ($perms as $key => $value) {
+                            $output .= $key . " => (";
+                            foreach ($value as $k => $v) {
+                                    $output .= $k . ": " . $v . ", ";
+                            }
+                            $output = rtrim($output, ", ");
+                            $output .= ")\n";
+                    }
+                }
+                
 		$output .= "\n";
 		
 		$output .= "Default user settings: \n";
@@ -543,4 +594,3 @@ class SystemInfo
 	}
 	
 }
-?>

@@ -92,6 +92,13 @@ $(document).ready(function(){
 		target.fadeToggle();
 		return false;
 	});
+        
+        // toggle Admin Guides
+        $("#admin_guide_toggle").click(function () {
+		var target = $(".admin_guide");
+		target.fadeToggle();
+		return false;
+	});
  
 });
 
@@ -136,4 +143,31 @@ function handleEnter (field, event) {
 }
 
 
-
+//$(document).ready(function(){
+//
+//  $('#myModal').modal('hide');
+//  
+//  $('#debugLog').click(function(){
+//     
+//    var vendor = $(this).text();
+//    $('#myModal').off('show.bs.modal');
+//    $('#myModal').on('show.bs.modal', function(){   
+//       
+//      $.ajax({
+//        type: "GET",
+//        url: "http://ipadrank.com/admin_index.php?page=maintenance&debug=error_log.php",
+//        //data: "id=" + vendor,
+//        success: function(html){
+//          $(".modal-body").html(html);
+//          $(".modal-header h4").html('Error Log');
+//          
+//        }
+//      });
+//    });
+//  });
+//  
+//  $('#myModal').on('hide.bs.modal', function () {
+//    $("#modal-body").empty();
+//  });
+//  
+//   });

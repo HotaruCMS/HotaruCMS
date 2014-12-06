@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class ThemeSettings
+namespace Libs;
+
+class ThemeSettings extends Prefab
 {
 	/**
 	 * Read and return plugin info from top of a plugin file.
@@ -37,7 +39,7 @@ class ThemeSettings
 		
 		// Include the generic_pmd class that reads post metadata from the a plugin
 		require_once(EXTENSIONS . 'GenericPHPConfig/class.metadata.php');
-		$metaReader = new generic_pmd();
+		$metaReader = new \generic_pmd();
 		$plugin_metadata = $metaReader->read(THEMES . $theme . '/index.php');
 		
 		if ($plugin_metadata) { return $plugin_metadata; } else { return false; }
@@ -55,13 +57,16 @@ class ThemeSettings
 	{
 		if (!$theme) { $theme = rtrim(THEME, '/'); }
 		
-		// Get settings from the database if they exist...
-		$sql = "SELECT miscdata_value, miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
-		$query = $h->db->prepare($sql, $theme . '_settings');
+                //$settings = \HotaruModels\Miscdata::getAllThemeSettings($theme);
+                $settings = \HotaruModels2\Miscdata::getAllThemeSettings($h, $theme);
                 
-                $h->smartCache('on', 'theme_settings', 60, $query); // start using cache
-                $settings = $h->db->get_row($query);
-                $h->smartCache('off'); // stop using cache
+//		// Get settings from the database if they exist...
+//		$sql = "SELECT miscdata_value, miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";
+//		$query = $h->db->prepare($sql, $theme . '_settings');
+//                
+//                $h->smartCache('on', 'miscdata', 60, $query); // start using cache
+//                $settings = $h->db->get_row($query);
+//                $h->smartCache('off'); // stop using cache
                 
 		if (!$settings) { return false; } 
 		
@@ -71,7 +76,7 @@ class ThemeSettings
 			$settings = unserialize($settings->miscdata_default);
 		}
 		
-		if ($settings) { return $settings; } else { return false; } 
+		return $settings;
 	}
 	
 	

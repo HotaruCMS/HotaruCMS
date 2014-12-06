@@ -42,70 +42,74 @@ if (!$result) {
 ?>
 
 <div id="main-wrapper">
-    
-                    
         <?php if ($h->sidebars) { ?>
-            
-                <!-- SIDEBAR -->
-                <?php                
-                        // plugin hook
-                        $result = $h->pluginHook('admin_theme_index_sidebar');
-                        if (!$result) {
-                                $h->template('admin_sidebar');                                
-                        }
-                ?>
-                
-                     
+            <!-- SIDEBAR -->
+            <div id="main-menu-sidebar-bgd">
+            <?php                
+                    // plugin hook
+                    $result = $h->pluginHook('admin_theme_index_sidebar');
+                    if (!$result) {
+                            $h->template('admin_sidebar');                                
+                    }
+            ?>
+            </div> 
         <?php } ?>	
+                
         <!-- BREADCRUMBS -->
+        <?php if ($h->currentUser->isAdmin) { ?>
                 <div id="admin-breadcrumb" class='breadcrumb'>
                     <i class="fa fa-th-large" style="color:gray;"></i>&nbsp;
-                        <?php echo $h->breadcrumbs("/"); ?>
+                    <?php echo $h->breadcrumbs("/"); ?>
                     <i class="pull-right navbar-icon fa fa-bars"></i>
+                    <ul class="pull-right" style="margin-top:2px;">
+                        <?php
+                        if (function_exists('sys_getloadavg')) {
+                            $load = sys_getloadavg();
+                        }
+                        if (isset($load)) {
+                            foreach ($load as $l) { 
+                                echo "<li class='inline-block label label-default' style='margin:4px;' data-toggle='tooltip' data-placement='top' title='System Load Average'>";
+                                echo $l;
+                                echo "</li>";
+                            }
+                         } ?>                   
+                    </ul>
+                    
                 </div>
+        <?php } ?>
             <!-- MAIN -->
             <div id="main-content" class="container">
-                
                 <div>
-                
-            <?php
-            // plugin hook
-            $result = $h->pluginHook('admin_theme_index_main');
-            if (!$result) {
-                    if ($h->pageName == 'admin_login') {
-                            if ($h->currentUser->loggedIn && $h->currentUser->adminAccess) {
-                                    $h->template('admin_home');
-                            } else {                                
-                                    $h->adminLoginForm();
-                            }
-                    } else {
-                            if ($h->pageName == 'plugin_settings') {  
-                                
+                    <?php
+                    // plugin hook
+                    $result = $h->pluginHook('admin_theme_index_main');
+                    if (!$result) {
+                            if ($h->pageName == 'admin_login') {
+                                    if ($h->currentUser->loggedIn && $h->currentUser->adminAccess) {
+                                            $h->template('admin_home');
+                                    } else {                                
+                                            $h->adminLoginForm();
+                                    }
+                            } else {
+                                    if ($h->pageName == 'plugin_settings') {  
+
+                                    } 
+
+                                    $h->template($h->pageName);
                             } 
-                            
-                            $h->template($h->pageName);
-                    } 
-            }
-            ?>
+                    } ?>
+                </div>
             </div>
+
+                <!-- FOOTER -->
+                <?php
+                // plugin hook
+                $result = $h->pluginHook('admin_theme_index_footer');
+                if (!$result) {
+                        $h->template('admin_footer');
+                } ?>
             </div>
-            <div id="main-menu-sidebar-bgd">&nbsp;</div>
-           
-
-
-
-<!-- FOOTER -->
-<?php
-	// plugin hook
-	$result = $h->pluginHook('admin_theme_index_footer');
-	if (!$result) {
-		$h->template('admin_footer');
-	}
-?>
-</div>
-</div> <!--/wrap-->
-</body>
+        </div> <!--/wrap-->
+    </body>
 </html>
-<?php } ?>
-
-
+<?php } 

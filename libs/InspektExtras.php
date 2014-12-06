@@ -23,8 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
- 
-require_once(EXTENSIONS . 'Inspekt/Inspekt/AccessorAbstract.php');
+ require_once(EXTENSIONS . 'Inspekt/Inspekt/AccessorAbstract.php');
  
 class testAlnumLines extends AccessorAbstract 
 {

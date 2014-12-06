@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+namespace Libs;
+
 class UserInfo extends UserBase
 {
 	/**
@@ -33,9 +35,9 @@ class UserInfo extends UserBase
 	 */
 	public function getUserNameFromId($h, $id = 0)
 	{
-		$sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_id = %d LIMIT 1";
+                //$username = \HotaruModels\User::getUserNameFromId($id);
+                $username = \HotaruModels2\User::getUserNameFromId($h, $id);
 		
-		$username = $h->db->get_var($h->db->prepare($sql, $id));
 		if ($username) { return $username; } else { return false; }
 	}
 	
@@ -48,9 +50,9 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromName($h, $username = '')
 	{
-		$sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_username = %s  LIMIT 1";
+                //$userid = \HotaruModels\User::getUserIdFromName($username);
+                $userid = \HotaruModels2\User::getUserIdFromName($h, $username);
 		
-		$userid = $h->db->get_var($h->db->prepare($sql, $username));
 		if ($userid) { return $userid; } else { return false; }
 	}
 	
@@ -63,9 +65,9 @@ class UserInfo extends UserBase
 	 */
 	public function getEmailFromId($h, $userid = 0)
 	{
-		$sql = "SELECT user_email FROM " . TABLE_USERS . " WHERE user_id = %d  LIMIT 1";
+                //$email = \HotaruModels\User::getEmailFromId($userid);
+                $email = \HotaruModels2\User::getEmailFromId($h, $userid);
 		
-		$email = $h->db->get_var($h->db->prepare($sql, $userid));
 		if ($email) { return $email; } else { return false; }
 	}
 	
@@ -78,9 +80,9 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromEmail($h, $email = '')
 	{
-		$sql = "SELECT user_id FROM " . TABLE_USERS . " WHERE user_email = %s  LIMIT 1";
+                //$userid = \HotaruModels\User::getUserIdFromEmail($email);
+                $userid = \HotaruModels2\User::getUserIdFromEmail($h, $email);
 		
-		$userid = $h->db->get_var($h->db->prepare($sql, $email));
 		if ($userid) { return $userid; } else { return false; }
 	}
 	
@@ -90,12 +92,20 @@ class UserInfo extends UserBase
 	 *
 	 * @return bool
 	 */
-	public function isAdmin($db, $username)
+	public function isAdmin($h, $username)
 	{
-		$sql = "SELECT * FROM " . TABLE_USERS . " WHERE user_username = %s AND user_role = %s  LIMIT 1";
-		$role = $db->get_row($db->prepare($sql, $username, 'admin'));
+                if (!$username) {
+                    if ($h->currentUser->role == 'admin') {
+                        return true;
+                    }
+                    // what about can_access_admin ?
+                    return false;
+                }
+                    
+                //$isAdmin = \HotaruModels\User::isAdmin($username);
+                $isAdmin = \HotaruModels2\User::isAdmin($h, $username);
 		
-		if ($role) { return true; } else { return false; }
+		return $isAdmin;
 	}
 	
 	
@@ -262,7 +272,7 @@ class UserInfo extends UserBase
 	public function userSettingsList($h, $userid = 0)
 	{
 		if ($userid) { 
-			$settings = $h->getProfileSettingsData($type = 'user_settings', $userid);
+			$settings = $this->getProfileSettingsData($h, 'user_settings', $userid);
 			return $settings;
 		} else {
 			$sql = "SELECT usermeta_userid, usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_key = %s";

@@ -23,23 +23,26 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class UserBase
+namespace Libs;
+
+class UserBase extends Prefab
 {
 	protected $id           = 0;
 	protected $name         = '';
 	protected $role         = 'member';
         protected $isAdmin      = false;
         protected $adminAccess  = false;
-	protected $password     = 'password';
+	protected $password     = 'unknown';
+        protected $passwordVersion = 2;     // current default
 	protected $email        = '';
 	protected $emailValid   = 0;
-	protected $loggedIn     = false;
+            protected $loggedIn     = false;
 	protected $perms        = array();  // permissions
 	protected $settings     = array();  // settings
 	protected $profile      = array();  // profile
 	protected $ip           = 0;
 	protected $lastActivity = 0;
-
+            protected $loginType    = "";
 	
 	/**
 	 * Access modifier to set protected properties
@@ -124,51 +127,83 @@ class UserBase
 	 *
 	 * Note: Needs either userid or username, not both
 	 */    
-	public function getUserBasic($h, $userid = 0, $username = '', $no_cache = false)
+	public function getUserBasic($h, $userId = 0, $username = '', $no_cache = false)
 	{
-                // Prepare SQL
-                if ($userid != 0){              
-                    // use userid                          
-                    $where = "user_id = %d";
-                    $param = $userid;
-                } elseif ($username != '') {    
-                    // use username
-                    $where = "user_username = %s";
-                    $param = $username;
+                if ($userId != 0){ 
+                    if (isset($h->users[$userId])) {                        
+                        $user = $h->users[$userId];
+                    } else {
+                        //$user = \HotaruModels\User::getBasicFromUserId($userId);
+                        $user = \HotaruModels2\User::getBasicFromUserId($h, $userId);
+                        $h->users[$userId] = $user;
+                    }
+                } elseif ($username != '') {
+                    if (isset($h->users[$username]) && !empty($h->users[$username])) {
+                        $user = $h->users[$username];
+                    } else {
+                        //$user = \HotaruModels\User::getBasicFromUsername($username);
+                        $user = \HotaruModels2\User::getBasicFromUsername($h, $username);
+                        $h->users[$username] = $user;
+                    }
                 } else {
-                        return false;
-                }
-
-                // Build SQL
-                $query = "SELECT user_id, user_username, user_password, user_role, user_email, user_email_valid, user_ip, user_permissions FROM " . TABLE_USERS . " WHERE " . $where;
-                $sql = $h->db->prepare($query, $param); 
-
-                if (!isset($h->vars['tempUserCache'])) { $h->vars['tempUserCache'] = array(); }
-
-                // If this query has already been read once this page load, we should have it in memory...
-                if (!$no_cache && array_key_exists($sql, $h->vars['tempUserCache'])) {
-                        // Fetch from memory
-                        $user_info = $h->vars['tempUserCache'][$sql];
-                } else {
-                        // Fetch from database
-                        if (!MEEKRODB) { $user_info = $h->db->get_row($sql); } else { $user_info = $h->mdb->queryOneRow($sql); }
-                        $h->vars['tempUserCache'][$sql] = $user_info;
+                    return false;
                 }
 		 
-		if (!$user_info) { return false; }
-		
-		$this->id = $user_info->user_id;
-		$this->name = $user_info->user_username;
-		$this->password = $user_info->user_password;
-		$this->role = $user_info->user_role;
-                $this->idAdmin = $this->role == 'admin' ? true : false;
-                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
-		$this->email = $user_info->user_email;
-		$this->emailValid = $user_info->user_email_valid;
-		$this->ip = $user_info->user_ip;
-		
-		return $user_info;
+                if (!$user) { return false; }
+                
+		return $user;
 	}
+        
+        
+        /**
+         * Sets the $h->currentUser info
+         * 
+         * @param type $h
+         * @param type $user
+         * @return boolean
+         */
+        public function setCurrentUser($h, $user)
+        {
+                if (!$user) { return false; }
+		
+		$this->id = $user->user_id;
+		$this->name = $user->user_username;
+		$this->password = $user->user_password;
+                $this->passwordVersion = $user->password_version;
+		$this->role = $user->user_role;
+                $this->isAdmin = $this->role == 'admin' ? true : false;
+                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
+		$this->email = $user->user_email;
+		$this->emailValid = $user->user_email_valid;
+		$this->ip = $user->user_ip;
+        }
+        
+        
+        /**
+         * Sets the $h->displayUser info
+         * 
+         * @param type $h
+         * @param type $user
+         * @return boolean
+         */
+        public function set($h, $userid = 0, $username = '', $no_cache = false)
+        {
+                $user = $this->getUser($h, $userid, $username, $no_cache);
+                
+                if (!$user) { return false; }
+                
+		//print_r($user);
+		$this->id = $user->user_id;
+		$this->name = $user->user_username;
+		$this->password = $user->user_password;
+                $this->passwordVersion = $user->password_version;
+		$this->role = $user->user_role;
+                $this->isAdmin = $this->role == 'admin' ? true : false;
+                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
+		$this->email = $user->user_email;
+		$this->emailValid = $user->user_email_valid;
+		$this->ip = $user->user_ip;
+        }
 	
 	
 	/**
@@ -185,7 +220,7 @@ class UserBase
 	{
 		$user_info = $this->getUserBasic($h, $userid, $username, $no_cache);
 		if (!$user_info) { return false; }
-		
+
 		// If a new plugin is installed, we need a way of adding any new default permissions
 		// that plugin provides. So, we get all defaults, then overwrite with existing perms.
 		
@@ -206,16 +241,8 @@ class UserBase
 		// get user settings:
 		$this->settings = $this->getProfileSettingsData($h, 'user_settings', $this->id);
                 
-		$this->id = $user_info->user_id;
-		$this->name = $user_info->user_username;
-		$this->password = $user_info->user_password;
-		$this->role = $user_info->user_role;
-                $this->idAdmin = $this->role == 'admin' ? true : false;
-                $this->adminAccess = $this->getPermission('can_access_admin') == 'yes' ? true : false;
-		$this->email = $user_info->user_email;
-		$this->emailValid = $user_info->user_email_valid;
-		$this->ip = $user_info->user_ip;
-
+                $this->setCurrentUser($h, $user_info);
+                
 		return $user_info;
 	}
 	
@@ -231,33 +258,358 @@ class UserBase
 		// get user ip
 		$userip = $h->cage->server->testIp('REMOTE_ADDR');
 		
+                $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
+                
 		// add user to the database
-		$sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions, user_ip) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s)";
-		$h->db->query($h->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($permissions), $userip));
+		$sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, password_version, user_email, user_permissions, user_ip) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %d, %s, %s, %s)";
+		$h->db->query($h->db->prepare($sql, $this->name, $this->role, $passwordHash, 2, $this->email, serialize($permissions), $userip));
 	}
 	
-	
+        
 	/**
 	 * Update a user
 	 */
-	public function updateUserBasic($h, $userid = 0)
+	public function updateUserBasic($h)
 	{
-		//determine if the current user is the same as this object's user
-		if($userid != $this->id) {
-			$updatedby = $userid;
-		} else {
-			$updatedby = $this->id;
-		}
-		
 		if ($this->id != 0) {
-			$sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_password = %s, user_email = %s, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
-			$h->db->query($h->db->prepare($sql, $this->name, $this->role, $this->password, $this->email, serialize($this->getAllPermissions()), $this->ip, $updatedby, $this->id));
+			$sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_email = %s, user_email_valid = %d, user_permissions = %s, user_ip = %s, user_updateby = %d WHERE user_id = %d";
+			$h->db->query($h->db->prepare($sql, $this->name, $this->role, $this->email, 1, serialize($this->getAllPermissions()), $this->ip, $this->id, $this->id));
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
+        
+        /**
+	 * Change username or email
+	 *
+	 * @param int $userid
+	 * @return bool
+	 */
+	public function updateAccount($h, $userid = 0)
+	{
+		// $viewee is the person whose account is being modified
+		
+		$viewee = new UserBase($h);
+		
+		// Get the details of the account to show.
+		// If no account is specified, assume it's your own.
+		
+		if (!$userid) {
+		    $userid = $this->id; 
+		}
+		
+		$viewee->getUser($h, $userid);
+		
+		$error = 0;
+		
+		// fill checks
+		$checks['userid_check'] = '';
+		$checks['username_check'] = '';
+		$checks['email_check'] = '';
+		$checks['role_check'] = '';
+		$checks['password_check_old'] = '';
+		$checks['password_check_new'] = '';
+		$checks['password_check_new2'] = '';
+		
+		// Updating account info (username and email address)
+		if ($h->cage->post->testAlnumLines('update_type') == 'update_general') {
+		
+			// check CSRF key
+			if (!$h->csrf()) {
+				$h->messages[$h->lang('error_csrf')] = 'red';
+				$error = 1;
+			}
+			
+			$username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+			if (!$username_check) {
+				$h->messages[$h->lang('main_user_account_update_username_error')] = 'red';
+				$error = 1;
+			} elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
+				$h->messages[$h->lang('main_user_account_update_username_exists')] = 'red';
+				$error = 1;
+			} else {
+				//success
+				$viewee->name = $username_check;
+			}
+			
+			$email_check = $h->cage->post->testEmail('email');
+			if (!$email_check) {
+				$h->messages[$h->lang('main_user_account_update_email_error')] = 'red';
+				$error = 1;
+			} elseif($h->emailExists($email_check, '', $viewee->id) || $h->isBlocked('email', $email_check)) {
+				$h->messages[$h->lang('main_user_account_update_email_exists')] = 'red';
+				$error = 1;
+			} else {
+				//success
+				$viewee->email = $email_check;
+			}
+			
+			$role_check = $h->cage->post->testUsername('user_role'); // from Users plugin account page
+			// compare with current role and update if different
+			if (!$error && $role_check && ($role_check != $viewee->role)) {
+				$viewee->role = $role_check;
+				$new_perms = $viewee->getDefaultPermissions($h, $role_check);
+				$viewee->setAllPermissions($new_perms);
+				$viewee->updatePermissions($h);
+				if ($role_check == 'killspammed' || $role_check == 'deleted') {
+					$h->deleteComments($viewee->id); // includes child comments from *other* users
+					$h->deletePosts($viewee->id); // includes tags and votes for self-submitted posts
+					
+					$h->pluginHook('userbase_killspam', '', array('target_user' => $viewee->id));
+					
+					if ($role_check == 'deleted') { 
+						$h->deleteUser($viewee->id); 
+						$checks['username_check'] = 'deleted';
+						$h->message = $h->lang("users_account_deleted");
+						$h->messageType = 'red';
+						return $checks; // This will then show a red "deleted" notice
+					}
+				}
+			}
+			
+			// If we've just edited our own account, let's refresh the cookie so it uses our latest username:
+			if ($h->currentUser->id == $h->cage->post->testInt('userid')) {
+				$h->setCookie($h, false);           // delete the cookie
+				$h->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->setCookie($h, true);            // create a new, updated cookie
+			}
+		}
+		
+		if (!isset($username_check) && !isset($email_check)) {
+			$username_check = $viewee->name;
+			$email_check = $viewee->email;
+			$role_check = $viewee->role;
+			// do nothing
+		} elseif ($error == 0) {
+			$exists = $h->userExists(0, $username_check, $email_check);
+			if (($exists != 'no') && ($exists != 'error')) { // user exists
+				//success
+				$viewee->updateUserBasic($h, $userid);
+				// only update the cookie if it's your own account:
+				if ($userid == $this->id) { 
+				$h->setCookie($h, false);           // delete the cookie
+				$h->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->setCookie($h, true);            // create a new, updated cookie
+				}
+				$h->messages[$h->lang('main_user_account_update_success')] = 'green';
+			} else {
+				//fail
+				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
+			}
+		} else {
+			// error must = 1 so fall through and display the form again
+		}
+		
+		//update checks
+		$this->updatePassword($h, $userid);
+		$userid_check = $viewee->id; 
+		$checks['userid_check'] = $userid_check;
+		$checks['username_check'] = $username_check;
+		$checks['email_check'] = $email_check;
+		$checks['role_check'] = $role_check;
+		
+		return $checks;
+	}
+	
+	
+	 /**
+	 * Enable a user to change their password
+	 *
+	 * @return bool
+	 */
+	public function updatePassword($h, $userid)
+	{
+		// we don't want to edit the password if this isn't our own account.
+		if ($userid != $this->id) { return false; }
+		
+		$error = 0;
+		
+		// Updating password
+		if ($h->cage->post->testAlnumLines('update_type') == 'update_password') {
+		
+			// check CSRF key
+			if (!$h->csrf()) {
+				$h->messages[$h->lang('error_csrf')] = 'red';
+				$error = 1;
+			}
+			
+			$password_check_old = $h->cage->post->noTags('password_old');
+			
+			if ($h->passwordCheck($password_check_old)) {
+				// safe, the old password matches the password for this user.
+			} else {
+				$h->messages[$h->lang('main_user_account_update_password_error_old')] = 'red';
+				$error = 1;
+			}
+			
+			$password_check_new = $h->cage->post->testPassword('password_new');    
+			if ($password_check_new) {
+				$password_check_new2 = $h->cage->post->testPassword('password_new2');    
+				if ($password_check_new2) { 
+					if ($password_check_new == $password_check_new2) {
+						// safe, the two new password fields match
+					} else {
+						$h->messages[$h->lang('main_user_account_update_password_error_match')] = 'red';
+						$error = 1;
+					}
+				} else {
+					$h->messages[$h->lang('main_user_account_update_password_error_new')] = 'red';
+					$error = 1;
+				}
+			} else {
+				$h->messages[$h->lang('main_user_account_update_password_error_not_provided')] = 'red';
+				$error = 1;
+			}
+		}
+		
+		if (!isset($password_check_old) && !isset($password_check_new) && !isset($password_check_new2)) {
+			$password_check_old = "";
+			$password_check_new = "";
+			$password_check_new2 = "";
+			// do nothing
+		} elseif ($error == 0) {
+			$exists = $h->userExists(0, $this->name, $this->email);
+			if (($exists != 'no') && ($exists != 'error')) { // user exists
+				//success
+				$this->password = $password_check_new;
+				$this->savePassword($h, $this->id); // update the database record for this user
+				$h->setCookie($h, false);           // delete the cookie
+				$this->getUser($h, $this->id, '', true);    // re-read the database record to get updated info
+				$h->setCookie($h, true);            // create a new, updated cookie
+				$h->messages[$h->lang('main_user_account_update_password_success')] = 'green';
+			} else {
+				//fail
+				$h->messages[$h->lang("main_user_account_update_unexpected_error")] = 'red';
+			}
+		} else {
+			// error must = 1 so fall through and display the form again
+		}
+	}
+        
+        
+        /**
+	 * save a users password
+	 */
+        public function savePassword($h, $passwordVersion = 2)
+        {
+                if ($passwordVersion == 1) {
+                    // only used when testing for old accounts
+                    $auth = new \Libs\Authorization();
+                    $passwordHash = $auth->deprecatedOldPasswordHash($this->password);
+                    $this->passwordVersion = 1;
+                } else {
+                    $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
+                    $this->passwordVersion = 2;
+                }
+                
+                $sql = "UPDATE " . TABLE_USERS . " SET user_password = %s, password_version = %d, user_email_valid = %d, user_updateby = %d WHERE user_id = %d";
+                $h->db->query($h->db->prepare($sql, $passwordHash, $this->passwordVersion, 1, $this->id, $this->id));
+        }
+	
+	
+	 /**
+	 * Send a confirmation code to a user who has forgotten his/her password
+	 *
+	 * @param string $email - already validated above
+	 */
+	public function sendPasswordConf($h, $userid, $email)
+	{
+		// generate the email confirmation code
+		$pass_conf = md5(crypt(md5($email),md5($email)));
+		
+		// store the hash in the user table
+		$sql = "UPDATE " . TABLE_USERS . " SET user_password_conf = %s WHERE user_id = %d";
+		$h->db->query($h->db->prepare($sql, $pass_conf, $userid));
+		
+		$line_break = "\r\n\r\n";
+		$next_line = "\r\n";
+		
+		if ($h->isActive('signin')) { 
+			$url = SITEURL . 'index.php?page=login&plugin=user_signin&userid=' . $userid . '&passconf=' . $pass_conf; 
+		} else { 
+			$url = SITEURL . 'admin_index.php?page=admin_login&userid=' . $userid . '&passconf=' . $pass_conf; 
+		}
+		
+		// send email
+		$subject = $h->lang('main_user_email_password_conf_subject');
+		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $h->getUserNameFromId($userid);
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_welcome');
+		$body .= $h->lang('main_user_email_password_conf_body_click');
+		$body .= $line_break;
+		$body .= $url;
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_no_request');
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_regards');
+		$body .= $next_line;
+		$body .= $h->lang('main_user_email_password_conf_body_sign');
+		$to = $email;
+		
+		$h->email($to, $subject, $body);    
+		
+		return true;
+	}
+	
+	
+	 /**
+	 * Reset the user's password to soemthing random and email it.
+	 *
+	 * @param string $passconf - confirmation code clicked in email
+	 */
+	public function newRandomPassword($h, $userid, $passconf)
+	{
+		$email = $h->getEmailFromId($userid);
+		
+		// check the email and confirmation code are a pair
+		$pass_conf_check = md5(crypt(md5($email),md5($email)));
+		if ($pass_conf_check != $passconf) {
+			return false;
+		}
+		
+		// update the password to something random
+		$temp_pass = random_string(10);
+		$sql = "UPDATE " . TABLE_USERS . " SET user_password = %s, password_version = %d WHERE user_id = %d";
+		$h->db->query($h->db->prepare($sql, password_hash($temp_pass, PASSWORD_DEFAULT), 2, $userid));
+		$line_break = "\r\n\r\n";
+		$next_line = "\r\n";
+		
+		if ($h->isActive('signin')) { 
+			$url = SITEURL . 'index.php?page=login&plugin=user_signin'; 
+		} else { 
+			$url = SITEURL . 'admin_index.php?page=admin_login'; 
+		}
+		
+		$username = $h->getUserNameFromId($userid);
+		
+		// send email
+		$subject = $h->lang('main_user_email_new_password_subject');
+		$body = $h->lang('main_user_email_password_conf_body_hello') . " " . $username;
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_requested');
+		$body .= $line_break;
+		$body .= $username;
+		$body .= $next_line;
+		$body .= $temp_pass;
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_remember');
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_pass_change');
+		$body .= $line_break;
+		$body .= $url; 
+		$body .= $line_break;
+		$body .= $h->lang('main_user_email_password_conf_body_regards');
+		$body .= $next_line;
+		$body .= $h->lang('main_user_email_password_conf_body_sign');
+		$to = $email;
+		
+		$h->email($to, $subject, $body);    
+		
+		return true;
+	}
+        
 	
 	/**
 	 * Physically delete this user
@@ -292,27 +644,32 @@ class UserBase
 		$perms = array(); // to be filled with default permissions for this user
 		
 		if ($defaults == 'site') { 
-			$field = 'miscdata_value';  // get site permissions
+                    //$field = 'miscdata_value';
+                    //$db_perms = \HotaruModels\Miscdata::getCurrentValue('permissions');
+                    $db_perms = \HotaruModels2\Miscdata::getCurrentValue($h, 'permissions');
 		} else {
-			$field = 'miscdata_default'; // get base permissions (i.e. the originals)
+                    //$field = 'miscdata_default';
+                    //$db_perms = \HotaruModels\Miscdata::getDefaultValue('permissions');
+                    $db_perms = \HotaruModels2\Miscdata::getDefaultValue($h, 'permissions');
 		}
 		
 		// get default permissions from the database:
-		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
-		$sql = $h->db->prepare($query, 'permissions');
-		
-		// Create temp cache array
-		if (!isset($h->vars['tempPermissionsCache'])) { $h->vars['tempPermissionsCache'] = array(); }
-		
-		// If this query has already been read once this page load, we should have it in memory...
-		if (array_key_exists($sql, $h->vars['tempPermissionsCache'])) {
-			// Fetch from memory
-			$db_perms = $h->vars['tempPermissionsCache'][$sql];
-		} else {
-			// Fetch from database
-			$db_perms = $h->db->get_var($sql);
-			$h->vars['tempPermissionsCache'][$sql] = $db_perms;
-		}
+                
+//		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
+//		$sql = $h->db->prepare($query, 'permissions');
+//		
+//		// Create temp cache array
+//		if (!isset($h->vars['tempPermissionsCache'])) { $h->vars['tempPermissionsCache'] = array(); }
+//		
+//		// If this query has already been read once this page load, we should have it in memory...
+//		if (array_key_exists($sql, $h->vars['tempPermissionsCache'])) {
+//			// Fetch from memory
+//			$db_perms = $h->vars['tempPermissionsCache'][$sql];
+//		} else {
+//			// Fetch from database
+//			$db_perms = $h->db->get_var($sql);
+//			$h->vars['tempPermissionsCache'][$sql] = $db_perms;
+//		}
 		
 		$permissions = unserialize($db_perms);
 		
@@ -415,39 +772,30 @@ class UserBase
 	*/
 	public function getProfileSettingsData($h, $type = 'user_profile', $userid = 0, $check_exists_only = false)
 	{
-		if (!$userid) { $userid = $this->id; }
-		
-		$query = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s LIMIT 1";
-		$sql = $h->db->prepare($query, $userid, $type);
-		
-		if (isset($h->vars[$sql])) { 
-			$result = $h->vars[$sql]; 
-		} else {
-			$h->smartCache('on', 'usermeta', 60, $sql); // start using database cache
-			$result = $h->db->get_var($sql);
-			$h->vars[$sql] = $result;    // cache result in memory (saves for just this page load)
-			$h->smartCache('off'); // stop using database cache
-		}
-		
+                //print_r($this);
+                if (!$userid) { $userid = $this->id; }
+                //print "id: " . $this->id;
+                //$result = \HotaruModels\Usermeta::getProfileSetting($userid, $type);
+                $result = \HotaruModels2\Usermeta::getProfileSetting($h, $userid, $type);
+
 		// if we're only testing to see if the settings exist, return here:
 		if($check_exists_only && $result) { return true; }
 		if($check_exists_only && !$result) { return false; }
 		
 		if ($result) { 
-			$result = unserialize($result);
-			if ($type == 'user_settings') {
-				$defaults = $this->getDefaultSettings($h);
-				if ($defaults) {
-					$result = array_merge($defaults, $result);
-				}
-			}
+                    $result = unserialize($result);
+                    if ($type == 'user_settings') {
+                            $defaults = $this->getDefaultSettings($h);
+                            if ($defaults) {
+                                    $result = array_merge($defaults, $result);
+                            }
+                    }
+                    return $result; 
 		} elseif ($type == 'user_settings') {
-			return $this->getDefaultSettings($h);
-		} else {
-			return false;
-		}
-		
-		return $result; 
+                    return $this->getDefaultSettings($h);
+                }
+                
+                return false;
 	}
 	
 	
@@ -461,7 +809,7 @@ class UserBase
 		if (!$data) { return false; }
 		if (!$userid) { $userid = $this->id; }
 		
-		$result = $h->getProfileSettingsData($type, $userid, true);
+		$result = $this->getProfileSettingsData($h, $type, $userid, true);
 		
 		if (!$result) {
 			$sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
@@ -483,26 +831,11 @@ class UserBase
 	 */
 	public function getDefaultSettings($h, $type = 'site')
 	{
-		if ($type == 'site') { 
-			$field = 'miscdata_value'; 
-		} elseif ($type == 'base') { 
-			$field = 'miscdata_default';
-		} else { 
-			return false;
-		}
-		
-		$query = "SELECT " . $field . " FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
-		$sql = $h->db->prepare($query, 'user_settings');
-		
-		if (isset($h->vars['default_user_settings'][$sql])) { 
-			$result = $h->vars['default_user_settings'][$sql]; 
-		} else {
-			$h->smartCache('on', 'miscdata', 60, $sql); // start using database cache
-			$result = $h->db->get_var($sql);
-			$h->vars['default_user_settings'][$sql] = $result; // cache result in memory for this page load
-			$h->smartCache('off'); // stop using database cache
-		}
-		
+                // since we already have all of the miscdata in $h->miscdata we should be able to get defaultsettings straight from there without going to db
+                
+                //$result = \HotaruModels\Miscdata::getUserSettings($type);
+                $result = \HotaruModels2\Miscdata::getUserSettings($h, $type);
+
 		if ($result) {
 			return unserialize($result);
 		} else {
@@ -568,15 +901,12 @@ class UserBase
 		
 		// Add any custom roles:
 		$custom_roles = $this->getCustomRoles($h);
-		if ($custom_roles)
-		{
-			foreach ($custom_roles as $role) 
-			{
-				if (!in_array($role, $unique_roles))
-				{ 
-					array_push($unique_roles, $role);
-				}
-			}
+		if ($custom_roles) {
+                    foreach ($custom_roles as $role) {
+                        if (!in_array($role, $unique_roles)) { 
+                            array_push($unique_roles, $role);
+                        }
+                    }
 		}
 		
 		if ($unique_roles) { return $unique_roles; } else { return false; }
@@ -601,9 +931,14 @@ class UserBase
 	 */
 	public function getCustomRoles($h) 
 	{
-		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
-		$result = $h->db->get_var($h->db->prepare($sql, 'custom_roles'));
-		if (!$result) { return false; } 
+                //$result = \HotaruModels\Miscdata::getCurrentValue('custom_roles');
+                $result = \HotaruModels2\Miscdata::getCurrentValue($h, 'custom_roles');
+            
+//		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
+//		$result = $h->db->get_var($h->db->prepare($sql, 'custom_roles'));
+		if (!$result) {
+                    return false;
+                } 
 		
 		$custom_roles = unserialize($result); // result should be an array
 
@@ -636,8 +971,9 @@ class UserBase
 		array_push($custom_roles, $new_role);
 		
 		// check custom_roles row exists in the database:
-		$sql = "SELECT miscdata_id FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
-		$result = $h->db->get_var($h->db->prepare($sql, 'custom_roles'));
+                
+                //$result = \HotaruModels\Miscdata::getCurrentValue('custom_roles');
+                $result = \HotaruModels2\Miscdata::getCurrentValue($h, 'custom_roles');
 
 		// update or insert accordingly 
 		if ($result)
@@ -800,4 +1136,38 @@ class UserBase
 
 		return $perms;
 	}
+        
+        
+        public function getCount($h, $role = '')
+        {
+            //$num = \HotaruModels\User::getCount($role);
+            $num = \HotaruModels2\User::getCount($h, $role);
+            
+            if (!$num) {
+                $num = "0";
+            } 
+            
+            return $num;
+        }
+        
+        public function newUserCount($h)
+        {                    
+            $time = strtotime("-1 year", time());
+            $begin = date('Y-m-d', $time);  
+            $sql = "SELECT EXTRACT(YEAR_MONTH FROM user_date), count(user_id) FROM " . TABLE_USERS . " WHERE user_date >= %s GROUP BY EXTRACT(YEAR_MONTH FROM user_date) ";
+            //$sql = "SELECT user_date FROM " . TABLE_USERS . " WHERE user_date >= %s";
+            $query = $h->db->prepare($sql, $begin);
+                        
+            $users = $h->db->get_results($query, ARRAY_N);
+            return $users;
+        }
+        
+        public function newUserCountPie($h)
+        {                    
+            $sql = "SELECT user_role, count(user_id) FROM " . TABLE_USERS . " GROUP BY user_role ";
+            $query = $h->db->prepare($sql);
+
+            $users = $h->db->get_results($query, ARRAY_N);
+            return $users;
+        }
 }

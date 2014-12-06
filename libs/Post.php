@@ -23,13 +23,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Post
+namespace Libs;
+
+class Post extends Prefab
 {
 	// individual posts
 	protected $id = 0;
 	protected $archived         = 'N';            // archived Yes or No (Y/N)
 	protected $author           = 0;            // post author
         protected $authorname       = '';           // post authorname from user table on left join
+        protected $email            = '';           // post author email from user table on left join
 	protected $date             = '';           // post submission date
         protected $updatedts        = '';           // post updated date
 	protected $pubDate          = '';           // post published date
@@ -47,6 +50,7 @@ class Post
 	protected $summaryLength    = 200;          // default max characters for summary
 	protected $comments         ='open';        // is the comment form open or closed?
 	protected $subscribe        = 0;            // is the post author subscribed to comments?
+        protected $votesUp          = 0;            //
 	
 	public $vars                = array();      // for additional fields
 	
@@ -77,6 +81,10 @@ class Post
 	 */    
 	public function readPost($h, $post_id = 0, $post_row = NULL)
 	{
+                // Time test 2 Nov 2014
+                // This method only taking 0.0002 to run each time
+                // If run 20 times in a loop then total is 0.004
+            
 		$h->vars['post_error'] = false; 
 		
 		if (!$post_id && !$post_row) {
@@ -89,10 +97,36 @@ class Post
 		}
 
 		if ($post_row && isset($post_row->post_id)) {
+                    
+                        // TODO do we need this in memory as well if we are mapping the post into its own object ?
+                        $h->currentPost = $post_row;
+                        // **** REMOVE above
+                        
+                        
+                        
 			$this->id = $post_row->post_id;
 			$this->archived = $post_row->post_archived;
 			$this->author = $post_row->post_author;
-                        $this->authorname = isset($post_row->user_username) ? $post_row->user_username : '';
+                        
+                        if (isset($h->vars['currentUserVotedPosts'])) {
+                            $this->userVoted = isset($h->vars['currentUserVotedPosts'][$this->id]) ? true : false;
+                        } else {
+                            $this->userVoted = isset($post_row->vote_rating) && $post_row->vote_rating> 0  ? true : false;
+                        }
+                        
+                        $this->categoryName = isset($h->categoriesById[$post_row->post_category]->category_name) ? $h->categoriesById[$post_row->post_category]->category_name : '';
+                        $this->categorySafeName = isset($h->categoriesById[$post_row->post_category]->category_safe_name) ? $h->categoriesById[$post_row->post_category]->category_safe_name : '';
+                        
+                        //print_r($post_row);
+                        $this->authorname = isset($post_row->user->user_username) ? $post_row->user->user_username : null;
+                        // TODO check this in query
+                        $this->email = isset($post_row->user->user_email) ? $post_row->user->user_email : null;
+                        
+                        // Just until I fix the bookmarking list query to bring it over to models, use following as well
+                        if (!$this->authorname) { $this->authorname = isset($post_row->user_username) ? $post_row->user_username : ''; }
+                        if (!$this->email) { $this->email = isset($post_row->user_email) ? $post_row->user_email : ''; }
+                        
+                        $this->commentsCount = isset($post_row->post_comments_count) ? $post_row->post_comments_count : 0;
 			$this->date = $post_row->post_date;
                         $this->updatedts = $post_row->post_updatedts;
 			$this->pubDate = $post_row->post_pub_date;
@@ -104,19 +138,23 @@ class Post
 			$this->origUrl = urldecode($post_row->post_orig_url);
 			$this->domain = urldecode($post_row->post_domain);
 			$this->url = urldecode($post_row->post_url);
+                        $this->post_img = urldecode($post_row->post_img);
 			$this->content = stripslashes(urldecode($post_row->post_content));
-			$this->comments = $post_row->post_comments;
+			$this->comments = $post_row->post_comments; // this is the comment box status not the number of comments
 			$this->subscribe = $post_row->post_subscribe;
 			
+                        $this->votesUp = $post_row->post_votes_up;
+                        
+                        $h->vars['votesUp'] = $this->votesUp; // only here for older sites using old votes plugin
+                        
 			$this->vars['post_row'] = $post_row;    // make available to plugins
 			
-			$h->pluginHook('post_read_post');
-			            
+			$h->pluginHook('post_read_post');                                                
+                        
 			return true;
 		} else {
 			return false;
 		}
-		
 	}
 	
 	
@@ -128,32 +166,12 @@ class Post
 	 */    
 	public function getPost($h, $post_id = 0)
 	{ 
-                $query = "SELECT P.*, U.user_username FROM " . TABLE_POSTS . " AS P LEFT OUTER JOIN " . TABLE_USERS . " AS U ON P.post_author = U.user_id WHERE P.post_id = %d";
-                   
-                if (!MEEKRODB) {
-                    // Build SQL                    
-                    $sql = $h->db->prepare($query, $post_id);                                
+                //$post = \HotaruModels\Post::getWithDetails($post_id);
+                $post = \HotaruModels2\Post::getWithDetails($h, $post_id);
+                
+                if ($post) { return $post; } else { return false; }                
+                
 
-                    // Create temp cache array
-                    if (!isset($h->vars['tempPostCache'])) { $h->vars['tempPostCache'] = array(); }
-
-                    // If this query has already been read once this page load, we should have it in memory...
-                    if (array_key_exists($sql, $h->vars['tempPostCache'])) {
-                            // Fetch from memory
-                            $post = $h->vars['tempPostCache'][$sql];
-                    } else {
-                            // Fetch from database
-                            $post = $h->db->get_row($sql);
-                            $h->vars['tempPostCache'][$sql] = $post;
-                    }
-                } else {
-                    $post = $h->mdb->queryOneRow($query, $post_id);
-                    
-                    //$post = models___Posts::find_by_post_id($post_id);
-                    // note we dont use models___Posts::($post_id); because it will throw an error if record not foound
-                }
-		
-		if ($post) { return $post; } else { return false; }
 	}
 	
 	
@@ -272,17 +290,11 @@ class Post
 	 */
 	public function deletePosts($h, $user_id = 0) 
 	{
+                // TODO we should be able to do the delete in 1 step without retrieving records first
 		if (!$user_id) { return false; }
                 
-		$sql = "SELECT post_id FROM " . TABLE_POSTS. " WHERE post_author = %d";
-                if (!MEEKRODB) {                    
-                    $results = $h->db->get_results($h->db->prepare($sql, $user_id));
-                } else {
-                    $results = $h->mdb->queryObj($sql, $user_id);
-//                    $results = models___Posts::all(array(
-//                        'conditions' => array('post_author = ?', $user_id)
-//                     ));
-                }
+                //$results = \HotaruModels\Post::getByAuthor($user_id);
+                $results = \HotaruModels2\Post::getByAuthor($h, $user_id);		
 				
 		if ($results) {
 			foreach ($results as $r) {
@@ -326,21 +338,12 @@ class Post
 	 */    
 	public function urlExists($h, $url = '')
 	{
-                $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_orig_url = %s";
+                //$posts = \HotaruModels\Post::getPostsByOrigUrl(urlencode($url));
+                $posts = \HotaruModels2\Post::getPostsByOrigUrl($h, urlencode($url));
                 
-                if (!MEEKRODB) {                    
-                    $posts = $h->db->get_results($h->db->prepare($sql, urlencode($url)));
-                } else {
-                    $posts = $h->mdb->queryObj($sql, urlencode($url));
-//                    $posts = models___Posts::all(array(
-//                        'select' => 'post_id, post_status',
-//                        'conditions' => array('post_orig_url = ?', urlencode($url))
-//                        ));
-                }                		
-		
 		if (!$posts) { return false; }
 		
-		// we know there's at least one post with the same url, so if it's processing, let's delete it:
+		// check whether any of found posts are being processed, if so let's delete them:
 		foreach ($posts as $post) {
 			if ($post->post_status == 'processing') {
 				$h->post->id = $post->post_id;
@@ -348,17 +351,10 @@ class Post
 			}
 		}
 		
-		// One last check to see if a post is present:
-                $sql = "SELECT * FROM " . TABLE_POSTS . " WHERE post_orig_url = %s LIMIT 1";
-                if (!MEEKRODB) {                    
-                    $post = $h->db->get_row($h->db->prepare($sql, urlencode($url)));
-                } else {
-                    $post = $h->mdb->queryFirstRow($sql, urlencode($url));
-//                    $post = models___Posts::first(array(                        
-//                        'conditions' => array('post_orig_url = ?', urlencode($url))
-//                     ));
-                }  
-				
+		// check again to see if url is still present:
+                //$post = \HotaruModels\Post::getFirstPostByOrigUrl(urlencode($url));
+                $post = \HotaruModels2\Post::getFirstPostByOrigUrl($h, urlencode($url));
+                		
 		// if present return the first existing row
 		if ($post) { return $post; } else { return false; }
 	}
@@ -373,21 +369,11 @@ class Post
 	public function titleExists($h, $title = '')
 	{
 		$title = trim($title);
-
 		if (!$title) { return FALSE; }
 
-                $sql = "SELECT post_id, post_status FROM " . TABLE_POSTS . " WHERE post_title = %s";
-                
-                if (!MEEKRODB) {                    
-                    $posts = $h->db->get_results($h->db->prepare($sql, urlencode($title)));
-                } else {
-                    $posts = $h->mdb->queryObj($sql, urlencode($title));
-//                    $posts = models___Posts::all(array(
-//                        'select' => 'post_id, post_status',
-//                        'conditions' => array('post_title = ?', urlencode($title))
-//                    ));
-                } 		
-		
+                //$posts = \HotaruModels\Post::getPostsByTitle(urlencode($title));
+                $posts = \HotaruModels2\Post::getPostsByTitle($h, urlencode($title));
+				
 		if (!$posts) { return false; }
 		
 		// we know there's at least one post with the same title, so if it's processing, let's delete it:
@@ -399,18 +385,8 @@ class Post
 		}
 		
 		// One last check to see if a post is present:
-                $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_title = %s LIMIT 1";
-                
-                if (!MEEKRODB) {                    
-                    $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($title)));
-                } else {
-                    $post_id = $h->mdb->queryFirstField($sql, urlencode($title));
-//                    $post = models___Posts::first(array( 
-//                        'select' => 'post_id',
-//                        'conditions' => array('post_title = ?', urlencode($title))
-//                    ));
-//                    if (isset($post->post_id)) $post_id = $post->post_id; else return false;
-                } 		
+                //$post_id = \HotaruModels\Post::getFirstPostByTitle(urlencode($title));
+                $post_id = \HotaruModels2\Post::getFirstPostByTitle($h, urlencode($title));
 		
 		if ($post_id) { return $post_id; } else { return false; }
 	}
@@ -422,25 +398,47 @@ class Post
 	 * @param str $post_url (slug)
 	 * @return int - id of post with matching url
 	 */
-	public function isPostUrl($h, $post_url = '')
+	public function isPostUrl($h, $url = '')
 	{
-                $sql = "SELECT post_id FROM " . TABLE_POSTS . " WHERE post_url = %s LIMIT 1";
-                
-                if (!MEEKRODB) {                    
-                    $post_id = $h->db->get_var($h->db->prepare($sql, urlencode($post_url)));
-                } else {
-                    $post_id = $h->mdb->queryFirstField($sql, urlencode($post_url));
-//                    $post = models___Posts::first(array( 
-//                        'select' => 'post_id',
-//                        'conditions' => array('post_url = ?', urlencode($post_url))
-//                      ));
-                    //if (isset($post->post_id)) $post_id = $post->post_id; else return false;
-                }
-                
-		if ($post_id) { return $post_id; } else { return false; }
+                //$post_id = \HotaruModels\Post::getFirstPostByPostUrl(urlencode($url));
+                $post_id = \HotaruModels2\Post::getFirstPostByPostUrl($h, urlencode($url));
+                if ($post_id) { return $post_id; } else { return false; }
 	}
 	
 	
+        /**
+         * Get the flags for this post
+         * 
+         * @param type $h
+         * @param type $post_id
+         * @return type
+         */
+        public function getFlags($h, $post_id = 0, $raw = 0)
+        {
+            if ($post_id == 0) {
+                $post_id = isset($h->post->id) ? $h->post->id : 0;
+            }
+            
+            if ($post_id == 0) { return null; }
+            
+            $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %d";
+            $flagged = $h->db->get_results($h->db->prepare($sql, $h->post->id, -999));   
+            
+            if ($raw) {
+                return $flagged;
+            }
+            
+            $flaggedArray = array();
+            if ($flagged) {                
+                foreach ($flagged as $flag) {
+                    array_push($flaggedArray, $flag->vote_reason);                    
+                }
+            }
+            
+            return $flaggedArray;
+        }
+        
+        
 	/**
 	 * Count how many approved posts a user has had
 	 *
@@ -454,14 +452,9 @@ class Post
 		
                 $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
                 
-                if (!MEEKRODB) {                    
+                                    
                     $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
-                } else {                        
-                    $count = $h->mdb->queryFirstField($sql, 'top', 'new', $user_id, $post_type);
-//                    $count = models___Posts::count(array(
-//                        'conditions' => array('(post_status = ? OR post_status = ?) AND post_author = ? AND post_type = ?', 'top', 'new', $user_id, $post_type))
-//                     );;
-                }
+                
                  
 		return $count;	
 	}
@@ -477,7 +470,7 @@ class Post
 		$exp = date('YmdHis', $timestamp - (60 * 30));
 		$sql = "DELETE FROM " . TABLE_POSTS . " WHERE post_status = %s AND post_date < %s";
 		
-                if (!MEEKRODB) { $h->db->query($h->db->prepare($sql, 'processing', $exp)); } else { $h->mdb->query($sql, 'processing', $exp); }
+                $h->db->query($h->db->prepare($sql, 'processing', $exp));
 	}
 	
 	

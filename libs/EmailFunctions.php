@@ -23,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-    
-class EmailFunctions
+namespace Libs;
+
+class EmailFunctions extends Prefab
 {
 	protected $to           = '';
 	protected $from         = '';
@@ -32,6 +33,7 @@ class EmailFunctions
 	protected $body         = '';
 	protected $headers      = '';
 	protected $type         = 'email';
+        protected $isHTML         = false;
 	private $smtp   = NULL;
 	
 	/**
@@ -144,7 +146,7 @@ class EmailFunctions
 			); 
 		
 			require EXTENSIONS. 'phpMailer/PHPMailerAutoload.php';
-			$mail = new PHPMailer;
+			$mail = new \PHPMailer;
 			
 			$mail->isSMTP();                                // Set mailer to use SMTP
 			$mail->Host = SMTP_HOST;			// Specify main and backup SMTP servers
@@ -154,9 +156,9 @@ class EmailFunctions
 			$mail->SMTPSecure = 'tls';                      // Enable TLS encryption, `ssl` also accepted
 			$mail->Port = SMTP_PORT;                        // TCP port to connect to
 
-			//require_once "Mail.php";
-                        //$mailFunction = new Mail;
-			//$this->smtp = $mailFunction->factory('smtp', $smtp_array);
+                        if ($this->isHtml) { 
+                            $mail->IsHTML(true); 
+                        }
 		}
 		
 		$mail->Body = $this->body;
@@ -166,19 +168,11 @@ class EmailFunctions
 		$mail->FromName = $this->headers['From'];
 		
 		if(!$mail->send()) {
-		    echo 'Message could not be sent.';
-		    echo 'Mailer Error: ' . $mail->ErrorInfo;
+                    //$h->messages[$h->lang('mail_error_message_not_sent')] = 'red';  
+                    //$h->messages[$h->lang('mail_error_mailer_error')] . $mail->ErrorInfo = 'red'; 		    
 		} else {
 		    //echo 'Message has been sent';
 		}
-
-		
-//		$mail = $this->smtp->send($this->to, $this->headers, $this->body);
-//		
-//		if (PEAR::isError($mail)) {
-//			echo("<p>" . $mail->getMessage() . "</p>");
-//			exit;
-//		} 
 	}
 }
 

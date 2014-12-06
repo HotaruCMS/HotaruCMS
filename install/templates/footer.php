@@ -1,5 +1,6 @@
-	
-        <div class='clearfix'></div>
+<?php date_default_timezone_set('UTC'); ?>
+
+        <div class="clearfix"></div>
 
         <hr />
         <!-- Footer content (a link to the forums) -->
@@ -11,6 +12,7 @@
 
     </div> <!-- /container -->
 	
-<script src="../libs/frameworks/bootstrap/js/bootstrap.min.js"></script>
-
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</body>
 </html>

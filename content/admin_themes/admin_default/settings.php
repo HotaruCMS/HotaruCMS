@@ -1,7 +1,7 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: settings.php
+ * Template name: plugins.php
  * Template author: shibuya246
  *
  * PHP version 5
@@ -25,88 +25,46 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-$loaded_settings = $h->vars['admin_settings'];
+$h->pluginHook('plugins_top');
+
+$h->template('admin_sidebar');
+
+$h->showMessages();
 ?>
 
-<?php $h->pluginHook('admin_settings_top'); ?>
+<div class="bs-example bs-example-tabs">
+    <ul id="myTab" class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="#main" role="tab" data-toggle="tab">Main</a></li>
+      <li><a href="#performance" role="tab" data-toggle="tab">Performance</a></li>
+<!--      <li><a href="#spam" role="tab" data-toggle="tab">Spam</a></li>-->
+      <li><a href="#security" role="tab" data-toggle="tab">Security</a></li>
+<!--      <li><a href="#notifications" role="tab" data-toggle="tab">Notifications</a></li>-->
+      <li class="dropdown">
+        <?php echo \Libs\PluginSettings::getSettingsDropdownList($h); ?>
+      </li>
+    </ul>
 
-<!--	<h2><?php echo $h->lang("admin_theme_settings_title"); ?></h2>-->
-	
-	<?php $h->showMessage(); ?>
-	
-	<form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
-	
-	<table id="settings" class="table table-bordered">    
-	<tr class="info">
-		<td><?php echo $h->lang("admin_theme_settings_setting"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_value"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_default"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_notes"); ?></td>
-	</tr>
-	
-	<?php     // **********************************************************
-	
-		// Loop through the settings, displaying each one as a row...  
-                if ($loaded_settings) { 
-		foreach ($loaded_settings as $ls)
-		{
-			if ($ls->settings_show == 'N') { continue; } // skip this row
-		
-			// replace underscores with spaces and make the first character of the setting name uppercase.
-			$name = ucfirst(preg_replace('/_/', ' ', $ls->settings_name));
-			
-			// get settings_names that need warning for '/' character being attached to text
-			if ($ls->settings_name == 'THEME' || $ls->settings_name == 'ADMIN_THEME') { $css_class = ' class="warning_slash"'; } else {$css_class = ''; }
-		
-		?>
-			<tr>
-			<td>
-			    <?php
-			    if (strpos($name, 'CACHE')) {echo "<a href='" . SITEURL . "/admin_index.php?page=maintenance'>" . $name . "</a>"; }
-			    elseif ($name == 'THEME') {echo "<a href='" . SITEURL . "admin_index.php?page=theme_settings&theme=" . $ls->settings_value . "'>" . $name . "</a>"; }
-			    else
-				echo $name;
-			    ?>:
-			</td>
-			<td>
-				<?php
-				if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
-					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="true" ';
-					if ($ls->settings_value == 'true') { echo ' checked'; }
-					echo ' >&nbsp;ON&nbsp;&nbsp;';
-					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="false" ';
-					if ($ls->settings_value == 'false') { echo ' checked'; }
-					echo ' >&nbsp;OFF';
-				}
-				else {
-					if (strpos($ls->settings_name,'PASSWORD') !== false) { $type = 'password'; } else { $type = 'text'; }
-					echo '<input class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
-				}
-				?>
-			</td>
-			<td>
-				<?php 
-					if ($ls->settings_default == 'true') {
-						echo "ON"; 
-					} elseif($ls->settings_default == 'false') {
-						echo "OFF"; 
-					} else {
-						echo $ls->settings_default; 
-					}
-				?>
-			</td>
-			<td><i><?php echo $ls->settings_note; ?></i></td>
-			</tr>
-	 
-	<?php	}} // End loop **********************************************************     ?>
-	
-	
-	<input type='hidden' name='settings_update' value='true' />
-	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-	</table>
-        <div class="form-actions">
-            <input id='settings_submit' class='btn btn-primary' type='submit' value='Save' />
-        </div>
-	</form>
+
+<?php 
+
+    $page = 'settings';
+    $active = " active";
+
+    $names = array(
+        'Main', 'Performance', 'Spam', 'Security', 'Notifications'      
+     );
+
+    echo '<div class="tab-content">';
+        foreach ($names as $name) {             
+           echo '<div class="tab-pane fade-in ' . $active . '" id="' . strtolower($name) . '">';              
+               $h->template($page .'/' . strtolower($name), 'admin');
+               if ($active == " active") $active = '';
+           echo '</div>';        
+        }
+    echo '</div>';
+?>
+
+  </div>  
+
 
 <?php $h->pluginHook('admin_settings_bottom'); ?>

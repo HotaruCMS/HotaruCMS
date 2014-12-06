@@ -23,47 +23,142 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Initialize
+
+//use Illuminate\Database\Capsule\Manager as Capsule;
+//use Illuminate\Events\Dispatcher;
+//use Illuminate\Container\Container;
+//use Illuminate\Cache\CacheManager;
+//use Illuminate\Filesystem\Filesystem;
+
+namespace Libs;
+
+class Initialize extends Prefab
 {
-	protected $db;                          // database object
-        protected $mdb;                         // meekro database object
-	protected $cage;                        // Inspekt object
-	protected $isDebug          = false;    // show db queries and page loading time
-        protected $memCache;                    // memcache global object
+        protected $isDebug              = false;    // show db queries and page loading time
+        protected $isTest               = false;    // show page files for testing
+        protected $profiling            = false;            
+	protected $adminPage            = false;    // flag to tell if we are in Admin or not
+	protected $sidebars             = true;     // enable or disable the sidebars
+	protected $csrfToken            = '';       // token for CSRF
+	protected $lang                 = array();  // stores language file content
+	
+	// objects
+	protected $db;                              // database object
+        //protected $mdb;                             // meekro database object
+	protected $cage;                            // Inspekt object
+        protected $includes;                        // for CSS/JavaScript includes
+	protected $debug;                           // Debug object
+        protected $email;                           // Email object
+	protected $pageHandling;                    // PageHandling object   
+        protected $profilePoint;
+        
+        // data objects
+	protected $avatar;                          // Avatar object
+	protected $comment;                         // Comment object
+        
+        // settings
+        protected $settings;                        // Site settings (instead of global define vars)
+        protected $systemJobs;
+        
+        // users
+        protected $currentUser;                     // UserBase object
+        protected $displayUser;                     // the user being displayed i.e. for messaging or following
+        protected $users;                           // List of users and their basic info loaded into memory
+        //protected $miscdata;                        // settings, data from miscdata table
+        
+        // posts
+        protected $post;                            // Post object
+        protected $postList;                        // List of posts shown in list
+        protected $currentPost;                     // Current Post
+        
+        // categories
+        protected $categories;                      // List of categories
+	protected $categoriesBySafeName;            // Index of categories by safename
+        protected $categoriesById;                  // Index of categories by Id
+        //protected $categoriesDisplay;               // List containing the <li> codes for displaying menu
+
+	// plugins
+        protected $plugin;                          // Plugin object
+	protected $pluginSettings       = array();  // contains all settings for all plugins
+        protected $plugins              = array();  // contains list of active types and active folders
+	protected $allPluginDetails     = array();  // contains details of all plugins
+        
+        // templates
+        protected $fileExists           = array();
+	
+        // page info
+	protected $home                 = '';       // name for front page
+	protected $pageName             = '';       // e.g. index, category
+	protected $pageTitle            = '';       // e.g. Top Stories
+	protected $pageType             = '';       // e.g. post, list
+	protected $pageTemplate         = '';       // e.g. sb_list, tag_cloud
+	protected $subPage              = '';       // e.g. category (if pageName is "index")
+        //
+	// messages
+	protected $message              = '';       // message to display
+	protected $messageType          = 'green';  // green or red, color of message box
+        protected $messageRole          = '';       // the Role that this message will display for
+	protected $messages             = array();  // for multiple messages
+	
+        // global cache
+        protected $memCache;                        // memcache object
+        
+	// vars
+        protected $vars                 = array();  // multi-purpose 
 	
 	/**
 	 * Initialize Hotaru with the essentials
 	 */
-	public function __construct($h)
+	public function __construct()
 	{
 		// session to be used by CSRF, etc.
 		if (!isset($_SESSION['HotaruCMS'])) {
 			@session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
+         
+                if (!defined("DB_ENGINE")) { define("DB_ENGINE", 'InnoDB'); }
                 
-                if (!defined('MEEKRODB')) define('MEEKRODB', false);
-
+                // passwordhash < 5.4
+                require_once(EXTENSIONS . 'passwordHash/password.php');
+                
+                $this->getFunctionFiles();
+                
 		// The order here is important!
 		$this->setDefaultTimezone();
 		$this->setTableConstants();
 
 		$this->MakeCacheFolders();
-
-		$this->getFiles();
+		$this->loadFiles();
+                
 		$this->cage = $this->initInspektCage();
 		$this->db = $this->initDatabase();
-                $this->mdb = $this->initDatabase('mdb');
+                //$this->mdb = $this->initDatabase('mdb');
+                //$this->initEloquent();
                 $this->memCache = $this->setMemCache();
 
 		$this->errorReporting();
-
+                
+                //$this->loadMiscData();
+                $this->loadSystemJobs();
+                $this->loadCategories();
                 $this->readSettings();
+                $this->readAllPluginSettings();
+                $this->getPluginActiveTypesAndFolders();
+                
                 $this->setUpDatabaseCache();
                 $this->isDebug = $this->checkDebug();
-                $this->setUpJsConstants();                
+                $this->setUpJsConstants();        
+                        
+                // TODO 
+                // get Widget blocks ? - speed test it first
+
+                // include "main" language pack
+		$lang = Language::instance();
+		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
+                $lang->writeLanguageCache($this);
                 
-		return $this;
+		return true;
 	}
 	
 	
@@ -84,11 +179,19 @@ class Initialize
 		return $this->$var;
 	}
 	
+        
+        // to get protected properties
+        public function __isset($name)
+        {
+                //echo "Is '$name' set?\n";
+                return isset($this->data[$name]);
+        }
+        
 	
 	/**
 	 * Error reporting
 	 */
-	public function errorReporting()
+	private function errorReporting()
 	{
 		// display errors
 		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
@@ -119,7 +222,7 @@ class Initialize
 	/**
 	 * Table Constants
 	 */
-	public function setTableConstants()
+	private function setTableConstants()
 	{
 		// define database tables
 		$tableConstants = array(
@@ -140,6 +243,8 @@ class Initialize
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
+                        "TABLE_USERCLAIMS"=>"userclaim",
+                        "TABLE_USERLOGINS"=>"userlogin",
 			"TABLE_USERMETA"=>"usermeta",
 			"TABLE_USERACTIVITY"=>"useractivity",
 			"TABLE_WIDGETS"=>"widgets"
@@ -155,62 +260,79 @@ class Initialize
 	/**
 	 * Set the timezone
 	 */
-	public function setDefaultTimezone()
+	private function setDefaultTimezone()
 	{
-		// set timezone
-		$version = explode('.', phpversion());
-		if($version[0] > 4){
-			$tmz = date_default_timezone_get();
-			date_default_timezone_set($tmz);
-		}
+		
 	}
 	
 	
 	/**
 	 * Include necessary files
 	 */
-	public function getFiles()
+	private function loadFiles()
 	{
 		// include third party libraries
 		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
+                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database                  
+                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
 		
                 require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-                require_once(LIBS       . 'InspektExtras.php'); // sanitation
-                
-                //require_once('Log.php'); // PEAR function
-                
-		require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database  
-                
-                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
+                require_once(LIBS       . 'InspektExtras.php'); // sanitation                		
                 
                 if (! function_exists ('mysqli_connect')) {
                     require_once(LIBS . 'Database_mysql.php');
                 } else {                    
                     require_once(LIBS . 'Database.php');
-                    
                 }
-                require_once(EXTENSIONS . 'meekrodb/hmeek.php');
-                                
-		// include functions
-		require_once(FUNCTIONS . 'funcs.strings.php');
-		require_once(FUNCTIONS . 'funcs.arrays.php');
-		require_once(FUNCTIONS . 'funcs.times.php');
-		require_once(FUNCTIONS . 'funcs.files.php');
-                require_once(FUNCTIONS . 'funcs.build.php');
-		require_once(FUNCTIONS . 'funcs.http.php'); 
 	}
 	
-	
+//	private function initEloquent()
+//        {
+//                /* Setup Eloquent. */
+//                $capsule = new Capsule;
+//                $capsule->addConnection([
+//                    'driver' => 'mysql',
+//                    'host' => DB_HOST,
+//                    'database' => DB_NAME,
+//                    'username' => DB_USER,
+//                    'password' => DB_PASSWORD,
+//                    'collation' => DB_COLLATE,
+//                    'prefix' => DB_PREFIX,
+//                    "charset"   => DB_CHARSET
+//                ]);
+//
+//                $capsule->setEventDispatcher(new Dispatcher(new Container));
+//
+//                $app = array(
+//                    'files' => new FileSystem(),
+//                    'config' => array(
+//                        'cache.driver' => 'file',
+//                        'cache.path' => CACHE . 'db_cache',
+//                        'cache.prefix' => 'hotaru_'
+//                    )
+//                );
+//                
+//                $cacheManager = new CacheManager($app);
+//                $capsule->setCacheManager($cacheManager);
+//
+//                // Make this Capsule instance available globally via static methods... (optional)
+//                $capsule->setAsGlobal();
+//
+//                $capsule->bootEloquent();
+//
+//                //$queries = $capsule->connection()->getQueryLog();
+//        }
+        
 	/**
 	 * Initialize Database
 	 *
 	 * @return object
 	 */
-	public function initDatabase($type = '')
+	private function initDatabase($type = '')
 	{                
                 if ($type == 'mdb') {
                     $port = '';
-                    $db = new hDB(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port, DB_CHARSET);
+                    $db = new hDB(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port, DB_CHARSET);                    
                     //$db->debugMode('my_debugmode_handler');
                     $db->error_handler = 'my_error_handler';
                     $db->nonsql_error_handler = 'my_nonsql_error_handler';    
@@ -219,10 +341,9 @@ class Initialize
                     
                 } else {
                     $db = new Database(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-                    $db->query("SET NAMES 'utf8'");
-                    //mysqli_set_charset($link, "utf8");    
+                    $db->query("SET NAMES 'utf8'");   
                 }
-
+                
 		return $db;
         }
 	
@@ -232,9 +353,9 @@ class Initialize
 	 *
 	 * @return object
 	 */
-	public function initInspektCage()
+	private function initInspektCage()
 	{
-		$cage = Inspekt::makeSuperCage(); 
+		$cage = \Inspekt::makeSuperCage(); 
 		
 		// Add Hotaru custom methods
 		$cage->addAccessor('testAlnumLines');
@@ -254,43 +375,114 @@ class Initialize
         /**
          *  set global memcache object
          */
-        protected function setMemCache() {
+        private function setMemCache() 
+        {   
+return false;
             
-            if (!defined('MEMCACHE') || !MEMCACHE) return false;
-            
-            if (!class_exists('memcache')) return false;                        
-                
             // TODO allow the following settings to be manually adjusted
-            $memCache = new myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
-            //print "new memcache";            
+            $memCache = new \myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
             
+            $memCache->flush();
+return false;
             return $memCache;
         }
 	
-	
-	/**
+        
+        private function loadSystemJobs()
+        {
+            if (!isset($this->systemJobs)) {
+                $systemJobs = \HotaruModels2\Miscdata::getCurrentSettings($this, 'system_jobs');
+                try {
+                    $this->systemJobs = unserialize($systemJobs);
+                } catch(Exception $e) {
+                    //
+                }
+            }
+        }
+        
+        
+//        private function loadMiscData()
+//        {
+//            // deprecated since there are too many other settings for other themes etc in miscdata
+//            // better to call each required setting indivdually
+//            if (!isset($this->miscdata)) {
+//                //$this->miscdata = HotaruModels\Miscdata::getAll();
+//                $this->miscdata = \HotaruModels2\Miscdata::getAll($this);
+//            }
+//        }
+        
+        
+        private function loadCategories()
+        {
+                if ($this->memCache) {
+                    $memCacheCategories = $this->memCache->read('categories');
+                    $memCacheCategoriesBySafeName = $this->memCache->read('categoriesBySafeName');
+                    $memCacheCategoriesById = $this->memCache->read('categoriesById');
+                    if ($memCacheCategories && $memCacheCategoriesBySafeName && $memCacheCategoriesById) {
+                        $this->categories = $memCacheCategories;
+                        $this->categoriesBySafeName = $memCacheCategoriesBySafeName;
+                        $this->categoriesById = $memCacheCategoriesById;
+                        return true;
+                    }
+                }
+
+                //if ($this->isTest) { timer_start('cats'); }
+                if (!isset($this->categories)) {
+                    //$this->categories = HotaruModels\Category::getAllOrderForNavBar();
+                    $this->categories = \HotaruModels2\Category::getAllOrderForNavBar($this);
+                }
+
+                // index of categories
+                if ($this->categories) {
+                    // This is like making an index on db, only here it is in memory
+                    foreach ($this->categories as $category)
+                    {
+                        $this->categoriesBySafeName[$category->category_safe_name] = $category;
+                        $this->categoriesById[$category->category_id]  = $category;
+                    }
+                    //if ($this->isTest) { print timer_stop(4, 'cats'); }
+                    // timetests averaging 0.0009, 0.0010, 0.0013 - Sep 21, 2014
+                    // timetests avergaing 0.0093, 0.0091, 0.0082 - Sep 24, 2014
+                }
+
+                if ($this->memCache) {
+                    $this->memCache->write('categories', $this->categories, 10000);
+                    $this->memCache->write('categoriesBySafeName', $this->categoriesBySafeName, 10000);
+                    $this->memCache->write('categoriesById', $this->categoriesById, 10000);
+                }
+        }
+
+
+        /**
 	 * Returns all site settings
 	 * 
 	 * @return <bool>
 	 */
-	public function readSettings() {	    
-                $sql = "SELECT settings_name, settings_value FROM " . TABLE_SETTINGS;  
+	private function readSettings()
+        {
+                // TODO sort out this hard code define problem
+                $settings = \HotaruModels2\Setting::getValues($this);
                 
-                if (!MEEKRODB) {                                      
-                    $settings = $this->db->get_results($this->db->prepare($sql));                   
-                } else {                                
-                    $settings = $this->mdb->query($sql);  
-//                    $settings = $this->db->query($sql);
-                    //$settings = models___Settings::all(array('select' => 'settings_name, settings_value'));
-                }
-                
-                //TODO 
-                // definitely want to cache off these settings to either file or memcache
+//                if ($this->memCache) {
+//                    $memCacheSettings = $this->memCache->read('settings');
+//                    if ($memCacheSettings) {
+//                        $settings = $memCacheSettings;
+//                    } else {
+//                        $settings = \HotaruModels2\Setting::getValues($this);
+//                        //$settings = HotaruModels\Setting::getValues();
+//                        $this->memCache->write('settings', $settings, 10000);
+//                    }
+//                } else {
+//                    $settings = \HotaruModels2\Setting::getValues($this);
+//                }
                 
                 if(!$settings) { 
-                    $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false);
+                    $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false, 'MINIFY_JS'=>false, 'MINIFY_CSS'=>false);
                     foreach ($default_settings as $setting => $value) {
-                        if (!defined($setting)) define ($setting, $value);
+                        $this->settings[$setting] = $value;
+                        if (!defined($setting)) { 
+                            define ($setting, $value);
+                        }
                     }                    
                     return false; 
                 }
@@ -307,16 +499,124 @@ class Initialize
 			if (!defined($setting->settings_name)) {
 				define($setting->settings_name, $setting->settings_value);
 			}                                               
-		}                                
-
+		}  
+                
 		return true;
 	}
+        
+        
+        private function getPluginActiveTypesAndFolders()
+        {
+                if ($this->memCache) {
+                    $memCacheAllPluginDetails = $this->memCache->read('allPluginDetails');
+                    $memCachePlugins = $this->memCache->read('plugins');
+                    if ($memCacheAllPluginDetails && $memCachePlugins) {
+                        $this->allPluginDetails = $memCacheAllPluginDetails;
+                        $this->plugins = $memCachePlugins;
+                        return true;
+                    }
+                }
+            
+                $pluginsRawData = \HotaruModels2\Plugin::getAllDetails($this);
+
+                $this->allPluginDetails['pluginData'] = array();
+                if ($pluginsRawData) {
+                    foreach ($pluginsRawData as $plugin) {
+                        $this->allPluginDetails['pluginData'][$plugin->plugin_folder] = $plugin;
+                        $this->allPluginDetails['pluginFolderIndexOnClass'][$plugin->plugin_class] = $plugin->plugin_folder;
+                    }
+                }
+
+                // hooks
+                //$h->allPluginDetails['hooks'] = \HotaruModels\Pluginhook::getAllEnabled();
+                $this->allPluginDetails['hooks'] = \HotaruModels2\Pluginhook::getAllEnabled($this);
+
+                //print_r($h->allPluginDetails['hooks']);
+                // turn this into an index based array as it runs faster than later calling an array_in func
+                // we are going to be using isset funcs later with this
+                // http://nickology.com/2012/07/03/php-faster-array-lookup-than-using-in_array/
+
+                if ($this->allPluginDetails['hooks']) {
+                    foreach ($this->allPluginDetails['hooks'] as $hooks)
+                    {
+                        $this->allPluginDetails['hookdata'][$hooks->plugin_hook][$hooks->plugin_folder] = 1;
+                    }
+                }
+
+                // this was the old function here originally just getting the active plugins
+                //$plugins = \HotaruModels\Plugin::getAllActiveNames()->toArray();
+                //$plugins = \HotaruModels2\Plugin::getAllActiveNames($this);
+
+                $plugins = $this->allPluginDetails['pluginData'];//[$plugin->plugin_folder] = $plugin;
+                foreach ($plugins as $plugin) {
+                    if ($plugin->plugin_enabled) {
+                        if ($plugin->plugin_type) {
+                            $this->plugins['activeTypes'][$plugin->plugin_type] = 1;
+                        }
+                        $this->plugins['activeFolders'][$plugin->plugin_folder] = 1;
+                    }
+                }
+            
+                if ($this->memCache) {
+                    $this->memCache->write('allPluginDetails', $this->allPluginDetails, 10000);
+                    $this->memCache->write('plugins', $this->plugins, 10000);
+                }
+        }
+        
+        
+        /**
+	 * Returns all plugin settings
+         * public because we may need to call it again later if plugins get updated, like on cron updates
+	 * 
+	 * @return <bool>
+	 */
+        public function readAllPluginSettings($forceUpdate = false)
+        {
+                // TODO
+                // run timetest again on just the enabled plugins rather than all of them in db
+                // $pluginsSetting = \HotaruModels\PuginSetting::getAll()->toArray();
+            
+                if ($this->memCache) {
+                    $memCachePluginsSetting = $this->memCache->read('pluginsSetting');
+                    if (!$forceUpdate && $memCachePluginsSetting) {
+                        $this->pluginSettings = $memCachePluginsSetting;
+                        return true;
+                    }
+                }
+            
+                //$pluginsSetting = \HotaruModels\PuginSetting::getAllWhereEnabled()->toArray();
+                $pluginsSetting = \HotaruModels2\PuginSetting::getAllWhereEnabled($this);
+                // timetests when retireving as object averaging 0.0010, 0.0014, 0.0012 - Sep 23, 2014
+                // timetests when retireving as array averaging  0.0019, 0.0020, 0.0018 - Sep 23, 2014
+                
+                //if (1==1) { timer_start('cats'); }
+                foreach ($pluginsSetting as $setting) {
+                    if ($setting['plugin_setting'] == $setting['plugin_folder'] . '_settings') {
+                    //if (is_serialized($setting['plugin_value'])) {
+                        $this->pluginSettings[$setting['plugin_folder']] = unserialize($setting['plugin_value']);
+                    } else {
+                        $this->pluginSettings[$setting['plugin_folder']][$setting['plugin_setting']] = $setting['plugin_value'];
+                    }                    
+                }
+                //if (1==1) { print timer_stop(4, 'cats'); }
+                // timetests when retrieving as object averaging 0.0023, 0.0022, 0.0023 - Sep 23, 2014
+                // timetests when retrieving as array averaging 0.0004, 0.0004, 0.0004 - Sep 23, 2014
+                // timetests when retrieving as array and not using is_serliazed check averaging 0.0002, 0.0002, 0.0002 - Sep 23, 2014
+                
+                //print 'sizeofvar pluginSettings: ' . sizeofvar($this->pluginSettings) . '<br/>';
+                
+                if ($this->memCache) {
+                    $this->memCache->write('pluginsSetting', $this->pluginSettings, 10000);
+                }
+                
+                return true;
+        }
         
         
 	/**
 	 * Make cache folders if they don't already exist
 	 */
-	public function MakeCacheFolders()
+	private function MakeCacheFolders()
 	{
 		// create a debug_logs folder if one doesn't exist.
 		if (!is_dir(CACHE . 'debug_logs')) { mkdir(CACHE . 'debug_logs'); }
@@ -343,7 +643,7 @@ class Initialize
 	 *
 	 * Note: Queries are still only cached following $this->db->cache_queries = true;
 	 */
-	public function setUpDatabaseCache()
+	private function setUpDatabaseCache()
 	{
 		// Setup database cache
 		$this->db->cache_timeout = DB_CACHE_DURATION; // Note: this is hours
@@ -364,12 +664,12 @@ class Initialize
 	 *
 	 * @ return bool 
 	 */
-	public function checkDebug()
+	private function checkDebug()
 	{
 		// Start timer if debugging
 		if (DEBUG == "true") {
 			require_once(FUNCTIONS . 'funcs.times.php');
-			timer_start();
+			timer_start('hotaru');
 			ini_set('display_errors', 1); // show errors
 			return true;
 		} else {
@@ -384,7 +684,7 @@ class Initialize
 	 *
 	 *  
 	 */
-	public function setUpJsConstants()
+	private function setUpJsConstants()
 	{
 		if (!defined('SITEURL')) { define("SITEURL", BASEURL); }
 
@@ -402,5 +702,15 @@ class Initialize
 		}
 		return false;
 	}
+        
+        private function getFunctionFiles()
+        {
+            // include functions
+		require_once(FUNCTIONS . 'funcs.strings.php');
+		require_once(FUNCTIONS . 'funcs.arrays.php');
+		require_once(FUNCTIONS . 'funcs.times.php');
+		require_once(FUNCTIONS . 'funcs.files.php');
+                require_once(FUNCTIONS . 'funcs.build.php');
+		require_once(FUNCTIONS . 'funcs.http.php'); 
+        }
 }
-?>

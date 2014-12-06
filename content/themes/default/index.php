@@ -47,7 +47,7 @@ if ($h->pluginHook('theme_index_top')) { return false; };
 if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 
 // check whether we have the fluid setting. If not make false
-$fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+$fluid = isset($h->vars['theme_settings']['fullWidth']) && $h->vars['theme_settings']['fullWidth'] == 'checked'  ? '-fluid' : '';
 
 // check for span from settings. if none then make default of 9
 $leftSpan = isset($h->vars['theme_settings']['leftSpan']) ? $h->vars['theme_settings']['leftSpan'] : 9;
@@ -73,14 +73,18 @@ $sideBarWidth = 12 - $leftSpan;
 	<?php } ?>
 		
         <div id="header_end">
-            <?php if (!$h->isActive('categories')) echo '<br/>'; ?>
+            <?php if (!$h->isActive('categories')) { echo '<br/>'; } ?>
                 <!-- CATEGORIES, ETC --> 
                 <?php $h->pluginHook('header_end'); ?>
         </div>
         
 	<div class="container<?php echo $fluid; ?>">
-            <div class="row<?php echo $fluid; ?>  clearfix">                
-
+            <div class="row clearfix">                
+ 
+                <?php if ($h->isDebug && $h->isAdmin) {
+                    $h->showMessages(); 
+                } ?>
+                
 		<div id="content">
 			
 			<div id="main_container" class="col-md-<?php echo $width; ?>">
@@ -125,5 +129,19 @@ $sideBarWidth = 12 - $leftSpan;
 
 	<?php $h->pluginHook('pre_close_body'); ?>
 
+        <div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                      <h4 class="modal-title" id="myLargeModalLabel">Modal</h4>
+                    </div>
+                    <div class="modal-body">
+                      ...
+                    </div>
+              </div>
+            </div>
+        </div>
+        
 </body>
 </html>

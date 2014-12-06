@@ -34,7 +34,9 @@
  * $h->getAvatar(); $h->linkAvatar(); $h->wrapAvatar();
  *
  */
-class Avatar
+namespace Libs;
+
+class Avatar extends Prefab
 {
 	public $user_id     = 0;
 	public $user_name   = '';
@@ -53,17 +55,27 @@ class Avatar
 	 * @param $size avatar size in pixels
 	 * @param $rating avatar rating (g, pg, r or x in Gravatar)
 	 */
-	public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g', $img_class = '')
+	public function  __construct($h, $user_id = 0, $size = 32, $rating = 'g', $img_class = '', $email = '', $username = '')
 	{
 		if (!$user_id) { return false; }
-		
-		$this->user_id = $user_id;
-		
-		$user = new UserBase();
-		$user->getUserBasic($h, $this->user_id);
-		$this->user_email = $user->email;
-		$this->user_name = $user->name;
-		
+                
+                if (!$email || !$username) {
+                    // check first whether it is the current logged in user
+                    if ($h->currentUser && $h->currentUser->id == $user_id) {
+                        $this->user_email = $h->currentUser->email;
+                        $this->user_name = $h->currentUser->name;
+                    } else {
+                        $user = $h->getUserBasic($user_id);
+                        $this->user_email = $user->user_email;
+                        $this->user_name = $user->user_username;
+                    }
+                } else {
+                    // this saves us looking anything up and cuts down on db trip
+                    $this->user_email = $email;
+                    $this->user_name = $username;
+                }
+                
+                $this->user_id = $user_id;
 		$this->size = $size;
 		$this->rating = $rating;
                 $this->img_class = $img_class;
@@ -108,7 +120,6 @@ class Avatar
 		
 		$this->valid = true;
 		return $result[key($result)];   // returns the result (i.e. Gravatar url in the case of Gravatar)
-	
 	}
 	
 	
@@ -204,4 +215,3 @@ class Avatar
 		return $output;
 	}
 }
-?>

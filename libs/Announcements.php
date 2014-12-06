@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Announcements
+namespace Libs;
+
+class Announcements extends Prefab
 {
 	/**
 	 * Displays an announcement at the top of the screen

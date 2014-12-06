@@ -52,6 +52,7 @@ $lang['main_hotaru_db_queries'] = "Database queries: ";
 $lang['main_hotaru_cache_queries'] = "Cache queries: ";
 $lang['main_hotaru_page_load_time'] = "Page load time: ";
 $lang['main_hotaru_memory_usage'] = "Memory usage: ";
+$lang['main_hotaru_memory_usage_peak'] = "Peak: ";
 $lang['main_hotaru_php_version'] = "PHP v.";
 $lang['main_hotaru_mysql_version'] = "MySQL v.";
 $lang['main_hotaru_hotaru_version'] = "<a href='http://hotarucms.org' title='HotaruCMS.org'>Hotaru CMS</a> v.";
@@ -86,6 +87,7 @@ $lang['error_csrf'] = "CSRF error. Please try again.";
 $lang["main_theme_navigation_home"] = "Home";
 $lang["main_theme_navigation_admin"] = "Admin";
 $lang["main_theme_navigation_debug"] = "Debug";
+$lang["main_theme_navigation_register"] = "Register";
 $lang["main_theme_navigation_login"] = "Login";
 $lang["main_theme_navigation_logout"] = "Logout";
 
@@ -156,5 +158,10 @@ $lang["main_welcome_install_plugins"] = "Time to install some plugins and open y
 
 /* Debug */
 $lang['debug_success_csrf'] = "DEBUG : CSRF Success";
+
+/* Mail */
+$lang['mail_error_message_not_sent'] = "Message could not be sent.";
+$lang['mail_error_mailer_error'] = "Mailer Error";
+$lang['mail_success_mail_sent'] = "Mail was sent";
 
 ?>

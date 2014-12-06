@@ -27,7 +27,7 @@
  */
 
 // stats
-$ui = new UserInfo();
+$ui = \Libs\UserInfo::instance();
 $stats = $ui->stats($h, 'month');
 
 $users = 0;
@@ -41,10 +41,11 @@ foreach($stats as $key=>$extClass){
         }
     }    
     
-    $postsAll = $h->post->stats($h, 'total');
-    $posts_week = $h->post->stats($h, 'totalweek');
+    $p = new \Libs\Post();
+    $postsAll = $p->stats($h, 'total');
+    $posts_week = $p->stats($h, 'totalweek');
     
-    $c = new Comment();	   
+    $c = new \Libs\Comment();	   
     $comments_today = $c->stats($h, 'today');
     
 ?>
@@ -147,7 +148,7 @@ foreach($stats as $key=>$extClass){
 			<h5>Software</h5>
 		    </div>
 		    <div class="content">
-			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="#" class="alert-link">upgrade now</a>', 'alert-info');   ?>
+			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="http://forums.hotarucms.org/resources/hotaru-cms-core.4/" class="alert-link">upgrade now</a>', 'alert-info');   ?>
 		    </div>
 		</div>
 			
@@ -176,7 +177,9 @@ foreach($stats as $key=>$extClass){
 	 
 <!-- TITLE FOR ADMIN NEWS -->
 	<h2>
-		<a href="http://feeds2.feedburner.com/hotarucms"><img src="<?php echo SITEURL; ?>content/admin_themes/<?php echo ADMIN_THEME; ?>images/rss_16.png" width="16" height="16" alt="rss" /></a>
+		<a href="http://feeds2.feedburner.com/hotarucms">
+                    <i class="fa fa-rss"></i>
+                </a>
 		&nbsp;<?php echo $h->lang("admin_theme_main_latest"); ?>
 	</h2>
 	

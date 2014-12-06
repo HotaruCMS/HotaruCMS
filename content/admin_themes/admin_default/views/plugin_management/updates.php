@@ -35,7 +35,7 @@
                         <td><?php echo $plugin['name']; ?></td>
                         <td><?php echo $plugin['version']; ?></td>
                         <td><?php echo $plugin['latestversion']; ?></td>
-                        <td><a href="<?php echo $href; ?>" class="button">Update</button></a></td>
+                        <td><a href="<?php echo $href; ?>" class="btn btn-xs btn-primary">Update</button></a></td>
                     </tr>
                 <?php } ?>
         <?php } 

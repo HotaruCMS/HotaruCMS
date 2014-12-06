@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class PluginSettings
+namespace Libs;
+
+class PluginSettings extends Prefab
 {
 	/**
 	 * Get the value for a given plugin and setting
@@ -36,8 +38,21 @@ class PluginSettings
 	 * this will only get the first.
 	 */
 	public function getSetting($h, $setting = '', $folder = '')
-	{
-		if (!$folder) { $folder = $h->plugin->folder; }
+	{            
+               //print 'folder: ' . $folder; print ' ** setting: ' . $setting . '<br/>';
+                //print '$h->plugin->folder: ' . $h->plugin->folder . '<br/>';
+		
+            if (!$folder) { 
+                    // we cant do an isset here as the propery is protected and wont return. trying this instead
+                    if (!property_exists($h, 'plugin')) { 
+//                        // TODO check what is causing this to be empty
+                        //print "no folder". '<br/>';
+                        return false;                         
+                    } else {
+                        //print "folder found". '<br/>';
+                        $folder = $h->plugin->folder;
+                    }
+                }                
 		
 		if ($h->adminPage)
 		{
@@ -47,24 +62,16 @@ class PluginSettings
 		}
 		else
 		{
-			// get all settings from the database if we haven't already:
-			if (!$h->pluginSettings) { $h->getAllPluginSettings(); }
-			
-			// return false if no plugin settings found in the database
 			if (!$h->pluginSettings) { return false; }
-			
-			// get the settings we need from memory
-			foreach ($h->pluginSettings as $item => $key) {
-				if (($key->plugin_folder == $folder) && ($key->plugin_setting == $setting)) {
-					$value = $key->plugin_value;
-				}
-			}
+                        
+                        $value = isset($h->pluginSettings[$folder][$setting]) ? $h->pluginSettings[$folder][$setting] : null;
 		}
-		
+		//print "value of setting " . $value . '<Br/>';
 		if (isset($value)) { return $value; } else { return false; }
 	}
 	
 	
+        // TODO test more - e.g install of some plugins use this
 	/**
 	 * Get an array of settings for a given plugin
 	 *
@@ -77,10 +84,13 @@ class PluginSettings
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
-		$results = $h->db->get_results($h->db->prepare($sql, $folder));
-		
-		if ($results) { return $results; } else { return false; }
+                if (isset($h->pluginSettings[$folder])) {
+                    return $h->pluginSettings[$folder];
+                }
+                
+                return false;
+		//$sql = "SELECT plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s)";
+		//$results = $h->db->get_results($h->db->prepare($sql, $folder));
 	}
 	
 	
@@ -94,28 +104,17 @@ class PluginSettings
 	public function getSerializedSettings($h, $folder = '', $settings_name = '')
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
+                
+                if (!$settings_name) {
+                    $settings_name = $folder . '_settings';
+                }
+    
+                if (!isset($h->pluginSettings[$folder])) {
+                    //print "set settings for: " . $folder . '<br/>';
+                    $h->pluginSettings[$folder] = unserialize($this->getSetting($h, $settings_name, $folder));
+                }
 		
-		// Get settings from the database if they exist...
-		if (!$settings_name) {
-			$settings = unserialize($h->getSetting($folder . '_settings', $folder));
-		} else {
-			$settings = unserialize($h->getSetting($settings_name, $folder));
-		}
-		return $settings;
-	}
-	
-	
-	/**
-	 * Get and store all plugin settings in $h->pluginSettings
-	 * We use the Hotaru object because it's persistent during a page load
-	 *
-	 * @return array - all settings
-	 */
-	public function getAllPluginSettings($h)
-	{
-		$sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
-		$results = $h->db->get_results($h->db->prepare($sql));
-		if ($results) { return $results; } else { return false; }
+		return $h->pluginSettings[$folder];
 	}
 	
 	
@@ -130,13 +129,23 @@ class PluginSettings
 	{
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s) LIMIT 1";
-		$returned_setting = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
-		if ($returned_setting) { 
-			return $returned_setting; 
-		} else { 
-			return false; 
-		}
+                //print "isSetting for folder: " . $folder . '   setting: ' .$setting . '<Br/>';
+                        
+                // dont do check in memory. we are going to update based on this. better to go to db
+                if (!isset($h->pluginSettings[$folder])) {
+                    //print "set settings for: " . $folder . '<br/>';
+                    $h->pluginSettings[$folder] = unserialize($this->getSetting($h, $setting, $folder));
+                }
+		
+		return $h->pluginSettings[$folder];
+                
+//		$sql = "SELECT plugin_setting FROM " . TABLE_PLUGINSETTINGS . " WHERE (plugin_folder = %s) AND (plugin_setting = %s) LIMIT 1";
+//		$returned_setting = $h->db->get_var($h->db->prepare($sql, $folder, $setting));
+//		if ($returned_setting) { 
+//			return $returned_setting; 
+//		}
+
+		return false; 		
 	}
 	
 	
@@ -149,22 +158,57 @@ class PluginSettings
 	 */
 	public function updateSetting($h, $setting = '', $value = '', $folder = '')
 	{
+                //print "@@@@ UPDATESETTING for folder: " . $folder . ',  setting: ' .$setting . ',  value:' . $value . '<br/><br/>';
 		if (!$folder) { $folder = $h->plugin->folder; }
 		
-		$exists = $h->isSetting($setting, $folder);
-		if (!$exists) 
-		{
+		$exists = $this->isSetting($h, $setting, $folder);
+		if (!$exists) {
 			$sql = "INSERT INTO " . TABLE_PLUGINSETTINGS . " (plugin_folder, plugin_setting, plugin_value, plugin_updateby) VALUES (%s, %s, %s, %d)";
-			$h->db->query($h->db->prepare($sql, $folder, $setting, $value, $h->currentUser->id));
-		} else 
-		{
+//print $sql; print '<br/>';			
+$h->db->query($h->db->prepare($sql, $folder, $setting, $value, $h->currentUser->id));
+		} else {
 			$sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
 			if (isset($h->currentUser->id)) { $updateby = $h->currentUser->id; } else { $updateby = 1; }
-			$h->db->query($h->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
+//print $sql; print '<br/>';			
+$h->db->query($h->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
 		}
 		
 		// optimize the table
 		$h->db->query("OPTIMIZE TABLE " . TABLE_PLUGINSETTINGS);
+                
+                // update the in memory settings for this plugin otherwise they wont be displayed back on form
+//                if (is_serialized($value)) {
+//                    $h->pluginSettings[$folder] = unserialize($value);
+//                } else {
+//                    $h->pluginSettings[$folder][$setting] = $value;
+//                }
+//                
+                // After updating a setting we should always recall the init methods for populting $h functions   
+                $h->getAllPluginSettings();
 	}
+        
+        
+        public static function getSettingsDropdownList($h, $title = "Plugins")
+        {
+            if (!isset($h->plugins['activeFolders']) || !$h->plugins['activeFolders']) { return false; }
+            
+            $output = '<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">' . $title . '<span class="caret"></span></a>';
+            $output .= '<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">';
+                        
+            foreach($h->plugins['activeFolders'] as $plugin => $val) {
+                $pluginData = $h->allPluginDetails['pluginData'][$plugin];
+                
+                $name = ucfirst(preg_replace('/_/', ' ', $plugin));   
+                $output .= '<li>';
+                $output .= '<a href="/admin_index.php?page=plugin_settings&plugin=' . $plugin . '" tabindex="-1" role="tab" >';
+                $output .= $pluginData->plugin_latestversion > $pluginData->plugin_version ? '<span class="btn btn-warning btn-xs">' . $name . '</span>' : $name;
+                //$output .= $pluginData->plugin_resourceId != 0 ? '<span class="pull-right"><i class="fa fa-comments"></i></span>' : '';
+                $output .= '</a>';
+                $output .= '</li>';
+            }
+            
+            $output .= '</ul>';
+            
+            return $output;
+        }
 }
-?>

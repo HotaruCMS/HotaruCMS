@@ -28,8 +28,13 @@
  * @link      http://www.hotarucms.org/
  */
 
+require_once '../vendor/autoload.php';
+
 // start session:
 session_start();
+
+$h = new \stdClass();
+$h->version = '1.7beta';
 
 // Read Settings
 define("SETTINGS", '../config/');
@@ -39,6 +44,7 @@ if (file_exists(SETTINGS . 'settings.php')) {
     $settings_file_exists = true;
 } else {
     $settings_file_exists = false;
+    define('BASEURL', '/');
 }
 
 define("SITEURL", BASEURL);
@@ -69,7 +75,10 @@ require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
 require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
 require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
 //$h  = new Hotaru('install'); // must come before language inclusion
-$h  = new Hotaru('start');
+
+//$h  = new Hotaru('start');
+
+
 require_once(INSTALL . 'language/install_language.php');    // language file for install
 
 $version_number = $h->version;
@@ -107,7 +116,7 @@ switch ($step) {
 		break;
 	case 3: 
 		if ($action == 'upgrade') {
-			upgrade_plugins();
+			upgrade_step_3();
 		} else {
 			$db = init_database();
                         
@@ -124,7 +133,11 @@ switch ($step) {
 		}
 		break;
 	case 4:
-		installation_complete();    // Delete "install" folder. Visit your site"
+                if ($action == 'upgrade') {
+			upgrade_plugins();
+		} else {
+                        installation_complete();    // Delete "install" folder. Visit your site"
+                }
 		break;
 	default:
 		// Anything other than step=1, 3 or 4 will return user to Step 0
@@ -342,7 +355,7 @@ function database_tables_creation($h)
 	
 	} else {	   
 	    
-	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'usermeta', 'useractivity', 'widgets');
+	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'userlogin', 'userclaim', 'usermeta', 'useractivity', 'widgets');
 
 	    // delete *all* tables in db:
 	    $db->selectDB(DB_NAME);
@@ -376,9 +389,23 @@ function register_admin()
 	    }
 	}
 
-	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+	$h = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
 
+        // save default admin user
+        $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
+        $admin_name = $h->db->get_var($h->db->prepare($sql, 'admin'));
+        if (!$admin_name) {
+                // Insert default settings
+                $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
+                $h->db->query($h->db->prepare($sql, 'admin', 'admin', password_hash('password', PASSWORD_DEFAULT), 'admin@example.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
+                $user_name = 'admin';
+                $user_email = 'admin@example.com';
+                $user_password = 'password';
+        }
+                
+        $next_button = false;
 	$error = 0;
+        
 	if ($h->cage->post->getInt('step') == 4)
 	{
 		// Test CSRF
@@ -405,7 +432,7 @@ function register_admin()
 			$password2_check = $h->cage->post->testPassword('password2');
 			if ($password_check == $password2_check) {
 				// success
-				$user_password = $h->currentUser->generateHash($password_check);
+				$user_password = $password_check; // $h->currentUser->generateHash($password_check);
 			} else {				
 				$h->messages[$lang['install_step3_password_match_error']] = 'red';				
 				$error = 1;
@@ -425,49 +452,40 @@ function register_admin()
 			$h->messages[$lang['install_step3_email_error']] = 'red';			
 			$error = 1;
 		}
+                
+                if ($error == 0) {
+                    $user_info = $h->currentUser->getUser($h, 0, $admin_name);
+                    // On returning to this page via back or next, the fields are empty at this point, so...
+                    $user_name = isset($user_name) ? $user_name : "";
+                    $user_email = isset($user_email) ? $user_email : "";
+                    $user_password = isset($user_password) ? $user_password : ""; 
+
+                    if ($user_name != "" && $user_email != "" && $user_password != "") {
+                            // There's been a change so update...
+                            $h->currentUser->name = $user_name;
+                            $h->currentUser->email = $user_email;
+                            $h->currentUser->password = $user_password;
+                            $h->currentUser->role = 'admin';
+                            $h->currentUser->updateUserBasic($h);
+                            $h->currentUser->savePassword($h);
+
+                            // auto login admin user as well, but no cookie
+                            //$h->loginCheck($user_name, $user_password);
+                            $next_button = true;
+                    } else {
+                            $user_id = $user_info->user_id;
+                            $user_name = $user_info->user_username;
+                            $user_email = $user_info->user_email;
+                            //$user_password = $user_info->user_password;
+                    }
+                }
 	}
 
 	// Show success message
 	if (($h->cage->post->getInt('step') == 4) && $error == 0) {		
 		$h->messages[$lang['install_step3_update_success']] = 'green';		
 	}
-
-        $next_button = false;
         
-	if ($error == 0) {
-            
-		$sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
-
-		if (!$admin_name = $h->db->get_var($h->db->prepare($sql, 'admin')))
-		{
-			// Insert default settings
-			$sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-			$h->db->query($h->db->prepare($sql, 'admin', 'admin', 'password', 'admin@example.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
-			$user_name = 'admin';
-			$user_email = 'admin@example.com';
-			$user_password = 'password';
-		}
-		else
-		{
-			$user_info = $h->currentUser->getUser($h, 0, $admin_name);
-			// On returning to this page via back or next, the fields are empty at this point, so...
-			if (!isset($user_name)) { $user_name = ""; }
-			if (!isset($user_email)){ $user_email = ""; }
-			if (!isset($user_password)) { $user_password = ""; }
-			if (($user_name != "") && ($user_email != "") && ($user_password != "")) {
-				// There's been a change so update...
-				$sql = "UPDATE " . TABLE_USERS . " SET user_username = %s, user_role = %s, user_date = CURRENT_TIMESTAMP, user_password = %s, user_email = %s, user_email_valid = %d WHERE user_role = %s";
-				$h->db->query($h->db->prepare($sql, $user_name, 'admin', $user_password, $user_email, 1, 'admin'));
-				$next_button = true;
-			} else {
-				$user_id = $user_info->user_id;
-				$user_name = $user_info->user_username;
-				$user_email = $user_info->user_email;
-				$user_password = $user_info->user_password;
-			}
-		}
-	}
-
         template($h, 'install/register_admin.php', array(
             'next_button' => $next_button,
             'user_name' => $user_name,
@@ -484,13 +502,13 @@ function installation_complete()
 	global $lang;
 	global $cage;	
 
-	$h  = new Hotaru(); // overwrites current global with fully initialized Hotaru object
+	$h  = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
 	
 	$phpinfo = $cage->post->getAlpha('phpinfo');        // delete install folder.
 
 	if (!$phpinfo) { 
 		//send feedback report 
-		$systeminfo = new SystemInfo(); 
+		$systeminfo = new \Libs\SystemInfo(); 
 		$systeminfo->hotaru_feedback($h); 
 	} else {	   
                 $php_version = phpversion();
@@ -529,24 +547,43 @@ function installation_complete()
 
 
 /**
+ * Step 3 of upgrade
+ */
+function upgrade_step_3()
+{
+        $h = new \Libs\Hotaru();
+        
+        template($h, 'upgrade/upgrade_step_3.php');          
+}
+
+
+/**
  * Step 3 of upgrade - shows completion.
  */
 function upgrade_plugins()
 {
-	$h = new Hotaru();
+	$h = new \Libs\Hotaru();
+        
+        $plugman = new \Libs\PluginManagement();
+        $plugman->refreshPluginOrder($h);
+        $plugman->sortPluginHooks($h);
+        
+        template($h, 'upgrade/upgrade_plugins.php');
         
         //send feedback report
-	$systeminfo = new SystemInfo();
+	$systeminfo = new \Libs\SystemInfo();
 	$systeminfo->hotaru_feedback($h);
-	
-        template($h, 'upgrade/upgrade_plugins.php');
+        
+        $systeminfo->plugin_version_getAll($h);
 }
 
 /**
  * create new settings file
  */
 function create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, $dbprefix_name, $dbhost_name, $baseurl_name) {
-
+    $checkSlash = substr($baseurl_name, -1);
+    if ($checkSlash !== '/') { $baseurl_name .= '/'; }
+    
     ob_start();
 
    ?>
@@ -565,10 +602,11 @@ define("DB_HOST", '<?php echo $dbhost_name; ?>');     			// You probably won't n
 // You probably don't need to change these
 define("DB_PREFIX", '<?php echo $dbprefix_name; ?>');     		// Database prefix, e.g. "hotaru_"
 define("DB_LANG", 'en');            			// Database language, e.g. "en"
-define("DB_ENGINE", 'MyISAM');				// Database Engine, e.g. "MyISAM"
 define('DB_CHARSET', 'utf8');				// Database Character Set (UTF8 is Recommended), e.g. "utf8"
 define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recommended), e.g. "utf8_unicode_ci"
 
+define("LANGUAGE_ADMIN", 'en');
+define("LANGUAGE_MAIN", 'en');
 ?><?php  // leave this line squashed up here as we dont want any blank lines at the end of the settings file
    $page = "<?php" . ob_get_contents();
    ob_end_clean();
@@ -588,4 +626,13 @@ define("DB_COLLATE", 'utf8_unicode_ci');		// Database Collation (UTF8 is Recomme
 function add_DBPREFIX($table) {   
     return DB_PREFIX . $table;
 }
-?>
+
+
+/**
+ * Displays ALL success or failure messages
+ */
+function showMessages()
+{
+        $messages = \Libs\Messages::instance();
+        $messages->showMessages($this);
+}

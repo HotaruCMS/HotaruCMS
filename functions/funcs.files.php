@@ -98,6 +98,24 @@ function display_filesize($filesize)
 	return 'Error displaying filesize';
 }
 
+function GetDirectorySize($path){
+    try {
+        $bytestotal = 0;
+        $path = realpath($path);
+        
+        if($path!==false){
+            foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
+                $bytestotal += $object->getSize();
+            }
+            $bytestotal = '<span class="label label-primary">' . display_filesize($bytestotal) . '</span>';
+        }
+    } catch (Exception $e) {
+        //echo 'Caught exception: ',  $e->getMessage(), "\n";
+        $bytestotal = '<span class="label label-default">n/a</span>';
+    }
+    return $bytestotal;
+}
+
 /**
  * Start Hotaru from Ajax callback
  */
@@ -112,9 +130,8 @@ function startHotaru()
 	require_once($root.'/config/settings.php');
 	require_once($root.'/Hotaru.php');
 
-	$h = new Hotaru();
+	$h = new \Libs\Hotaru();
 	$h->start();
 
 	return $h;
 }
-?>

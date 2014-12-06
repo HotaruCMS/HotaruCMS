@@ -6,7 +6,7 @@
     <meta name="author" content="">
 
     <!-- styles -->
-    <link href="/libs/frameworks/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/frameworks/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 20px;
@@ -44,13 +44,12 @@
         margin-top: 28px;
       }
     </style>
-    <link href="/libs/frameworks/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-
+    
   </head>
 
   <body>
 
-    <div class="container-narrow">
+    <div class="container">
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
@@ -71,8 +70,8 @@
 
       <hr>
 
-      <div class="row-fluid marketing">
-        <div class="span6">
+      <div class="row marketing">
+        <div class="col-md-6">
           <h4>Hotaru CMS</h4>
           <p>Hotaru CMS allows you to create great bookmarking, journal and other social web sites. Be your own site admin and create your own social network niche.</p>
 
@@ -80,12 +79,15 @@
           <p>Built for sharing information, Hotaru CMS lets you add content easily and share it with other social networks.</p>
         </div>
 
-        <div class="span6">
+        <div class="col-md-6">
           <h4>Bookmarking</h4>
           <p>Although flexible to be used for different purposes, Hotaru CMS is a leader in creating social bookmarking sites. </p>
 
           <h4>Forums</h4>
-          <p>There is always plenty of help in the forums from developers and site owners</p>
+          <p>
+              There is always plenty of help in the forums from developers and site owners<br/>
+              <a href="http://forums.hotarucms.org">Forum Link</a>
+          </p>
         </div>
       </div>
 

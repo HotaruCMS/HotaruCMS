@@ -24,7 +24,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class Feeds {
+namespace Libs;
+
+class Feeds extends Prefab
+{
 
 	 /**
 	 * Create an RSS Feed
@@ -38,7 +41,7 @@ class Feeds {
 	public function rss($h, $title = '', $link = '', $description = '', $items = array(), $content_type = 'application/xml') {
 		require_once(EXTENSIONS.'RSSWriterClass/rsswriter.php');
 		
-		$feed = new RSS($h->url(array('page'=>'rss')));
+		$feed = new \RSS($h->url(array('page'=>'rss')));
 		$feed->title = stripslashes(html_entity_decode(urldecode($title), ENT_QUOTES, 'UTF-8'));
 		$feed->link = html_entity_decode($link, ENT_QUOTES, 'UTF-8');
 		$feed->description = $description;
@@ -64,7 +67,7 @@ class Feeds {
 		include_once(EXTENSIONS."SimplePie/simplepie.inc");
 		
 		if ($feed != '') {
-			$sp = new SimplePie();
+			$sp = new \SimplePie();
 			$sp->set_feed_url($feed);
 			$sp->set_cache_location(CACHE."rss_cache/");
 			$sp->set_cache_duration($cache_duration);

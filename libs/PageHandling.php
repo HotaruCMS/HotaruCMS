@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-class PageHandling
+namespace Libs;
+
+class PageHandling extends Prefab
 {
 	protected $default = 'default/';
 	protected $adminDefault = 'admin_default/';
@@ -169,16 +171,14 @@ class PageHandling
 			}
 		} 
 		
-		if ($page) {
-                        if ($page === 'page') {                            
-                            $page = ltrim($h->cage->server->sanitizeTags('REQUEST_URI'), '/page/');                            
-                        }
-			$page = str_replace('..', '', $page); // prevents access outside the current folder
-			$page = rtrim($page, '/');
-			return $page;
-		} else {
-			return false;
-		}
+                if (!$page) { return false; }
+                
+                if ($page === 'page') {                            
+                    $page = ltrim($h->cage->server->sanitizeTags('REQUEST_URI'), '/page/');                            
+                }
+                $page = str_replace('..', '', $page); // prevents access outside the current folder
+                $page = rtrim($page, '/');
+                return $page;
 	}
 	
 	
@@ -261,11 +261,12 @@ class PageHandling
 		} 
                 
                 $page = str_replace('..', '', $page); // prevents access outside the current folder
-		$page = $page . '.php';
-
+                $file = $page . '.php';
+                        
                 // Include this for testing
-                if ($h->isTest) print "plugin = " . $plugin . ' : pages = ' . $page . '<br/>';
-                
+                if ($h->isTest) { print "plugin = " . $plugin . ' : page = ' . $page . '.php<br/>'; }
+                //$startTime = timer_stop(4,'hotaru');
+                //print 'time before fileExists on ' . $file . ' : ' . $startTime . '<Br/>';
 		/* 
 			1. Check the custom theme (skip step 1 if plugin is "pages")
 			2. Check the default theme (skip step 2 if plugin is "pages")
@@ -274,83 +275,59 @@ class PageHandling
 			5. Show the 404 Not Found page from "themes" folder
 		*/
 
-		if ($plugin != 'pages' && file_exists($themes . $theme . $page))
-		{ 
-			if (!$include_once) {
-				// Special case, do not restrict to include once.
-                                if ((include $themes . $theme . $page) == 1) {
-                                    //
-                                } else {
-                                    echo 'ERROR : ' . $themes . $theme . $page . ' not included';
-                                    
-                                } 				
-			} else {
-				if ((include_once $themes . $theme . $page) == 1) {
-                                    //
-                                } else {
-                                    echo 'ERROR : ' . $themes . $theme . $page . ' not included';                                    
-                                }                                
-			}
-		} 
-		elseif ($plugin != 'pages' && file_exists($themes . $default . $page)) 
-		{
-			if (!$include_once) {
-				// Special case, do not restrict to include once.
-				include($themes . $default . $page);
-			} else {
-				include_once($themes . $default . $page);
-			}
-		}
-                elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $page)) 
-                {
-                        include_once($themes . $theme . 'views/' . $page);
+                // TODO we are running a file_exists on the same template multiple times
+                // If we already got it once lets add it to the $h->fileExists list
+                
+                if (!isset($h->fileExists[$page])) {
+                    if ($plugin != 'pages' && file_exists($themes . $theme . $file))
+                    {
+			$h->fileExists[$page] = $themes . $theme . $file;
+                    } 
+                    elseif ($plugin != 'pages' && file_exists($themes . $default . $file)) 
+                    {
+                        $h->fileExists[$page] = $themes . $default . $file;
+                    }
+                    elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $file)) 
+                    {
+                        $include_once = true;
+                        $h->fileExists[$page] = $themes . $theme . 'views/' . $file;
+                    }
+                    elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $file))
+                    {
+                        $include_once = true;
+                        $h->fileExists[$page] = CONTENT . 'pages/' . $file;
+                    } 
+                    elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $file))
+                    {
+                            $h->fileExists[$page] = PLUGINS . $plugin . '/templates/' . $file;
+                            //$stopHere = true; return true; die();
+                    }
+                    elseif (file_exists($themes . $theme . '404error.php')) 
+                    {
+                            $h->fileExists[$page] = $themes . $theme . '404error.php';
+                    }
+                    else
+                    {
+                            $h->fileExists[$page] = $themes . '404error.php';
+                    }
                 }
-		elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $page))
-		{
-			include_once(CONTENT . 'pages/' . $page);
-		} 
-		elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $page))
-		{
-			if (!$include_once) {
-				// Special case, do not restrict to include once.
-				include(PLUGINS . $plugin . '/templates/' . $page);
-			} else {
-				include_once(PLUGINS . $plugin . '/templates/' . $page);
-			}
-			return true;
-			die();
-		}
-		elseif (file_exists($themes . $theme . '404error.php')) 
-		{
-			include_once($themes . $theme . '404error.php');
-		}
-		else
-		{
-			include_once($themes . '404error.php');
-		}
+                
+                if (!$include_once) {
+                        include $h->fileExists[$page];
+                    } else {
+                        include_once $h->fileExists[$page];                    
+                }
+                
+                $h->checkSystemJobs($h);
+                
+                //$endTime = timer_stop(4,'hotaru');
+                //print 'time after include for ' . $file . ' : ' . timer_stop(4,'hotaru') . '<Br/>';
+                //$lapsedTime = $endTime - $startTime ;
+                //$label = ($lapsedTime > 0.001) ? 'label-warning' : 'label-default';
+                //if ($lapsedTime > 0.05) { $label = 'label-danger'; }
+                //print '** total time for ' . $file . '  = <span class="label ' . $label . '">' . $lapsedTime . '</span><Br/><Br/>';
 	}
 	
-        
-        /**
-	 * Includes a view template to display
-	 *
-	 * @param string $page page name
-	 * @param array $data optional array of data
-	 */
-	public function render($h, $page = '', $data = array())
-	{
-                if (!$h->adminPage) return false;
-                
-		$page = str_replace('..', '', $page); // prevents access outside the current folder
-                $page = $page . '.php';
-                
-                $folder = ADMIN_THEMES . ADMIN_THEME;                
-                 
-                if (file_exists($folder . 'views/' . $page))
-                {
-                    include_once($folder . 'views/' . $page);			
-                }                
-        }
 	
 	/**
 	 * Generate either default or friendly urls
@@ -382,9 +359,7 @@ class PageHandling
 			}
 			return rstrtrim($url, '&amp;');    
 		    
-		} 
-		
-		if (FRIENDLY_URLS == "true") {
+		} elseif (FRIENDLY_URLS == "true") {
 		
 			if ($head == 'index') { 
 				$url = SITEURL;
@@ -396,10 +371,14 @@ class PageHandling
 			
 			foreach ($parameters as $key => $value) {
 			
-				if ($key == 'page' && is_numeric($value) ) {
+                                // added in for pages like show all comments, activity
+                                if ($key == 'postUrl') {
+                                    return SITEURL . $value;
+                                }
+                        
+				if ($key == 'page' && is_numeric($value)) {
                                         // find the url
-                                        $h->readPost($value);
-					$value = $h->post->url;
+                                        $value = $h->post->url;
 					
 					// if we're using categories and the category is not "all"...
 //					if ($h->isActive('categories') && $h->post->category > 1) {
@@ -408,12 +387,11 @@ class PageHandling
 					
 					$url .= $value . '/';
 				
-				} elseif ($key == 'category' && is_numeric($value) ) {
+				} elseif ($key == 'category' && is_numeric($value)) {
 				
 					$url .= $key . '/' . $h->getCatSafeName($value) . '/';
 				
 				} elseif ($key == 'page') {
-				
 					// don't show "page" in the url, only the value
 					$url .= $value . '/';
 				
@@ -421,9 +399,9 @@ class PageHandling
 					$url .= $key . '/' . $value . '/';
 				}
 			}
+                        //print '|' . $url . '|';
 			return $url;
 		}
-		
 	}
 	
 	

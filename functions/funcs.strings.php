@@ -520,7 +520,6 @@ function utf8_uri_encode($utf8_string, $length = 0)
 	return $unicode;
 }
 
-
 /**
  * Strip domain from url
  *
@@ -604,4 +603,3 @@ function strip_foreign_characters($str)
 	$str = str_replace('â€', '"', $str);
 	return $str;
 }
-?>
