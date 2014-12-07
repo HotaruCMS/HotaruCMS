@@ -9,6 +9,7 @@ return array(
     'AccessorAbstract' => $baseDir . '/libs/extensions/Inspekt/Inspekt/AccessorAbstract.php',
     'Avatar' => $baseDir . '/libs/deprecAvatar.php',
     'Comment' => $baseDir . '/libs/deprecComment.php',
+    'Hotaru' => $baseDir . '/libs/deprecHotaru.php',
     'HotaruHttpRequest' => $baseDir . '/libs/extensions/SWCMS/HotaruHttpRequest.php',
     'Hotaru\\Models2\\BaseModel' => $baseDir . '/models/mdb/BaseModel.php',
     'Hotaru\\Models2\\Blocked' => $baseDir . '/models/mdb/Blocked.php',

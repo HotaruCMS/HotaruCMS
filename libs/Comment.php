@@ -81,7 +81,7 @@ class Comment extends Prefab
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-                //$num_comments = \Hotaru\Models\Comment::countByPost($h->post->id);
+                //$num_comments = \HotaruModels\Comment::countByPost($h->post->id);
                 $num_comments = \Hotaru\Models2\Comment::countByPost($h, $h->post->id);                
                 
 		if ($digits_only) { return $num_comments; } // just return the number
@@ -167,7 +167,7 @@ class Comment extends Prefab
 	 */
 	function getComment($h, $comment_id = 0)
 	{
-                //$comment = \Hotaru\Models\Comment::getWithDetails($comment_id);  // this query was wrong anyway
+                //$comment = \HotaruModels\Comment::getWithDetails($comment_id);  // this query was wrong anyway
                 $comment = \Hotaru\Models2\Comment::getWithDetailsForComment($h, $comment_id);
 		
 		if($comment) { return $comment; } else { return false; }
@@ -187,7 +187,7 @@ class Comment extends Prefab
 		
 		if ($post_id) {
 			// get all comments from specified post
-                        //$comments = \Hotaru\Models\Comment::getWithDetails($post_id);
+                        //$comments = \HotaruModels\Comment::getWithDetails($post_id);
                         $comments = \Hotaru\Models2\Comment::getWithDetails($h, $post_id);
                         
                         // TODO this search crteria is different to the one above getComment
@@ -252,12 +252,12 @@ class Comment extends Prefab
 	function getAllCommentsQuery($h, $order = "ASC", $userId = 0)
 	{
 		if ($userId) { 
-                        //$comments = \Hotaru\Models\Comment::getAllForUserWithDetails($userId, $order);
+                        //$comments = \HotaruModels\Comment::getAllForUserWithDetails($userId, $order);
                         // Cant use above yet because we dont have a new paging solution yet
                         $comments = \Hotaru\Models2\Comment::getAllForUserWithDetails($h, $userId, $order);
                         
 		} else {
-                        //$comments = \Hotaru\Models\Comment::getAllWithDetails($order);
+                        //$comments = \HotaruModels\Comment::getAllWithDetails($order);
                         // Cant use above yet because we dont have a new paging solution yet
                         $comments = \Hotaru\Models2\Comment::getAllWithDetails($h, $order);
 		}
@@ -328,7 +328,7 @@ class Comment extends Prefab
 		$h->comment->id = $this->id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_update_comment');
                 
-                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                //\HotaruModels\Post::updateCommentCount($this->postId);
                 \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
 		
 		return true;
@@ -354,7 +354,7 @@ class Comment extends Prefab
 		$h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_delete_comment');
                 
-                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                //\HotaruModels\Post::updateCommentCount($this->postId);
                 \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
 		
 		// Need to clear both these caches to be sure related items are updated in widgets, etc.:
@@ -384,7 +384,7 @@ class Comment extends Prefab
 			}
 		}
 		
-                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                //\HotaruModels\Post::updateCommentCount($this->postId);
                 \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
                 
 		return true;

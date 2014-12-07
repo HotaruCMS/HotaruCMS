@@ -25,8 +25,6 @@
  * @link      http://www.hotarucms.org/
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 // includes
 if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');

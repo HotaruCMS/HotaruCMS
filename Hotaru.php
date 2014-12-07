@@ -1,6 +1,7 @@
 <?php
 namespace Libs;
 
+require_once __DIR__ . '/vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
@@ -82,7 +83,7 @@ class Hotaru extends Initialize
 		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
 		
                 // fills $h->pageName
-		$this->getPageName();                   
+		$this->getPageName();
 		
                 // special diversion for api calls to api plugin to avoid session,cookie vars etc
                 if ($this->pageName == 'api') {

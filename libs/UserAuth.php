@@ -228,7 +228,7 @@ class Authorization
                 if (!$username) {
                     return false;
                 }
-            
+
                 $status = \Hotaru\Models2\User::isLockedOut($h, $username);
                 return $status;
         }

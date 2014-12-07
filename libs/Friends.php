@@ -140,4 +140,3 @@ class Friends extends Prefab
 	}
 
 }
-?>

@@ -133,7 +133,7 @@ class UserBase extends Prefab
                     if (isset($h->users[$userId])) {                        
                         $user = $h->users[$userId];
                     } else {
-                        //$user = \Hotaru\Models\User::getBasicFromUserId($userId);
+                        //$user = \HotaruModels\User::getBasicFromUserId($userId);
                         $user = \Hotaru\Models2\User::getBasicFromUserId($h, $userId);
                         $h->users[$userId] = $user;
                     }
@@ -141,7 +141,7 @@ class UserBase extends Prefab
                     if (isset($h->users[$username]) && !empty($h->users[$username])) {
                         $user = $h->users[$username];
                     } else {
-                        //$user = \Hotaru\Models\User::getBasicFromUsername($username);
+                        //$user = \HotaruModels\User::getBasicFromUsername($username);
                         $user = \Hotaru\Models2\User::getBasicFromUsername($h, $username);
                         $h->users[$username] = $user;
                     }
@@ -645,11 +645,11 @@ class UserBase extends Prefab
 		
 		if ($defaults == 'site') { 
                     //$field = 'miscdata_value';
-                    //$db_perms = \Hotaru\Models\Miscdata::getCurrentValue('permissions');
+                    //$db_perms = \HotaruModels\Miscdata::getCurrentValue('permissions');
                     $db_perms = \Hotaru\Models2\Miscdata::getCurrentValue($h, 'permissions');
 		} else {
                     //$field = 'miscdata_default';
-                    //$db_perms = \Hotaru\Models\Miscdata::getDefaultValue('permissions');
+                    //$db_perms = \HotaruModels\Miscdata::getDefaultValue('permissions');
                     $db_perms = \Hotaru\Models2\Miscdata::getDefaultValue($h, 'permissions');
 		}
 		
@@ -775,7 +775,7 @@ class UserBase extends Prefab
                 //print_r($this);
                 if (!$userid) { $userid = $this->id; }
                 //print "id: " . $this->id;
-                //$result = \Hotaru\Models\Usermeta::getProfileSetting($userid, $type);
+                //$result = \HotaruModels\Usermeta::getProfileSetting($userid, $type);
                 $result = \Hotaru\Models2\Usermeta::getProfileSetting($h, $userid, $type);
 
 		// if we're only testing to see if the settings exist, return here:
@@ -833,7 +833,7 @@ class UserBase extends Prefab
 	{
                 // since we already have all of the miscdata in $h->miscdata we should be able to get defaultsettings straight from there without going to db
                 
-                //$result = \Hotaru\Models\Miscdata::getUserSettings($type);
+                //$result = \HotaruModels\Miscdata::getUserSettings($type);
                 $result = \Hotaru\Models2\Miscdata::getUserSettings($h, $type);
 
 		if ($result) {
@@ -931,7 +931,7 @@ class UserBase extends Prefab
 	 */
 	public function getCustomRoles($h) 
 	{
-                //$result = \Hotaru\Models\Miscdata::getCurrentValue('custom_roles');
+                //$result = \HotaruModels\Miscdata::getCurrentValue('custom_roles');
                 $result = \Hotaru\Models2\Miscdata::getCurrentValue($h, 'custom_roles');
             
 //		$sql = "SELECT miscdata_value FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s LIMIT 1";
@@ -972,7 +972,7 @@ class UserBase extends Prefab
 		
 		// check custom_roles row exists in the database:
                 
-                //$result = \Hotaru\Models\Miscdata::getCurrentValue('custom_roles');
+                //$result = \HotaruModels\Miscdata::getCurrentValue('custom_roles');
                 $result = \Hotaru\Models2\Miscdata::getCurrentValue($h, 'custom_roles');
 
 		// update or insert accordingly 
@@ -1140,7 +1140,7 @@ class UserBase extends Prefab
         
         public function getCount($h, $role = '')
         {
-            //$num = \Hotaru\Models\User::getCount($role);
+            //$num = \HotaruModels\User::getCount($role);
             $num = \Hotaru\Models2\User::getCount($h, $role);
             
             if (!$num) {

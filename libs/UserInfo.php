@@ -50,7 +50,7 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromName($h, $username = '')
 	{
-                //$userid = \Hotaru\Models\User::getUserIdFromName($username);
+                //$userid = \HotaruModels\User::getUserIdFromName($username);
                 $userid = \Hotaru\Models2\User::getUserIdFromName($h, $username);
 		
 		if ($userid) { return $userid; } else { return false; }
@@ -65,7 +65,7 @@ class UserInfo extends UserBase
 	 */
 	public function getEmailFromId($h, $userid = 0)
 	{
-                //$email = \Hotaru\Models\User::getEmailFromId($userid);
+                //$email = \HotaruModels\User::getEmailFromId($userid);
                 $email = \Hotaru\Models2\User::getEmailFromId($h, $userid);
 		
 		if ($email) { return $email; } else { return false; }

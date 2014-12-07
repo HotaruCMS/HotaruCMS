@@ -116,7 +116,7 @@ class Initialize extends Prefab
 			@session_start();
 			$_SESSION['HotaruCMS'] = time();
 		}
-         
+
                 // these items can be defined in settings but if not here are the defaults
                 if (!defined("DB_ENGINE")) { define("DB_ENGINE", 'InnoDB'); }
                 if (!defined("MEMCACHED_HOST")) { define("MEMCACHED_HOST", '127.0.0.1'); }

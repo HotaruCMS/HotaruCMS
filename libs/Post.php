@@ -169,9 +169,7 @@ class Post extends Prefab
                 //$post = \Hotaru\Models\Post::getWithDetails($post_id);
                 $post = \Hotaru\Models2\Post::getWithDetails($h, $post_id);
                 
-                if ($post) { return $post; } else { return false; }                
-                
-
+                if ($post) { return $post; } else { return false; }
 	}
 	
 	
@@ -292,9 +290,9 @@ class Post extends Prefab
 	{
                 // TODO we should be able to do the delete in 1 step without retrieving records first
 		if (!$user_id) { return false; }
-                
+
                 //$results = \Hotaru\Models\Post::getByAuthor($user_id);
-                $results = \Hotaru\Models2\Post::getByAuthor($h, $user_id);		
+                $results = \Hotaru\Models2\Post::getByAuthor($h, $user_id);
 				
 		if ($results) {
 			foreach ($results as $r) {
@@ -450,12 +448,9 @@ class Post extends Prefab
 	{
 		if (!$user_id) { $user_id = $h->currentUser->id; }
 		
-                $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";
+                $sql = "SELECT COUNT(post_id) FROM " . TABLE_POSTS . " WHERE (post_status = %s || post_status = %s) AND post_author = %d AND post_type = %s";                
+                $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
                 
-                                    
-                    $count = $h->db->get_var($h->db->prepare($sql, 'top', 'new', $user_id, $post_type));
-                
-                 
 		return $count;	
 	}
 	
@@ -599,12 +594,10 @@ class Post extends Prefab
                         $h->smartCache('on', 'posts', 60, $query); // start using cache
                         $posts = $h->db->get_var($query);						
 			break;
-		}
-		
+		}	
 
 		$h->smartCache('off'); // stop using cache
 
 		return $posts;
 	}
 }
-?>

@@ -62,4 +62,3 @@ class Plugin extends Prefab
 		return $this->$var;
 	}
 }
-?>

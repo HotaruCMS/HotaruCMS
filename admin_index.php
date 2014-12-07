@@ -25,12 +25,19 @@
  */
 
 // Autoload our dependencies with Composer
-require_once 'vendor/autoload.php';
-//
+//require_once 'vendor/autoload.php';
+
 // includes
 require_once('config/settings.php');
 require_once('Hotaru.php');
 
 $h = \Libs\Hotaru::instance();
+
+//$f3 = require_once('libs/extensions/Fatfree/libs/base.php');
+
+// includes
+require_once('config/settings.php');
+require_once('Hotaru.php');
+$h = Libs\Hotaru::instance();
 $h->start('admin');
 

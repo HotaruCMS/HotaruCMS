@@ -229,5 +229,4 @@ class Widget extends Prefab
                 
 		return $widget_plugin;
 	}
-
 }

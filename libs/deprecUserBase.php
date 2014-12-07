@@ -10,4 +10,3 @@ class UserBase extends \Libs\UserBase
 {
     
 }
-

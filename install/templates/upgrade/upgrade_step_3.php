@@ -115,9 +115,8 @@ function postPreparation()
 {
         // Re-sort all orders and remove any accidental gaps
         //refreshPluginOrder();
-        
+
         // clear all caches one more time including langage cache
-        
          
         // turn on right arrow next
         $('#update-step3-right').removeClass('disabled');
