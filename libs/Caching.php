@@ -229,7 +229,7 @@ class Caching extends Prefab
                             $sql = "SELECT MAX(cvote_updatedts) FROM " . DB_PREFIX . $table;
                             break;
                         case 'users':
-                            $sql = "SELECT MAX(post_updatedts) FROM " . DB_PREFIX . $table;
+                            $sql = "SELECT MAX(user_updatedts) FROM " . DB_PREFIX . $table;
                             break;
                         case 'useractivity':
                             $sql = "SELECT MAX(useract_updatedts) FROM " . DB_PREFIX . $table;
