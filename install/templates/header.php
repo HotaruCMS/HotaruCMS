@@ -36,7 +36,7 @@
 						<li class="active"><a href="index.php?step=1&action=install"><?php echo $lang['install_new2']; ?></a></li>
 						<li><a href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade2']; ?></a></li>
 						<li><a href="./templates/instruction.html">Help</a></li>
-						<li><a href="index.php">Site</a></li>
+						<li><a href="/index.php">Site</a></li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">

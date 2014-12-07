@@ -630,6 +630,13 @@ function do_upgrade($h, $old_version)
                 
                 $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_type = 'Perf'  WHERE settings_name like '%CACHE%'";
                 $h->db->query($sql);
+                
+                // REMOVE TOKENS TABLE
+                $exists = $h->db->column_exists('tokens', 'token_sid');
+		if ($exists) {
+                    $sql = "DROP TABLE " . DB_PREFIX . 'tokens';
+                    $h->db->query($sql);
+                }
 
                 $h->messages['Updated from 1.6.6'] = 'green';
             }

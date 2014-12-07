@@ -1341,6 +1341,10 @@ class Hotaru extends Initialize
                             $h->vars['framework']['jquery'] = true;                            
                         }
                         
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>'; 
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
+
                         break;
                     case 'js': 
                         
@@ -1352,7 +1356,12 @@ class Hotaru extends Initialize
                         }
                           
                         $version_js = $this->includes->combineIncludes($this, 'js');
-                        $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);                               	                        
+                        $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);  
+                        
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>'; 
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
+
                         break;
                     case 'css': 
                         $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1370,14 +1379,6 @@ class Hotaru extends Initialize
                         break;
              }  
              
-            //$this->includeJs(LIBS . 'extensions/summernote/', 'summernote.min');   
-             
-            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>';             
-                            
-            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
-            echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';             
-            
-            
 	 }
 	 
 	/**
