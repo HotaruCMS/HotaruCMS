@@ -117,7 +117,10 @@ class Initialize extends Prefab
 			$_SESSION['HotaruCMS'] = time();
 		}
          
+                // these items can be defined in settings but if not here are the defaults
                 if (!defined("DB_ENGINE")) { define("DB_ENGINE", 'InnoDB'); }
+                if (!defined("MEMCACHED_HOST")) { define("MEMCACHED_HOST", '127.0.0.1'); }
+                if (!defined("MEMCACHED_PORT")) { define("MEMCACHED_PORT", 11211); }
                 
                 // passwordhash < 5.4
                 require_once(EXTENSIONS . 'passwordHash/password.php');
@@ -135,7 +138,8 @@ class Initialize extends Prefab
 		$this->db = $this->initDatabase();
                 //$this->mdb = $this->initDatabase('mdb');
                 //$this->initEloquent();
-                $this->memCache = $this->setMemCache();
+                
+                $this->memCache = $this->setMemCache(MEMCACHED_HOST, MEMCACHED_PORT);
 
 		$this->errorReporting();
                 
@@ -193,9 +197,9 @@ class Initialize extends Prefab
 	 */
 	private function errorReporting()
 	{
-		// display errors
-		ini_set('display_errors', 1); // Gets disabled later in checkDebug()
-		error_reporting(E_ALL);
+		// display errors already set at top of Hotaru
+		//ini_set('display_errors', 1); // Gets disabled later in checkDebug()
+		//error_reporting(E_ALL);
 		
 		// error log filename
 		$filename = CACHE . 'debug_logs/error_log.php';
@@ -272,18 +276,18 @@ class Initialize extends Prefab
 	private function loadFiles()
 	{
 		// include third party libraries
-		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database                  
-                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
-		
-                require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-                require_once(LIBS       . 'InspektExtras.php'); // sanitation                		
-                
-                if (! function_exists ('mysqli_connect')) {
-                    require_once(LIBS . 'Database_mysql.php');
-                } else {                    
-                    require_once(LIBS . 'Database.php');
-                }
+//		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
+//                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database                  
+//                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
+//		
+//                require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
+//                require_once(LIBS       . 'InspektExtras.php'); // sanitation                		
+//                
+//                if (! function_exists ('mysqli_connect')) {
+//                    require_once(LIBS . 'Database_mysql.php');
+//                } else {                    
+//                    require_once(LIBS . 'Database.php');
+//                }
 	}
 	
 //	private function initEloquent()
@@ -374,15 +378,15 @@ class Initialize extends Prefab
         
         /**
          *  set global memcache object
+         *  test for whether memcache or memcached methods are available on server within this myMemcache call
          */
-        private function setMemCache() 
+        private function setMemCache($host, $port) 
         {   
 return false;
             
-            // TODO allow the following settings to be manually adjusted
-            $memCache = new \myMemcache(array('host'=>'127.0.0.1', 'port'=>11211));
+            $memCache = new \myMemcache(array('host'=>$host, 'port'=>$port));
             
-            $memCache->flush();
+            //$memCache->flush();   // for flush on testing
 return false;
             return $memCache;
         }
@@ -391,7 +395,7 @@ return false;
         private function loadSystemJobs()
         {
             if (!isset($this->systemJobs)) {
-                $systemJobs = \HotaruModels2\Miscdata::getCurrentSettings($this, 'system_jobs');
+                $systemJobs = \Hotaru\Models2\Miscdata::getCurrentSettings($this, 'system_jobs');
                 try {
                     $this->systemJobs = unserialize($systemJobs);
                 } catch(Exception $e) {
@@ -407,7 +411,7 @@ return false;
 //            // better to call each required setting indivdually
 //            if (!isset($this->miscdata)) {
 //                //$this->miscdata = HotaruModels\Miscdata::getAll();
-//                $this->miscdata = \HotaruModels2\Miscdata::getAll($this);
+//                $this->miscdata = \Hotaru\Models2\Miscdata::getAll($this);
 //            }
 //        }
         
@@ -429,7 +433,7 @@ return false;
                 //if ($this->isTest) { timer_start('cats'); }
                 if (!isset($this->categories)) {
                     //$this->categories = HotaruModels\Category::getAllOrderForNavBar();
-                    $this->categories = \HotaruModels2\Category::getAllOrderForNavBar($this);
+                    $this->categories = \Hotaru\Models2\Category::getAllOrderForNavBar($this);
                 }
 
                 // index of categories
@@ -461,20 +465,19 @@ return false;
 	private function readSettings()
         {
                 // TODO sort out this hard code define problem
-                $settings = \HotaruModels2\Setting::getValues($this);
                 
-//                if ($this->memCache) {
-//                    $memCacheSettings = $this->memCache->read('settings');
-//                    if ($memCacheSettings) {
-//                        $settings = $memCacheSettings;
-//                    } else {
-//                        $settings = \HotaruModels2\Setting::getValues($this);
-//                        //$settings = HotaruModels\Setting::getValues();
-//                        $this->memCache->write('settings', $settings, 10000);
-//                    }
-//                } else {
-//                    $settings = \HotaruModels2\Setting::getValues($this);
-//                }
+                if ($this->memCache) {
+                    $memCacheSettings = $this->memCache->read('settings');
+                    if ($memCacheSettings) {
+                        $settings = $memCacheSettings;
+                    } else {
+                        $settings = \Hotaru\Models2\Setting::getValues($this);
+                        //$settings = HotaruModels\Setting::getValues();
+                        $this->memCache->write('settings', $settings, 10000);
+                    }
+                } else {
+                    $settings = \Hotaru\Models2\Setting::getValues($this);
+                }
                 
                 if(!$settings) { 
                     $default_settings = array('THEME'=>'default/', 'SITE_NAME'=>'Hotaru CMS', 'FRIENDLY_URLS'=>false, 'LANG_CACHE'=>false, 'SITE_OPEN'=>false, 'DB_CACHE_DURATION'=>0, 'DB_CACHE'=>false, 'DEBUG'=>false, 'MINIFY_JS'=>false, 'MINIFY_CSS'=>false);
@@ -517,7 +520,7 @@ return false;
                     }
                 }
             
-                $pluginsRawData = \HotaruModels2\Plugin::getAllDetails($this);
+                $pluginsRawData = \Hotaru\Models2\Plugin::getAllDetails($this);
 
                 $this->allPluginDetails['pluginData'] = array();
                 if ($pluginsRawData) {
@@ -528,8 +531,8 @@ return false;
                 }
 
                 // hooks
-                //$h->allPluginDetails['hooks'] = \HotaruModels\Pluginhook::getAllEnabled();
-                $this->allPluginDetails['hooks'] = \HotaruModels2\Pluginhook::getAllEnabled($this);
+                //$h->allPluginDetails['hooks'] = \Hotaru\Models\Pluginhook::getAllEnabled();
+                $this->allPluginDetails['hooks'] = \Hotaru\Models2\Pluginhook::getAllEnabled($this);
 
                 //print_r($h->allPluginDetails['hooks']);
                 // turn this into an index based array as it runs faster than later calling an array_in func
@@ -544,8 +547,8 @@ return false;
                 }
 
                 // this was the old function here originally just getting the active plugins
-                //$plugins = \HotaruModels\Plugin::getAllActiveNames()->toArray();
-                //$plugins = \HotaruModels2\Plugin::getAllActiveNames($this);
+                //$plugins = \Hotaru\Models\Plugin::getAllActiveNames()->toArray();
+                //$plugins = \Hotaru\Models2\Plugin::getAllActiveNames($this);
 
                 $plugins = $this->allPluginDetails['pluginData'];//[$plugin->plugin_folder] = $plugin;
                 foreach ($plugins as $plugin) {
@@ -574,7 +577,7 @@ return false;
         {
                 // TODO
                 // run timetest again on just the enabled plugins rather than all of them in db
-                // $pluginsSetting = \HotaruModels\PuginSetting::getAll()->toArray();
+                // $pluginsSetting = \Hotaru\Models\PuginSetting::getAll()->toArray();
             
                 if ($this->memCache) {
                     $memCachePluginsSetting = $this->memCache->read('pluginsSetting');
@@ -584,8 +587,8 @@ return false;
                     }
                 }
             
-                //$pluginsSetting = \HotaruModels\PuginSetting::getAllWhereEnabled()->toArray();
-                $pluginsSetting = \HotaruModels2\PuginSetting::getAllWhereEnabled($this);
+                //$pluginsSetting = \Hotaru\Models\PuginSetting::getAllWhereEnabled()->toArray();
+                $pluginsSetting = \Hotaru\Models2\PuginSetting::getAllWhereEnabled($this);
                 // timetests when retireving as object averaging 0.0010, 0.0014, 0.0012 - Sep 23, 2014
                 // timetests when retireving as array averaging  0.0019, 0.0020, 0.0018 - Sep 23, 2014
                 
@@ -668,7 +671,6 @@ return false;
 	{
 		// Start timer if debugging
 		if (DEBUG == "true") {
-			require_once(FUNCTIONS . 'funcs.times.php');
 			timer_start('hotaru');
 			ini_set('display_errors', 1); // show errors
 			return true;
