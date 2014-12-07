@@ -1,11 +1,8 @@
-/nbproject/private/
-nbproject/project.xml
+/nbproject/
 
 config/settings.php
 
 .htaccess
-
-memcacheadmin.php
 
 content/pages/test/abc.php
 
