@@ -1,5 +1,5 @@
 <?php
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class BaseModel //extends \hDB
 {

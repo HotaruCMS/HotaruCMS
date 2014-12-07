@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class UserClaim extends BaseModel
 {

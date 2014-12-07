@@ -225,7 +225,7 @@ class Widget extends Prefab
 	public function getPluginFromFunction($h, $function)
 	{
                 //$widget_plugin = HotaruModels\Widget::getPluginNameFromWidget($function);
-                $widget_plugin = \HotaruModels2\Widget::getPluginNameFromWidget($h, $function);
+                $widget_plugin = \Hotaru\Models2\Widget::getPluginNameFromWidget($h, $function);
                 
 		return $widget_plugin;
 	}

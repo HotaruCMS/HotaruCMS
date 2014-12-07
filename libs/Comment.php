@@ -81,8 +81,8 @@ class Comment extends Prefab
 	 */
 	function countComments($h, $digits_only = true, $no_comments_text = '')
 	{
-                //$num_comments = \HotaruModels\Comment::countByPost($h->post->id);
-                $num_comments = \HotaruModels2\Comment::countByPost($h, $h->post->id);                
+                //$num_comments = \Hotaru\Models\Comment::countByPost($h->post->id);
+                $num_comments = \Hotaru\Models2\Comment::countByPost($h, $h->post->id);                
                 
 		if ($digits_only) { return $num_comments; } // just return the number
 		
@@ -167,8 +167,8 @@ class Comment extends Prefab
 	 */
 	function getComment($h, $comment_id = 0)
 	{
-                //$comment = \HotaruModels\Comment::getWithDetails($comment_id);  // this query was wrong anyway
-                $comment = \HotaruModels2\Comment::getWithDetailsForComment($h, $comment_id);
+                //$comment = \Hotaru\Models\Comment::getWithDetails($comment_id);  // this query was wrong anyway
+                $comment = \Hotaru\Models2\Comment::getWithDetailsForComment($h, $comment_id);
 		
 		if($comment) { return $comment; } else { return false; }
 	}
@@ -187,8 +187,8 @@ class Comment extends Prefab
 		
 		if ($post_id) {
 			// get all comments from specified post
-                        //$comments = \HotaruModels\Comment::getWithDetails($post_id);
-                        $comments = \HotaruModels2\Comment::getWithDetails($h, $post_id);
+                        //$comments = \Hotaru\Models\Comment::getWithDetails($post_id);
+                        $comments = \Hotaru\Models2\Comment::getWithDetails($h, $post_id);
                         
                         // TODO this search crteria is different to the one above getComment
 			//$sql = "SELECT C.*, U.user_username, P.post_title FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_USERS . " AS U ON C.comment_user_id = U.user_id LEFT JOIN " . TABLE_POSTS  . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_post_id = %d AND C.comment_status = %s AND P.post_status <> %s AND P.post_status <> %s ORDER BY C.comment_date " . $order;
@@ -252,14 +252,14 @@ class Comment extends Prefab
 	function getAllCommentsQuery($h, $order = "ASC", $userId = 0)
 	{
 		if ($userId) { 
-                        //$comments = \HotaruModels\Comment::getAllForUserWithDetails($userId, $order);
+                        //$comments = \Hotaru\Models\Comment::getAllForUserWithDetails($userId, $order);
                         // Cant use above yet because we dont have a new paging solution yet
-                        $comments = \HotaruModels2\Comment::getAllForUserWithDetails($h, $userId, $order);
+                        $comments = \Hotaru\Models2\Comment::getAllForUserWithDetails($h, $userId, $order);
                         
 		} else {
-                        //$comments = \HotaruModels\Comment::getAllWithDetails($order);
+                        //$comments = \Hotaru\Models\Comment::getAllWithDetails($order);
                         // Cant use above yet because we dont have a new paging solution yet
-                        $comments = \HotaruModels2\Comment::getAllWithDetails($h, $order);
+                        $comments = \Hotaru\Models2\Comment::getAllWithDetails($h, $order);
 		}
 		
 		if($comments) { return $comments; } else { return false; }
@@ -309,7 +309,7 @@ class Comment extends Prefab
 		$h->vars['last_insert_id'] = $last_insert_id;    // make it available outside this class
 
                 // update the comment count on post table as well
-                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
                 
 		$h->pluginHook('comment_post_add_comment');
 	}
@@ -328,8 +328,8 @@ class Comment extends Prefab
 		$h->comment->id = $this->id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_update_comment');
                 
-                //\HotaruModels\Post::updateCommentCount($this->postId);
-                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
 		
 		return true;
 	}
@@ -354,8 +354,8 @@ class Comment extends Prefab
 		$h->comment->id = $comment_id; // a small hack to get the id for use in plugins.
 		$h->pluginHook('comment_delete_comment');
                 
-                //\HotaruModels\Post::updateCommentCount($this->postId);
-                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
 		
 		// Need to clear both these caches to be sure related items are updated in widgets, etc.:
 		$h->clearCache('html_cache', false); 
@@ -384,8 +384,8 @@ class Comment extends Prefab
 			}
 		}
 		
-                //\HotaruModels\Post::updateCommentCount($this->postId);
-                \HotaruModels2\Post::updateCommentCount($h, $this->postId);
+                //\Hotaru\Models\Post::updateCommentCount($this->postId);
+                \Hotaru\Models2\Post::updateCommentCount($h, $this->postId);
                 
 		return true;
 	}

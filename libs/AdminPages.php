@@ -152,8 +152,8 @@ class AdminPages extends Prefab
 	public function settings($h)
 	{
                 // get all admin settings from the database
-		//$loaded_settings = \HotaruModels\Setting::all();
-		$loaded_settings = \HotaruModels2\Setting::getAll($h);
+		//$loaded_settings = \Hotaru\Models\Setting::all();
+		$loaded_settings = \Hotaru\Models2\Setting::getAll($h);
                 
 		$error = 0;
                 $updated = false;
@@ -166,8 +166,8 @@ class AdminPages extends Prefab
                             $setting_value = $h->cage->post->getRaw($setting->settings_name);
                             
                             if ($setting_value && $setting_value != $setting->settings_value) {
-                                    //\HotaruModels\Setting::makeUpdate($setting->settings_name, $setting_value, $h->currentUser->id);
-                                    \HotaruModels2\Setting::makeUpdate($h, $setting->settings_name, $setting_value, $h->currentUser->id);
+                                    //\Hotaru\Models\Setting::makeUpdate($setting->settings_name, $setting_value, $h->currentUser->id);
+                                    \Hotaru\Models2\Setting::makeUpdate($h, $setting->settings_name, $setting_value, $h->currentUser->id);
                             } elseif (!$setting_value) {
                                     // empty value                                             
                                     $error = 1;
@@ -208,8 +208,8 @@ class AdminPages extends Prefab
 		}
 
                 if ($updated) {
-                    //$loaded_settings = \HotaruModels\Setting::all();
-                    $loaded_settings = \HotaruModels2\Setting::getAll($h);                    
+                    //$loaded_settings = \Hotaru\Models\Setting::all();
+                    $loaded_settings = \Hotaru\Models2\Setting::getAll($h);                    
                 }
 		
 		return $loaded_settings;
@@ -223,8 +223,8 @@ class AdminPages extends Prefab
 	 */
 	public function getAllAdminSettings($db)
 	{
-                //$settings = \HotaruModels\Setting::all();
-                $settings = \HotaruModels2\Setting::getAll();
+                //$settings = \Hotaru\Models\Setting::all();
+                $settings = \Hotaru\Models2\Setting::getAll();
                 
                 return $settings;
 	}
@@ -238,8 +238,8 @@ class AdminPages extends Prefab
 	 */
 	public function adminSettingUpdate($h, $setting = '', $value = '')
 	{
-            //$result = \HotaruModels\Setting::makeUpdate($setting, $value, $h->currentUser->id);
-            $result = \HotaruModels2\Setting::makeUpdate($h, $setting, $value, $h->currentUser->id);
+            //$result = \Hotaru\Models\Setting::makeUpdate($setting, $value, $h->currentUser->id);
+            $result = \Hotaru\Models2\Setting::makeUpdate($h, $setting, $value, $h->currentUser->id);
 	}
         
 	
@@ -313,7 +313,7 @@ class AdminPages extends Prefab
 	{
 		$plugin_settings = array();
                 
-                $results = \HotaruModels2\Setting::getPluginSettings($h);
+                $results = \Hotaru\Models2\Setting::getPluginSettings($h);
                 
 		if (!$results) { return false; } 
 		

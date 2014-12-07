@@ -94,7 +94,7 @@
       <hr>
 
       <div class="footer">
-        <p>© Hotaru CMS 2013</p>
+        <p>© Hotaru CMS 2014</p>
       </div>
 
     </div> <!-- /container -->

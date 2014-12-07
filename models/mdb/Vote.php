@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class Vote extends BaseModel
 {
@@ -8,12 +8,12 @@ class Vote extends BaseModel
     
     public function post()
     {
-        return $this->hasOne('\HotaruModels\Post', 'post_id', 'postvote_post_id');
+        return $this->hasOne('\Hotaru\Models\Post', 'post_id', 'postvote_post_id');
     }
     
     public function user()
     {
-        return $this->hasOne('\HotaruModels\User', 'user_id', 'postvote_user_id');
+        return $this->hasOne('\Hotaru\Models\User', 'user_id', 'postvote_user_id');
     }
     
     

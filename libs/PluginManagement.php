@@ -45,8 +45,8 @@ class PluginManagement extends Prefab
 		
 		if ($plugins_array) {
                         $pluginsDb = array();
-                        //$pluginsFromDb = \HotaruModels\Plugin::getAllActiveAndInactiveDetails();
-                        $pluginsFromDb = \HotaruModels2\Plugin::getAllActiveAndInactiveDetails($h);
+                        //$pluginsFromDb = \Hotaru\Models\Plugin::getAllActiveAndInactiveDetails();
+                        $pluginsFromDb = \Hotaru\Models2\Plugin::getAllActiveAndInactiveDetails($h);
                         if ($pluginsFromDb) {
                             foreach ($pluginsFromDb as $pluginFromDb)
                             { 
@@ -494,7 +494,7 @@ class PluginManagement extends Prefab
 			$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $h->plugin->folder));
 		}
 		
-                \HotaruModels2\Pluginhook::removeHook($h, $h->plugin->folder);
+                \Hotaru\Models2\Pluginhook::removeHook($h, $h->plugin->folder);
 		//$h->db->query($h->db->prepare("DELETE FROM " . TABLE_PLUGINHOOKS . " WHERE plugin_folder = %s", $h->plugin->folder));
 		
 		// Settings aren't deleted anymore, but a user can do so manually from Admin->Maintenance
@@ -632,8 +632,8 @@ class PluginManagement extends Prefab
                 }
                 
 		// Get the enabled status for this plugin...
-                //$plugin = \HotaruModels\Plugin::getEnabledStatus($h->plugin->folder);
-                $plugin = \HotaruModels2\Plugin::getEnabledStatus($h, $h->plugin->folder);
+                //$plugin = \Hotaru\Models\Plugin::getEnabledStatus($h->plugin->folder);
+                $plugin = \Hotaru\Models2\Plugin::getEnabledStatus($h, $h->plugin->folder);
 		
                 // if not installed
 		if (!$plugin) {
@@ -719,13 +719,13 @@ class PluginManagement extends Prefab
 		// The plugin is already installed. Activate or deactivate according to $enabled (the user's action).
 		if ($plugin->plugin_enabled == $newStatus) { return false; }  // only update if we're changing the enabled value.
  
-                //$result = \HotaruModels\Plugin::updateEnabled($h->plugin->folder, $newStatus, $h->currentUser->id);
-                $result = \HotaruModels2\Plugin::updateEnabled($h, $plugin->plugin_folder, $newStatus, $h->currentUser->id);
+                //$result = \Hotaru\Models\Plugin::updateEnabled($h->plugin->folder, $newStatus, $h->currentUser->id);
+                $result = \Hotaru\Models2\Plugin::updateEnabled($h, $plugin->plugin_folder, $newStatus, $h->currentUser->id);
 		
                 if ($newStatus == 1) { // Activating now...
 		
 			// Get plugin version from the database...
-                        $db_version = \HotaruModels2\Plugin::getVersionNumber($h, $plugin->plugin_folder);
+                        $db_version = \Hotaru\Models2\Plugin::getVersionNumber($h, $plugin->plugin_folder);
 			//$db_version = $h->getPluginVersion($plugin->plugin_folder);
 			
 			// Get plugin version from the file....

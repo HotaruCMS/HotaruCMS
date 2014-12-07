@@ -166,8 +166,8 @@ class Post extends Prefab
 	 */    
 	public function getPost($h, $post_id = 0)
 	{ 
-                //$post = \HotaruModels\Post::getWithDetails($post_id);
-                $post = \HotaruModels2\Post::getWithDetails($h, $post_id);
+                //$post = \Hotaru\Models\Post::getWithDetails($post_id);
+                $post = \Hotaru\Models2\Post::getWithDetails($h, $post_id);
                 
                 if ($post) { return $post; } else { return false; }                
                 
@@ -293,8 +293,8 @@ class Post extends Prefab
                 // TODO we should be able to do the delete in 1 step without retrieving records first
 		if (!$user_id) { return false; }
                 
-                //$results = \HotaruModels\Post::getByAuthor($user_id);
-                $results = \HotaruModels2\Post::getByAuthor($h, $user_id);		
+                //$results = \Hotaru\Models\Post::getByAuthor($user_id);
+                $results = \Hotaru\Models2\Post::getByAuthor($h, $user_id);		
 				
 		if ($results) {
 			foreach ($results as $r) {
@@ -338,8 +338,8 @@ class Post extends Prefab
 	 */    
 	public function urlExists($h, $url = '')
 	{
-                //$posts = \HotaruModels\Post::getPostsByOrigUrl(urlencode($url));
-                $posts = \HotaruModels2\Post::getPostsByOrigUrl($h, urlencode($url));
+                //$posts = \Hotaru\Models\Post::getPostsByOrigUrl(urlencode($url));
+                $posts = \Hotaru\Models2\Post::getPostsByOrigUrl($h, urlencode($url));
                 
 		if (!$posts) { return false; }
 		
@@ -352,8 +352,8 @@ class Post extends Prefab
 		}
 		
 		// check again to see if url is still present:
-                //$post = \HotaruModels\Post::getFirstPostByOrigUrl(urlencode($url));
-                $post = \HotaruModels2\Post::getFirstPostByOrigUrl($h, urlencode($url));
+                //$post = \Hotaru\Models\Post::getFirstPostByOrigUrl(urlencode($url));
+                $post = \Hotaru\Models2\Post::getFirstPostByOrigUrl($h, urlencode($url));
                 		
 		// if present return the first existing row
 		if ($post) { return $post; } else { return false; }
@@ -371,8 +371,8 @@ class Post extends Prefab
 		$title = trim($title);
 		if (!$title) { return FALSE; }
 
-                //$posts = \HotaruModels\Post::getPostsByTitle(urlencode($title));
-                $posts = \HotaruModels2\Post::getPostsByTitle($h, urlencode($title));
+                //$posts = \Hotaru\Models\Post::getPostsByTitle(urlencode($title));
+                $posts = \Hotaru\Models2\Post::getPostsByTitle($h, urlencode($title));
 				
 		if (!$posts) { return false; }
 		
@@ -385,8 +385,8 @@ class Post extends Prefab
 		}
 		
 		// One last check to see if a post is present:
-                //$post_id = \HotaruModels\Post::getFirstPostByTitle(urlencode($title));
-                $post_id = \HotaruModels2\Post::getFirstPostByTitle($h, urlencode($title));
+                //$post_id = \Hotaru\Models\Post::getFirstPostByTitle(urlencode($title));
+                $post_id = \Hotaru\Models2\Post::getFirstPostByTitle($h, urlencode($title));
 		
 		if ($post_id) { return $post_id; } else { return false; }
 	}
@@ -400,8 +400,8 @@ class Post extends Prefab
 	 */
 	public function isPostUrl($h, $url = '')
 	{
-                //$post_id = \HotaruModels\Post::getFirstPostByPostUrl(urlencode($url));
-                $post_id = \HotaruModels2\Post::getFirstPostByPostUrl($h, urlencode($url));
+                //$post_id = \Hotaru\Models\Post::getFirstPostByPostUrl(urlencode($url));
+                $post_id = \Hotaru\Models2\Post::getFirstPostByPostUrl($h, urlencode($url));
                 if ($post_id) { return $post_id; } else { return false; }
 	}
 	

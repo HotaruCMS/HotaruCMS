@@ -46,8 +46,8 @@ $adminPages = \Libs\AdminPages::instance();
 	
         <?php 
         $pluginFunc = new \Libs\PluginFunctions();
-        //$pluginLinks = \HotaruModels\Plugin::getAllActiveNamesOrderByName();
-        $pluginLinks = \HotaruModels2\Plugin::getAllActiveNamesOrderByName($h);
+        //$pluginLinks = \Hotaru\Models\Plugin::getAllActiveNamesOrderByName();
+        $pluginLinks = \Hotaru\Models2\Plugin::getAllActiveNamesOrderByName($h);
         ?>        
         
 	<!-- Plugins -->       

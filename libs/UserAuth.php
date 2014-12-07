@@ -73,7 +73,7 @@ class Authorization
                 $user = $h->getUser(0, $cookie->username);
                 //$h->messages['getuser: ' . $cookie->username . ', id: ' . $h->currentUser->id . ', token: ' . $cookie->token] = 'green';
                 // Check if token matches db login
-                $login = \HotaruModels2\UserLogin::getLogin($h, $h->currentUser->id, $cookie->token);
+                $login = \Hotaru\Models2\UserLogin::getLogin($h, $h->currentUser->id, $cookie->token);
                 
                 if (!$login) {
                     //$h->messages['no match for cookie login'] = 'red';
@@ -229,7 +229,7 @@ class Authorization
                     return false;
                 }
             
-                $status = \HotaruModels2\User::isLockedOut($h, $username);
+                $status = \Hotaru\Models2\User::isLockedOut($h, $username);
                 return $status;
         }
         
@@ -395,7 +395,7 @@ class Authorization
 		} else {
                     // just need random token here. no real reason to pass name in. just easy to use password_hash to create it
                     $cookieToken = password_hash($h->currentUser->name, PASSWORD_DEFAULT);
-                    \HotaruModels2\UserLogin::addLogin($h, $h->currentUser->id, $cookieToken);
+                    \Hotaru\Models2\UserLogin::addLogin($h, $h->currentUser->id, $cookieToken);
                     
                     $strCookie=base64_encode(
                             join(':', array(
@@ -445,7 +445,7 @@ class Authorization
         
         private static function removeLoginFromDb($h, $userId, $cookieToken)
         {
-                \HotaruModels2\UserLogin::removeLogin($h, $userId, $cookieToken);
+                \Hotaru\Models2\UserLogin::removeLogin($h, $userId, $cookieToken);
         }
 	
 	/**

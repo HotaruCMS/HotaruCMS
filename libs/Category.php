@@ -308,7 +308,7 @@ class Category extends Prefab
                 //print "isCatEmpty <br/>****<br/>******";
             
                 //$posts = HotaruModels\Post::countByCategory($cat_id);
-                $posts = \HotaruModels2\Post::countByCategory($h, $cat_id);
+                $posts = \Hotaru\Models2\Post::countByCategory($h, $cat_id);
 //		$sql = "SELECT count(post_id) FROM " . TABLE_POSTS . " WHERE post_category = %d ";
 //		$posts = $h->db->get_var($h->db->prepare($sql, $cat_id));
 		if ($posts == 0) { return true;	} else { return false; }

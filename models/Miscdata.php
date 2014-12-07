@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class Miscdata extends BaseModel
 {
@@ -83,12 +83,12 @@ class Miscdata extends BaseModel
     
     public static function updateLatestVersion()
     {
-//        $data = \HotaruModels\Miscdata::where('miscdata_key', '=', 'hotaru_latest_version')->first();
+//        $data = \Hotaru\Models\Miscdata::where('miscdata_key', '=', 'hotaru_latest_version')->first();
 //                    
 //        
 //        // move this check in the model maybe
 //                    if (!$data) {
-//                        $data = new \HotaruModels\Miscdata();
+//                        $data = new \Hotaru\Models\Miscdata();
 //                        $data->miscdata_key = 'hotaru_latest_version';
 //                    }
 //                    

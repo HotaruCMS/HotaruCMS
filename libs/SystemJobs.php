@@ -397,7 +397,7 @@ class SystemJobs extends Prefab
             $value = serialize($cron);
 
             // check if we have a setting first
-            $exists = \HotaruModels2\Miscdata::exists($h, 'system_jobs');
+            $exists = \Hotaru\Models2\Miscdata::exists($h, 'system_jobs');
             if (!$exists) {
                 $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_default, miscdata_value, miscdata_updateby) VALUES (%s, %s, %s, %s)";
                 $h->db->query($h->db->prepare($sql, 'system_jobs', '', $value, $h->currentUser->id));
@@ -407,7 +407,7 @@ class SystemJobs extends Prefab
                 $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, 'system_jobs'));
             }
             
-            $systemJobs = \HotaruModels2\Miscdata::getCurrentSettings($h, 'system_jobs');
+            $systemJobs = \Hotaru\Models2\Miscdata::getCurrentSettings($h, 'system_jobs');
             try {
                 $h->systemJobs = unserialize($systemJobs);
             } catch(Exception $e) {

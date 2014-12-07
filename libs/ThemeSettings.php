@@ -57,8 +57,8 @@ class ThemeSettings extends Prefab
 	{
 		if (!$theme) { $theme = rtrim(THEME, '/'); }
 		
-                //$settings = \HotaruModels\Miscdata::getAllThemeSettings($theme);
-                $settings = \HotaruModels2\Miscdata::getAllThemeSettings($h, $theme);
+                //$settings = \Hotaru\Models\Miscdata::getAllThemeSettings($theme);
+                $settings = \Hotaru\Models2\Miscdata::getAllThemeSettings($h, $theme);
                 
 //		// Get settings from the database if they exist...
 //		$sql = "SELECT miscdata_value, miscdata_default FROM " . TABLE_MISCDATA . " WHERE miscdata_key = %s";

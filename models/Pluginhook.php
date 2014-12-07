@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class Pluginhook extends BaseModel
 {
@@ -12,7 +12,7 @@ class Pluginhook extends BaseModel
         
         public function plugin()
         {
-            return $this->hasOne('\HotaruModels\Plugin', 'plugin_folder', 'plugin_folder');
+            return $this->hasOne('\Hotaru\Models\Plugin', 'plugin_folder', 'plugin_folder');
         }
 
         public static function getAllEnabled()

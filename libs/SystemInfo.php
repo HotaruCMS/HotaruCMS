@@ -76,8 +76,8 @@ class SystemInfo extends Prefab
 		// save the updated version number to the local db so we can display it on the admin panel until it gets updated.
 		if (isset($info['version_string'])) {
                     
-                    //$data = \HotaruModels\Miscdata::where('miscdata_key', '=', 'hotaru_latest_version')->first();
-                    $data = \HotaruModels2\Miscdata::getLatestVersion($h, 'miscdata_key');
+                    //$data = \Hotaru\Models\Miscdata::where('miscdata_key', '=', 'hotaru_latest_version')->first();
+                    $data = \Hotaru\Models2\Miscdata::getLatestVersion($h, 'miscdata_key');
                     
 		    if ($data) {
 			// update existing db record
@@ -132,8 +132,8 @@ class SystemInfo extends Prefab
                 
                 // Update the plugin in db using resourceName and the array for that from above
                 foreach($resourceList as $plugin) {
-                    //$result = \HotaruModels\Plugin::makeUpdate($plugin['title'], $plugin, $h->currentUser->id);
-                    $result = \HotaruModels2\Plugin::makeUpdate($h, $plugin['title'], $plugin, $h->currentUser->id);
+                    //$result = \Hotaru\Models\Plugin::makeUpdate($plugin['title'], $plugin, $h->currentUser->id);
+                    $result = \Hotaru\Models2\Plugin::makeUpdate($h, $plugin['title'], $plugin, $h->currentUser->id);
                 }
                 
 		return true;
@@ -322,7 +322,7 @@ class SystemInfo extends Prefab
 	public function getSystemData($h, $level = '')
 	{
 		// essentials:
-                //$data = \HotaruModels\Miscdata::getCurrentSettings();
+                //$data = \Hotaru\Models\Miscdata::getCurrentSettings();
                 //print_r($data);
             
 		$report['hotaru_site_name'] = SITE_NAME;
@@ -347,8 +347,8 @@ class SystemInfo extends Prefab
 		$report['hotaru_user_settings'] = $h->db->get_var($h->db->prepare($sql, 'user_settings'));
 		
                 // Settings: Name, value (excluding SMTP PASSWORD)
-                $settings = \HotaruModels2\Setting::getValues($h);
-                //$settings = \HotaruModels\Setting::getValues();
+                $settings = \Hotaru\Models2\Setting::getValues($h);
+                //$settings = \Hotaru\Models\Setting::getValues();
 		
 		if ($settings) {
 			foreach ($settings as $setting) {
@@ -457,8 +457,8 @@ class SystemInfo extends Prefab
          */
         public function miscdata($h, $key = '', $cache = 'true')
         {       
-                //$data = \HotaruModels\Miscdata::getCurrentValue($key);
-                $data = \HotaruModels2\Miscdata::getCurrentValue($h, $key, $cache);
+                //$data = \Hotaru\Models\Miscdata::getCurrentValue($key);
+                $data = \Hotaru\Models2\Miscdata::getCurrentValue($h, $key, $cache);
                 return $data;
         }
         
@@ -500,9 +500,11 @@ class SystemInfo extends Prefab
 		
 		$output .= "Default user settings: \n";
 		$user_settings = unserialize($report['hotaru_user_settings']);
-		foreach ($user_settings as $key => $value) {
-			$output .= $key . " => " . $value . "\n";
-		}
+                if ($user_settings) {
+                    foreach ($user_settings as $key => $value) {
+                            $output .= $key . " => " . $value . "\n";
+                    }
+                }
 		
 		$output .= "\n";
 		

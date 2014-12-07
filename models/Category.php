@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class Category extends BaseModel
 {
@@ -8,7 +8,7 @@ class Category extends BaseModel
     
     public function posts()
     {
-            return $this->hasMany('\HotaruModels\Post', 'post_category_id', 'category_id');
+            return $this->hasMany('\Hotaru\Models\Post', 'post_category_id', 'category_id');
     }
     
     // get

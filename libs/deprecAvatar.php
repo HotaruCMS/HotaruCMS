@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class Avatar extends Libs\Avatar
+class Avatar extends \Libs\Avatar
 {
     
 }

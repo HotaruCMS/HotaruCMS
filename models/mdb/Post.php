@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class Post extends BaseModel
 {
@@ -14,17 +14,17 @@ class Post extends BaseModel
     
     public function user()
     {
-        return $this->hasOne('\HotaruModels\User', 'user_id', 'post_author');
+        return $this->hasOne('\Hotaru\Models\User', 'user_id', 'post_author');
     }
     
     public function votes()
     {
-        return $this->hasMany('\HotaruModels\Postvote', 'vote_post_id', 'post_author');
+        return $this->hasMany('\Hotaru\Models\Postvote', 'vote_post_id', 'post_author');
     }
     
     public function comments()
     {
-        return $this->hasMany('\HotaruModels\Comment', 'comment_post_id', 'post_author');
+        return $this->hasMany('\Hotaru\Models\Comment', 'comment_post_id', 'post_author');
     }
     
     // we dont need a tags relation because the tags are serialized in a field of the post table
@@ -33,7 +33,7 @@ class Post extends BaseModel
     // we shouldnt need to use this relation as we have the lis of categories in memory from init
     public function category()
     {
-        return $this->hasOne('\HotaruModels\Category', 'category_id', 'post_category');
+        return $this->hasOne('\Hotaru\Models\Category', 'category_id', 'post_category');
     }
     
     // scope

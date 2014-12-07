@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class User extends BaseModel
 {

@@ -35,8 +35,8 @@ class UserInfo extends UserBase
 	 */
 	public function getUserNameFromId($h, $id = 0)
 	{
-                //$username = \HotaruModels\User::getUserNameFromId($id);
-                $username = \HotaruModels2\User::getUserNameFromId($h, $id);
+                //$username = \Hotaru\Models\User::getUserNameFromId($id);
+                $username = \Hotaru\Models2\User::getUserNameFromId($h, $id);
 		
 		if ($username) { return $username; } else { return false; }
 	}
@@ -50,8 +50,8 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromName($h, $username = '')
 	{
-                //$userid = \HotaruModels\User::getUserIdFromName($username);
-                $userid = \HotaruModels2\User::getUserIdFromName($h, $username);
+                //$userid = \Hotaru\Models\User::getUserIdFromName($username);
+                $userid = \Hotaru\Models2\User::getUserIdFromName($h, $username);
 		
 		if ($userid) { return $userid; } else { return false; }
 	}
@@ -65,8 +65,8 @@ class UserInfo extends UserBase
 	 */
 	public function getEmailFromId($h, $userid = 0)
 	{
-                //$email = \HotaruModels\User::getEmailFromId($userid);
-                $email = \HotaruModels2\User::getEmailFromId($h, $userid);
+                //$email = \Hotaru\Models\User::getEmailFromId($userid);
+                $email = \Hotaru\Models2\User::getEmailFromId($h, $userid);
 		
 		if ($email) { return $email; } else { return false; }
 	}
@@ -80,8 +80,8 @@ class UserInfo extends UserBase
 	 */
 	public function getUserIdFromEmail($h, $email = '')
 	{
-                //$userid = \HotaruModels\User::getUserIdFromEmail($email);
-                $userid = \HotaruModels2\User::getUserIdFromEmail($h, $email);
+                //$userid = \Hotaru\Models\User::getUserIdFromEmail($email);
+                $userid = \Hotaru\Models2\User::getUserIdFromEmail($h, $email);
 		
 		if ($userid) { return $userid; } else { return false; }
 	}
@@ -102,8 +102,8 @@ class UserInfo extends UserBase
                     return false;
                 }
                     
-                //$isAdmin = \HotaruModels\User::isAdmin($username);
-                $isAdmin = \HotaruModels2\User::isAdmin($h, $username);
+                //$isAdmin = \Hotaru\Models\User::isAdmin($username);
+                $isAdmin = \Hotaru\Models2\User::isAdmin($h, $username);
 		
 		return $isAdmin;
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class BaseModel //extends \Illuminate\Database\Eloquent\Model
 {

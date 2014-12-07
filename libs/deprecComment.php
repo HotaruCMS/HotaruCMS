@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class Comment extends Libs\Comment
+class Comment extends \Libs\Comment
 {
     
 }

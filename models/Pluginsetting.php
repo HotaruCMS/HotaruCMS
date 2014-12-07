@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels;
+namespace Hotaru\Models;
 
 class PuginSetting extends BaseModel
 {
@@ -11,7 +11,7 @@ class PuginSetting extends BaseModel
         
         public function plugin()
         {
-            return $this->hasOne('\HotaruModels\Plugin', 'plugin_folder', 'plugin_folder');
+            return $this->hasOne('\Hotaru\Models\Plugin', 'plugin_folder', 'plugin_folder');
         }
         
         // get

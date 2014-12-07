@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class Tag extends BaseModel
 {
@@ -8,7 +8,7 @@ class Tag extends BaseModel
     
     public function posts()
     {
-        return $this->hasMany('\HotaruModels\Post', 'post_tag_id', 'tag_id');
+        return $this->hasMany('\Hotaru\Models\Post', 'post_tag_id', 'tag_id');
     }
     
     

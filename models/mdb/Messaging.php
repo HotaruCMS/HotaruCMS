@@ -1,6 +1,6 @@
 <?php
 
-namespace HotaruModels2;
+namespace Hotaru\Models2;
 
 class Messaging extends BaseModel
 {
@@ -8,12 +8,12 @@ class Messaging extends BaseModel
     
     public function sender()
     {
-        //return $this->hasOne('\HotaruModels\User', 'user_category_id', 'user_id');
+        //return $this->hasOne('\Hotaru\Models\User', 'user_category_id', 'user_id');
     }
     
     public function reader()
     {
-        //return $this->hasOne('\HotaruModels\User', 'user_category_id', 'user_id');
+        //return $this->hasOne('\Hotaru\Models\User', 'user_category_id', 'user_id');
     }
     
     public static function getCount($h, $box, $userId)

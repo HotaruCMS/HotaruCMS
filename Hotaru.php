@@ -1,7 +1,6 @@
 <?php
 namespace Libs;
 
-require_once 'vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
@@ -12,7 +11,7 @@ class Hotaru extends Initialize
 	 */
 	public function __construct($start = '')
 	{   
-            // Managed directives
+                // Managed directives
 		ini_set('default_charset',$charset='UTF-8');
 		ini_set('display_errors',1);
 		// Abort on startup error
@@ -82,7 +81,8 @@ class Hotaru extends Initialize
 		$lang = Language::instance();
 		$this->lang = $lang->includeLanguagePack($this->lang, 'main');
 		
-		$this->getPageName();                   // fills $h->pageName
+                // fills $h->pageName
+		$this->getPageName();                   
 		
                 // special diversion for api calls to api plugin to avoid session,cookie vars etc
                 if ($this->pageName == 'api') {
@@ -627,7 +627,7 @@ class Hotaru extends Initialize
         
         public function getUserLogins($userId)
         {
-                return \HotaruModels2\UserLogin::getLogins($this, $userId);
+                return \Hotaru\Models2\UserLogin::getLogins($this, $userId);
         }
 	
 	/**
@@ -2581,7 +2581,7 @@ class Hotaru extends Initialize
         
         public function updateCommentCountBulk() 
         {
-            \HotaruModels2\Post::updateCommentCountBulk($this);
+            \Hotaru\Models2\Post::updateCommentCountBulk($this);
         }
     
     

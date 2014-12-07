@@ -62,12 +62,12 @@ class PrivateMessaging extends Prefab
 	public function getMessages($h, $box = 'inbox', $type = '')
 	{
             if ($type == 'count') {
-                //$messages = \HotaruModels\Messaging::getCount($box, $h->currentUser->id);
-                $messages = \HotaruModels2\Messaging::getCount($h, $box, $h->currentUser->id);
+                //$messages = \Hotaru\Models\Messaging::getCount($box, $h->currentUser->id);
+                $messages = \Hotaru\Models2\Messaging::getCount($h, $box, $h->currentUser->id);
                 return $messages;
             } else {
-                //$messages = \HotaruModels\Messaging::getAll($box, $h->currentUser->id);
-                $messages = \HotaruModels2\Messaging::getAll($h, $box, $h->currentUser->id);
+                //$messages = \Hotaru\Models\Messaging::getAll($box, $h->currentUser->id);
+                $messages = \Hotaru\Models2\Messaging::getAll($h, $box, $h->currentUser->id);
                 return $messages;
             } 
             
@@ -113,7 +113,7 @@ class PrivateMessaging extends Prefab
 	{
 		if ($userId == 0) { return false; }
 		
-                $messages = \HotaruModels2\Messaging::getCountUnread($h, $userId);
+                $messages = \Hotaru\Models2\Messaging::getCountUnread($h, $userId);
 		
 		return ($messages) ? $messages : 0;
 	}

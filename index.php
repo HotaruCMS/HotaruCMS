@@ -25,12 +25,13 @@
  * @link      http://www.hotarucms.org/
  */
 
+require_once __DIR__ . '/vendor/autoload.php';
 
 // includes
 if(file_exists('config/settings.php') ) {
 	require_once('config/settings.php');
 	require_once('Hotaru.php');   // must be in root folder or some plugins get upset
-        $h = Libs\Hotaru::instance();
+        $h = \Libs\Hotaru::instance();
         
         // Server Variables
         $apiAuth = $h->cage->get->testAlnumLines('apiAuth');
@@ -48,4 +49,3 @@ if(file_exists('config/settings.php') ) {
 
         include('error.php'); 
 }
-?>

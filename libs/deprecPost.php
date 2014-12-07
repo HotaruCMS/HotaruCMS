@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class Post extends Libs\Post
+class Post extends \Libs\Post
 {
     
 }

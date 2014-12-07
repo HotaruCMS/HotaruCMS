@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class UserBase extends Libs\UserBase
+class UserBase extends \Libs\UserBase
 {
     
 }

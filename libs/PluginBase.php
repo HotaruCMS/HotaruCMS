@@ -24,9 +24,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-namespace Plugins;
+namespace Hotaru\Plugins;
 
-abstract class PluginBase extends \Base implements PluginInterface
+abstract class PluginBase extends \Hotaru\Base implements PluginInterface
 {
         protected $id;                          // id
         protected $folder;                      // folder name

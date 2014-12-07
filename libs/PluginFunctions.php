@@ -253,8 +253,8 @@ class PluginFunctions extends Prefab
 	 */
 	public function numActivePlugins($h)
 	{
-                //$enabled = \HotaruModels\Plugin::countEnabled();
-                $enabled = \HotaruModels2\Plugin::countEnabled($h);
+                //$enabled = \Hotaru\Models\Plugin::countEnabled();
+                $enabled = \Hotaru\Models2\Plugin::countEnabled($h);
                 
                 //TODO
                 // we could cache this off and increment it on plugin activtated etc
@@ -368,8 +368,8 @@ class PluginFunctions extends Prefab
          */
 //        public static function getAllActivePluginNames($h)
 //	{
-//                //$pluginNames = \HotaruModels\Plugin::getAllActiveNames();
-//                $pluginNames = \HotaruModels2\Plugin::getAllActiveNames($h);
+//                //$pluginNames = \Hotaru\Models\Plugin::getAllActiveNames();
+//                $pluginNames = \Hotaru\Models2\Plugin::getAllActiveNames($h);
 //                return $pluginNames;
 //        }
         
@@ -382,13 +382,13 @@ class PluginFunctions extends Prefab
 	{   
                 // to much overhead to call it like this and leave as object. 
                 // but if we change to array and make list below as that then we have to convert all other uses to array as well
-                // $pluginsRawData = \HotaruModels\Plugin::getAllDetails();
+                // $pluginsRawData = \Hotaru\Models\Plugin::getAllDetails();
                 // NB both active and nonactive need to be read in
                 //  $sql = "SELECT * FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
                 //  $pluginsRawData = $h->db->get_results($sql); 
 
                 //print "getAllPluginDetails *** <br/>*****<br/>*** <br/>*****<br/>";
-                $pluginsRawData = \HotaruModels2\Plugin::getAllDetails($h);
+                $pluginsRawData = \Hotaru\Models2\Plugin::getAllDetails($h);
                     
                 $h->allPluginDetails['pluginData'] = array();
                 if ($pluginsRawData) {
@@ -400,8 +400,8 @@ class PluginFunctions extends Prefab
 
                 
                 // hooks
-                //$h->allPluginDetails['hooks'] = \HotaruModels\Pluginhook::getAllEnabled();
-                $h->allPluginDetails['hooks'] = \HotaruModels2\Pluginhook::getAllEnabled($h);
+                //$h->allPluginDetails['hooks'] = \Hotaru\Models\Pluginhook::getAllEnabled();
+                $h->allPluginDetails['hooks'] = \Hotaru\Models2\Pluginhook::getAllEnabled($h);
                 
                 //print_r($h->allPluginDetails['hooks']);
                 // turn this into an index based array as it runs faster than later calling an array_in func
