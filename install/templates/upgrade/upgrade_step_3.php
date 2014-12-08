@@ -11,6 +11,8 @@
         </div>
 </div>
 
+<?php $h->showMessages(); ?>
+
 <!-- Step content -->
 
 <?php
@@ -32,9 +34,13 @@
         }
         
         echo '</div>';
-        echo '</div>';
         
-        //echo 'You ' . plugins not installed
+        echo '<div class="panel-footer">
+            <p class="help-block">
+                &nbsp;&nbsp;<i class="fa fa-warning"></i> You must be logged in as admin to succesfully refresh the plugins here
+            </p></div>';
+        
+        echo '</div>';
         
         if (isset($h->plugins['activeFolders'])) {
             echo '<div class="text-center">';
@@ -44,8 +50,6 @@
         
         echo '<br/><br/>';
 ?>
-
-<?php $h->showMessages(); ?>
 
         <div class='form-actions'>
                 <!-- Previous/Next buttons -->

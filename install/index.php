@@ -70,15 +70,6 @@ if (!defined($key))
 require_once('libs/install_tables.php');
 require_once('libs/install_functions.php');
 require_once(BASE . 'Hotaru.php');
-//require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-//require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-//require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-//require_once(EXTENSIONS . 'ezSQL/mysqli/ez_sql_mysqli.php'); // database
-////$h  = new Hotaru('install'); // must come before language inclusion
-
-//$h  = new Hotaru('start');
-
-
 require_once(INSTALL . 'language/install_language.php');    // language file for install
 
 $version_number = $h->version;

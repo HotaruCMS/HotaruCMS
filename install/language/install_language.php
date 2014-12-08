@@ -38,7 +38,7 @@ $lang["upgrade_step2_details"] = "Congratulations! You have successfully upgrade
 
 /* Upgrade Step 3 */
 $lang["upgrade_step_plugins"] = "Step 3/4: Refresh Plugins";
-$lang["upgrade_step_plugins_details"] = "Updating your plugins now.";
+$lang["upgrade_step_plugins_details"] = "Checking your plugins now.";
 $lang["admin_plugins_upgrade_done"] = "Plugins upgraded succesfully";
 
 /* Upgrade Step 3 */
