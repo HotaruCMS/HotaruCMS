@@ -148,7 +148,7 @@ class Paginator extends Prefab
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
 				$str .= "<li><a class='pagi_first' href='" . $link . "'  title='" . $h->lang('pagination_first') . "'>1</a></li> \n";
 				if ($currentPage > ($before+1)) {
-					$str .= "<li class='disabled'><a href='#' class='pagi_dots'>...</a></li> \n";
+					$str .= "<li class='disabled'><span>...</span></li> \n";
 				}
 			}
 		}
@@ -164,7 +164,7 @@ class Paginator extends Prefab
 			}
 			
 			if ($i == $currentPage) {
-				$str .= "<li class='active'><a href='#' class='pagi_current'>$i</a></li>\n";
+				$str .= "<li class='active'><span>$i</span></li>\n";
 			}
 			else {
 				$link = $path . '&pg=' . $i;
@@ -177,7 +177,7 @@ class Paginator extends Prefab
 		if (!$this->isLastPage() && ($currentPage <= ($this->totalPages - $after))) {
 			if ($currentPage != $this->totalPages && $currentPage != $this->totalPages -1 && $currentPage != $this->totalPages - $after) {
 				if ($currentPage < ($this->totalPages - ($after + 1))) {
-                                    $str .= "<li class='disabled'><a href='#' class='pagi_dots'>...</a></li> \n"; 
+                                    $str .= "<li class='disabled'><span>...</span></li> \n"; 
                                 }
 				$link = $path . '&pg=' . $this->totalPages;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark

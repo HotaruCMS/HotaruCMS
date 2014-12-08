@@ -63,5 +63,6 @@ header('Content-type: text/html; charset=utf-8');
         <link rel="icon" href="/favicon.ico" type="image/x-icon">
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
-	        
+
 </head>
+    
