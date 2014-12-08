@@ -632,7 +632,7 @@ function do_upgrade($h, $old_version)
                 $h->db->query($sql);
                 
                 // REMOVE TOKENS TABLE
-                $exists = $h->db->column_exists('tokens', 'token_sid');
+                $exists = $h->db->table_exists('tokens');
 		if ($exists) {
                     $sql = "DROP TABLE " . DB_PREFIX . 'tokens';
                     $h->db->query($sql);

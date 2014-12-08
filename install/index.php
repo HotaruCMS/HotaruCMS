@@ -34,7 +34,7 @@ require_once '../vendor/autoload.php';
 session_start();
 
 $h = new \stdClass();
-$h->version = '1.7beta';
+$h->version = '1.7';
 
 // Read Settings
 define("SETTINGS", '../config/');
@@ -70,11 +70,11 @@ if (!defined($key))
 require_once('libs/install_tables.php');
 require_once('libs/install_functions.php');
 require_once(BASE . 'Hotaru.php');
-require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
-require_once(EXTENSIONS . 'ezSQL/mysql/ez_sql_mysql.php'); // database
-//$h  = new Hotaru('install'); // must come before language inclusion
+//require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
+//require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
+//require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database
+//require_once(EXTENSIONS . 'ezSQL/mysqli/ez_sql_mysqli.php'); // database
+////$h  = new Hotaru('install'); // must come before language inclusion
 
 //$h  = new Hotaru('start');
 

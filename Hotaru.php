@@ -5,7 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
-        protected $version = '1.7.0.beta1';  // Hotaru CMS version       
+        protected $version = '1.7.0';  // Hotaru CMS version       
         
         /**
 	 * CONSTRUCTOR - Initialize
