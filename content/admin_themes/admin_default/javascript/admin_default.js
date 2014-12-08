@@ -24,23 +24,23 @@
 
 jQuery('document').ready(function($) {
 
-    // Javascript to enable link to tab (used with bootstrap)
-    var hash = document.location.hash;
-    var prefix = "tab_";
-    if (hash) {
-        $('.nav-tabs a[href='+hash.replace(prefix,"")+']').tab('show');
-        $('form').prop('action', window.location.hash);
-    } 
-
-    // Change hash for page-reload
-    $('.nav-tabs a').on('shown', function (e) {
-        window.location.hash = e.target.hash.replace("#", "#" + prefix);
-        
-        $('form').prop('action', function(i, val) {
-            $('form').prop('action', window.location.hash);
-        });
-    });
-    
+//    // Javascript to enable link to tab (used with bootstrap)
+//    var hash = document.location.hash;
+//    var prefix = "tab_";
+//    if (hash) {
+//        $('.nav-tabs a[href='+hash.replace(prefix,"")+']').tab('show');
+//        $('form').prop('action', window.location.hash);
+//    } 
+//
+//    // Change hash for page-reload
+//    $('.nav-tabs a').on('shown', function (e) {
+//        window.location.hash = e.target.hash.replace("#", "#" + prefix);
+//        
+//        $('form').prop('action', function(i, val) {
+//            $('form').prop('action', window.location.hash);
+//        });
+//    });
+//    
     
     // add warning slash to the settings page for when admins leave slash off end of setting
     $('.warning_slash').blur(function() {
@@ -54,8 +54,8 @@ jQuery('document').ready(function($) {
 
 
     $('#admin_theme_theme_activate').click(function() {        
-        var theme = $(this).attr("name");       
-        var formdata = 'admin=theme_settings&theme='  + theme;
+                var theme = $(this).attr("name");       
+                var formdata = 'admin=theme_settings&theme='  + theme;
 		var sendurl = SITEURL + "admin_index.php?page=settings";
 
                 $.ajax(
@@ -68,16 +68,14 @@ jQuery('document').ready(function($) {
 					},
 				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
 						$('#admin_theme_theme_activate').html('ERROR');
-                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
+                                                $('#admin_theme_theme_activate').removeClass('btn-success').addClass('btn-danger');
 				},
 				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
 					if (data.error === true) {
-                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('warning_on');
-					}
-					else
-					{                        
+                                                $('#admin_theme_theme_activate').removeClass('btn-success').addClass('btn-danger');
+					} else {                        
                                                 $('#admin_theme_theme_activate').html(data.message);
-                                                $('#admin_theme_theme_activate').removeClass('power_on').addClass('tick_on alert alert-success');
+                                                $('#admin_theme_theme_activate').removeClass('btn-success').addClass('btn-primary');
 					}
 					$('.message').html(data.message).addClass(data.color, 'visible');
 				},
@@ -86,7 +84,37 @@ jQuery('document').ready(function($) {
     });
     
     
-    
+    $('#admin_theme_maintenance_openclose_site').click(function() {        
+                var action = $(this).attr("name"); 
+                var formdata = 'action='  + action;  // close, open
+		var sendurl = SITEURL + "admin_index.php?page=maintenance";
+
+                $.ajax(
+			{
+			type: 'get',
+				url: sendurl,
+				data: formdata,
+				beforeSend: function () {
+						$('#admin_theme_maintenance_openclose_site').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Attempting to ' + action + ' site.<br/>');
+					},
+				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+						$('#admin_theme_maintenance_openclose_site').html('ERROR');
+                                                $('#admin_theme_maintenance_openclose_site').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+				},
+				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+					if (data.error === true) {
+                                                $('#admin_theme_maintenance_openclose_site').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+                                                $('#admin_theme_maintenance_openclose_site').html('Failed to ' + action + ' site');
+                                        } else {                        
+                                                $('#admin_theme_maintenance_openclose_site').html(data.message);
+                                                $('#admin_theme_maintenance_openclose_site').removeClass('btn-success').removeClass('btn-warning').addClass('btn-primary');
+                                                $('#admin_theme_maintenance_openclose_site').attr('name', data.name);
+					}
+					$('.message').html(data.message);
+				},
+				dataType: "json"
+		});
+    });
     
     
 });	

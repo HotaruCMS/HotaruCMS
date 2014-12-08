@@ -53,8 +53,6 @@ $meta = $h->readThemeMeta($theme);
                 echo '<br/>';
                     echo '<div class="tab-pane active" id="home">';
                         
-			
-		     
                         if ($theme == rtrim(THEME, '/')) {
 				$span = "current";
 				$instruct = $h->lang('admin_theme_theme_activate_current');
@@ -63,10 +61,9 @@ $meta = $h->readThemeMeta($theme);
 				$instruct = $h->lang('admin_theme_theme_activate');
 			}
 
-			echo '<div id="admin_theme_theme_activate" class="power_on" name="'. $theme .'">' .
-                                '<span class="' . $span . '">' . $instruct . '</span>';
-                                                      
-                            
+			echo '<div>' .
+                                '<button id="admin_theme_theme_activate" name="'. $theme .'" class="' . $span . '">' . $instruct . '</button>';
+                                   
                         echo '<br/><br/></div>';  
                                               
                         echo "<div class='well'><div class='lead'>Screenshots";
@@ -147,5 +144,3 @@ $meta = $h->readThemeMeta($theme);
 		</ul>
 	<?php } ?>
 </div>
-
-

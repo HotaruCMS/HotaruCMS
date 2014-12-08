@@ -1,17 +1,24 @@
 <br/>
-<ul class="">
+<div id="admin_theme_maintenance">
+    <div>
 	<?php if (SITE_OPEN == "true") { ?>
-	<li><a class="btn btn-warning" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=close">
-		<?php echo $h->lang("admin_theme_maintenance_close_site"); ?></a>&nbsp;&nbsp;- <?php echo $h->lang("admin_theme_maintenance_close_site_desc"); ?></li>
+	<span>
+            <button class="btn btn-warning" id="admin_theme_maintenance_openclose_site" name='close'>
+		<?php echo $h->lang("admin_theme_maintenance_close_site"); ?>
+            </button>&nbsp;&nbsp;<?php echo $h->lang("admin_theme_maintenance_close_site_desc"); ?>
+        </span>
 	<?php } else { ?>
-	<li><a class="btn btn-primary" href="<?php echo SITEURL; ?>admin_index.php?page=maintenance&amp;action=open">
-		<?php echo $h->lang("admin_theme_maintenance_open_site"); ?></a>&nbsp;&nbsp;- <?php echo $h->lang("admin_theme_maintenance_open_site_desc"); ?></li>
+	<span>
+            <button class="btn btn-primary" id="admin_theme_maintenance_openclose_site" name='open'>
+		<?php echo $h->lang("admin_theme_maintenance_open_site"); ?>
+            </button>&nbsp;&nbsp;<?php //echo $h->lang("admin_theme_maintenance_open_site_desc"); ?>
+        </span>
 	<?php } ?>
-	
+</div>
 	<br />
 	<?php echo $h->lang("admin_theme_maintenance_announcement"); ?>
 	
-	<form name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php?action=announcement#tab_home' method='post'>    
+	<form role='form' name='maintenance_announcement' action='<?php echo SITEURL; ?>admin_index.php?action=announcement#tab_home' method='post'>    
 	<div>
             <div class="form-group" style='width:80%;'>
 		<textarea style='width:100%;' name='announcement_text' rows=3><?php echo $h->vars['admin_announcement']; ?></textarea>
@@ -28,4 +35,4 @@
 	<input type='hidden' name='page' value='maintenance'>
 	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 	</form>
-</ul>
+</div>

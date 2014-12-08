@@ -220,19 +220,24 @@ class Maintenance extends Prefab
 	 */
 	public function openCloseSite($h, $switch = 'open')
 	{
-		if ($switch == 'open') { 
-			// open
-			$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
-			$h->db->query($h->db->prepare($sql, 'true', 'SITE_OPEN'));
-			$h->message = $h->lang('admin_maintenance_site_opened');
-			$h->messageType = 'green';
-		} else {
-			//close
-			$sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s WHERE settings_name = %s";
-			$h->db->query($h->db->prepare($sql, 'false', 'SITE_OPEN'));
-			$h->message = $h->lang('admin_maintenance_site_closed');
-			$h->messageType = 'green';
-		}
+                // called via JavaScript
+                if ($switch == 'open') {
+                    $value = 'true';
+                    $message = $h->lang("admin_theme_maintenance_close_site"); //$h->lang("admin_maintenance_site_closed");
+                    $siteState = 'close';
+                } else {
+                    $value = 'false';
+                    $message = $h->lang("admin_theme_maintenance_open_site"); //$h->lang("admin_maintenance_site_opened");
+                    $siteState = 'open';
+                }
+                
+                $result = \Hotaru\Models2\Setting::makeUpdate($h, 'SITE_OPEN', $value, $h->currentUser->id);
+                
+                $json_array = array('activate'=>$result, 'message'=>$message, 'name'=>$siteState);
+
+                // Send back result data
+                echo json_encode($json_array);
+                die();
 	}
 	
 	
@@ -244,12 +249,9 @@ class Maintenance extends Prefab
 	public function siteClosed($h, $lang)
 	{
                 // show custom maintenance page if one exists:
-                if (file_exists(THEMES . THEME . 'closed.php'))
-		{
+                if (file_exists(THEMES . THEME . 'closed.php')) {
 			$h->template('closed');
-		} 
-		else
-		{
+		} else {
                         // site closed and access not granted
                         echo "<HTML id='site_closed_body'>\n<HEAD>\n";
 
@@ -280,11 +282,8 @@ class Maintenance extends Prefab
 	public function getSiteAnnouncement($h)
 	{
 		// get announcement from database
-                if ($h->pageName != 'maintenance') 
-                    $result = $h->miscdata('site_announcement');
-                else
-                    $result = $h->miscdata('site_announcement', false);               
-		
+                $result = ($h->pageName != 'maintenance') ? $h->miscdata('site_announcement') : $h->miscdata('site_announcement', false);
+                
 		// assign results to $h
 		if ($result) {
 			$result = unserialize($result);
@@ -311,11 +310,7 @@ class Maintenance extends Prefab
 		$allowable_tags = "<div><p><span><b><i><u><a><img><blockquote><del><br><br/>";
 		$h->vars['admin_announcement'] = sanitize($h->cage->post->getHtmLawed('announcement_text'), 'tags', $allowable_tags);
 		
-                if ($h->cage->post->keyExists('announcement_enabled')) {
-			$h->vars['admin_announcement_enabled'] = "checked";
-		} else {
-			$h->vars['admin_announcement_enabled'] = "";
-		}
+                $h->vars['admin_announcement_enabled'] = $h->cage->post->keyExists('announcement_enabled') ? "checked" : "";
 		
 		// prepare announcement for database entry:
 		$value = array('announcement'=>$h->vars['admin_announcement'], 'enabled'=>$h->vars['admin_announcement_enabled']);

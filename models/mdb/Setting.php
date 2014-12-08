@@ -55,12 +55,15 @@ class Setting extends BaseModel
         $exists = self::isSetting($h, $setting);
 		
         if (!$exists) {
+            print "insert";
                 $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-                $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id));
+                $result = $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id));
         } else {
-                $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_name = %s, settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-                $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id, $setting));
+                $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
+                $result = $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, $setting));
         }
+        
+        return $result;
     }
     
     public static function getPluginSettings($h)

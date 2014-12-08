@@ -102,7 +102,6 @@ $adminPages = \Libs\AdminPages::instance();
         
         <li <?php if($h->pageTitle == 'Media') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=media"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_media"); ?></span></a></li>
 	
-	
 	<?php
         if ($h->isActive('category_manager')) {
             echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_categories_list"><a href="#"><i class="menu-icon fa fa-bars"></i><span class="menu-text">' . $h->lang("admin_theme_categories") . '</span></a>';
@@ -133,7 +132,6 @@ $adminPages = \Libs\AdminPages::instance();
                 <?php echo $h->lang("admin_theme_plugin_settings"); ?>
                 <span class="label label-success pull-right"><?php echo $pluginsCount; ?></span>
             </a>
-            
 
             <div id="admin_plugins_list" class="collapse out">    
                 <ul id="plugin_settings_list">
@@ -147,8 +145,6 @@ $adminPages = \Libs\AdminPages::instance();
                 </ul>
             </div> 
         </li>
-	
-        
             
         <!-- Themes -->	
         <?php $themes = $h->getFiles(THEMES, array('404error.php', 'pages')); ?>
@@ -159,7 +155,6 @@ $adminPages = \Libs\AdminPages::instance();
 		<?php echo $h->lang("admin_theme_theme_settings"); ?>
 		<span class="badge badge-info pull-right"><?php echo $themesCount; ?></span>
             </a>
-            
         </li>	
 	
 	<?php $h->pluginHook('admin_sidebar'); ?>
