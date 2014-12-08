@@ -67,12 +67,20 @@
             </ul> 
             <ul class="nav navbar-header navbar-nav navbar-right">
 		
-		<?php
-		$announcements = $h->checkAnnouncements();
-           
-		if ($announcements != null  && $h->currentUser->adminAccess)
-		{
-		    ?>		
+                <?php
+                $announcements = $h->checkAnnouncements();
+                
+		if ($announcements != null  && $h->currentUser->adminAccess) { ?>
+		    <?php if (isset($h->vars['upgradeButtonShow']) && $h->vars['upgradeButtonShow']) { ?>
+                        <li>
+                            <a href="/install/index.php?action=upgrade&step=1" style="padding-bottom:14px; padding-top: 14px;"><span class="btn btn-warning btn-xs">Run upgrade script</span></a>
+                        </li>
+                    <?php } elseif (isset($h->vars['installFilesButtonShow']) && $h->vars['installFilesButtonShow']) { ?>
+                        <li >
+                            <h3 style="margin-top:16px;"><span class="label label-danger"><i class="fa fa-warning"></i> Delete Install Scripts</span>
+                            </h3></li>
+                    <?php } ?>
+                    
 		    <li class="dropdown">
 			<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
 			    <i class="fa fa-bell"></i>  <span class="label label-danger"><?php echo count($announcements)?></span>
@@ -81,35 +89,28 @@
 
 			    <?php
 			     $h->pluginHook('admin_announcement_first');
-			    foreach ($announcements as $announcement) 
-				{
-				?>
-				    <li>
-					<a href="/admin_index.php?page=settings">
-					    <div>
-						<i class="fa fa-info-circle fa-fw"></i> <?php echo $announcement; ?>
-	    <!--                                    <span class="pull-right text-muted small">4 minutes ago</span>-->
-					    </div>
-					</a>
-				    </li>				
-				     <li class="divider"></li>
-				<?php
-				}
+			    foreach ($announcements as $announcement) { ?>
+                                <li>
+                                    <a href="/admin_index.php?page=settings">
+                                        <div>
+                                            <i class="fa fa-info-circle fa-fw"></i> <?php echo $announcement; ?>
+        <!--                                    <span class="pull-right text-muted small">4 minutes ago</span>-->
+                                        </div>
+                                    </a>
+                                </li>				
+                                 <li class="divider"></li>
+                            <?php }
 			    $h->pluginHook('admin_announcement_last');
 			    ?>			
 			</ul>
 		    </li>
 		    <?php
-		}
-		else
-		{
-		    ?>
+		} else { ?>
 		    <li class="">
                         <a href="#"><i class="fa fa-bell"></i></a>                  
 		    </li>
 		    <?php
-		}   
-		?>
+		} ?>
 		    
 		<li class="dropdown">
 		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">

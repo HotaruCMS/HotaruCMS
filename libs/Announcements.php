@@ -94,12 +94,14 @@ class Announcements extends Prefab
 		$filename = INSTALL . 'install.php';
 		if (file_exists($filename)) {
 			array_push($announcements, $h->lang('admin_announcement_delete_install'));
+                        $h->vars['installFilesButtonShow'] = true;
 		}
 		
 		// Check if install file has not been run
                 $hotaru_version = $h->miscdata('hotaru_version');
 		if (version_compare($h->version, $hotaru_version, '>')) {
 			array_push($announcements, $h->lang('admin_announcement_run_install'));
+                        $h->vars['upgradeButtonShow'] = true;
 		}
 		
 		// Site is currently undergoing maintenance
