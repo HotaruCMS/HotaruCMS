@@ -172,7 +172,7 @@
 	foreach ($the_plugins as $plug) {
 		$alt++;		
 		$update = false;
-		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update = true; $info_icon = 'info_green_16.png'; }}
+		if (isset($plug['latestversion'])) { if ($plug['latestversion'] > $plug['version']) {$update = true; }}
 		echo "<tr id='table_tr' class='table_row_" . $alt % 2 . "'>\n";
 		echo "<td class='table_uninstalled_plugin'>" . $plug['name'] . " " . $plug['version'] . "<br />\n";
 		echo "<span class='table_requires'>";
