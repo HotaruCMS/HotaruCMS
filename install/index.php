@@ -78,6 +78,9 @@ $cage = init_inspekt_cage();
 $step = $cage->get->getInt('step');        // Installation steps.
 $action = $cage->get->getAlpha('action');    // Install or Upgrade.
 
+$activeInstall = $action == "install" ? 'active' : '';
+$activeUpgrade = $action == "upgrade" ? 'active' : '';
+
 switch ($step) {
 	case 0:
             //  Show the choice of upgrade or install screen
