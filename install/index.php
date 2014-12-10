@@ -95,12 +95,21 @@ if ($langSession) {
     $_SESSION['lang'] = $langSession;
 }
 
+// install languages
+$installLanguages = array('en' => 'English', 'ja-JP' => '日本語', 'cs-CZ' => 'Czech', 'tr' => 'Turkish');
+
 // check session for set language
 if (isset($_SESSION['lang'])) {
+    $currentLang['code'] = $_SESSION['lang'];
+    $lookupVal = str_replace('_', '-', $_SESSION['lang']);
+    $currentLang['name'] = isset($installLanguages[$lookupVal]) ? $installLanguages[$lookupVal] : $_SESSION['lang'];
     $filename = INSTALL . 'language/install_language_' . $_SESSION['lang'] . '.php';
     if (file_exists($filename)) {
         include_once($filename);
     }
+} else {
+    $currentLang['name'] = 'English';
+    $currentLang['code'] = 'en';
 }
 
 $step = $h->cage->get->getInt('step');        // Installation steps.
@@ -185,6 +194,7 @@ function template($h, $template, $args = array())
 {
     global $lang;
     global $version_number;
+    global $currentLang;
     
     // check for any vars being passed in
     extract($args);

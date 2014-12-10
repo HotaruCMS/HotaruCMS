@@ -45,7 +45,7 @@
 
 					<ul class="nav navbar-nav navbar-right">
                                             <li class="dropdown">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">English<span class="caret"></span></a>
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo $currentLang['name']; ?><span class="caret"></span></a>
                                                     <ul class="dropdown-menu" role="menu">
                                                         <li><a href="<?php echo $urlLang . 'en'; ?>">English</a></li>
                                                         <li class="divider"></li>
