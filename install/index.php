@@ -83,6 +83,7 @@ require_once('libs/install_functions.php');
 require_once(BASE . 'Hotaru.php');
 $h = new \stdClass();
 $h->version = '1.7';
+$h->messages = array(); 
 
 require_once(INSTALL .'language/install_language.php');    // language file for install
 
@@ -96,7 +97,7 @@ if ($langSession) {
 }
 
 // install languages
-$installLanguages = array('en' => 'English', 'ja-JP' => '日本語', 'cs-CZ' => 'Czech', 'tr' => 'Turkish');
+$installLanguages = array('en' => 'English', 'ja-JP' => '日本語', 'cs-CZ' => 'Czech', 'ta' => 'Tamil', 'tr' => 'Turkish');
 
 // check session for set language
 if (isset($_SESSION['lang'])) {

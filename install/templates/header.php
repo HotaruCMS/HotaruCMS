@@ -49,6 +49,7 @@
                                                     <ul class="dropdown-menu" role="menu">
                                                         <li><a href="<?php echo $urlLang . 'en'; ?>">English</a></li>
                                                         <li class="divider"></li>
+                                                        <li><a href="<?php echo $urlLang . 'ta'; ?>">Tamil</a></li>
                                                         <li><a href="<?php echo $urlLang . 'tr'; ?>">Turkish</a></li>
                                                         <li><a href="<?php echo $urlLang . 'cs_CZ'; ?>">Czech</a></li>
                                                         <li><a href="<?php echo $urlLang . 'ja_JP'; ?>">日本語</a></li>

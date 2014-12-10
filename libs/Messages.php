@@ -82,7 +82,7 @@ class Messages extends Prefab
 	 */
 	public function showMessages($h)
 	{
-		if (isset($h->messages) && $h->messages) {
+		if ($h->messages) {
 			foreach ($h->messages as $msg => $msg_params) {
                                 // check whether we have an array here or a normal vars first
                                 // old message type or new extra params type
