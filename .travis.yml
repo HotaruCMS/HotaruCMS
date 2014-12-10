@@ -10,8 +10,16 @@ env:
   - DB=mysql
   
 before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --prefer-source --no-interaction --dev
   - mysql -e 'create database myapp_test;'
   
 services:
   - memcached
   
+script:
+  
+matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true

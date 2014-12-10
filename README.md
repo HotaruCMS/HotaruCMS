@@ -1,4 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/hotarucms/hotarucms.png?label=ready&title=Ready)](http://waffle.io/hotarucms/hotarucms)
+[![Build Status](https://travis-ci.org/hotarucms/hotarucms.svg?branch=master)](https://travis-ci.org/hotarucms/hotarucms)
 
 HOTARU CMS
 ==========
