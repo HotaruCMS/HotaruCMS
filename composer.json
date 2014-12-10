@@ -1,6 +1,19 @@
 {
+    "name": "hotarucms/hotarucms",
+    "type": "cms",
+    "description": "Bookmarking CMS for PHP 5.3",
+    "keywords": ["cms","bookmarking"],
+    "homepage": "https://github.com/HotaruCMS/HotaruCMS",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "shibuya246",
+            "homepage": "http://forums.hotarucms.org",
+            "role": "Developer"
+        }
+    ],
     "require": {        
-        
+        "php": ">=5.2.0"
     },
     "autoload": {
         "classmap": [
