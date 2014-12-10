@@ -49,6 +49,12 @@ header('Content-type: text/html; charset=utf-8');
                         <meta name="keywords" content="<?php echo $h->lang('header_meta_keywords'); ?>" />
         <?php } ?>	
         
+        <link href="//maxcdn.bootstrapcdn.com" rel="dns-prefetch" />
+        <link href="//cdnjs.cloudflare.com" rel="dns-prefetch" />
+        <link href="//ajax.googleapis.com" rel="dns-prefetch" />
+        <link href="//cdn.jsdelivr.net" rel="dns-prefetch" />
+        
+        
         <!-- Theme -->
         <?php $h->getThemeCss(); ?>
         

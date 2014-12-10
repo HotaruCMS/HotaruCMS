@@ -77,3 +77,44 @@ function drop_table($table_name)
 	
 	$db->query("DROP TABLE " . $table_name);
 }
+
+function urlLang($h)
+{
+        $pageURL = 'http';
+        if ($h->cage->server->getAlpha("HTTPS") == "on") {$pageURL .= "s";}
+        $pageURL .= "://";
+
+        $serverName = $h->cage->server->getRaw("SERVER_NAME");
+        $requestUri = $h->cage->server->getRaw("REQUEST_URI");
+        $port = $h->cage->server->getAlpha("SERVER_PORT");
+        
+        if ($port != "80") {
+            $pageURL .= $serverName.":".$port.$requestUri;
+        } else {
+            $pageURL .= $serverName.$requestUri;
+        }
+        
+        if (strpos($pageURL, '?') !== false) {
+                list($base, $query) = explode('?', $pageURL, 2);
+                $base .= '?';
+        } else {
+                $base = $pageURL . '?';
+                $query = '';
+        }
+        
+        $args = explode('&', $query);
+        $newQuery = '';
+        if (is_array($args)) {
+                foreach ($args as $arg) {
+                    $parts = explode('=', $arg);
+                    if ($parts[0] != 'lang') {
+                        $newQuery .= $arg . '&';
+                    }
+                }
+        }
+        
+        $newQuery .= 'lang=';
+        $resultUrl = $base . $newQuery;
+ 
+        return $resultUrl;
+}

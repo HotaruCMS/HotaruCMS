@@ -24,48 +24,43 @@
  **************************************************************************************************** */
 
 /* Upgrade Step 1 */
-$lang["upgrade_title"] = "Hotaru CMS Upgrade";
+$lang["upgrade_title"] = "Hotaru CMS aktualizace";
 
-$lang["upgrade_step1"] = "Step 1/4: Checking your existing setup";
+$lang["upgrade_step1"] = "Krok 1/3: Kontrola nastavení";
 $lang["upgrade_step1_details"] = "To upgrade Hotaru to version " . $h->version . ", click 'Next'...";
-$lang["upgrade_step1_old_version"] = "You are currently running Hotaru CMS version ";
-$lang["upgrade_step1_old_no_version"] = "We could not find an existing version number of Hotaru CMS in your database.";
-$lang["upgrade_step1_current_version"] = "You already have the latest version of Hotaru installed.<br/>If you want to run the upgrade script again click 'Next', otherwise you can close this browser window now.";
+$lang["upgrade_step1_old_version"] = "Instalovaná verze Hotaru CMS:";
+$lang["upgrade_step1_old_no_version"] = "Nalezení označení verze instalovaného redakčního systému Hotaru CMS není dostupné.";
+$lang["upgrade_step1_current_version"] = "Nejnovější verze redakčního systému je již nainstalován.<br/>Pakliže chcete spustit aktualizaci znovu, klikněte na tlačítko další, v opačném případě můžete okno prohlížeče zavřít.";
 
 /* Upgrade Step 2 */
-$lang["upgrade_step2"] = "Step 2/4: Upgrade Database";
-$lang["upgrade_step2_details"] = "Congratulations! You have successfully upgraded Hotaru CMS.";
+$lang["upgrade_step2"] = "Krok 2/3: Aktualizace databáze";
+$lang["upgrade_step2_details"] = "Gratulujeme! Aktualizace systému Hotaru, byla úspěšná.";
 
-/* Upgrade Step 3 */
-$lang["upgrade_step_plugins"] = "Step 3/4: Refresh Plugins";
-$lang["upgrade_step_plugins_details"] = "Checking your plugins now.";
-$lang["admin_plugins_upgrade_done"] = "Plugins upgraded succesfully";
-
-/* Upgrade Step 3 */
-$lang["upgrade_step3"] = "Step 4/4: Check Files, Templates";
-$lang["upgrade_step3_details"] = "You have successfully upgraded Hotaru CMS.";
+/* Upgrade Step 2 */
+$lang["upgrade_step3"] = "Krok 3/3: Kontrola doplňků, šablon vzhledu";
+$lang["upgrade_step3_details"] = "Aktualizace systému Hotaru, byla úspěšná.";
 $lang["upgrade_step3_instructions"] = "After clicking \"Finish\" you may find some of your plugins need upgrading. You can check the latest version numbers from the Plugin Management page in your admin dashboard. You may also need to modify any templates you have customised to make sure they work with the latest version of Hotaru CMS.";
-$lang["upgrade_step3_go_play"] = "Click \"Finish\" to access your Hotaru site!";
-$lang["upgrade_home"] = "Finish";
+$lang["upgrade_step3_go_play"] = "Klepněte na tlačítko \"Dokončit\" pro přechod na stránky!";
+$lang["upgrade_home"] = "Dokončit";
 
 /* Install Common */
-$lang["install_title"] = "Hotaru CMS Setup";
-$lang["admin_theme_header_hotarucms"] = "Hotaru CMS ";
-$lang["install_next"] = "Next";
-$lang["install_back"] = "Back";
+$lang["install_title"] = "Instalace Hotaru CMS";
+$lang["admin_theme_header_hotarucms"] = "Hotaru CMS";
+$lang["install_next"] = "Dále";
+$lang["install_back"] = "Zpět";
 $lang["install_trouble"] = "Having trouble? Read the <a href='http://docs.hotarucms.org'>Documentation</a> or ask for help in the <a href='http://forums.hotarucms.org'>Forums</a>.";
 
 /* Install Step 1 */
-$lang["install_step0"] = "Welcome to Hotaru CMS";
+$lang["install_step0"] = "Vítejte v redakčním systému Hotaru";
 $lang["install_step0_welcome"] = "Installing Hotaru can be completed in just 4 steps and normally requires just a few minutes.";
 $lang["install_step0_select"] = "Select below whether you want to make a new installation or upgrade an existing Hotaru site...";
-$lang["install_new"] = "New Installation";
-$lang["install_new2"] = "Install";
-$lang["install_upgrade"] = "Upgrade Existing Site";
-$lang["install_upgrade2"] = "Upgrade";
+$lang["install_new"] = "Nová instalace";
+$lang["install_new2"] = "Instalovat";
+$lang["install_upgrade"] = "Aktualizovat již existující stránky";
+$lang["install_upgrade2"] = "Aktualizovat";
 
 /* Install Step 2 */
-$lang["install_step1"] = "Step 1/4: Database Setup";
+$lang["install_step1"] = "Krok 1/4: Nastavení databáze";
 $lang["install_step1_instructions"] = "To set up a database for Hotaru CMS, you'll need to do the following";
 $lang["install_step1_instructions1"] = "Create a database called <i>hotaru</i> in your web host's control panel. Make a note of your username and password!";
 $lang["install_step1_instructions2"] = "Copy <code>settings_default.php</code> in the config folder and rename it <code>settings.php</code>.";
@@ -74,20 +69,20 @@ $lang["install_step1_instructions4"] = "Fill in the <code>baseurl</code>, e.g. <
 $lang["install_step1_instructions5"] = "Save and upload <code>settings.php</code> to your server in the config folder, then click \"Next\"...";
 $lang["install_step1_instructions_create_db"] = "Create a new database on your server first then fill in the form below. These details will be unique to your server and database setup.";
 $lang["install_step1_instructions_manual_setup"] = "If you prefer to edit the settings file manually";
-$lang["install_step1_instructions_manual_setup_click"] = "click here";
-$lang["install_step1_warning"] = "<b>Warning</b>";
-$lang["install_step1_warning_note"] = "When you click \"Next\", new database tables will be created, deleting any old ones you may have!";
+$lang["install_step1_instructions_manual_setup_click"] = "klikněte zde";
+$lang["install_step1_warning"] = "<b>Varování</b>";
+$lang["install_step1_warning_note"] = "Po kliknutí na tlačítko \"Dále\", budou v databázi vytvořeny nové tabulky, pokud se nachází v databázi tabulky z předešlé instalace, budou odstraněny!";
 
-$lang["install_step1_baseurl"] = "<b>Baseurl</b>";
+$lang["install_step1_baseurl"] = "<b>Výchozí adresa stránek</b>";
 $lang["install_step1_baseurl_explain"] = "e.g. http://example.com/ (Needs trailing slash '/')";
-$lang["install_step1_dbuser"] = "<b>Database User</b>";
-$lang["install_step1_dbuser_explain"] = "Add your own database details ";
-$lang["install_step1_dbpassword"] = "<b>Database Password</b>";
+$lang["install_step1_dbuser"] = "<b>Uživatelské jméno pro přístup</b>";
+$lang["install_step1_dbuser_explain"] = "Zadejte údaje, pro připojení k databázi";
+$lang["install_step1_dbpassword"] = "<b>Heslo pro přístup do databáze</b>";
 $lang["install_step1_dbpassword_explain"] = "";
-$lang["install_step1_dbname"] = "<b>Database Name</b>";
+$lang["install_step1_dbname"] = "<b>Jméno databáze</b>";
 $lang["install_step1_dbname_explain"] = "";
-$lang["install_step1_dbprefix"] = "<b>Database Prefix</b>";
-$lang["install_step1_dbprefix_explain"] = "Database prefix, e.g. 'hotaru_'";
+$lang["install_step1_dbprefix"] = "<b>Předpona tabulek databáze</b>";
+$lang["install_step1_dbprefix_explain"] = "Předpona např. 'hotaru_'";
 $lang["install_step1_dbhost"] = "<b>Database Host</b>";
 $lang["install_step1_dbhost_explain"] = "You probably won't need to change this";
 
@@ -102,7 +97,7 @@ $lang["install_step1_settings_file_already_exists"] = "There is already a Hotaru
 $lang["install_step1_settings_db_already_exists"] = "There is already a Hotaru database on your server with live tables. Proceed with caution.";
 $lang["install_step1_update_file_writing_success"] = "The 'settings' file was created.";
 $lang["install_step1_update_file_writing_failure"] = "There was a problem creating the 'settings' file.";
-$lang["install_step1_no_db_exists_failure"] = "The database does not exist or the current connection settings are incorrect.";
+$lang["install_step1_no_db_exists_failure"] = "The database does not exist or the connection settings are incorrect.";
 $lang["install_step1_no_table_exists_failure"] = "No tables exist or the database prefix may be incorrect in your settings file.";
 
 
@@ -146,7 +141,7 @@ $lang["install_step3_form_update"] = "Update";
 
 /* Install Step 5 */
 $lang["install_step4"] = "Step 4/4: Completion";
-$lang["install_step4_installation_complete"] = "Installation is now complete. Optional Settings";
+$lang["install_step4_installation_complete"] = "The database has been successfully upgraded";
 $lang["install_step4_installation_delete"] = "<span style='color: red;'><b>WARNING:</b> You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!</span>";
 
 $lang["install_step4_form_check_php"] = "Check PHP Setup";
@@ -157,3 +152,5 @@ $lang["install_step4_form_check_php_version"] = "Hotaru has not been tested on t
 
 $lang["install_step4_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
 $lang["install_home"] = "Get Started!";
+
+?>

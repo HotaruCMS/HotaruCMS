@@ -65,7 +65,7 @@
       <div class="jumbotron">
         <h1>Oops!</h1>
         <p class="lead"><?php echo $msg1; ?></p>
-        <a class="btn btn-large btn-success" href="http://hotarucms.org">Hotaru CMS</a>
+        
       </div>
 
       <hr>
@@ -85,8 +85,8 @@
 
           <h4>Forums</h4>
           <p>
-              There is always plenty of help in the forums from developers and site owners<br/>
-              <a href="http://forums.hotarucms.org">Forum Link</a>
+              <a class="btn btn-success btn-xs" href="http://forums.hotarucms.org">Forum Link</a>
+              &nbsp;Find plenty of help in the forums from developers and site owners 
           </p>
         </div>
       </div>

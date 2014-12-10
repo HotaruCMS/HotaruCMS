@@ -1,3 +1,7 @@
+<?php 
+    $urlLang = urlLang($h);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,8 +44,19 @@
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="http://forums.hotarucms.org">Forums</a></li>
-						<li><a href="http://forums.hotarucms.org/misc/contact">Contact</a></li>
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">English<span class="caret"></span></a>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="<?php echo $urlLang . 'en'; ?>">English</a></li>
+                                                        <li class="divider"></li>
+                                                        <li><a href="<?php echo $urlLang . 'tr'; ?>">Turkish</a></li>
+                                                        <li><a href="<?php echo $urlLang . 'cs_CZ'; ?>">Czech</a></li>
+                                                        <li><a href="<?php echo $urlLang . 'ja_JP'; ?>">日本語</a></li>
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li><a href="http://forums.hotarucms.org">Forums</a></li>
+                                                <li><a href="http://forums.hotarucms.org/misc/contact">Contact</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->

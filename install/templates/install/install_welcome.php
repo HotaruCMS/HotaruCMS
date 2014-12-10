@@ -14,6 +14,9 @@
                         
 			<p class="text-center">
 				<a class="btn btn-primary btn-lg" href="index.php?step=1&action=install" role="button"><?php echo $lang['install_new'];?></a>
-				&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-default btn-lg" href="index.php?step=1&action=upgrade" role="button"><?php echo $lang['install_upgrade'];?></a>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+                                <?php if ($settings_file_exists) { ?>
+                                    <a class="btn btn-default btn-lg" href="index.php?step=1&action=upgrade" role="button"><?php echo $lang['install_upgrade'];?></a>
+                                <?php } ?>
 			</p>
 		</div>

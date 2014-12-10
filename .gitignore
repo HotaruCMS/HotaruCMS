@@ -6,3 +6,4 @@ config/settings.php
 
 content/pages/test/abc.php
 
+!/.htaccess

@@ -10,13 +10,14 @@
 					<span class='sr-only'>25% Complete</span>
 				</div>
 			</div>
+                        <?php echo $lang['install_step1_instructions_manual_setup']; ?>&nbsp;<a href='?step=1&action=install&type=manual'><?php echo $lang['install_step1_instructions_manual_setup_click']; ?></a>.
+
 		</div>
 	
 		<!-- Manual creation link -->
 		<div class='install_content'>
-			<?php echo $lang['install_step1_instructions_manual_setup']; ?>&nbsp;<a href='?step=1&action=install&type=manual'><?php echo $lang['install_step1_instructions_manual_setup_click']; ?></a>.
-
-			<?php showMessages(); ?>
+			
+			<?php showMessages($h); ?>
 			
 			<?php
 				if ($cage->post->getAlpha('updated') != 'true' && $settings_file_exists) { ?>

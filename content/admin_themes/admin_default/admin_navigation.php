@@ -77,8 +77,9 @@
                         </li>
                     <?php } elseif (isset($h->vars['installFilesButtonShow']) && $h->vars['installFilesButtonShow']) { ?>
                         <li >
-                            <h3 style="margin-top:16px;"><span class="label label-danger"><i class="fa fa-warning"></i> Delete Install Scripts</span>
-                            </h3></li>
+                            <h4 style="margin-top:18px;"><span class="label label-danger"><i class="fa fa-warning"></i> Delete Install Folder</span>
+                            </h4>
+                        </li>
                     <?php } ?>
                     
 		    <li class="dropdown">
