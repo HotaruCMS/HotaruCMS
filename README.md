@@ -1,5 +1,6 @@
 [![Stories in Ready](https://badge.waffle.io/hotarucms/hotarucms.png?label=ready&title=Ready)](http://waffle.io/hotarucms/hotarucms)
-[![Build Status](https://travis-ci.org/hotarucms/hotarucms.svg?branch=master)](https://travis-ci.org/hotarucms/hotarucms)
+[![Build Status](https://travis-ci.org/HotaruCMS/HotaruCMS.svg?branch=master)](https://travis-ci.org/HotaruCMS/HotaruCMS)
+[![Latest Stable Version](https://poser.pugx.org/hotarucms/hotarucms/v/stable.svg)](https://packagist.org/packages/hotarucms/hotarucms)[![License](https://poser.pugx.org/hotarucms/hotarucms/license.svg)](https://packagist.org/packages/hotarucms/hotarucms)
 
 HOTARU CMS
 ==========
