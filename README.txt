@@ -27,12 +27,10 @@ Upgrading
 
   1. Backup your database.
   2. Download the latest version of Hotaru CMS.
-  3. Turn off all your plugins.
+  3. Sign in as admin
   4. Overwrite ALL the old files. If you've made any customizations, read up on the [Hotaru File Organization][2]
   5. Go to /install/upgrade.php and follow the steps
-  6. Turn your plugins back on
-  7. Reactivate your widgets
-  8. When finished, delete the install folder.
+  6. When finished, delete the install folder.  
 
 First-time Installation
 -----------------------
