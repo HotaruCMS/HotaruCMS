@@ -2,8 +2,6 @@
 
 config/settings.php
 
-.htaccess
-
 content/pages/test/abc.php
 
-!/.htaccess
+.htaccess
