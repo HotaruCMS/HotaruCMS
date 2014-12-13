@@ -534,15 +534,13 @@ return false;
                 //$h->allPluginDetails['hooks'] = \Hotaru\Models\Pluginhook::getAllEnabled();
                 $this->allPluginDetails['hooks'] = \Hotaru\Models2\Pluginhook::getAllEnabled($this);
 
-                //print_r($h->allPluginDetails['hooks']);
                 // turn this into an index based array as it runs faster than later calling an array_in func
                 // we are going to be using isset funcs later with this
                 // http://nickology.com/2012/07/03/php-faster-array-lookup-than-using-in_array/
 
                 if ($this->allPluginDetails['hooks']) {
-                    foreach ($this->allPluginDetails['hooks'] as $hooks)
-                    {
-                        $this->allPluginDetails['hookdata'][$hooks->plugin_hook][$hooks->plugin_folder] = 1;
+                    foreach ($this->allPluginDetails['hooks'] as $hook) {
+                        $this->allPluginDetails['hookdata'][$hook->plugin_hook][$hook->plugin_folder] = 1;
                     }
                 }
 

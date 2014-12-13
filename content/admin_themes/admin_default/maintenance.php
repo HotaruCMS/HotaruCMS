@@ -35,12 +35,9 @@ $h->showMessages();
 $h->pluginHook('admin_maintenance_top');
 
 // Tabs and content pages
-$tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Other');
+$tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Hooks', 'Other');
 
 buildtabs($h, 'maintenance', $tabs);
 
 // Hook below content
 $h->pluginHook('admin_maintenance_bottom');
-
-
-?>
