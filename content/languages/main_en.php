@@ -164,4 +164,5 @@ $lang['mail_error_message_not_sent'] = "Message could not be sent.";
 $lang['mail_error_mailer_error'] = "Mailer Error";
 $lang['mail_success_mail_sent'] = "Mail was sent";
 
+$lang['javascript_disabled'] = "Javascript is not enabled in your browser. You will need to enable it to use this site.";
 ?>

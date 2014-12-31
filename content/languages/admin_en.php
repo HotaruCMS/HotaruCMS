@@ -292,4 +292,6 @@ $lang["admin_theme_media"] = "Media";
 /* Themes */
 $lang["admin_theme_management_installed"] = "Installed"; 
 $lang["admin_theme_management_add_new"] = "Add New"; 
-?>
+
+/* Spam */
+$lang["admin_theme_spam"] = "Spam"; 
