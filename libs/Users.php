@@ -43,8 +43,8 @@ class Users extends Prefab
                 //$sql = "SELECT " . $select . " FROM " . TABLE_USERACTIVITY . " AS UA LEFT OUTER JOIN " . TABLE_USERS . " AS U ON UA.useract_userid = U.user_id WHERE UA.useract_archived = %s AND UA.useract_status = %s AND UA.useract_id > %d AND P.post_status <> %s AND P.post_status <> %s ORDER BY UA.useract_date DESC " . $limit;
                 //$query = $h->db->prepare($sql, 'N', 'show', $fromId, 'pending', 'buried');
 
-                $sql = "SELECT " . $select . " FROM " . TABLE_USERS . " AS U WHERE U.user_role <> %s AND U.user_role <>%s AND U.user_role <>%s ORDER BY U.user_date ASC " . $limit;
-                $query = $h->db->prepare($sql, 'N', 'pending', 'suspend', 'banned');
+                $sql = "SELECT " . $select . " FROM " . TABLE_USERS . " AS U WHERE U.user_role <> %s AND U.user_role <>%s AND U.user_role <>%s AND U.user_role <>%s AND U.user_role <>%s ORDER BY U.user_date ASC " . $limit;
+                $query = $h->db->prepare($sql, 'N', 'pending', 'suspend', 'banned', 'killspammed');
 
                 if ($type == 'query') { return $query; }
                 $result = ($type == 'count') ? $h->db->get_var($query) : $h->db->get_results($query);

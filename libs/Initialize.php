@@ -244,6 +244,7 @@ class Initialize extends Prefab
 			"TABLE_POSTMETA"=>"postmeta",
 			"TABLE_POSTVOTES"=>"postvotes",
 			"TABLE_SETTINGS"=>"settings",
+                        "TABLE_SPAMLOG"=>"spamlog",
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
@@ -275,14 +276,6 @@ class Initialize extends Prefab
 	 */
 	private function loadFiles()
 	{
-		// include third party libraries
-//		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-//                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database                  
-//                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
-//		
-//                require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-//                require_once(LIBS       . 'InspektExtras.php'); // sanitation                		
-//                
 //                if (! function_exists ('mysqli_connect')) {
 //                    require_once(LIBS . 'Database_mysql.php');
 //                } else {                    

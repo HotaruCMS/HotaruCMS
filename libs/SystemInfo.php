@@ -113,8 +113,7 @@ class SystemInfo extends Prefab
                 $resourceIds = array(1,2,3,4,6,12,14,16);
 		$resourceList = array();
 		
-                foreach($resourceIds as $resourceId)
-                {
+                foreach($resourceIds as $resourceId) {
                     $query_vals = array(
                         'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
                         'format' => 'json',
@@ -130,10 +129,16 @@ class SystemInfo extends Prefab
 		   }
 		}
                 
+                $updateQuery = "";
                 // Update the plugin in db using resourceName and the array for that from above
                 foreach($resourceList as $plugin) {
-                    //$result = \Hotaru\Models\Plugin::makeUpdate($plugin['title'], $plugin, $h->currentUser->id);
-                    $result = \Hotaru\Models2\Plugin::makeUpdate($h, $plugin['title'], $plugin, $h->currentUser->id);
+                    // was hoping to check first whether version number changed but forums returns plugin name not folder
+                    //if (!isset($h->allPluginDetails['pluginData'][$plugin['title']])) { continue; }
+                    
+                    //if ($plugin['version_string'] > $h->allPluginDetails['pluginData'][$plugin['title']]->plugin_version) {
+                        //$result = \Hotaru\Models\Plugin::makeUpdate($plugin['title'], $plugin, $h->currentUser->id);
+                        $result = \Hotaru\Models2\Plugin::makeUpdate($h, $plugin['title'], $plugin, $h->currentUser->id);
+                    //}
                 }
                 
 		return true;
@@ -155,8 +160,7 @@ class SystemInfo extends Prefab
                 $resourceIds = array(1,2,3,4,6,12,14,16);
 		$resourceList = array();
             
-                foreach($resourceIds as $resourceId)
-                {
+                foreach($resourceIds as $resourceId) {
                     $query_vals = array(
                         'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
                         'format' => 'json',
@@ -190,8 +194,7 @@ class SystemInfo extends Prefab
                 $resourceIds = array(5);
 		$resourceList = array();
             
-                foreach($resourceIds as $resourceId)
-                {
+                foreach($resourceIds as $resourceId) {
                     $query_vals = array(
                         'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
                         'format' => 'json',
@@ -225,8 +228,7 @@ class SystemInfo extends Prefab
                 $resourceIds = array(1,2,3,4,6,12,14);
 		$resourceList = array();
 	    
-                foreach($resourceIds as $resourceId)
-                {
+                foreach($resourceIds as $resourceId) {
                     $query_vals = array(
                         'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
                         'format' => 'json',
@@ -261,8 +263,7 @@ class SystemInfo extends Prefab
                 $resourceIds = array(5);
 		$resourceList = array();
 	    
-                foreach($resourceIds as $resourceId)
-                {
+                foreach($resourceIds as $resourceId) {
                     $query_vals = array(
                         'hash' => 'r2FBq73aY1dD3yA604cG25AU30HfKyEE',
                         'format' => 'json',
@@ -312,7 +313,45 @@ class SystemInfo extends Prefab
 		return json_decode($response, true);
 	}
 
+        
+        /**
+         * 
+         * @param type $username
+         * @param type $password
+         * @return type
+         */
+        public function loginForum($h, $username, $password)
+        {
+                $loginUrl = "http://forums.hotarucms.org/index.php?login/login";
+                
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_NOBODY, false);
+                curl_setopt($ch, CURLOPT_URL, $loginUrl);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
+                curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+                curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
+                curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+                curl_setopt ($ch, CURLOPT_COOKIEFILE, 'cookie.txt');
+
+                curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($ch, CURLOPT_HEADER, 1);
+                curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0");
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+                $post_array = array('login' => $username, 'password' => $password, 'cookie_check' => 1, 'redirect' => 'http://forums.hotarucms.org/login/login', 'register' => 0, 'remember' => 1);
+                
+                curl_setopt($ch,CURLOPT_POST, count($post_array));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_array));
+                $output = curl_exec ($ch);
+                
+                //$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // for login we are getting a redirect which is a 303 code - unusual but that is what we get
+                
+                return $ch;
+        }
+        
+        
 	/**
 	 * Get system data
 	 *
@@ -351,24 +390,23 @@ class SystemInfo extends Prefab
                 //$settings = \Hotaru\Models\Setting::getValues();
 		
 		if ($settings) {
-			foreach ($settings as $setting) {
-				// mask sensitive data
-				switch ($setting->settings_name) {					
-					case 'SMTP_HOST':
-					case 'SMTP_PORT':
-					case 'SMTP_USERNAME':
-					case 'SMTP_PASSWORD':
-                                        case 'FORUM_PASSWORD':
-						$setting->settings_value = preg_replace("/[a-zA-Z0-9]/", "*", $setting->settings_value);
-						break;
-				}
-				$report['settings'][$setting->settings_name] = $setting->settings_value;
-			}
+                    foreach ($settings as $setting) {
+                        // mask sensitive data
+                        switch ($setting->settings_name) {					
+                            case 'SMTP_HOST':
+                            case 'SMTP_PORT':
+                            case 'SMTP_USERNAME':
+                            case 'SMTP_PASSWORD':
+                            case 'FORUM_PASSWORD':
+                                    $setting->settings_value = preg_replace("/[a-zA-Z0-9]/", "*", $setting->settings_value);
+                                    break;
+                        }
+                        $report['settings'][$setting->settings_name] = $setting->settings_value;
+                    }
 		}
                 
                 // Counts for all tables		
-		foreach ( $h->db->get_col("SHOW TABLES",0) as $table_name )
-		{
+		foreach ($h->db->get_col("SHOW TABLES",0) as $table_name) {
 			$report['hotaru_table_count'][$table_name] = $h->db->get_var("SELECT COUNT(*) FROM " . $table_name);
 		}
                 
@@ -380,12 +418,12 @@ class SystemInfo extends Prefab
 		$sql = "SELECT plugin_folder, plugin_enabled, plugin_version, plugin_order, plugin_latestversion FROM " . TABLE_PLUGINS . " ORDER BY plugin_order";
 		$plugins = $h->db->get_results($h->db->prepare($sql));
 		if ($plugins) {
-			foreach ($plugins as $plugin) {
-				$report['hotaru_plugins'][$plugin->plugin_folder]['enabled'] = $plugin->plugin_enabled;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['version'] = $plugin->plugin_version;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['order'] = $plugin->plugin_order;
-				$report['hotaru_plugins'][$plugin->plugin_folder]['plugin_latestversion'] = $plugin->plugin_latestversion;
-			}
+                    foreach ($plugins as $plugin) {
+                        $report['hotaru_plugins'][$plugin->plugin_folder]['enabled'] = $plugin->plugin_enabled;
+                        $report['hotaru_plugins'][$plugin->plugin_folder]['version'] = $plugin->plugin_version;
+                        $report['hotaru_plugins'][$plugin->plugin_folder]['order'] = $plugin->plugin_order;
+                        $report['hotaru_plugins'][$plugin->plugin_folder]['plugin_latestversion'] = $plugin->plugin_latestversion;
+                    }
 		}
 		
 		// plugin hooks: id, folder, hook name
@@ -394,10 +432,10 @@ class SystemInfo extends Prefab
                     $sql = "SELECT phook_id, plugin_folder, plugin_hook FROM " . TABLE_PLUGINHOOKS;
                     $plugins = $h->db->get_results($h->db->prepare($sql));
                     if ($plugins) {
-                            foreach ($plugins as $plugin) {
-                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
-                                    $report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
-                            }
+                        foreach ($plugins as $plugin) {
+                            $report['hotaru_plugin_hooks'][$plugin->phook_id]['folder'] = $plugin->plugin_folder;
+                            $report['hotaru_plugin_hooks'][$plugin->phook_id]['hook'] = $plugin->plugin_hook;
+                        }
                     }
                 }
 		
@@ -406,10 +444,12 @@ class SystemInfo extends Prefab
                     $sql = "SELECT plugin_folder, plugin_setting, plugin_value FROM " . TABLE_PLUGINSETTINGS;
                     $plugins = $h->db->get_results($h->db->prepare($sql));
                     if ($plugins) {
-                            foreach ($plugins as $plugin) {
-                                    if (is_serialized($plugin->plugin_value)) { $plugin->plugin_value = unserialize($plugin->plugin_value); }
-                                    $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
+                        foreach ($plugins as $plugin) {
+                            if (is_serialized($plugin->plugin_value)) {
+                                $plugin->plugin_value = unserialize($plugin->plugin_value);
                             }
+                            $report['hotaru_plugin_settings'][$plugin->plugin_folder][$plugin->plugin_setting] = $this->applyMaskToArrays($h, $plugin->plugin_value);
+                        }
                     }
                 }				
 		
@@ -418,10 +458,10 @@ class SystemInfo extends Prefab
 		$sql = "SELECT widget_plugin, widget_function, widget_args FROM " . TABLE_WIDGETS;
 		$widgets = $h->db->get_results($h->db->prepare($sql));
 		if ($widgets) {
-			foreach ($widgets as $widget) {
-				$report['hotaru_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
-				$report['hotaru_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
-			}
+                    foreach ($widgets as $widget) {
+                        $report['hotaru_widgets'][$widget->widget_plugin]['function'] = $widget->widget_function;
+                        $report['hotaru_widgets'][$widget->widget_plugin]['args'] = $widget->widget_args;
+                    }
 		}				
 		
 		return $report;
@@ -440,11 +480,11 @@ class SystemInfo extends Prefab
 		if (!is_array($array) && !is_object($array)) { return false; }
 		
 		foreach ($array as $key => $value) {
-			if (is_array($value) || is_object($value)) {
-				$array[$key] = $this->applyMaskToArrays($h, $value);
-			} else {
-				$array[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
-			}
+                    if (is_array($value) || is_object($value)) {
+                        $array[$key] = $this->applyMaskToArrays($h, $value);
+                    } else {
+                        $array[$key] = preg_replace("/[a-zA-Z0-9]/", "*", $value);
+                    }
 		}
 		return $array;
 	}
@@ -487,12 +527,12 @@ class SystemInfo extends Prefab
                     $perms = unserialize($report['hotaru_permissions']);
                     unset($perms['options']); // don't need to display these
                     foreach ($perms as $key => $value) {
-                            $output .= $key . " => (";
-                            foreach ($value as $k => $v) {
-                                    $output .= $k . ": " . $v . ", ";
-                            }
-                            $output = rtrim($output, ", ");
-                            $output .= ")\n";
+                        $output .= $key . " => (";
+                        foreach ($value as $k => $v) {
+                                $output .= $k . ": " . $v . ", ";
+                        }
+                        $output = rtrim($output, ", ");
+                        $output .= ")\n";
                     }
                 }
                 
@@ -502,7 +542,7 @@ class SystemInfo extends Prefab
 		$user_settings = unserialize($report['hotaru_user_settings']);
                 if ($user_settings) {
                     foreach ($user_settings as $key => $value) {
-                            $output .= $key . " => " . $value . "\n";
+                        $output .= $key . " => " . $value . "\n";
                     }
                 }
 		
@@ -510,64 +550,64 @@ class SystemInfo extends Prefab
 		
 		$output .= "Plugins: \n";
 		if (isset($report['hotaru_plugins'])) {
-			foreach ($report['hotaru_plugins'] as $key => $value) {
-				$output .= $value['order'] . ". " . $key . " v." . $value['version'] . " ";
-				if ($value['enabled']) { $output .= "[enabled] \n"; } else { $output .= "[disabled] \n"; }				
-			}
+                    foreach ($report['hotaru_plugins'] as $key => $value) {
+                        $output .= $value['order'] . ". " . $key . " v." . $value['version'] . " ";
+                        if ($value['enabled']) { $output .= "[enabled] \n"; } else { $output .= "[disabled] \n"; }				
+                    }
 		}
 		
 		$output .= "\n";
 		
 		$output .= "Plugin Hooks: \n";
 		if (isset($report['hotaru_plugin_hooks'])) {
-			foreach ($report['hotaru_plugin_hooks'] as $key => $value) {
-				$output .= $key . ". " . $value['folder'] . " => " . $value['hook'] . " \n";
-			}
+                    foreach ($report['hotaru_plugin_hooks'] as $key => $value) {
+                        $output .= $key . ". " . $value['folder'] . " => " . $value['hook'] . " \n";
+                    }
 		}
 		
 		$output .= "\n";
 		
 		$output .= "Plugin Settings: \n";
 		if (isset($report['hotaru_plugin_settings'])) {
-			foreach ($report['hotaru_plugin_settings'] as $key => $value) {
-				foreach ($value as $k => $v) {
-					if (!is_array($v)) {
-						$output .= "\nPlugin settings for " . $key . ":\n...." . $k . " = " . $v . " \n";
-					} else {
-						$output .= "\nPlugin settings for " . $key . ":\n";
-						$output = $this->outputArrays($h, $v, $output);
-					}
-				}
-			}
+                    foreach ($report['hotaru_plugin_settings'] as $key => $value) {
+                        foreach ($value as $k => $v) {
+                            if (!is_array($v)) {
+                                    $output .= "\nPlugin settings for " . $key . ":\n...." . $k . " = " . $v . " \n";
+                            } else {
+                                    $output .= "\nPlugin settings for " . $key . ":\n";
+                                    $output = $this->outputArrays($h, $v, $output);
+                            }
+                        }
+                    }
 		}
 		
 		$output .= "\n";
 		
 		$output .= "Hotaru Settings: \n";
 		if (isset($report['settings'])) {
-			foreach ($report['settings'] as $key => $value) {
-				$output .= $key . " => " . $value . " \n";
-			}
+                    foreach ($report['settings'] as $key => $value) {
+                            $output .= $key . " => " . $value . " \n";
+                    }
 		}
 		
 		$output .= "\n";
 		
 		$output .= "Widgets: \n";
 		if (isset($report['hotaru_widgets'])) {
-			foreach ($report['hotaru_widgets'] as $key => $value) {
-				$output .= $key . " => " . $value['function'];
-				if ($value['args']) { $output .= " (args: " . $value['args'] . ")"; }
-				$output .= "\n";
-			}
+                    foreach ($report['hotaru_widgets'] as $key => $value) {
+                            $output .= $key . " => " . $value['function'];
+                            if ($value['args']) { $output .= " (args: " . $value['args'] . ")"; }
+                            $output .= "\n";
+                    }
 		}
 		
 		$output .= "\n";
 		
 		$output .= "Number of rows in each table: \n";
 		if (isset($report['hotaru_table_count'])) {
-			foreach ($report['hotaru_table_count'] as $key => $value) {
-				$output .= $key . " => " . $value . " \n";
-			}
+                    foreach ($report['hotaru_table_count'] as $key => $value) {
+                            $output .= $key . " => " . $value . " \n";
+                    }
 		}
 		
 		return $output;
@@ -585,14 +625,13 @@ class SystemInfo extends Prefab
 		if (!is_array($array) && !is_object($array)) { return $output; }
 		
 		foreach ($array as $key => $value) {
-			if (is_array($value) || is_object($array)) {
-				$output .= "..... " . $key . ":\n";
-				$output = $this->outputArrays($h, $value, $output);
-			} else {
-				$output .= "..... " . $key . ": " . $value . " \n";
-			}
+                    if (is_array($value) || is_object($array)) {
+                            $output .= "..... " . $key . ":\n";
+                            $output = $this->outputArrays($h, $value, $output);
+                    } else {
+                            $output .= "..... " . $key . ": " . $value . " \n";
+                    }
 		}
 		return $output;
 	}
-	
 }

@@ -104,7 +104,7 @@
 			// Try to establish the server database handle
 			else 
                         {
-                                $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport);
+                                $this->dbh = @new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport);
                                 // Check for connection problem
                                 if( $this->dbh->connect_errno )				
                                 {

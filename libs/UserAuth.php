@@ -163,7 +163,6 @@ class Authorization
 		$plugin_result = $h->pluginHook('userbase_logincheck', '', array($username, $password));
 		
 		if (!$plugin_result) {
-                    
                         if ($user->password_version == '1') {
                             // old deprecated passwords
                             $deprecatedPassword = self::deprecatedOldPasswordHash($password, substr($user->user_password, 0, 9));
@@ -178,7 +177,7 @@ class Authorization
                         }
                         
                         if ($result) {
-                            $h->messages['Password correct'] = 'green';
+                            //$h->messages['Password correct'] = 'green';
                             //signInOrTwoFactor($user, $rememberMe);
                             
                             // TODO once we have got this far we dont need the password
@@ -311,15 +310,15 @@ class Authorization
         
         private static function setAsLoggedIn($h, $loginType = '')
         {
-            $h->currentUser->loggedIn = true;
-            $h->currentUser->loginType = $loginType;
+                $h->currentUser->loggedIn = true;
+                $h->currentUser->loginType = $loginType;
 
-            // remove old and create new session object for user
-            //unset($_SESSION["hotaru_user"]);
-            @session_start();
-            $_SESSION["hotaru_user"] = $h->currentUser;
-            //print_r($_SESSION);
-            //$h->messages['new session set'] = 'green';
+                // remove old and create new session object for user
+                //unset($_SESSION["hotaru_user"]);
+                @session_start();
+                $_SESSION["hotaru_user"] = $h->currentUser;
+                //print_r($_SESSION);
+                //$h->messages['new session set'] = 'green';
         }
 	
 	/**

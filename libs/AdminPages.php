@@ -77,6 +77,8 @@ class AdminPages extends Prefab
                                 break;
                         case "theme_management":
 				break;
+                        case "spam_management":
+                                break;
                         case "ajax_stats":
                                 $this->ajaxStats($h);
                                 die();
@@ -86,6 +88,26 @@ class AdminPages extends Prefab
                         case "media":
                                 $h->vars['media_folder'] = $h->cage->get->testAlnumLines('folder');
                                 break;
+                        case "ajax_loginforum":
+                                $ch = $h->loginForum(FORUM_USERNAME, FORUM_PASSWORD);
+                                $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                                if ($statusCode == 303) {
+                                    $error = false;
+                                    $message = 'Success';
+                                } else {
+                                    $error = true;
+                                    $message = 'Password Failed';
+                                }
+                                print json_encode(array('error' => $error, 'message' => $message));
+                                die();
+                        case "ajax_getHotaruApiKey":
+                                // call api on api.hotarucms.org with site details
+                                $newApiKey = getGUID();
+                                \Hotaru\Models2\Setting::makeUpdate($h, 'HOTARU_API_KEY', $newApiKey);
+                                $error = false;
+                                $message = "API Key Reset";
+                                print json_encode(array('error' => $error, 'message' => $message, 'apiKey' => $newApiKey));
+                                die();
 			case "plugin_search":				
 				$h->vars['admin_sidebar_layout'] = 'horizontal';
 				//$this->adminPluginSearch($h);				
@@ -168,8 +190,7 @@ class AdminPages extends Prefab
                             if ($setting_value && $setting_value != $setting->settings_value) {
                                     //\Hotaru\Models\Setting::makeUpdate($setting->settings_name, $setting_value, $h->currentUser->id);
                                     \Hotaru\Models2\Setting::makeUpdate($h, $setting->settings_name, $setting_value, $h->currentUser->id);
-                            } elseif (!$setting_value) {
-                                    // empty value                                             
+                            } elseif (!$setting_value) {                                      
                                     $error = 1;
                             }
                         }

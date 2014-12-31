@@ -66,10 +66,10 @@ $adminPages = \Libs\AdminPages::instance();
                 echo '</div>';
             echo '</li>';
             
-        }
-        ?>
+        } ?>
         
-        
+        <li <?php if($h->pageTitle == 'Spam Management') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=spam_management"><i class="menu-icon fa fa-ban"></i><span class="menu-text"><?php echo $h->lang("admin_theme_spam"); ?></span></a></li>
+	
         <?php
         if ($h->isActive('post_manager')) {
             echo '<li role="presentation" class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_posts_list"><a href="#"><i class="menu-icon fa fa-edit"></i><span class="menu-text">' . $h->lang("admin_theme_posts") . '</span></a>';
@@ -82,9 +82,7 @@ $adminPages = \Libs\AdminPages::instance();
                     echo '</ul>';
                 echo '</div>';
             echo '</li>';
-            
-        }
-        ?>
+        } ?>
         
         <?php
         if ($h->isActive('comment_manager')) {
@@ -97,8 +95,7 @@ $adminPages = \Libs\AdminPages::instance();
                 echo '</div>';
             echo '</li>';
             
-        }
-        ?>
+        } ?>
         
         <li <?php if($h->pageTitle == 'Media') { echo 'class="active"'; } ?> role="presentation"><a href="<?php echo SITEURL; ?>admin_index.php?page=media"><i class="menu-icon fa fa-check"></i><span class="menu-text"><?php echo $h->lang("admin_theme_media"); ?></span></a></li>
 	
@@ -113,14 +110,12 @@ $adminPages = \Libs\AdminPages::instance();
                 echo '</div>';
             echo '</li>';
             
-        }
-        ?>
+        } ?>
 	
 	<?php
         if ($h->isActive('widgets')) {
             echo '<li role="presentation"><a href="' . SITEURL . 'admin_index.php?page=plugin_settings&plugin=widgets#tab_settings"><i class="menu-icon fa fa-square-o"></i><span class="menu-text">' . $h->lang("admin_theme_widgets") . '</span></a></li>';            
-        }
-        ?>
+        } ?>
         
         <?php $h->pluginHook('admin_sidebar_stats'); ?>
         

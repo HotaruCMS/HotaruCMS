@@ -191,26 +191,16 @@ class PageHandling extends Prefab
 	public function getTitle($h, $delimiter = ' | ', $raw = false)
 	{
 		// if the title is already set...
-		if ($h->pageTitle)
-		{
+		if ($h->pageTitle) {
 			// replace [delimiter] text with the specified delimiter:
 			$h->pageTitle = str_replace('[delimiter]', $delimiter, $h->pageTitle);
 			
-			// return the title only
 			if ($raw) { return $h->pageTitle; }
-			
-			// if this is the home page...
-			if ($h->pageName == $h->home) {
-				// title only (set by plugins, e.g. bookmarking)
-				return $h->pageTitle;
-			} else {
-				// title followed by site name
-				return $h->pageTitle . $delimiter . SITE_NAME;
-			}
-		}
-		// fetch the page name...
-		elseif ($h->getPageName())
-		{
+                        
+                        // title only (set by plugins, e.g. bookmarking) or title followed by site name
+			$pageTitle = $h->pageName == $h->home ? $h->pageTitle : $h->pageTitle . $delimiter . SITE_NAME;
+                        return $pageTitle;
+		} elseif ($h->getPageName()) {
 			// make a title from it...
 			$h->pageTitle = make_name($h->pageName);
 			
@@ -222,9 +212,7 @@ class PageHandling extends Prefab
 			
 			// return with site name
 			return $h->pageTitle . $delimiter . SITE_NAME;
-		}
-		else
-		{ 
+		} else {
 			// there's no title and no page name - assume "page not found"
 			$h->pageTitle = $h->lang('main_theme_page_not_found');
 			
@@ -279,43 +267,29 @@ class PageHandling extends Prefab
                 // If we already got it once lets add it to the $h->fileExists list
                 
                 if (!isset($h->fileExists[$page])) {
-                    if ($plugin != 'pages' && file_exists($themes . $theme . $file))
-                    {
+                    if ($plugin != 'pages' && file_exists($themes . $theme . $file)) {
 			$h->fileExists[$page] = $themes . $theme . $file;
-                    } 
-                    elseif ($plugin != 'pages' && file_exists($themes . $default . $file)) 
-                    {
+                    } elseif ($plugin != 'pages' && file_exists($themes . $default . $file)) {
                         $h->fileExists[$page] = $themes . $default . $file;
-                    }
-                    elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $file)) 
-                    {
+                    } elseif ($h->adminPage && file_exists($themes . $theme . 'views/' . $file)) {
                         $include_once = true;
                         $h->fileExists[$page] = $themes . $theme . 'views/' . $file;
-                    }
-                    elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $file))
-                    {
+                    } elseif ($plugin == 'pages' && file_exists(CONTENT . 'pages/' . $file)) {
                         $include_once = true;
                         $h->fileExists[$page] = CONTENT . 'pages/' . $file;
-                    } 
-                    elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $file))
-                    {
-                            $h->fileExists[$page] = PLUGINS . $plugin . '/templates/' . $file;
-                            //$stopHere = true; return true; die();
-                    }
-                    elseif (file_exists($themes . $theme . '404error.php')) 
-                    {
-                            $h->fileExists[$page] = $themes . $theme . '404error.php';
-                    }
-                    else
-                    {
-                            $h->fileExists[$page] = $themes . '404error.php';
+                    } elseif ($plugin != '' && file_exists(PLUGINS .  $plugin . '/templates/' . $file)) {
+                        $h->fileExists[$page] = PLUGINS . $plugin . '/templates/' . $file;
+                    } elseif (file_exists($themes . $theme . '404error.php')) {
+                        $h->fileExists[$page] = $themes . $theme . '404error.php';
+                    } else {
+                        $h->fileExists[$page] = $themes . '404error.php';
                     }
                 }
                 
                 if (!$include_once) {
-                        include $h->fileExists[$page];
-                    } else {
-                        include_once $h->fileExists[$page];                    
+                    include $h->fileExists[$page];
+                } else {
+                    include_once $h->fileExists[$page];                    
                 }
                 
                 $h->checkSystemJobs($h);
@@ -499,4 +473,3 @@ class PageHandling extends Prefab
 	}
 	
 }
-?>

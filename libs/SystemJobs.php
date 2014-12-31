@@ -1,9 +1,27 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Functions for checking system jobs for Hotaru installation
+ *
+ * PHP version 5
+ *
+ * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ *
+ * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
+ * 
+ * @category  Content Management System
+ * @package   HotaruCMS
+ * @author    shibuya246 <blog@shibuya246.com>
+ * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link      http://www.hotarucms.org/
  */
 namespace Libs;
 
@@ -36,12 +54,12 @@ class SystemJobs extends Prefab
             return;
        }
 
-       $keys = array_keys($crons);
+       //$keys = array_keys($crons);
        $local_time = time();
 //print_r($crons);
-       if (isset($keys[0]) && $keys[0] > $local_time) {
+       //if (isset($keys[0]) && $keys[0] > $local_time) {
            //return false;
-       }
+       //}
 
        foreach ($crons as $timestamp => $cronhooks) {
             if ($timestamp > $local_time) {
@@ -52,28 +70,28 @@ class SystemJobs extends Prefab
                 // check whether we have an assoc array
                 if (!is_string($cronhooks)) {
                     foreach ($cronhooks as $hook => $keys) {               
-                    foreach ($keys as $k => $v) {                   
-                        $schedule = $v['schedule'];
-                        // TODO combinethe reschedule with the unschedule to save processing time
-                        if ($schedule != false) {
-                            //$new_args = array($timestamp, $schedule, $hook, $v['args']);
-                            $this->cronRescheduleEvent($h, $timestamp, $schedule, $hook, $v['args']);
-                        }
-                        $this->cronUnscheduleEvent($h, $timestamp, $hook, $v['args']);
-                        //call function to do task required for cron
-                        //print "running hook..-> " . $hook. "     ";
-                        if (strpos($hook, ':')) {
-                            $parts = explode(':', $hook);
-                            if (count($parts) > 1) {
-                                $class = '\\Libs\\' . $parts[0];
-                                $cron_call = new $class();
-                                $cron_call->$parts[1]($h);
+                        foreach ($keys as $k => $v) {                   
+                            $schedule = $v['schedule'];
+                            // TODO combinethe reschedule with the unschedule to save processing time
+                            if ($schedule != false) {
+                                //$new_args = array($timestamp, $schedule, $hook, $v['args']);
+                                $this->cronRescheduleEvent($h, $timestamp, $schedule, $hook, $v['args']);
                             }
-                        } else {
-                            $h->pluginHook($hook, '', $v['args']);
+                            $this->cronUnscheduleEvent($h, $timestamp, $hook, $v['args']);
+                            //call function to do task required for cron
+                            //print "running hook..-> " . $hook. "     ";
+                            if (strpos($hook, ':')) {
+                                $parts = explode(':', $hook);
+                                if (count($parts) > 1) {
+                                    $class = '\\Libs\\' . $parts[0];
+                                    $cron_call = new $class();
+                                    $cron_call->$parts[1]($h);
+                                }
+                            } else {
+                                $h->pluginHook($hook, '', $v['args']);
+                            }
                         }
                     }
-                }
                 }
             } catch(Exception $e) {
                 // send error report

@@ -38,16 +38,13 @@ class Language extends Prefab
 		$lang = $this->getLanguageCache();
                 
                 // maybe bring this into db setting
-                if ($pack == 'main')
-                {
+                if ($pack == 'main') {
                     $language = (defined('LANGUAGE_MAIN')) ? LANGUAGE_MAIN : 'en'; 
-                }
-                if ($pack == 'admin')
-                {
+                } elseif ($pack == 'admin') {
                     $language = (defined('LANGUAGE_ADMIN')) ? LANGUAGE_ADMIN : 'en'; 
                 }
 
-		$file = BASE.'content/languages/'.$pack.'_'.$language.'.php';
+		$file = BASE . 'content/languages/' . $pack . '_' . $language . '.php';
 
 		if( file_exists($file) ) {
 		
@@ -84,15 +81,15 @@ class Language extends Prefab
 	 */    
 	public function includeLanguage($h, $folder = '', $filename = '')
 	{
-		$folder = ($folder)? $folder: $h->plugin->folder;
+		$folder = ($folder) ? $folder : $h->plugin->folder;
 
 		if( $folder ) {
 
 			// If not filename given, make the plugin name the file name
 			$filename = ($filename) ? $filename : $folder;
 
-			$file1 = THEMES.THEME.'languages/'.$filename.'_language.php';
-			$file2 = PLUGINS.$folder.'/languages/'.$filename.'_language.php';
+			$file1 = THEMES . THEME . 'languages/' . $filename . '_language.php';
+			$file2 = PLUGINS . $folder . '/languages/' . $filename . '_language.php';
 
 			// check if this language is already cached
 			if( $this->checkLanguageCached($h, $file1) || $this->checkLanguageCached($h, $file2) ) {
@@ -100,17 +97,17 @@ class Language extends Prefab
 			}
 
 			// Look for the file to load.
-			if( file_exists($file1) ) {
+			if (file_exists($file1)) {
 				// It is in the user theme languages folder.
 				$this->addLanguageFile($h, $file1);
-			} elseif( file_exists($file2) ) {
+			} elseif (file_exists($file2)) {
 				// It is in the plugin folder.
 				$this->addLanguageFile($h, $file2);
 			}
 
 			// Add new language to our lang property
-			if( isset($lang) ) {
-				foreach( $lang as $l => $text ) {
+			if (isset($lang)) {
+				foreach($lang as $l => $text) {
 					$h->lang[$l] = $text;
 				}
 			}
@@ -136,17 +133,17 @@ class Language extends Prefab
 		// check the current theme for a language file, then the default theme...
 
 		$files = array(
-			THEMES.THEME.'languages/'.$filename.'_language.php',
-			THEMES.$h->pageHandling->default.'languages/'.$filename.'_language.php'
+			THEMES . THEME . 'languages/' . $filename . '_language.php',
+			THEMES . $h->pageHandling->default . 'languages/' . $filename . '_language.php'
 		);
 
-		foreach( $files as $file ) {
+		foreach ($files as $file) {
 			// check if this language is already cached
-			if( $this->checkLanguageCached($h, $file) ) {
+			if ($this->checkLanguageCached($h, $file)) {
 				return TRUE;
 			}
 
-			if( file_exists($file) ) {
+			if (file_exists($file)) {
 				$this->addLanguageFile($h, $file);
 				return TRUE;
 			}
@@ -299,4 +296,3 @@ class Language extends Prefab
 		return true;
 	}
 }
-?>

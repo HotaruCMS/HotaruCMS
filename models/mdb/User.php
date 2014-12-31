@@ -87,4 +87,10 @@ class User extends BaseModel
         
         return $model;
     }
+    
+    public static function getPendingCount($h)
+    {
+        $count = self::getCount($h, 'pending');
+        return $count;
+    }
 }

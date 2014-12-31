@@ -33,59 +33,66 @@ foreach ($loaded_settings as $setting) {
     }
 }
 $loaded_settings = $thisSettings;
-
 ?>
-
         
-            <form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
+    <form id='settings_form' class='form' name='settings_form' action='<?php echo SITEURL; ?>admin_index.php?page=settings' method='post'>
 	
 	<table id="settings" class="table table-bordered">    
-	<tr class="info">
-		<td><?php echo $h->lang("admin_theme_settings_setting"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_value"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_default"); ?></td>
-		<td><?php echo $h->lang("admin_theme_settings_notes"); ?></td>
-	</tr>
+            <tr class="info">
+                    <td><?php echo $h->lang("admin_theme_settings_setting"); ?></td>
+                    <td><?php echo $h->lang("admin_theme_settings_value"); ?></td>
+                    <td><?php echo $h->lang("admin_theme_settings_default"); ?></td>
+                    <td><?php echo $h->lang("admin_theme_settings_notes"); ?></td>
+            </tr>
 	
-	<?php     // **********************************************************
+            <?php // **********************************************************
 	
 		// Loop through the settings, displaying each one as a row...  
                 if ($loaded_settings) { 
 		foreach ($loaded_settings as $ls)
 		{
-			if ($ls->settings_show == 'N') { continue; } // skip this row
-		
-			// replace underscores with spaces and make the first character of the setting name uppercase.
-			$name = ucfirst(preg_replace('/_/', ' ', $ls->settings_name));
-			
-			// get settings_names that need warning for '/' character being attached to text
-			if ($ls->settings_name == 'THEME' || $ls->settings_name == 'ADMIN_THEME') { $css_class = ' class="warning_slash"'; } else {$css_class = ''; }
-		
+                    if ($ls->settings_show == 'N') { continue; } // skip this row
+
+                    // replace underscores with spaces and make the first character of the setting name uppercase.
+                    $name = ucfirst(preg_replace('/_/', ' ', $ls->settings_name));
+
+                    // get settings_names that need warning for '/' character being attached to text
+                    if ($ls->settings_name == 'THEME' || $ls->settings_name == 'ADMIN_THEME') { $css_class = ' class="warning_slash"'; } else {$css_class = ''; }
+
 		?>
-			<tr>
+                    <tr>
 			<td>
 			    <?php
 			    if (strpos($name, 'CACHE')) {echo "<a href='" . SITEURL . "/admin_index.php?page=maintenance'>" . $name . "</a>"; }
 			    elseif ($name == 'THEME') {echo "<a href='" . SITEURL . "admin_index.php?page=theme_settings&theme=" . $ls->settings_value . "'>" . $name . "</a>"; }
-			    else
-				echo $name;
+			    else { echo $name; }
 			    ?>:
+                            <?php if ($ls->settings_name == 'FORUM_PASSWORD') {
+                                echo '&nbsp;<span id="admin_settings_btn_check_password" class="btn btn-warning btn-xs">Check Password</span>';
+                            } ?>
+                            <?php if ($ls->settings_name == 'HOTARU_API_KEY') {
+                                echo '&nbsp;<span id="admin_settings_btn_get_hotaru_api_key" class="btn btn-danger btn-xs">Reset API Key</span>';
+                            } ?>
+                            <?php if ($ls->settings_name == 'HOTARUCMS_COM_CONNECTED') {
+                                echo '&nbsp;<span id="admin_settings_btn_hotaru_com_connect" class="btn btn-primary btn-xs">Connect @HotaruCMS.com</span>';
+                            } ?>
 			</td>
 			<td>
-				<?php
-				if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
-					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="true" ';
-					if ($ls->settings_value == 'true') { echo ' checked'; }
-					echo ' >&nbsp;ON&nbsp;&nbsp;';
-					echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="false" ';
-					if ($ls->settings_value == 'false') { echo ' checked'; }
-					echo ' >&nbsp;OFF';
-				}
-				else {
-					if (strpos($ls->settings_name,'PASSWORD') !== false) { $type = 'password'; } else { $type = 'text'; }
-					echo '<input class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
-				}
-				?>
+                                <?php
+                                if ( $ls->settings_value == 'true' || $ls->settings_value == 'false' ) {
+                                        echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="true" ';
+                                        if ($ls->settings_value == 'true') { echo ' checked'; }
+                                        echo ' >&nbsp;ON&nbsp;&nbsp;';
+                                        echo '<input class="radio-inline" type="radio" name="' . $ls->settings_name .'" value="false" ';
+                                        if ($ls->settings_value == 'false') { echo ' checked'; }
+                                        echo ' >&nbsp;OFF';
+                                }
+                                else {
+                                        $type = strpos($ls->settings_name,'PASSWORD') !== false ? 'password' : 'text';
+                                        $disabled = $ls->settings_name == 'HOTARU_API_KEY' ? 'disabled' : '';
+                                        echo '<input ' . $disabled . ' id="input_' . $ls->settings_name . '" class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
+                                }
+                                ?>
 			</td>
 			<td>
 				<?php 
@@ -99,25 +106,15 @@ $loaded_settings = $thisSettings;
 				?>
 			</td>
 			<td><i><?php echo $ls->settings_note; ?></i></td>
-			</tr>
+                    </tr>
 	 
-	<?php	}} // End loop **********************************************************     ?>
-	
-	
-	<input type='hidden' name='settings_update' value='true' />
-	<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-	</table>
+            <?php }} // End loop **********************************************************     ?>
+
+
+            <input type='hidden' name='settings_update' value='true' />
+            <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+        </table>
         <div class="form-actions">
             <input id='settings_submit' class='btn btn-primary' type='submit' value='Save' />
         </div>
-	</form>
-          
-          
-          
-          
-      
-
-	
-	
-
-
+    </form>

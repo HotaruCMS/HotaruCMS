@@ -28,4 +28,15 @@ class Usermeta extends BaseModel
               
         return $model;
     }
+    
+    
+    public static function getUserFlags($h)
+    {
+        $query = "SELECT * FROM " . DB_PREFIX . "usermeta WHERE usermeta_key = %s";
+        $sql = $h->db->prepare($query, 'stop_spam_flags');
+        
+        $model = $h->db->get_results($sql);     
+        
+        return $model;
+    }
 }

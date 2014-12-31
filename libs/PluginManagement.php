@@ -57,18 +57,10 @@ class PluginManagement extends Prefab
 			foreach ($plugins_array as $plugin_details) {
 			
 				$allplugins[$count] = array();
-//				if ($h->allPluginDetails) {
-//					// get details from memory if we have them..
-//					$plugin_row = $h->readPlugin($plugin_details['folder']);
-//				} else {
-//                                        $sql = "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s";
-//                                        $plugin_row = $h->db->get_row($h->db->prepare($sql, $plugin_details['folder']));       
-//				}
-
+//				
                                 $plugin_row = isset( $pluginsDb[$plugin_details['folder']] ) ? $pluginsDb[$plugin_details['folder']] : null;
 				
-				if ($plugin_row) 
-				{
+				if ($plugin_row) {
 					// if plugin is in the database...
                                         $allplugins[$count]['id'] = $plugin_row->plugin_id;   // need this for when we reorder the lists - use id in the sort_id col
 					$allplugins[$count]['name'] = $plugin_row->plugin_name;
@@ -78,22 +70,14 @@ class PluginManagement extends Prefab
 					$allplugins[$count]['authorurl'] = urldecode($plugin_row->plugin_authorurl);
 					$allplugins[$count]['resourceId'] = urldecode($plugin_row->plugin_resourceId);
 					$allplugins[$count]['resourceVersionId'] = urldecode($plugin_row->plugin_resourceVersionId);
-					
-					if ($plugin_row->plugin_enabled) {
-						$allplugins[$count]['status'] = 'active';
-					} else {
-						$allplugins[$count]['status'] = 'inactive';
-					}
-					
+					$allplugins[$count]['status'] = $plugin_row->plugin_enabled ? 'active' : 'inactive';
 					$allplugins[$count]['version'] = $plugin_row->plugin_version;
 					$allplugins[$count]['latestversion'] = $plugin_row->plugin_latestversion;
 					$allplugins[$count]['install'] = "installed";
 					$allplugins[$count]['location'] = "database";
 					$allplugins[$count]['settings'] = $h->hasSettings($allplugins[$count]['folder']); // true or false
 					$allplugins[$count]['order'] = $plugin_row->plugin_order;
-				} 
-				else 
-				{
+				} else {
 					// if plugin is not in database...                                        
 					$allplugins[$count]['name'] = $plugin_details['name'];
 					$allplugins[$count]['description'] = $plugin_details['description'];
@@ -121,7 +105,6 @@ class PluginManagement extends Prefab
 					$allplugins[$count]['active'] = "<div class='switch' id='switch#". $allplugins[$count]['folder'] . "'><input class='theswitch' type=\"checkbox\" data-size='mini' name='switch#". $allplugins[$count]['folder'] . "'></div>";
 				}
 				
-				
 				// Conditions for "install"...
 				if ($allplugins[$count]['install'] == 'install') { 
 					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=install&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-upload\"></i> </a>";
@@ -129,16 +112,13 @@ class PluginManagement extends Prefab
 					$allplugins[$count]['install'] = "<a href='" . SITEURL . "admin_index.php?page=plugin_management&amp;action=uninstall&amp;plugin=". $allplugins[$count]['folder'] . "'><i class=\"fa fa-times-circle\"></i> </a>";
 				}
 				
-				
-				
 				// Conditions for "requires"...
 				if (isset($plugin_details['requires']) && $plugin_details['requires']) {
 					$h->plugin->requires = $plugin_details['requires'];
 					$this->requiresToDependencies($h);
 					
 					// Converts plugin folder names to well formatted names...
-					foreach ($h->plugin->dependencies as $this_plugin => $version)
-					{
+					foreach ($h->plugin->dependencies as $this_plugin => $version) {
 						$h->plugin->dependencies[$this_plugin] = $version;
 						$allplugins[$count]['requires'][$this_plugin] = $h->plugin->dependencies[$this_plugin];
 					}
@@ -146,7 +126,6 @@ class PluginManagement extends Prefab
 				} else {
 					$allplugins[$count]['requires'] = array();
 				}
-				
 				
 				// Conditions for "order"...
 				// The order is sorted numerically in the plugin_management.php template, so we need separate order and order_output elements.
@@ -219,8 +198,7 @@ class PluginManagement extends Prefab
 	{
 		$plugin_list = getFilenames(PLUGINS, "short");
 		$plugins_array = array();
-		foreach ($plugin_list as $plugin_folder_name)
-		{
+		foreach ($plugin_list as $plugin_folder_name) {
 			if($plugin_metadata = $this->readPluginMeta($plugin_folder_name)) {
 				array_push($plugins_array, $plugin_metadata);
 			}
@@ -259,8 +237,7 @@ class PluginManagement extends Prefab
 			unset($h->plugin->dependencies[$k]);
 		}
 		
-		foreach (explode(',', $h->plugin->requires) as $pair) 
-		{		    
+		foreach (explode(',', $h->plugin->requires) as $pair) {		    
 		    $pair_array = explode(' ', trim(strtolower($pair)));
 		    $pair_array ? $k = $pair_array[0] : $k=$h->lang("admin_plugins_install_unknown_plugin");
 		    count($pair_array) > 1 ? $v = $pair_array[1] : $v=0;		    
@@ -299,17 +276,14 @@ class PluginManagement extends Prefab
 		$this->assignPluginMeta($h, $plugin_metadata);
 		
 		$dependency_error = 0;
-		foreach ($h->plugin->dependencies as $dependency => $version)
-		{
+		foreach ($h->plugin->dependencies as $dependency => $version) {
 			if (version_compare($version, $h->getPluginVersion($dependency), '>')) {
 				$dependency_error = 1;
 			}
 		}
 		
-		if ($dependency_error == 1)
-		{
-			foreach ($h->plugin->dependencies as $dependency => $version)
-			{
+		if ($dependency_error == 1) {
+			foreach ($h->plugin->dependencies as $dependency => $version) {
 				if (($h->isActive($dependency) == 'inactive') 
 					|| version_compare($version, $h->getPluginVersion($dependency), '>')) {
 					$dependency = make_name($dependency);
@@ -321,7 +295,6 @@ class PluginManagement extends Prefab
 		
 		// set a new plugin order if NOT upgrading
 		if ($upgrade == 0) {
-		
 			$sql = "REPLACE INTO " . TABLE_PLUGINS . " (plugin_enabled, plugin_name, plugin_folder, plugin_class, plugin_extends, plugin_type, plugin_desc, plugin_requires, plugin_version, plugin_author, plugin_authorurl, plugin_updateby) VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d)";
 			$h->db->query($h->db->prepare($sql, $h->plugin->enabled, $h->plugin->name, $h->plugin->folder, $h->plugin->class, $h->plugin->extends, $h->plugin->type, $h->plugin->desc, $h->plugin->requires, $h->plugin->version, $h->plugin->author, urlencode($h->plugin->authorurl), $h->currentUser->id));
 			
@@ -354,8 +327,7 @@ class PluginManagement extends Prefab
 		
 		// For plugins to avoid showing this success message, they need to 
 		// return a non-boolean value to $result.
-		if (!is_array($result))
-		{
+		if (!is_array($result)) {
 			if ($upgrade == 0) {
 				$h->messages[$h->lang("admin_plugins_install_done")] = 'green';
 			} else {
@@ -523,16 +495,15 @@ class PluginManagement extends Prefab
 		$sql = "SELECT plugin_order FROM " . TABLE_PLUGINS . " ORDER BY plugin_order ASC";
 		$rows = $h->db->get_results($h->db->prepare($sql));
 		if ($rows) { 
-			$previous_row = 0;
-			foreach ($rows as $row) 
-			{
-				if ($row->plugin_order != ($previous_row + 1)) { 
-					$need_refresh = true;
-					break;
-				} else {
-					$previous_row = $row->plugin_order; // increment $previous_row
-				}
-			}
+                    $previous_row = 0;
+                    foreach ($rows as $row) {
+                        if ($row->plugin_order != ($previous_row + 1)) { 
+                            $need_refresh = true;
+                            break;
+                        } else {
+                            $previous_row = $row->plugin_order; // increment $previous_row
+                        }
+                    }
 		}
 		
 		if (!$need_refresh) { return true; }
@@ -542,13 +513,12 @@ class PluginManagement extends Prefab
 		$rows = $h->db->get_results($h->db->prepare($sql));
 		
 		if ($rows) { 
-			$i = 1;
-			foreach ($rows as $row) 
-			{
-				$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-				$h->db->query($h->db->prepare($sql, $i, $row->plugin_id));
-				$i++; 
-			}
+                    $i = 1;
+                    foreach ($rows as $row) {
+                        $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
+                        $h->db->query($h->db->prepare($sql, $i, $row->plugin_id));
+                        $i++; 
+                    }
 		}
 		
 		// optimize the table
@@ -575,17 +545,16 @@ class PluginManagement extends Prefab
 		
 		// Add plugin hooks back into the hooks table
 		if ($rows) {
-			foreach ($rows  as $row)
-			{
-				$values .= "(%s, %s, %d), ";
-				array_push($pvalues, $row->plugin_folder);
-				array_push($pvalues, $row->plugin_hook);
-				array_push($pvalues, $h->currentUser->id);
-			}
-			
-			$values = rstrtrim($values, ", "); // strip off trailing comma
-			$pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
-			$h->db->query($h->db->prepare($pvalues));
+                    foreach ($rows  as $row) {
+                        $values .= "(%s, %s, %d), ";
+                        array_push($pvalues, $row->plugin_folder);
+                        array_push($pvalues, $row->plugin_hook);
+                        array_push($pvalues, $h->currentUser->id);
+                    }
+
+                    $values = rstrtrim($values, ", "); // strip off trailing comma
+                    $pvalues[0] = "INSERT INTO " . TABLE_PLUGINHOOKS . " (plugin_folder, plugin_hook, plugin_updateby) VALUES " . $values;
+                    $h->db->query($h->db->prepare($pvalues));
 		}
 	}
 
@@ -688,22 +657,22 @@ class PluginManagement extends Prefab
 			are upgraded first, then plugins with one requirement. */ 
 		$i = 0;
 		foreach ($active_plugins as $active) {
-			$h->plugin->folder = $active->plugin_folder;
-			$ordered[$i]['name'] = $active->plugin_folder;
-			if (!$active->plugin_requires) { 
-				$ordered[$i]['req_count'] = 0; 
-			} else {
-				$requires = explode(', ', $active->plugin_requires);
-				$ordered[$i]['req_count'] = count($requires);
-			}
-			$i++;
+                    $h->plugin->folder = $active->plugin_folder;
+                    $ordered[$i]['name'] = $active->plugin_folder;
+                    if (!$active->plugin_requires) { 
+                            $ordered[$i]['req_count'] = 0; 
+                    } else {
+                            $requires = explode(', ', $active->plugin_requires);
+                            $ordered[$i]['req_count'] = count($requires);
+                    }
+                    $i++;
 		}
 		
 		$ordered = sksort($ordered, 'req_count', 'int', true);
 		foreach ($ordered as $ord) {
-			$plugin_row = $h->db->get_row($h->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $ord['name']));
-			$h->plugin->folder = $plugin_row->plugin_folder;
-			$this->activateDeactivateDo($h, $plugin_row, $enabled);
+                    $plugin_row = $h->db->get_row($h->db->prepare("SELECT plugin_folder, plugin_enabled FROM " . TABLE_PLUGINS . " WHERE plugin_folder = %s", $ord['name']));
+                    $h->plugin->folder = $plugin_row->plugin_folder;
+                    $this->activateDeactivateDo($h, $plugin_row, $enabled);
 		}
 	}
 	
@@ -781,14 +750,27 @@ class PluginManagement extends Prefab
         {
             if (!$sort) return false;
 
-            foreach($sort as $p => $id)
-            {
-                //print $p+1 . '=' . $id . '<br/>'; 
-                // since array starts at 0 we need to add 1 to $p to get the sort order for saving to db               
+            $base_plugins = array('Bookmarking', 'Categories', 'Widgets', 'User Signin', 'Users', 'Gravatar');
+
+            $countBasePlugins = count($base_plugins);
+            
+            $sql = "SELECT plugin_id, plugin_name FROM " . TABLE_PLUGINS;
+            $all_plugins = $h->db->get_results($sql);
+            foreach ($all_plugins as $plugin) {
+                $pluginIndex[$plugin->plugin_id] = $plugin->plugin_name;
+            }
+            
+            foreach($sort as $p => $id) {
+                if (in_array($pluginIndex[$id], $base_plugins)) {
+                    // get the order by adding 1 to the key (because the keys start at 0)
+                    $order = array_search($pluginIndex[$id], $base_plugins) + 1;
+                } else {
+                    $order = $p + $countBasePlugins + 1;
+                }
                 
                 $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_id = %d";
-                //print $h->db->prepare($sql, $p+1, $id) . '<br/>';
-                $h->db->query($h->db->prepare($sql, $p+1, $id)); 			
+                //print $h->db->prepare($sql, $order, $id) . '<br/>';
+                $h->db->query($h->db->prepare($sql, $order, $id)); 			
             }   
             
             //refresh cache and sort hooks
@@ -816,8 +798,7 @@ class PluginManagement extends Prefab
 		
 		$this_plugin = $h->getPluginName();
 		
-		if ($arrow == "up")
-		{
+		if ($arrow == "up") {
 			// get row above
 			$sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
 			$row_above = $h->db->get_row($h->db->prepare($sql, ($order - 1)));
@@ -839,9 +820,7 @@ class PluginManagement extends Prefab
 			// update current plugin
 			$sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_order = %d WHERE plugin_folder = %s";
 			$h->db->query($h->db->prepare($sql, ($order - 1), $h->plugin->folder));
-		}
-		else
-		{
+		} else {
 			// get row below
 			$sql= "SELECT * FROM " . TABLE_PLUGINS . " WHERE plugin_order = %d";
 			$row_below = $h->db->get_row($h->db->prepare($sql, ($order + 1)));
@@ -936,8 +915,7 @@ class PluginManagement extends Prefab
                 $settings = $h->vars['admin_settings'];
                 
                 if ($settings) { 
-                    foreach ($settings as $ls)
-                    {
+                    foreach ($settings as $ls) {
                         if ($ls->settings_name == 'FORUM_USERNAME' ) { $username = $ls->settings_value; }
                         if ($ls->settings_name == 'FORUM_PASSWORD' ) { $password = $ls->settings_value; }
                     }
@@ -985,40 +963,12 @@ class PluginManagement extends Prefab
 		} else {
 		    $h->messages[$h->lang('admin_theme_filecopy_error') . $file] = 'red';
 		}
-	}	
-
-        public function loginForum($username, $password)
-        {
-                $loginUrl = "http://forums.hotarucms.org/index.php?login/login";
-                
-                $ch = curl_init ();
-                curl_setopt($ch, CURLOPT_NOBODY, false);
-                curl_setopt($ch, CURLOPT_URL, $loginUrl);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
-                curl_setopt($ch, CURLOPT_COOKIESESSION, true);
-                curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
-                curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
-                curl_setopt ($ch, CURLOPT_COOKIEFILE, 'cookie.txt');
-
-                curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                curl_setopt($ch, CURLOPT_HEADER, 1);
-                curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0");
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-                $post_array = array('login' => $username, 'password' => $password, 'cookie_check' => 1, 'redirect' => 'http://forums.hotarucms.org/index.php', 'register' => 0, 'remember' => 1);
-                
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_array));
-                $output = curl_exec ($ch);
-                
-                return $ch;
-        }
+	}
 
 	public function fileCheckCurlConnection($url, $file, $username, $password)
 	{
                 // create a new CURL resource and login to forum for cookie
-                $ch = $this->loginForum($username, $password);
+                $ch = $h->loginForum($username, $password);
                 
 		// set URL and other appropriate options
 		curl_setopt($ch, CURLOPT_URL, $url . $file);
@@ -1044,7 +994,7 @@ class PluginManagement extends Prefab
 	public function filePhpWrite($h, $url, $resourceFile, $file, $findfolder, $copydir, $username, $password )
 	{	
                 // create a new CURL resource and login to forum for cookie
-                $ch = $this->loginForum($username, $password);
+                $ch = $h->loginForum($username, $password);
 
 		// set URL and other appropriate options
 		curl_setopt($ch, CURLOPT_URL, $url . $resourceFile);

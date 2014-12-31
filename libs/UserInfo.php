@@ -94,7 +94,7 @@ class UserInfo extends UserBase
 	 */
 	public function isAdmin($h, $username)
 	{
-                if (!$username) {
+                if (!$username || $username == $h->currentUser->name) {
                     if ($h->currentUser->role == 'admin') {
                         return true;
                     }

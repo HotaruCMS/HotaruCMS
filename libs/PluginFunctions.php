@@ -94,7 +94,6 @@ class PluginFunctions extends Prefab
                 }
                 //print_r($h->allPluginDetails['plugins'][$hook]);
                 //print "=========<br/>";
-                // TODO review whether array_keys is performing better or not. Feels like foreach loops are faster
                 
                 // only used when we are targeting a specific folder - not often
 		if ($folder) {

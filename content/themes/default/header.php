@@ -35,9 +35,9 @@ header('Content-type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
-<head profile="http://gmpg.org/xfn/11">
-<meta http-equiv="X-UA-Compatible" content="chrome=1" />
-<meta name="generator" content="Hotaru CMS" />
+    <head profile="http://gmpg.org/xfn/11">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="generator" content="Hotaru CMS" />
 
 	<title><?php echo $h->getTitle(); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -70,5 +70,5 @@ header('Content-type: text/html; charset=utf-8');
 	
 	<?php $h->pluginHook('header_include_raw'); ?>
 
-</head>
+    </head>
     

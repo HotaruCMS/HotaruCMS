@@ -43,6 +43,7 @@ class UserBase extends Prefab
 	protected $ip           = 0;
 	protected $lastActivity = 0;
             protected $loginType    = "";
+            protected $profileSettingsData;
 	
 	/**
 	 * Access modifier to set protected properties
@@ -129,7 +130,7 @@ class UserBase extends Prefab
 	 */    
 	public function getUserBasic($h, $userId = 0, $username = '', $no_cache = false)
 	{
-                if ($userId != 0){ 
+                if ($userId != 0) { 
                     if (isset($h->users[$userId])) {                        
                         $user = $h->users[$userId];
                     } else {
@@ -191,8 +192,7 @@ class UserBase extends Prefab
                 $user = $this->getUser($h, $userid, $username, $no_cache);
                 
                 if (!$user) { return false; }
-                
-		//print_r($user);
+
 		$this->id = $user->user_id;
 		$this->name = $user->user_username;
 		$this->password = $user->user_password;
@@ -772,9 +772,12 @@ class UserBase extends Prefab
 	*/
 	public function getProfileSettingsData($h, $type = 'user_profile', $userid = 0, $check_exists_only = false)
 	{
-                //print_r($this);
                 if (!$userid) { $userid = $this->id; }
-                //print "id: " . $this->id;
+                
+                if (isset($this->profileSettingsData[$type]) && $this->profileSettingsData[$type]) {
+                    return $this->profileSettingsData[$type];
+                }
+                
                 //$result = \HotaruModels\Usermeta::getProfileSetting($userid, $type);
                 $result = \Hotaru\Models2\Usermeta::getProfileSetting($h, $userid, $type);
 
@@ -787,9 +790,10 @@ class UserBase extends Prefab
                     if ($type == 'user_settings') {
                             $defaults = $this->getDefaultSettings($h);
                             if ($defaults) {
-                                    $result = array_merge($defaults, $result);
+                                $result = array_merge($defaults, $result);
                             }
                     }
+                    $this->profileSettingsData[$type] = $result;
                     return $result; 
 		} elseif ($type == 'user_settings') {
                     return $this->getDefaultSettings($h);

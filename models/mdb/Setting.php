@@ -52,15 +52,17 @@ class Setting extends BaseModel
         
         //$model->save();
         
+        if (!$userId) {
+            $userId = $h->currentUser->id;
+        }
+        
         $exists = self::isSetting($h, $setting);
-		
         if (!$exists) {
-            print "insert";
                 $sql = "INSERT INTO " . TABLE_SETTINGS . " (settings_name, settings_value, settings_updateby) VALUES (%s, %s, %d)";
-                $result = $h->db->query($h->db->prepare($sql, $setting, $value, $h->currentUser->id));
+                $result = $h->db->query($h->db->prepare($sql, $setting, $value, $userId));
         } else {
                 $sql = "UPDATE " . TABLE_SETTINGS . " SET settings_value = %s, settings_updateby = %d WHERE (settings_name = %s)";
-                $result = $h->db->query($h->db->prepare($sql, $value, $h->currentUser->id, $setting));
+                $result = $h->db->query($h->db->prepare($sql, $value, $userId, $setting));
         }
         
         return $result;

@@ -5,7 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
-        protected $version = '1.7.0';  // Hotaru CMS version       
+        protected $version = '1.7.1';  // Hotaru CMS version       
         
         /**
 	 * CONSTRUCTOR - Initialize
@@ -13,40 +13,38 @@ class Hotaru extends Initialize
 	public function __construct($start = '')
 	{   
                 // Managed directives
-		ini_set('default_charset',$charset='UTF-8');
-		ini_set('display_errors',1);
+		ini_set('default_charset', $charset='UTF-8');
+		ini_set('display_errors', 1);
 		// Abort on startup error
 		// Intercept errors/exceptions; PHP5.3-compatible
 		error_reporting(E_ALL|E_STRICT);
                 
-                if(!ini_get('date.timezone'))
-                {
+                if(!ini_get('date.timezone')) {
                     date_default_timezone_set('GMT');
                 }
             
                 // define shorthand paths
 		if (!defined('BASE')) {
                     $base = dirname(__FILE__). '/';
-			define("BASE", $base);
-			define("CACHE", $base.'cache/');
-			define("ADMIN", $base.'admin/');
-			define("INSTALL", $base.'install/');
-			define("LIBS", $base.'libs/');
-			define("EXTENSIONS", $base.'libs/extensions/');
-                        define("FRAMEWORKS", $base.'libs/frameworks/');
-			define("FUNCTIONS", $base.'functions/');
-			define("CONTENT", $base.'content/');
-			define("THEMES", $base.'content/themes/');
-			define("PLUGINS", $base.'content/plugins/');
-			define("ADMIN_THEMES", $base.'content/admin_themes/');
-			define("SITEURL", BASEURL);
+                    define("BASE", $base);
+                    define("CACHE", $base.'cache/');
+                    define("ADMIN", $base.'admin/');
+                    define("INSTALL", $base.'install/');
+                    define("LIBS", $base.'libs/');
+                    define("EXTENSIONS", $base.'libs/extensions/');
+                    define("FRAMEWORKS", $base.'libs/frameworks/');
+                    define("FUNCTIONS", $base.'functions/');
+                    define("CONTENT", $base.'content/');
+                    define("THEMES", $base.'content/themes/');
+                    define("PLUGINS", $base.'content/plugins/');
+                    define("ADMIN_THEMES", $base.'content/admin_themes/');
+                    define("SITEURL", BASEURL);
 		}                        
                 
-                // initialize Hotaru
-                parent::__construct();
-		
 		if (!$start) {
-			
+                        // initialize
+                        parent::__construct();
+                
                         $this->currentUser  = UserBase::instance();       // the current user
                         $this->displayUser  = DisplayUser::instance();
                         $this->plugin       = Plugin::instance();         // instantiate Plugin object
@@ -76,7 +74,7 @@ class Hotaru extends Initialize
 	/**
 	 * START - the top of "Hotaru", i.e. the page-building process
 	 */
-	public function start($entrance = '')
+	public function start($type = '')
 	{
 		// include "main" language pack
 		$lang = Language::instance();
@@ -87,10 +85,10 @@ class Hotaru extends Initialize
 		
                 // special diversion for api calls to api plugin to avoid session,cookie vars etc
                 if ($this->pageName == 'api') {
-                    $entrance = 'api';
+                    $type = 'api';
                 }
                 
-		switch ($entrance) {
+		switch ($type) {
 			case 'admin':
 				$this->adminPage = true;
 				$this->lang = $lang->includeLanguagePack($this->lang, 'admin');				
@@ -114,15 +112,19 @@ class Hotaru extends Initialize
                                 //$this->apiCall();
                                 
                                 break;
+                        case 'install':
+                                $this->adminPage = false;
+                                Authorization::checkSession($this);     // log in user if session exists
+                                return;
+                                break;
 			default:
 				$this->adminPage = false;
                                 // TODO dont check cookie if we are using the login page or even the register page or forget password page maybe				
                                 Authorization::checkSession($this);     // log in user if session exists
-				$this->checkSiteAccess();                   // site closed if no access permitted
-				if (!$entrance) { return false; }       // stop here if entrance not defined
-				//print 'time: ' . timer_stop(4,'hotaru');
-                                // here at 0.02
-                                $this->template('index');               // displays the index page
+				$this->checkSiteAccess();               // site closed if no access permitted
+				if (!$type) { return false; }           // stop here if start type not defined
+				$this->template('index');               // displays the index page
+                                break;
 		}
 		
 		$lang->writeLanguageCache($this);
@@ -158,7 +160,6 @@ class Hotaru extends Initialize
         // to get protected properties
         public function __isset($name)
         {
-                //echo "Is '$name' set?\n";
                 return isset($this->data[$name]);
         }
 
@@ -225,8 +226,7 @@ class Hotaru extends Initialize
 		// The file must contain a class titled PluginNameSettings
 		// The class must have a method called "settings".
 		if (($this->cage->get->testAlnumLines('plugin') != $this->plugin->folder)
-			&& ($this->cage->post->testAlnumLines('plugin') != $this->plugin->folder)) 
-		{ 
+			&& ($this->cage->post->testAlnumLines('plugin') != $this->plugin->folder)) { 
 			return false; 
 		}
 		
@@ -237,8 +237,7 @@ class Hotaru extends Initialize
 		    $settings_class = str_replace(' ', '', $settings_class); // strip spaces
 		    $settings_object = new $settings_class();
 		    $settings_object->settings($this);   // call the settings function		
-		}
-		else {
+		} else {
 		    $this->showMessage($this->lang["admin_theme_plugins_filenotfound"] . "<br/><br/>", 'red');		    
                     $this->showMessage($this->lang["admin_theme_plugins_checkforfile"] . PLUGINS . $this->plugin->folder . '/' . $this->plugin->folder . '_settings.php', 'red');
 		}
@@ -304,7 +303,7 @@ class Hotaru extends Initialize
 	 * @param bool $include_once true or false
 	 */
 	public function template($page = '', $plugin = '', $include_once = true)
-	{ 
+	{
 		$this->pageHandling->template($this, $page, $plugin, $include_once);
 	}
         
@@ -323,8 +322,8 @@ class Hotaru extends Initialize
                 $method = isset($apiArray[1]) ? $apiArray[1] : '';
                 $action = isset($apiArray[2]) ? $apiArray[2] : '';
                 
-                if ($class !== 'hotaru') return false;
-                if (!$method || !$action ) return false;
+                if ($class !== 'hotaru') { return false; }
+                if (!$method || !$action ) { return false; }
 
                 $result = $this->pluginHook('api_call', $method, $action);
                 
@@ -333,9 +332,9 @@ class Hotaru extends Initialize
                 $arrayName = ucfirst($method) . '_api_call';  
                 
                 try {
-                    if (isset($result[$arrayName]) && isset($result[$arrayName]->items))
+                    if (isset($result[$arrayName]) && isset($result[$arrayName]->items)) {
                         $result = array('error' => '', 'items' => $result[$arrayName]->items);
-                    else {
+                    } else {
                         $result = array('error' => 'data error');
                     }
                 } catch (Exception $e) {
@@ -345,11 +344,9 @@ class Hotaru extends Initialize
                 
                 // return json
                 if ($result) {
-                    sendResponse(200,json_encode($result), 'application/json');
+                    sendResponse(200, json_encode($result), 'application/json');
                 } else {
-                    sendResponse(501, sprintf(
-                        'Mode <b>%s</b> is not implemented for <b>%s</b>',
-                        $action, $this->folder) );
+                    sendResponse(501, sprintf('Mode <b>%s</b> is not implemented for <b>%s</b>', $action, $this->folder));
                 }
         }
         
@@ -424,7 +421,6 @@ class Hotaru extends Initialize
          */
         public function urlPage($page = '')
         {
-            // POPULAR LINK
             $url = $this->url(array('page'=>$page));
             return $url;
         }
@@ -467,7 +463,9 @@ class Hotaru extends Initialize
 	 */
 	public function pageBar($paginator = NULL)
 	{
-                $paginator = Paginator::instance();
+                if (!$paginator) {
+                    $paginator = Paginator::instance();
+                }
 		return $paginator->pageBar($this);
 	}
     
@@ -573,7 +571,7 @@ class Hotaru extends Initialize
         
         public function newUserAuth()
         {
-            return new UserBase();
+                return new UserBase();
         }
         
         
@@ -589,9 +587,6 @@ class Hotaru extends Initialize
         }
         
         
-        
-        
-	
 	/**
 	 * Get basic user details
 	 *
@@ -995,8 +990,6 @@ class Hotaru extends Initialize
 	public function numActivePlugins()
 	{
                 return isset($this->plugins['activeFolders']) ? count($this->plugins['activeFolders']) : 0;
-//		$pluginFunctions = PluginFunctions::instance();
-//		return $pluginFunctions->numActivePlugins($this);
 	}
 	
 	
@@ -1071,10 +1064,7 @@ class Hotaru extends Initialize
                 // finally, try the $type param in the $folder name. It is possible a call was made for a plugin by mistake
                 return isset($this->plugins['activeFolders'][$type]);
                 
-                // return from pluginActiveFolders
-                
-                
-                print "could not find active settings for folder: " . $h->plugin->folder . " or type: " . $type;                		
+                //print "could not find active settings for folder: " . $h->plugin->folder . " or type: " . $type;                		
 	}
 	
 	
@@ -1086,7 +1076,7 @@ class Hotaru extends Initialize
 	 */
 	public function isInstalled($folder = '')
 	{
-		$pluginFunctions = PluginFunctions::instance();
+		//$pluginFunctions = PluginFunctions::instance();
 		$result = $this->getPluginProperty('plugin_id', $folder);
 		return $result;
 	}
@@ -1295,6 +1285,37 @@ class Hotaru extends Initialize
         }
         
         
+/* *************************************************************
+ * 
+ * SPAM LOG
+ * 
+* *********************************************************** */
+        
+        public function spamLogAdd($pluginFolder, $type, $email = '')
+        {
+                $spamLog = SpamLog::instance();
+                return $spamLog->add($this, $pluginFolder, $type, $email);
+        }
+        
+        public function spamLogGetAll()
+        {
+                $spamLog = SpamLog::instance();
+                return $spamLog->getAll($this);
+        }
+        
+        public function spamLogGet($pluginFolder = '')
+        {
+                $spamLog = SpamLog::instance();
+                return $spamLog->get($this, $pluginFolder);
+        }
+        
+        public function spamLogCount($pluginFolder = '')
+        {
+                $spamLog = SpamLog::instance();
+                return $spamLog->count($this, $pluginFolder);
+        }
+        
+        
         
 /* *************************************************************
  *
@@ -1306,6 +1327,13 @@ class Hotaru extends Initialize
         {
                 $systemInfo = SystemInfo::instance();
 		return $systemInfo->miscdata($this, $key, $cache);
+        }
+        
+        
+        public function loginForum($username = '', $password = '')
+        {
+                $systemInfo = SystemInfo::instance();
+		return $systemInfo->loginForum($this, $username, $password);
         }
 
  /* *************************************************************
@@ -1328,8 +1356,7 @@ class Hotaru extends Initialize
                         // for old themes that dont split between loading js and css
                         //if ($this->vars['framework']['bootstrap-js'])
                             //$this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');  
-                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' type='text/css' /></script>";
-                            
+                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>";
                             
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1349,8 +1376,7 @@ class Hotaru extends Initialize
                     case 'js': 
                         
                         // for better caching we should send this js file separately to hotarus combined js
-                        if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js'])
-                        {
+                        if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js']) {
                             echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' type='text/css' /></script>";
                             //echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
                         }
@@ -1377,10 +1403,10 @@ class Hotaru extends Initialize
                         break;
                     default :
                         break;
-             }  
-             
+             }
 	 }
 	 
+         
 	/**
 	 * Build an array of css files to combine
 	 *
@@ -1431,14 +1457,13 @@ class Hotaru extends Initialize
          
          public function getThemeCss()
 	 {
-             if ($this->adminPage) {
-                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
-             } else {
-                    echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';                    
-             }        
-             
-             echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
-                
+                if ($this->adminPage) {
+                       echo '<link rel="stylesheet" href="' . SITEURL . 'content/admin_themes/' . ADMIN_THEME . 'css/style.css" type="text/css" />';         
+                } else {
+                       echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';                    
+                }        
+
+                echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
          }                
 
          
@@ -1452,7 +1477,7 @@ class Hotaru extends Initialize
                     case 'bootstrap3':                        
                         echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
-                         break;
+                        break;
                     case 'bootstrap':                        
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
@@ -1464,25 +1489,20 @@ class Hotaru extends Initialize
                         }
                         break;
                     case 'bootstrap-responsive':                        
-                       //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
+                        //$this->includeCss(LIBS . 'frameworks/bootstrap', 'bootstrap-responsive.min'); 
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-responsive.min.css' type='text/css' />\n";
                         break;
                     case 'none':
                         $h->vars['framework']['bootstrap'] = true;  // trick it into thinking we already have this done
                         break;
                     default:
-                       //echo 'framework css incorrect params : ' . $file;
-                       break;
+                        //echo 'framework css incorrect params : ' . $file;
+                        break;
                 }   
                 
                 echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.css" type="text/css" />';                
                 echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote-bs3.css" type="text/css" />';
                 echo '<link href="//cdn.jsdelivr.net/animatecss/3.2.0/animate.min.css" rel="stylesheet">';
-                
-                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/summernote/summernote.css" type="text/css" />';
-                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/summernote/summernote-bs3.css" type="text/css" />';
-                //echo '<link rel="stylesheet" href="' . SITEURL . 'libs/extensions/animate/animate.css" type="text/css" />';
-                
          }
      
      
@@ -1502,8 +1522,8 @@ class Hotaru extends Initialize
           */
          public function addMessage($msg = '', $msg_type = '', $msg_role = '')
          {
-             $messages = Messages::instance();
-             $messages->addMessage($this, $msg, $msg_type, $msg_role);
+                $messages = Messages::instance();
+                $messages->addMessage($this, $msg, $msg_type, $msg_role);
          }
          
  
@@ -1566,7 +1586,7 @@ class Hotaru extends Initialize
 	 */
 	public function showQueriesAndTime()
 	{
-            $this->debug->showQueriesAndTime($this);
+                $this->debug->showQueriesAndTime($this);
 	}
 	
 	/**
@@ -2037,8 +2057,7 @@ class Hotaru extends Initialize
 
                 // above ajax test didnt work so use this hard set test
                 $newToken = $this->cage->post->testAlnum('newToken'); 
-                if ($newToken == 'false') 
-                {
+                if ($newToken == 'false') {
                     return true;
                 }
                 
@@ -2300,8 +2319,8 @@ class Hotaru extends Initialize
          */
         public function prepareSearchFilter($h, $search, $return = 'posts')
         {
-            $searchFuncs = new Search();
-            return  $searchFuncs->prepareSearchFilter($this, $search, $return);
+                $searchFuncs = new Search();
+                return  $searchFuncs->prepareSearchFilter($this, $search, $return);
         }
         
    
@@ -2583,7 +2602,7 @@ class Hotaru extends Initialize
         
         public function updateCommentCountBulk() 
         {
-            \Hotaru\Models2\Post::updateCommentCountBulk($this);
+                \Hotaru\Models2\Post::updateCommentCountBulk($this);
         }
     
     
@@ -2801,16 +2820,22 @@ class Hotaru extends Initialize
  
         public function activity($method = '', $params = '')
         {
-            print "class = " . 'UserActivity' . '<br/>';
-            if (class_exists('UserActivity')) print "class exists<br/>"; else print "class does not exist<br/>";
+            if (class_exists('UserActivity'))  { 
+                //print "class exists<br/>"; 
+            } else {
+                //print "class does not exist<br/>"; 
+            }
             $activity = UserActivity::instance();
             
-            print "method = " . $method . '<br/>';             
-            if (method_exists($activity,$method)) print "method exists<br/>"; else print "method does not exist<br/>";
+            //print "method = " . $method . '<br/>';             
+            if (method_exists($activity,$method)) { 
+                //print "method exists<br/>";
+            } else { 
+                //print "method does not exist<br/>";
+            }
                 
             print ($activity->$method);
             
-            //
             $r = new ReflectionMethod($activity, $method);
             $params = $r->getParameters();
             foreach ($params as $param) {
@@ -2818,14 +2843,10 @@ class Hotaru extends Initialize
                 echo $param->getName();
                 echo $param->isOptional();
             }
-            //
             
-            
-            foreach ($params as $param)
-            {
+            foreach ($params as $param) {
                 extract($params);                
             }
-            //print_r($params);
             
             $result = $activity->$method($this, $params);
             return $result;
@@ -3082,4 +3103,3 @@ class Hotaru extends Initialize
 		return VoteFunctions::countUserVotes($this, $type, $user_id);
 	}
 }
-
