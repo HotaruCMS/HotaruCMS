@@ -20,8 +20,10 @@
 			<?php showMessages($h); ?>
 			
 			<?php
-				if ($cage->post->getAlpha('updated') != 'true' && $settings_file_exists) { ?>
-			
+                            $btnType = 'btn-primary'; 
+				if ($cage->post->getAlpha('updated') != 'true' && $settings_file_exists) {
+                                    $btnType = 'btn-danger'; 
+                                ?>
 				<!-- Alert if Settings file already exists -->
 				<div class='alert alert-info alert-dismissible'>
 					<button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>
@@ -108,7 +110,8 @@
 								<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 								<input type='hidden' name='step' value='2' />
 								<input type='hidden' name='updated' value='true' />
-								<input class='btn btn-primary' type='submit' value='<?php echo $lang['install_step3_form_update']; ?>' />
+                                                                <input type='submit' id='install_dbTestBtn' class='btn btn-default' value='Test Db Connection' />
+                                                                <button class='btn <?php echo $btnType; ?>'><i class='fa fa-save'></i> <?php echo $lang['install_step3_form_update']; ?></button>
 							</div>
 						</div>
 						
@@ -126,3 +129,44 @@
 				<?php } ?>
 			</div>
 		</div>
+                
+<script type='text/javascript'>
+    jQuery('document').ready(function($) {  
+        $('#install_dbTestBtn').click(function() {
+            event.preventDefault();
+            var dbuser_name = $('#inputDBuser').val();
+            var dbpassword_name = $('#inputDBpassword').val();
+            var dbhost_name = $('#inputDBhost').val();
+            var dbname_name = $('#inputDBname').val();
+            
+            var sendurl = "index.php?step=99";
+            var formdata = 'dbuser_name=' + dbuser_name + '&dbpassword_name='  + dbpassword_name + '&dbhost_name='  + dbhost_name + '&dbname_name='  + dbname_name;
+
+            $.ajax({
+                type: 'get',
+                url: sendurl,
+                data: formdata,
+
+                beforeSend: function () {
+                        $('#install_dbTestBtn').removeClass('btn-success').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-primary');
+                        $('#install_dbTestBtn').val('Checking Db Connection');
+                },
+                error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                        $('#install_dbTestBtn').val('Code Error');
+                        $('#install_dbTestBtn').removeClass('btn-primary').addClass('btn-danger');
+                },
+                success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                    if (data.error === true) {
+                        $('#install_dbTestBtn').removeClass('btn-primary').addClass('btn-warning');
+                        $('#install_dbTestBtn').val('Connection Failed: Test Again');
+                    } else {           
+                        $('#install_dbTestBtn').val('Db Connection Success');
+                        $('#install_dbTestBtn').removeClass('btn-primary').addClass('btn-success');
+                    }
+                    //$('.message').html(data.message);
+                },
+                dataType: "json"
+            });
+        });
+    });
+</script>

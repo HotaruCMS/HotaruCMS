@@ -122,8 +122,6 @@ $lang['admin_maintenance_export_failure'] = "The database files could not be exp
 $lang['admin_maintenance_table_emptied'] = "Table emptied";
 $lang['admin_maintenance_table_deleted'] = "Table deleted";
 $lang['admin_maintenance_settings_removed'] = "Settings removed";
-$lang["admin_maintenance_site_closed"] = SITE_NAME . " will be closed next page view";
-$lang["admin_maintenance_site_opened"] = SITE_NAME . " will be opened next page view";
 $lang['admin_maintenance_announcement_updated'] = "Site announcement updated";
 $lang['admin_maintenance_system_report_success'] = "New system report generated";
 $lang['admin_maintenance_system_report_failure'] = "Unable to generate a system report";
@@ -140,7 +138,7 @@ $lang["admin_theme_maintenance_open_site"] = "Open " . SITE_NAME . " to the publ
 $lang["admin_theme_maintenance_close_site_desc"] = "Only users with \"access admin\" permissions will be able to view the site.";
 $lang["admin_theme_maintenance_open_site_desc"] = "Finished maintenance? Allow everyone back in.";
 $lang["admin_theme_maintenance_cache"] = "Cache:";
-$lang["admin_theme_maintenance_plugin_settings"] = "Plugin settings:";
+$lang["admin_theme_maintenance_plugin_settings"] = "Plugin settings";
 $lang["admin_theme_maintenance_db_tables"] = "Database tables:";
 $lang["admin_theme_maintenance_settings"] = "settings";
 $lang["admin_theme_maintenance_all_cache"] = "Clear all cache folders";
@@ -175,6 +173,9 @@ $lang["admin_theme_maintenance_plugin_settings_explanation"] = "Some Hotaru CMS 
 $lang["admin_theme_maintenance_empty_explanation"] = "Emptying tables will remove any data, but retain the structure. Remember, some plugins may rely on the data in these tables so removing them may cause problems for your site. Unless advised to empty tables by a developer, it's best to leave these alone.";
 $lang["admin_theme_maintenance_no_db_tables_to_empty"] = "No database tables to empty.";
 $lang["admin_theme_maintenance_no_plugin_settings_to_delete"] = "No plugin settings to delete.";
+$lang["admin_theme_maintenance_hook_settings_explanation"] = "These are the plugin hooks which are curently active in your Hotaru site. The order shown matches the installed order of the plugins.";
+$lang["admin_theme_maintenance_no_hook_settings"] = "No plugin hooks found.";
+$lang["admin_theme_maintenance_hook_settings"] = "Plugin Hooks";
 
 /* Pages */
 $lang["admin_theme_pages"] = "Pages";
@@ -291,4 +292,6 @@ $lang["admin_theme_media"] = "Media";
 /* Themes */
 $lang["admin_theme_management_installed"] = "Installed"; 
 $lang["admin_theme_management_add_new"] = "Add New"; 
-?>
+
+/* Spam */
+$lang["admin_theme_spam"] = "Spam"; 

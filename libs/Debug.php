@@ -35,11 +35,10 @@ class Debug extends Prefab
 	 */
 	public function showQueriesAndTime($h)
 	{
-		if ($h->isDebug) {
-                            
+		if ($h->isDebug && $h->currentUser->isAdmin) {
 			$mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
 			                        
-			echo "<p class='debug'>";
+			echo "<p class='debug'><span class='label label-default'>Admin Only</span> ";
 			echo $h->lang('main_hotaru_db_queries') . $h->db->num_queries . " | ";
                         echo $h->lang('main_hotaru_cache_queries') . $h->db->num_cache_queries . " | ";
 			echo $h->lang('main_hotaru_page_load_time') . timer_stop(3, 'hotaru') . $h->lang('main_times_secs') . " | ";
@@ -58,35 +57,34 @@ class Debug extends Prefab
                         
 			echo "</p>"; 
 		} else {		
-                    if (!$h->adminPage && $h->pageTemplate && function_exists('file_get_contents'))
-                    {
+                    if (!$h->adminPage && $h->pageTemplate && function_exists('file_get_contents')) {
                         $filename = THEMES . THEME . $h->pageTemplate . '.php';
                         if (file_exists($filename)) {
                             $template = file_get_contents($filename);
 
-                            $hlink1 = stripos($template,"href='http://hotarucms.org'");
-                            $hlink2 = stripos($template,"href=\"http://hotarucms.org\"");
-                            if (($hlink1 === FALSE) && ($hlink2 === FALSE)) {
+                            $hlink1 = stripos($template, "href='http://hotarucms.org'");
+                            $hlink2 = stripos($template, "href=\"http://hotarucms.org\"");
+                            if ($hlink1 === FALSE && $hlink2 === FALSE) {
                                     // Hotaru link removed from footer so put it back in:
-                                    echo "<p><small><a href='http://hotarucms.org' title='HotaruCMS.org'>Powered by HotaruCMS</a></small></p>";
+                                    echo '<a href="http://hotarucms.org" title="' . $h->lang("main_theme_footer_hotaru_link") . '"><div id="hotaruFooterImg"></div></a>';
                             }
                         }
                     }
                 }
-                //print_r($h->currentUser);
-                if ($h->isDebug && $h->currentUser->perms['can_access_admin'] == 'yes') { 
-                    //echo $this->hvars($h); 
-                }
 	
-		if ($h->currentUser->loggedIn) {echo "<span id='loggedIn' class='loggedIn_true'/>"; } else {"<span id='loggedIn' class='loggedIn_false'/>";}
+		if ($h->currentUser->loggedIn) {
+                    echo "<span id='loggedIn' class='loggedIn_true'/>";
+                } else {
+                    echo "<span id='loggedIn' class='loggedIn_false'/>";
+                }
 	}
         
         
         /**
-         * Creates a pull down menu in the nav bar for help with debugging
-         * @param type $h
-         */
-         public function debugNav($h)
+        * Creates a pull down menu in the nav bar for help with debugging
+        * @param type $h
+        */
+        public function debugNav($h)
         {
              //$mysql_version = $h->db->get_var("SELECT VERSION() AS VE");
 			
@@ -107,13 +105,15 @@ class Debug extends Prefab
                         </li>
                     <?php
                         foreach ($debug as $item => $value) {                      
-                            if ($item == 'divider')
+                            if ($item == 'divider') {
                                 echo  '<li class="divider"></li>'; 
-                            else
-                                if (is_array($value)) 
+                            } else {
+                                if (is_array($value)) {
                                     echo '<li><a href="' . $value[1] . '">' . $item . '<strong>' . $value[0] . '</strong></a></li>';
-                                else                                    
+                                } else {                                    
                                     echo '<li><a href="#">' . $item . '<strong>' . $value . '</strong></a></li>';
+                                }
+                            }
                         }
                         // Make these separate as we are using javascript to fill them later
                         
@@ -123,17 +123,14 @@ class Debug extends Prefab
                         echo '<li class="divider"></li>';
                         //echo '<li><a id="debugLog" href="#" data-toggle="modal" data-target="#myModal">Log</a></li>'; // . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php">' . "Error log" . '<strong></strong></a></li>';
                         echo '<li><a id="debugLog" href="' . BASEURL . 'admin_index.php?page=maintenance&debug=error_log.php" target="_blank">' . "Error log" . '<strong></strong></a></li>';
-                        
-                        
 
-                        
                         // show csrf token
-                        if (isset($_SESSION["csrf-form"]))
-                        {
-                                $token = $_SESSION["csrf-form"];
-                                if (strlen($token) > 7) $token = '..' . substr($token, strlen($token)-7, 7);
+                        if (isset($_SESSION["csrf-form"])) {
+                            $token = $_SESSION["csrf-form"];
+                            if (strlen($token) > 7) { $token = '..' . substr($token, strlen($token)-7, 7); }
+                        } else {
+                            $token = "none";
                         }
-                        else {  $token = "none"; }
                         
                         echo '<li><a href="#">csrf: ' . $token . '</a></li>'
 //                 $h->lang('main_hotaru_page_load_time') => timer_stop(2) . $h->lang('main_times_secs'),
@@ -162,7 +159,7 @@ class Debug extends Prefab
 		$this->log[$type] = CACHE . "debug_logs/" . $type . ".php";
 		
 		// delete file if over 500KB
-		if (file_exists($this->log[$type]) && (filesize($this->log[$type]) > 500000)) {
+		if (file_exists($this->log[$type] && filesize($this->log[$type]) > 500000)) {
 			unlink($this->log[$type]); 
 		}
 		
@@ -252,38 +249,33 @@ class Debug extends Prefab
          * @param type $h
          */
         function hvars($h)
-        {
-            ?> 
+        { ?> 
             <div id="modal_hvars" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-              <h3 id="myModalLabel">$h->vars</h3>
+              <h3 id="myModalLabel"><?php echo $h->vars; ?></h3>
             </div>
             <div class="modal-body">
               
-              
-              <?php         
-                         //print_r($h->vars);
+              <?php
               foreach ($h->vars as $key => $value) {
                   if (is_array($value)) {                      
                       echo '<h4>' . $key . '</h4>';
                       foreach ($value as $subKey => $subValue) {
                           //echo '<p>' . $subKey . ' = '  . $subValue . '</p>';
                           echo '<p>' . htmlentities($subKey) . ' = ';
-                          
-                          if (is_object($subValue) || is_array($subValue)) print_r($subValue); else print htmlentities($subValue);
+                          if (is_object($subValue) || is_array($subValue)) { print_r($subValue);  } else { print htmlentities($subValue); }
                           echo '</p>';
                       }
                       echo '<hr>';
                   } else {                     
                      echo '<p>';
-                     if (is_object($key)) print_r($key); else print htmlentities($key);                     
+                     if (is_object($key)) { print_r($key); } else { print htmlentities($key); }
                      print ' = ';
-                     if (is_object($value)) print_r($value); else print htmlentities($value);
+                     if (is_object($value)) { print_r($value); } else { print htmlentities($value); }
                      print '</p>';
                      echo '<hr>';
                   }
-                  
               } ?>
             </div>
                 
@@ -295,4 +287,3 @@ class Debug extends Prefab
             <?php
         }
 }
-?>

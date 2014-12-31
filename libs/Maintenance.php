@@ -223,11 +223,11 @@ class Maintenance extends Prefab
                 // called via JavaScript
                 if ($switch == 'open') {
                     $value = 'true';
-                    $message = $h->lang("admin_theme_maintenance_close_site"); //$h->lang("admin_maintenance_site_closed");
+                    $message = $h->lang("admin_theme_maintenance_close_site");
                     $siteState = 'close';
                 } else {
                     $value = 'false';
-                    $message = $h->lang("admin_theme_maintenance_open_site"); //$h->lang("admin_maintenance_site_opened");
+                    $message = $h->lang("admin_theme_maintenance_open_site");
                     $siteState = 'open';
                 }
                 

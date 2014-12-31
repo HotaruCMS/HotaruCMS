@@ -102,7 +102,9 @@ $sideBarWidth = 12 - $leftSpan;
 					<?php $h->pluginHook('theme_index_pre_main'); ?>
 					
 					<!-- MAIN -->                                                                                  
-					<?php if (!$h->pluginHook('theme_index_main')) { $h->template($h->pageName, 'pages'); } ?>
+					<?php if (!$h->pluginHook('theme_index_main')) {
+                                            $h->template($h->pageName, 'pages'); 
+                                        } ?>
 
 					<div class="clear"></div>
 				</div>
@@ -144,4 +146,9 @@ $sideBarWidth = 12 - $leftSpan;
         </div>
         
 </body>
+<noscript>
+    <div id="no_javascript">
+      <strong><?php echo $h->lang('javascript_disabled'); ?></strong>
+    </div>
+</noscript>
 </html>

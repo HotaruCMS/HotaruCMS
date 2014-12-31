@@ -33,8 +33,6 @@ jQuery('document').ready(function($) {
         if (check != '/' ) { notes.addClass('alert-danger'); } else { notes.removeClass('alert-danger');}
     });
 
-
-
     $('#admin_theme_theme_activate').click(function() {        
                 var theme = $(this).attr("name");       
                 var formdata = 'admin=theme_settings&theme='  + theme;
@@ -64,8 +62,7 @@ jQuery('document').ready(function($) {
 				dataType: "json"
 		});
     });
-    
-    
+        
     $('#admin_theme_maintenance_openclose_site').click(function() {        
                 var action = $(this).attr("name"); 
                 var formdata = 'action='  + action;  // close, open
@@ -98,7 +95,67 @@ jQuery('document').ready(function($) {
 		});
     });
     
+    $('#admin_settings_btn_check_password').click(function() {
+		var sendurl = SITEURL + "admin_index.php?page=ajax_loginforum";
+
+                $.ajax(
+			{
+			type: 'get',
+				url: sendurl,
+				
+				beforeSend: function () {
+						$('#admin_settings_btn_check_password').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Checking password.');
+					},
+				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+						$('#admin_settings_btn_check_password').html('ERROR');
+                                                $('#admin_settings_btn_check_password').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+				},
+				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                                        if (data.error === true) {
+                                                $('#admin_settings_btn_check_password').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+                                                $('#admin_settings_btn_check_password').html('Password Failed');
+                                        } else {           
+                                                $('#admin_settings_btn_check_password').html(data.message);
+                                                $('#admin_settings_btn_check_password').removeClass('btn-success').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
+                                                
+					}
+					$('.message').html(data.message);
+				},
+				dataType: "json"
+		});
+    });
     
+    $('#admin_settings_btn_get_hotaru_api_key').click(function() {
+		var sendurl = SITEURL + "admin_index.php?page=ajax_getHotaruApiKey";
+
+                $.ajax(
+			{
+			type: 'get',
+				url: sendurl,
+				
+				beforeSend: function () {
+                                                $('#admin_settings_btn_get_hotaru_api_key').removeClass('btn-success').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-primary');
+						$('#admin_settings_btn_get_hotaru_api_key').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Resetting API Key');
+					},
+				error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+						$('#admin_settings_btn_get_hotaru_api_key').html('ERROR');
+                                                $('#admin_settings_btn_get_hotaru_api_key').removeClass('btn-success').removeClass('btn-warning').removeClass('btn-primary').addClass('btn-danger');
+				},
+				success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
+                                        if (data.error === true) {
+                                                $('#admin_settings_btn_get_hotaru_api_key').removeClass('btn-success').removeClass('btn-warning').removeClass('btn-primary').addClass('btn-danger');
+                                                $('#admin_settings_btn_get_hotaru_api_key').html('Failed to reset API Key');
+                                        } else {           
+                                                $('#admin_settings_btn_get_hotaru_api_key').html(data.message);
+                                                $('#input_HOTARU_API_KEY').val(data.apiKey);
+                                                $('#admin_settings_btn_get_hotaru_api_key').removeClass('btn-success').removeClass('btn-danger').removeClass('btn-primary').removeClass('btn-warning').addClass('btn-success');
+                                                
+					}
+					$('.message').html(data.message);
+				},
+				dataType: "json"
+		});
+    });
 });	
 
 function doSearch() {

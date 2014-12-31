@@ -136,18 +136,6 @@ class Plugin extends BaseModel
             $sql = "UPDATE " . TABLE_PLUGINS . " SET plugin_latestversion = %s, plugin_resourceId = %d, plugin_resourceVersionId = %d, plugin_rating = %d, plugin_updateby = %d"
                     . " WHERE (plugin_name = %s)";
             $h->db->query($h->db->prepare($sql, $resource['version_string'], $resource['id'], $resource['version_id'], $resource['rating_avg'], $userId, $pluginName));
-		               
-//            $model = self::where('plugin_name', $pluginName)->first();
-//
-//            if (!$model) { return false; }
-//            
-//            $model->plugin_latestversion = $resource['version_string'];
-//            $model->plugin_resourceId = $resource['id'];
-//            $model->plugin_resourceVersionId = $resource['version_id'];
-//            $model->plugin_rating = $resource['rating_avg'];
-//            $model->plugin_updateby = $userId;
-//            
-//            $model->save();
             
             return true;
         }

@@ -19,9 +19,9 @@
 				print '<span style="display:inline-block;" class="label label-default">' . $table_name . '</span>&nbsp;';
 				drop_table($table_name); // table name
 			}
-			echo '</p><div class="alert alert-warning" role="alert"><i class="fa fa-trash"></i> ' . $lang['install_step2_deleting_table'] . "...</div>\n";
+			echo '</p><div class="alert alert-warning" role="alert"><i class="fa fa-trash"></i> ' . $lang['install_step2_deleting_table'] . "...</div>";
 		} else {
-			echo '<p class="text-success">' . $lang['install_step2_no_tables'] . '</p><br/><br />\n';
+			echo '<p class="text-success">' . $lang['install_step2_no_tables'] . '</p><br/><br />';
 		}
 
 

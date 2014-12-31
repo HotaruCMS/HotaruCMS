@@ -1,7 +1,7 @@
 <?php 
 /**
  * Theme name: admin_default
- * Template name: maintenance.php
+ * Template name: spam_management.php
  * Template author: shibuya246
  *
  * PHP version 5
@@ -26,18 +26,16 @@
  * @link      http://www.hotarucms.org/
  */
 
-$plugin_settings = isset($h->vars['admin_plugin_settings']) ? $h->vars['admin_plugin_settings'] : '';
-$db_tables = isset($h->vars['admin_plugin_tables']) ? $h->vars['admin_plugin_tables'] : '';
+$h->template('admin_sidebar');
 
 $h->showMessages();
 
-// Hook above content
-$h->pluginHook('admin_maintenance_top');
+$themes = $h->getFiles(THEMES, array('404error.php', 'pages'));
 
-// Tabs and content pages
-$tabs = array('General', 'Cache', 'Debug', array('Database', array('db_tables' => $db_tables, 'some' => 'ds')), 'Hooks', 'Other');
+// Build tabs and content pages
+$tabs = array(
+    'Settings',
+    'Stats'
+ );
 
-buildtabs($h, 'maintenance', $tabs);
-
-// Hook below content
-$h->pluginHook('admin_maintenance_bottom');
+buildTabs($h, 'spam_management', $tabs);

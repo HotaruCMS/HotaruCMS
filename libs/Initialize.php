@@ -244,6 +244,7 @@ class Initialize extends Prefab
 			"TABLE_POSTMETA"=>"postmeta",
 			"TABLE_POSTVOTES"=>"postvotes",
 			"TABLE_SETTINGS"=>"settings",
+                        "TABLE_SPAMLOG"=>"spamlog",
 			"TABLE_TAGS"=>"tags",
 			"TABLE_TEMPDATA"=>"tempdata",
 			"TABLE_USERS"=>"users",
@@ -275,14 +276,6 @@ class Initialize extends Prefab
 	 */
 	private function loadFiles()
 	{
-		// include third party libraries
-//		require_once(EXTENSIONS . 'csrf/csrf_class.php'); // protection against CSRF attacks
-//                require_once(EXTENSIONS . 'ezSQL/ez_sql_core.php'); // database                  
-//                require_once(EXTENSIONS . 'memcache/memcache.php'); // memcache  
-//		
-//                require_once(EXTENSIONS . 'Inspekt/Inspekt.php'); // sanitation
-//                require_once(LIBS       . 'InspektExtras.php'); // sanitation                		
-//                
 //                if (! function_exists ('mysqli_connect')) {
 //                    require_once(LIBS . 'Database_mysql.php');
 //                } else {                    
@@ -534,15 +527,13 @@ return false;
                 //$h->allPluginDetails['hooks'] = \Hotaru\Models\Pluginhook::getAllEnabled();
                 $this->allPluginDetails['hooks'] = \Hotaru\Models2\Pluginhook::getAllEnabled($this);
 
-                //print_r($h->allPluginDetails['hooks']);
                 // turn this into an index based array as it runs faster than later calling an array_in func
                 // we are going to be using isset funcs later with this
                 // http://nickology.com/2012/07/03/php-faster-array-lookup-than-using-in_array/
 
                 if ($this->allPluginDetails['hooks']) {
-                    foreach ($this->allPluginDetails['hooks'] as $hooks)
-                    {
-                        $this->allPluginDetails['hookdata'][$hooks->plugin_hook][$hooks->plugin_folder] = 1;
+                    foreach ($this->allPluginDetails['hooks'] as $hook) {
+                        $this->allPluginDetails['hookdata'][$hook->plugin_hook][$hook->plugin_folder] = 1;
                     }
                 }
 

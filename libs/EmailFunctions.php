@@ -66,11 +66,11 @@ class EmailFunctions extends Prefab
 		if (!$this->from) { $this->from = SITE_NAME . ' <' . SITE_EMAIL . '>'; }
 
 		// Fixing the subject for non-ASCII characters:
-		$this->subject = '=?UTF-8?B?'.base64_encode($this->subject).'?=';
+		//$this->subject = '=?UTF-8?B?'.base64_encode($this->subject).'?=';
+                if ($this->subject) { $this->subject = '=?UTF-8?B?'.base64_encode($this->subject).'?='; }
 		
-		if (SMTP == 'true')
-		{
-			if (is_array($this->to)) { $to = $this->to['To']; } else { $to = $this->to; }
+		if (SMTP == 'true') {
+			$to = is_array($this->to) ? $this->to['To'] : $this->to;
 			if (!$this->headers) {
 				//$this->headers = array ('MIME-Version: 1.0\r\nFrom' => $this->from, '\r\nTo' => $to, 'Subject' => $this->subject);
                                 $this->headers['From'] = $this->from;
@@ -84,9 +84,7 @@ class EmailFunctions extends Prefab
 			if (!isset($this->headers['Content-Type'])) {
 				$this->headers['Content-Type'] = 'text/hmtl; charset=UTF-8';
 			}
-		}
-		else 
-		{
+		} else {
 			// if not using SMTP and no headers passed to this function, use default
 			if (!$this->headers) { 
 				$this->headers = "MIME-Version: 1.0\r\nFrom:" . $this->from . "\r\nReply-To:" . SITE_EMAIL . "\r\nX-Priority: 3\r\n";
@@ -98,8 +96,7 @@ class EmailFunctions extends Prefab
 			}
 		}
 
-		switch ($this->type)
-		{
+		switch ($this->type) {
 			case 'log':
 				require_once(LIBS . 'Debug.php');
 				$debug = new Debug();
@@ -135,8 +132,7 @@ class EmailFunctions extends Prefab
 	public function doSmtpEmail()
 	{
 		//  Only create a new smtp object if we don't already have one:
-		if (!is_object($this->smtp))
-		{
+		if (!is_object($this->smtp)) {
 			$smtp_array = array (
 				'host' => SMTP_HOST, 
 				'port' => SMTP_PORT,
@@ -175,5 +171,3 @@ class EmailFunctions extends Prefab
 		}
 	}
 }
-
-?>

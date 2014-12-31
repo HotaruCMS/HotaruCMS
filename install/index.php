@@ -31,11 +31,11 @@
 require_once '../vendor/autoload.php';
 
 // Managed directives
-ini_set('default_charset',$charset='UTF-8');
-ini_set('display_errors',1);
-// Abort on startup error
-// Intercept errors/exceptions; PHP5.3-compatible
-error_reporting(E_ALL|E_STRICT);
+ini_set('default_charset', $charset='UTF-8');
+ini_set('display_errors', 0);
+
+// Turn off all errors for install script
+error_reporting(0);
 
 if(!ini_get('date.timezone')) {
     date_default_timezone_set('GMT');
@@ -43,8 +43,8 @@ if(!ini_get('date.timezone')) {
                 
 // session - HotaruCMS_Install
 if (!isset($_SESSION['HotaruCMS'])) {
-        @session_start();
-        $_SESSION['HotaruCMS'] = time();
+    @session_start();
+    $_SESSION['HotaruCMS'] = time();
 }
 
 // Read Settings
@@ -59,6 +59,7 @@ if (file_exists(SETTINGS . 'settings.php')) {
 }
 
 define("SITEURL", BASEURL);
+
 // define path constants
 $path_constants = array(
     "BASE" => "/../",
@@ -79,16 +80,44 @@ foreach ($path_constants as $key => $value) {
     }
 }
 require_once('libs/install_tables.php');
+require_once('libs/upgrade_tables.php');
 require_once('libs/install_functions.php');
+
 require_once(BASE . 'Hotaru.php');
-$h = new \stdClass();
-$h->version = '1.7';
-$h->messages = array(); 
+
+$newH = false;
+if ($settings_file_exists) {
+    $settings = settingsFile($settings_file_exists);
+    // Check whether database and tables exist on this server
+    $db = new ezSQL_mysqli($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
+    $db->show_errors = false;
+    
+    $database_exists = $db->quick_connect($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);	
+    if ($database_exists) {
+        $table_exists = $db->table_exists('miscdata');
+        if ($table_exists) {
+            $h = \Libs\Hotaru::instance();
+            $h->start('install');
+        } else {
+            $newH = true;
+        }
+    } else {
+        // no db at all
+        $newH = true;
+    }
+} else {
+    $newH = true; 
+}
+
+if ($newH) {
+    //print 'newH';
+    $h = new \Libs\Hotaru('start');
+    $h->messages = array(); 
+    $h->currentUser = false;
+    $h->cage = init_inspekt_cage();
+}
 
 require_once(INSTALL .'language/install_language.php');    // language file for install
-
-$version_number = $h->version;
-$h->cage = init_inspekt_cage();
 
 //set lang
 $langSession = $h->cage->get->testAlnumLines('lang');
@@ -97,7 +126,7 @@ if ($langSession) {
 }
 
 // install languages
-$installLanguages = array('en' => 'English', 'ja-JP' => '日本語', 'cs-CZ' => 'Czech', 'ta' => 'Tamil', 'tr' => 'Turkish');
+$installLanguages = array('en' => 'English', 'ja-JP' => '日本語', 'cs-CZ' => 'Czech', 'ru' => 'Russian', 'ta' => 'Tamil', 'tr' => 'Turkish', 'uk' => 'Ukrainian');
 
 // check session for set language
 if (isset($_SESSION['lang'])) {
@@ -116,17 +145,26 @@ if (isset($_SESSION['lang'])) {
 $step = $h->cage->get->getInt('step');        // Installation steps.
 $action = $h->cage->get->getAlpha('action');    // Install or Upgrade.
 
+// divert to step 1 if no database when trying to access upgrade
+if ($action == 'upgrade' && $settings_file_exists && (!$database_exists || !$table_exists)) {
+    $theMessage = !$database_exists ? $lang['install_step1_no_db_exists_failure'] : $lang['install_step1_no_table_exists_failure'];
+    $h->messages[$theMessage] = 'red';
+    $old_version = '';
+    $show_next = false;
+    $step = 0;  // rest to step if db not available
+}
+
 $activeInstall = $action == "install" ? 'active' : '';
 $activeUpgrade = $action == "upgrade" ? 'active' : '';
 
 // if we are upgrading and no settings file then show error
 if ($step != 0 && $action == 'upgrade' && !$settings_file_exists) {
-     $msg1 = 'Hotaru is having trouble starting.<br/>' .
+    $msg1 = 'Hotaru is having trouble starting.<br/>' .
                 'You need to have a "settings.php" file in the config folder to <span class="label label-warning">upgrade</span><br/>' .
                 'or maybe you wanted to <span class="label label-danger">Install</span> Hotaru instead.';        
         
-        include('../error.php');
-        exit;
+    include('../error.php');
+    exit;
 }
 
 switch ($step) {
@@ -136,22 +174,26 @@ switch ($step) {
 		break;
 	case 1: 
 		if ($action == 'upgrade') {
-			database_upgrade();
+                    $old_version = $h->miscdata('hotaru_version');
+                    upgrade_check($h, $old_version, true);
 		} else {	
-                        // Tell user to setup database
-                        if ($h->cage->get->getAlpha('type') == 'manual') {
-                            database_setup_manual($h);
-                        } else { 
-                            database_setup($h, $settings_file_exists);
-                        }
+                    // Tell user to setup database
+                    if ($h->cage->get->getAlpha('type') == 'manual') {
+                        database_setup_manual($h);
+                    } else { 
+                        database_setup($h, $settings_file_exists);
+                    }
 		}
 		break;
 	case 2:                
 		if ($action == 'upgrade') {
-		    database_upgrade();
+                    $old_version = $h->miscdata('hotaru_version');
+		    do_upgrade($h, $old_version);
+                    upgrade_database($h);
 		} else {
-			$db = init_database();
-			database_tables_creation($h);        // Creates the database tables
+                    $db = init_database();
+                    // Create the database tables
+                    database_tables_creation($h);
 		}
 		break;
 	case 3: 
@@ -165,19 +207,36 @@ switch ($step) {
                 setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);
                 
 		if ($action == 'upgrade') {
-			upgrade_step_3();
+			upgrade_step_3($h);
 		} else {
 			$db = init_database();              
-			register_admin();           // Username and password for Admin user...
+			register_admin($h);           // Username and password for Admin user...
 		}
 		break;
 	case 4:
                 if ($action == 'upgrade') {
-			upgrade_plugins();
+			upgrade_plugins($h);
 		} else {
-                        installation_complete();    // Delete "install" folder. Visit your site"
+                        installation_complete($h);    // Delete "install" folder. Visit your site"
                 }
 		break;
+        case 99:
+            $dbuser_name = $h->cage->get->testAlnumLines('dbuser_name');
+            $dbpassword_name = $h->cage->get->KeyExists('dbpassword_name');
+            $dbname_name = $h->cage->get->testAlnumLines('dbname_name');
+            $dbhost_name = $h->cage->get->testAlnumLines('dbhost_name');
+            if (!$settings_file_exists) {
+                $db = new ezSQL_mysqli($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+                $db->show_errors = false;
+            }
+            $database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);	
+            //print $dbpassword_name . ' : ' . $dbuser_name . ' : ' . $dbname_name . ' : ' . $dbhost_name;
+            if ($database_exists) {
+                echo json_encode(array('error' => false));
+            } else {
+                echo json_encode(array('error' => true));
+            }
+            die();
 	default:
 		// Anything other than step=1, 3 or 4 will return user to Step 0
 		installation_welcome($h);
@@ -187,25 +246,7 @@ switch ($step) {
 exit;
 
 
-/*
- * function for calling templates with header and footer
- * 
- */
-function template($h, $template, $args = array())
-{
-    global $lang;
-    global $version_number;
-    global $currentLang;
-    
-    // check for any vars being passed in
-    extract($args);
-    
-    include_once('templates/header.php');
-    
-    include_once('templates/' . $template);
-    
-    include_once('templates/footer.php');
-}
+
 
 
 /**
@@ -223,10 +264,10 @@ function installation_welcome($h, $settings_file_exists)
 function database_setup($h, $settings_file_exists) {
 	global $lang;   //already included so Hotaru can't re-include it
 
-	$show_next = false;
-
 	if ($h->cage->post->KeyExists('updated')) {
 
+            $settings = new \stdClass();
+            
 	    $error = 0;
 	    // Test CSRF
 //	    if (!$h->csrf('check', 'index')) {
@@ -235,70 +276,56 @@ function database_setup($h, $settings_file_exists) {
 //	    }
 
 	    // Test baseurl
-	    $baseurl_name = $h->cage->post->testUri('baseurl');
-	    if (!$baseurl_name) {
+	    $settings->baseurl_name = $h->cage->post->testUri('baseurl');
+	    if (!$settings->baseurl_name) {
 		    $h->messages[$lang['install_step1_baseurl_error']] = 'red';
 		    $error = 1;
 	    }
 
 	    // Test dbname
-	    $dbuser_name = $h->cage->post->testAlnumLines('dbuser');
-	    if (!$dbuser_name) {
+	    $settings->dbuser_name = $h->cage->post->testAlnumLines('dbuser');
+	    if (!$settings->dbuser_name) {
 		    $h->messages[$lang['install_step1_dbuser_error']] = 'red';
 		    $error = 1;
 	    }
 
 	    // Test dbpassword
-	    $dbpassword_name = $h->cage->post->KeyExists('dbpassword');
-	    if (!$dbpassword_name) {
+	    $settings->dbpassword_name = $h->cage->post->KeyExists('dbpassword');
+	    if (!$settings->dbpassword_name) {
 		    $h->messages[$lang['install_step1_dbpassword_error']] = 'red';
 		    $error = 1;
 	    }
 
 	    // Test dbname
-	    $dbname_name = $h->cage->post->testAlnumLines('dbname');
-	    if (!$dbname_name) {
+	    $settings->dbname_name = $h->cage->post->testAlnumLines('dbname');
+	    if (!$settings->dbname_name) {
 		    $h->messages[$lang['install_step1_dbname_error']] = 'red';
 		    $error = 1;
 	    }
 
 	    // Test dbprefix
-	    $dbprefix_name = $h->cage->post->testAlnumLines('dbprefix');
-	    if (!$dbprefix_name) {
+	    $settings->dbprefix_name = $h->cage->post->testAlnumLines('dbprefix');
+	    if (!$settings->dbprefix_name) {
 		    $h->messages[$lang['install_step1_dbprefix_error']] = 'red';
 		    $error = 1;
 	    }
 
 	    // Test dbhost
-	    $dbhost_name = $h->cage->post->testAlpha('dbhost');
-	    if (!$dbhost_name) {
+	    $settings->dbhost_name = $h->cage->post->testAlpha('dbhost');
+	    if (!$settings->dbhost_name) {
 		    $h->messages[$lang['install_step1_dbhost_error']] = 'red';
 		    $error = 1;
 	    }
 
 	} else {
-            if ($settings_file_exists) {
-                $dbuser_name = DB_USER;
-                $dbname_name = DB_NAME;
-		$dbpassword_name = DB_PASSWORD;
-                $dbprefix_name = DB_PREFIX;
-                $dbhost_name = DB_HOST;
-                $baseurl_name = BASEURL;
-            } else {
-                $dbuser_name = 'admin';
-                $dbname_name = 'hotaru';
-		$dbpassword_name = '';
-                $dbprefix_name = 'hotaru_';
-                $dbhost_name = 'localhost';
-                $baseurl_name = "http://"; // . $h->cage->server->sanitizeTags('HTTP_HOST') . "/";
-            }
+            $settings = settingsFile($settings_file_exists);
 	}
 
 	// Show messages
 	if ($h->cage->post->getAlpha('updated') == 'true') {
 		if (!$error) {
 		    // Try to write file to disk based on form inputs
-		    $fputs = create_new_settings_file($dbuser_name, $dbpassword_name, $dbname_name, $dbprefix_name, $dbhost_name, $baseurl_name);
+		    $fputs = create_new_settings_file($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbprefix_name, $settings->dbhost_name, $settings->baseurl_name);
 		    // if file written successfully then
 		    if ($fputs) {
 			$h->messages[$lang['install_step1_update_file_writing_success']] = 'green';					
@@ -311,17 +338,16 @@ function database_setup($h, $settings_file_exists) {
 	}
 
 	// Check whether database and tables exist on this server
-        $db = new ezSQL_mysql($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
-			
-	$db->show_errors = false;
-	$database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);	
-	if (!$database_exists) {
+        $db = new ezSQL_mysqli($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
+        $db->show_errors = false;
+	
+        $database_exists = $db->quick_connect($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);	
+	$table_exists = $database_exists ? table_exists($db, 'miscdata', $settings->dbprefix_name) : false;
+	$show_next = $database_exists ? true : false;
+        
+        if ($settings->dbpassword_name && !$database_exists) {
 	    $h->messages[$lang['install_step1_no_db_exists_failure']] = 'red';
-            $table_exists = false;
-	} else {
-	    $show_next = true;	   
-	    $table_exists = $db->table_exists('miscdata');	   
-	}
+        }
 
 	// Try to write the /config/settings.php file to disk
 	//
@@ -336,12 +362,12 @@ function database_setup($h, $settings_file_exists) {
                 'cage' => $h->cage,
                 'table_exists' => $table_exists,
                 'show_next' => $show_next,
-                'baseurl_name' => $baseurl_name,
-                'dbuser_name' => $dbuser_name,
-                'dbpassword_name' => $dbpassword_name,
-                'dbname_name' => $dbname_name,
-                'dbprefix_name' => $dbprefix_name,
-                'dbhost_name' => $dbhost_name
+                'baseurl_name' => $settings->baseurl_name,
+                'dbuser_name' => $settings->dbuser_name,
+                'dbpassword_name' => $settings->dbpassword_name,
+                'dbname_name' => $settings->dbname_name,
+                'dbprefix_name' => $settings->dbprefix_name,
+                'dbhost_name' => $settings->dbhost_name
             ));
 
 	} else {
@@ -357,14 +383,6 @@ function database_setup($h, $settings_file_exists) {
 function database_setup_manual($h)
 {
 	template($h, 'install/database_setup_manual.php');        
-}
-
-/**
- * Step 2 of Upgrade - update database tables
- */
-function database_upgrade()
-{      
-        include_once('install-upgrade.php');
 }
 
 
@@ -384,7 +402,7 @@ function database_tables_creation($h)
         if ($table_exists && $delete != 'DELETE') {
             template($h,'install/database_creation.php', array('show_next' => $show_next));
 	} else {
-	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'site', 'tags', 'tempdata', 'tokens', 'users', 'userlogin', 'userclaim', 'usermeta', 'useractivity', 'widgets');
+	    $tables = array('blocked', 'categories', 'comments', 'commentvotes', 'friends', 'messaging', 'miscdata', 'plugins', 'pluginhooks', 'pluginsettings', 'posts', 'postmeta', 'postvotes', 'settings', 'spamlog', 'site', 'tags', 'tempdata', 'tokens', 'users', 'userlogin', 'userclaim', 'usermeta', 'useractivity', 'widgets');
 
 	    // delete *all* tables in db:
 	    $db->selectDB(DB_NAME);
@@ -401,24 +419,21 @@ function database_tables_creation($h)
 /**
  * Step 3 of installation - registers the site Admin.
  */
-function register_admin()
+function register_admin($h)
 {
 	global $lang;   //already included so Hotaru can't re-include it
-	global $db;
-
+	
 	// Make sure that the cache folders have been created before we call $h for the first time
 	// Since we have defined CACHE in install script, the normal Initialize script will think folders are already present
 	$dirs = array('debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/'); 
 
 	foreach ($dirs as $dir) {
-	    //print "checking where dir exists at " . CACHE . $dir . '<br/>';
 	    if (!is_dir(CACHE . $dir)) {
-		//print "trying to create " . CACHE . $dir . '<br/>';
 		mkdir(CACHE . $dir);
 	    }
 	}
 
-	$h = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
+	//$h = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
 
         // save default admin user
         $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
@@ -434,9 +449,9 @@ function register_admin()
                 
         $next_button = false;
 	$error = 0;
-        
-	if ($h->cage->post->getInt('step') == 4)
-	{
+        $step = $h->cage->post->getInt('step');
+
+	if ($step == 4) {
 		// Test CSRF
 		// if (!$h->csrf()) {
 		//	$h->message = $lang['install_step3_csrf_error'];			;
@@ -458,28 +473,30 @@ function register_admin()
 		// Test password
 		$password_check = $h->cage->post->testPassword('password');
 		if ($password_check) {
-			$password2_check = $h->cage->post->testPassword('password2');
-			if ($password_check == $password2_check) {
-				// success
-				$user_password = $password_check; // $h->currentUser->generateHash($password_check);
-			} else {				
-				$h->messages[$lang['install_step3_password_match_error']] = 'red';				
-				$error = 1;
-			}
+                    $password2_check = $h->cage->post->testPassword('password2');
+                    if ($password_check == $password2_check) {
+                        // success
+                        $user_password = $password_check; // $h->currentUser->generateHash($password_check);
+                    } else {				
+                        $h->messages[$lang['install_step3_password_match_error']] = 'red';				
+                        $error = 1;
+                    }
 		} else {
-			$password_check = "";
-			$password2_check = "";			
-			$h->messages[$lang['install_step3_password_error']] = 'red';			
-			$error = 1;
+                    $password_check = "";
+                    $password2_check = "";			
+                    $h->messages[$lang['install_step3_password_error']] = 'red';			
+                    $error = 1;
 		}
 
 		// Test email
 		$email_check = $h->cage->post->testEmail('email');
-		if ($email_check) {
-			$user_email = $email_check;
+                if ($email_check) {
+                    $user_email = $email_check;
+                    // also use this email address as the site notification email address
+                    \Hotaru\Models2\Setting::makeUpdate($h, 'SITE_EMAIL', $user_email);
 		} else {			
-			$h->messages[$lang['install_step3_email_error']] = 'red';			
-			$error = 1;
+                    $h->messages[$lang['install_step3_email_error']] = 'red';			
+                    $error = 1;
 		}
                 
                 if ($error == 0) {
@@ -488,7 +505,6 @@ function register_admin()
                     $user_name = isset($user_name) ? $user_name : "";
                     $user_email = isset($user_email) ? $user_email : "";
                     $user_password = isset($user_password) ? $user_password : ""; 
-
                     if ($user_name != "" && $user_email != "" && $user_password != "") {
                             // There's been a change so update...
                             $h->currentUser->name = $user_name;
@@ -497,9 +513,11 @@ function register_admin()
                             $h->currentUser->role = 'admin';
                             $h->currentUser->updateUserBasic($h);
                             $h->currentUser->savePassword($h);
-
+                            
                             // auto login admin user as well, but no cookie
-                            //$h->loginCheck($user_name, $user_password);
+                            unset($h->users[$user_name]);
+                            $h->loginCheck($user_name, $user_password);
+                            
                             $next_button = true;
                     } else {
                             $user_id = $user_info->user_id;
@@ -511,7 +529,7 @@ function register_admin()
 	}
 
 	// Show success message
-	if (($h->cage->post->getInt('step') == 4) && $error == 0) {		
+	if ($step == 4 && $error == 0) {
 		$h->messages[$lang['install_step3_update_success']] = 'green';		
 	}
         
@@ -526,11 +544,11 @@ function register_admin()
 /**
  * Step 4 of installation - shows completion.
  */
-function installation_complete()
+function installation_complete($h)
 {
 	global $lang;
 	
-	$h  = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
+	//$h  = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
 	
 	$phpinfo = $h->cage->post->getAlpha('phpinfo');        // delete install folder.
 
@@ -570,16 +588,23 @@ function installation_complete()
 	template($h, 'install/install_complete.php', array(
             'phpinfo' => $phpinfo           
         ));
-        
 }
 
+   
+/**
+ * Step 2 of upgrade
+ */
+function upgrade_database($h)
+{
+        template($h, 'upgrade/upgrade_step_2.php');          
+}
 
 /**
  * Step 3 of upgrade
  */
-function upgrade_step_3()
+function upgrade_step_3($h)
 {
-        $h = new \Libs\Hotaru();
+        //$h = new \Libs\Hotaru();
         
         template($h, 'upgrade/upgrade_step_3.php');          
 }
@@ -588,9 +613,9 @@ function upgrade_step_3()
 /**
  * Step 3 of upgrade - shows completion.
  */
-function upgrade_plugins()
+function upgrade_plugins($h)
 {
-	$h = new \Libs\Hotaru();
+	//$h = new \Libs\Hotaru();
         
         $plugman = new \Libs\PluginManagement();
         $plugman->refreshPluginOrder($h);
@@ -648,11 +673,6 @@ define("LANGUAGE_MAIN", 'en');
    fclose($fw);
 
    return $fputs;
-
-}
-
-function add_DBPREFIX($table) {   
-    return DB_PREFIX . $table;
 }
 
 
@@ -663,4 +683,37 @@ function showMessages($h)
 {
         $messages = \Libs\Messages::instance();
         $messages->showMessages($h);
+}
+
+
+function table_exists($db, $table2check, $prefix) {
+        $tables = $db->get_col("SHOW TABLES",0);
+        if (in_array($prefix . $table2check, $tables)) {
+            return true;
+        }
+        return false;
+}
+
+
+function settingsFile($settings_file_exists)
+{
+        $s = new \stdClass();
+        
+        if ($settings_file_exists) {
+            $s->dbuser_name = DB_USER;
+            $s->dbname_name = DB_NAME;
+            $s->dbpassword_name = DB_PASSWORD;
+            $s->dbprefix_name = DB_PREFIX;
+            $s->dbhost_name = DB_HOST;
+            $s->baseurl_name = BASEURL;
+        } else {
+            $s->dbuser_name = 'admin';
+            $s->dbname_name = 'hotaru';
+            $s->dbpassword_name = '';
+            $s->dbprefix_name = 'hotaru_';
+            $s->dbhost_name = 'localhost';
+            $s->baseurl_name = "http://";
+        }
+        
+        return $s;
 }

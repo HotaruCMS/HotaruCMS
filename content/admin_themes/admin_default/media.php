@@ -30,7 +30,7 @@
 <ul class="nav nav-pills">
   <li class="active"><a href="#">Home</a></li>
   <li><a href="?page=media&folder=post_images">Post Images</a></li>
-<!--  <li><a href="?page=media&folder=user">Users</a></li>-->
+  <li><a href="?page=media&folder=profile_images">Users</a></li>
 </ul>
 <hr/>
 
@@ -38,7 +38,7 @@
 <div class="superbox col-sm-12">
 <?php 
     $folder = (!isset($h->vars['media_folder']) || $h->vars['media_folder'] == null) ? 'post_images/' : $h->vars['media_folder'] . '/';
-    
+    if (isset($h->vars['media_folder']) && $h->vars['media_folder'] == 'profile_images') { $folder = 'profile_images/'; }
     $siteFolder = CONTENT . 'images/' . $folder;
     $siteUrl = SITEURL . 'content/images/' . $folder;
     

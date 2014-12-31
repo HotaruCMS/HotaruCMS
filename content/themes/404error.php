@@ -28,10 +28,11 @@
 ?>
 
 <?php //echo $h->lang('main_theme_page_not_found'); ?>
-<div class="span11">
+<div class="col-md-11">
 <div class="jumbotron">
         <h1>Oops!</h1>
         <p class="lead"><?php echo $h->lang('main_theme_page_not_found'); ?></p>
+        <p><?php echo $h->pageName; ?></p>
 <!--        <a class="btn btn-large btn-primary" href="/">Back to Home</a>-->
       </div>
 

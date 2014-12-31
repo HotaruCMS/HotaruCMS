@@ -34,9 +34,6 @@
 // check whether we have the fluid setting. If not make false
 $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings']['userProfile_tabs']) ? $h->vars['theme_settings']['userProfile_tabs'] : 0;
-
-
-//print_r($h->vars['theme_settings']);
 ?>
 
 <!-- Navigation Bar -->
@@ -135,30 +132,10 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                                         </a>
                                 </li>
 
-                        <?php $h->pluginHook('usermenu_top'); ?>
-
                                 <li class="divider"></li>
-                            <?php if ($h->isActive('bookmarking')) { ?>
-                                <li class="posts" data-name="posts">
-                                    <a href="<?php echo $h->url(array('page' => 'all', 'user' => $h->currentUser->name)) ?>">Posts</a>
-                                </li>
-                            <?php } ?>   
                                 
-                            <?php if ($h->isActive('messaging')) { ?>
-                                
-
-                                <li class="messages" data-name="messages">
-                                    <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
-                                        <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#inbox')) ?>">
-                                    <?php } else { ?>
-                                            <a href="<?php echo $h->url(array('page' => 'inbox', 'user' => $h->currentUser->name)) ?>">
-                                    <?php } ?>
-                                            <span class=""></span>
-                                            Messages
-                                        </a>
-                                </li>                    
-                            <?php } ?>                  
-
+                                <?php $h->pluginHook('usermenu_top'); ?>
+                               
                                 <li class="divider"></li>
 
                                 <li>
@@ -187,7 +164,7 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                                 </li>
 
                                 <li>
-                                    <a href="<?php echo $h->url(array('page' => 'admin_logout'), 'admin'); ?>"><i class='fa fa-sign-out'></i> Sign out</a>                   
+                                    <a href="<?php echo $h->url(array('page' => 'logout'), 'index'); ?>"><i class='fa fa-sign-out'></i> <?php echo $h->lang('main_theme_navigation_logout'); ?></a>                   
                                 </li>
 
                             </ul>
@@ -202,10 +179,10 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                         } else {
                             $status = "";
                         }
-                        //echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";
+                        echo "<li class='visible-xs-block' " . $status . "><a href='" . $h->url(array('page' => 'login'), 'index') . "'>" . $h->lang("main_theme_navigation_login") . "</a></li>";
                         ?>
 
-                        <li class="dropdown visible-desktop">
+                        <li class="dropdown hidden-xs">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo $h->lang("main_theme_navigation_login"); ?> <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li>
@@ -248,17 +225,12 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                             $h->adminNav();
                         }
 
-                        if ($h->pageName == 'logout') {
-                            $status = "class='active'"; 
-
-                        } else {
-                            $status = ""; 
-
-                        }
+                        $status = $h->pageName == 'logout' ? "class='active'" : ""; 
+                        
                         // Logout
                         echo "<li " . $status . "><a href='" . $h->url(array('page'=>'admin_logout'), 'admin') . "'>" . $h->lang("main_theme_navigation_logout") . "</a></li>";
                     } else {
-                        echo "<li class='hidden-desktop' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";                        
+                        echo "<li class='' " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_admin") . "</a></li>";                        
                     } 
                 }
                 ?>

@@ -35,10 +35,12 @@
         
         echo '</div>';
         
-        echo '<div class="panel-footer">
-            <p class="help-block">
-                &nbsp;&nbsp;<i class="fa fa-warning"></i> You must be logged in as admin to succesfully refresh the plugins here
-            </p></div>';
+        if (!$h->currentUser->isAdmin) {
+            echo '<div class="panel-footer">
+                <p class="help-block">
+                    &nbsp;&nbsp;<i class="fa fa-warning"></i> You must be logged in as admin to successfully refresh the plugins here
+                </p></div>';
+        }
         
         echo '</div>';
         

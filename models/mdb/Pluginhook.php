@@ -20,7 +20,6 @@ class Pluginhook extends BaseModel
             $sql = "SELECT H.plugin_folder, H.plugin_hook FROM " . TABLE_PLUGINHOOKS . " AS H"
                     . " LEFT OUTER JOIN " . TABLE_PLUGINS . " AS P ON H.plugin_folder = P.plugin_folder"
                     . " AND P.plugin_enabled = 1";
-            //$model = $h->mdb->query($sql, 1);
             
             $model = $h->db->get_results($sql);
             return $model;

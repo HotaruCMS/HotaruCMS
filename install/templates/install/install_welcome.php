@@ -12,6 +12,10 @@
                             <img align="center" src="images/hotarucms_splash.jpg" class="img-thumbnail" alt="splash">
                         </div>
                         
+                        <div>
+                            <?php $h->showMessages(); ?>
+                        </div>
+                        
 			<p class="text-center">
 				<a class="btn btn-primary btn-lg" href="index.php?step=1&action=install" role="button"><?php echo $lang['install_new'];?></a>
 				&nbsp;&nbsp;&nbsp;&nbsp;
