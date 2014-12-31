@@ -383,7 +383,7 @@ function create_table($table_name)
                     array('SITE_NAME', '', '', 'Hotaru CMS', 'Hotaru CMS', ''),
                     array('THEME', '', '', 'default/', 'default/', 'You need the "\/"'),
                     array('ADMIN_THEME', '', '', 'admin_default/', 'admin_default/', 'You need the "\/"'),
-                    array('DEBUG', '', '', 'true', 'true', ''),
+                    array('DEBUG', '', '', 'false', 'false', ''),
                     array('FRIENDLY_URLS', '', '', 'false', 'false', ''),
                     array('DB_CACHE', 'Perf', 'Cache', 'false', 'false', ''),
                     array('DB_CACHE_DURATION', 'Perf', 'Cache', 12, 12, 'Hours', 'N'),
@@ -403,12 +403,14 @@ function create_table($table_name)
                     array('FTP_USERNAME', 'Security', '', '', '', 'Optional'),
                     array('FTP_PASSWORD', 'Security', '', '', '', 'Optional'),
                     array('REST_API', 'Security', '', 'false', 'false', ''),
-                    array('FORUM_USERNAME', 'Security', '', '', '', '', 'Need for auto updates'),
-                    array('FORUM_PASSWORD', 'Security', '', '', '', '', 'Need for auto updates'),
-                    array('JQUERY_PATH', 'Perf', 'Files', '', '', '', ''),
-                    array('BOOTSTRAP_PATH', 'Perf', 'Files', '', '', '', ''),   
+                    array('FORUM_USERNAME', 'Security', '', '', '', 'Need for auto updates'),
+                    array('FORUM_PASSWORD', 'Security', '', '', '', 'Need for auto updates'),
+                    array('JQUERY_PATH', 'Perf', 'Files', '', '', ''),
+                    array('BOOTSTRAP_PATH', 'Perf', 'Files', '', '', ''),   
                     array('MINIFY_JS', 'Perf', 'Scripts', 'false', 'false', ''),
                     array('MINIFY_CSS', 'Perf', 'Scripts', 'false', 'false', ''),
+                    array('HOTARU_API_KEY', 'Security', '', '', '', ''),
+                    array('HOTARUCMS_COM_CONNECTED', 'Security', '', 'false', 'false', ''),
                 );
 
                 $sql = "INSERT INTO " . DB_PREFIX . $table_name . " (settings_name, settings_type, settings_subType, settings_value, settings_default, settings_note) VALUES (%s, %s, %s, %s, %s, %s)";
@@ -419,6 +421,22 @@ function create_table($table_name)
                 }
                  
 		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_adding_data'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
+	}
+        
+        // SPAM LOG - spamlog
+        
+        if ($table_name == "spamlog") {
+		$sql = "CREATE TABLE `" . DB_PREFIX . $table_name . "` (
+			`spamlog_id` int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`spamlog_email` varchar(64) NULL,
+			`spamlog_pluginfolder` varchar(64) NULL,
+                        `spamlog_type` tinyint(1) NOT NULL DEFAULT 0,
+			`spamlog_updatedts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			INDEX  (`spamlog_pluginfolder`),
+                        INDEX  (`spamlog_type`)
+		) ENGINE=" . DB_ENGINE_INNODB . " DEFAULT CHARSET=" . DB_CHARSET . " COLLATE=" . DB_COLLATE . " COMMENT='SpamLog';";
+		echo '<p class="text-success"><i class="fa fa-check"></i> ' . $lang['install_step2_creating_table'] . ": '" . DB_PREFIX . $table_name . "'...</p>\n";
+		$db->query($sql);
 	}
 	
 	// TAGS TABLE - tags

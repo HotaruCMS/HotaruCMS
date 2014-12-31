@@ -5,7 +5,7 @@
         <hr />
         <!-- Footer content (a link to the forums) -->
         <footer>
-            <p>&copy; <?php echo date('Y') . " " . $lang['admin_theme_header_hotarucms'] . " v." . $version_number; ?></p>
+            <p>&copy; <?php echo date('Y') . " " . $lang['admin_theme_header_hotarucms'] . " v." . $h->version; ?></p>
         </footer>
         
         <p><?php echo $lang['install_trouble']; ?></p>

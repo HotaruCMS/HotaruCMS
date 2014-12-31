@@ -37,27 +37,44 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="index.php?step=1&action=install"><?php echo $lang['install_new2']; ?></a></li>
-						<li class=""><a href="index.php?step=1&action=upgrade"><?php echo $lang['install_upgrade2']; ?></a></li>
-						<li><a href="./templates/instruction.html">Help</a></li>
+						<li class="active"><a href="/install/index.php?step=1&action=install"><i class="fa fa-plus-square"></i> <?php echo $lang['install_new2']; ?></a></li>
+						<li class=""><a href="/install/index.php?step=1&action=upgrade"><i class="fa fa-refresh"></i> <?php echo $lang['install_upgrade2']; ?></a></li>
+						<li><a href="./templates/instruction.html"><i class="fa fa-question-circle"></i> Help</a></li>
 						<li><a href="/index.php">Site</a></li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
                                             <li class="dropdown">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo $currentLang['name']; ?><span class="caret"></span></a>
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                                    <i class="fa fa-language"></i> <?php echo $currentLang['name']; ?><span class="caret"></span>
+                                                </a>
                                                     <ul class="dropdown-menu" role="menu">
                                                         <li><a href="<?php echo $urlLang . 'en'; ?>">English</a></li>
                                                         <li class="divider"></li>
                                                         <li><a href="<?php echo $urlLang . 'ta'; ?>">Tamil</a></li>
                                                         <li><a href="<?php echo $urlLang . 'tr'; ?>">Turkish</a></li>
                                                         <li><a href="<?php echo $urlLang . 'cs_CZ'; ?>">Czech</a></li>
+                                                        <li><a href="<?php echo $urlLang . 'ru'; ?>">Russian</a></li>
+                                                        <li><a href="<?php echo $urlLang . 'uk'; ?>">Ukranian</a></li>
                                                         <li><a href="<?php echo $urlLang . 'ja_JP'; ?>">日本語</a></li>
-                                                        
                                                     </ul>
                                                 </li>
                                                 <li><a href="http://forums.hotarucms.org">Forums</a></li>
                                                 <li><a href="http://forums.hotarucms.org/misc/contact">Contact</a></li>
+                                                <?php
+                                                if ($h->currentUser) {
+                                                    if ($h->currentUser->loggedIn == true) {
+//                                                        if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
+//                                                            //
+//                                                        }
+                                                        // Logout
+                                                        echo "<li><a href='#'><i class='fa fa-user'></i> ";
+                                                        echo ucfirst($h->currentUser->name);
+                                                        echo "</a></li>";
+                                                    } else {
+                                                        echo "<li class=''><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang("main_theme_navigation_login") . "</a></li>";                        
+                                                    }
+                                                } ?>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->

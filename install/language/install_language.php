@@ -142,7 +142,7 @@ $lang["install_step3_password_match_error"] = "The password fields don't match";
 $lang["install_step3_email_error"] = "That doesn't parse as a valid email address";
 $lang["install_step3_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
 $lang["install_step3_update_success"] = "Updated successfully";
-$lang["install_step3_form_update"] = "Update";
+$lang["install_step3_form_update"] = "Update File";
 
 /* Install Step 5 */
 $lang["install_step4"] = "Step 4/4: Completion";

@@ -118,3 +118,42 @@ function urlLang($h)
  
         return $resultUrl;
 }
+
+
+/*
+ * function for calling templates with header and footer
+ * 
+ */
+function template($h, $template, $args = array())
+{
+        global $lang;
+        global $currentLang;
+
+        // check for any vars being passed in
+        extract($args);
+
+        include_once('templates/header.php');
+
+        include_once('templates/' . $template);
+
+        include_once('templates/footer.php');
+}
+
+/**
+ * Step 1 of upgrade - checks existing version available and confirms details
+ */
+function upgrade_check($h, $old_version, $show_next)         
+{               
+        // delete existing cache
+        $h->deleteFiles(CACHE . 'db_cache');
+        $h->deleteFiles(CACHE . 'css_js_cache');
+        $h->deleteFiles(CACHE . 'rss_cache');
+        $h->deleteFiles(CACHE . 'lang_cache');
+        $h->deleteFiles(CACHE . 'html_cache');
+
+        template($h, 'upgrade/upgrade_step_1.php', array(
+            'old_version' => $old_version,
+            'show_next' => $show_next
+        ));	
+}
+
