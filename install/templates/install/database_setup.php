@@ -2,7 +2,7 @@
 		<!-- Step title -->
 		<legend><?php echo $lang['install_step1']; ?></legend>
 			
-		<div class='alert alert-warning' role='alert'>
+		<div class='alert alert-info' role='alert'>
 			<strong><?php echo $lang['install_step1_instructions_create_db']; ?></strong>
 			<!-- Complete Step Progress Bar -->
 			<div class='progress'>
@@ -18,28 +18,6 @@
 		<div class='install_content'>
 			
 			<?php showMessages($h); ?>
-			
-			<?php
-                            $btnType = 'btn-primary'; 
-				if ($cage->post->getAlpha('updated') != 'true' && $settings_file_exists) {
-                                    $btnType = 'btn-danger'; 
-                                ?>
-				<!-- Alert if Settings file already exists -->
-				<div class='alert alert-info alert-dismissible'>
-					<button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>
-					<i class='fa fa-info-circle'></i> <?php echo $lang['install_step1_settings_file_already_exists']; ?>
-				</div>
-			<?php } ?>
-
-			<?php
-			if (isset($table_exists) && ($table_exists)) { ?>
-			
-				<!-- Alert if database already exists -->
-				<div class='alert alert-danger alert-dismissible' role='alert'>
-					<button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>
-					<i class='fa fa-exclamation-triangle'></i> <?php echo $lang['install_step1_settings_db_already_exists']; ?>
-				</div>
-			<?php } ?>
 			
 			<div class='panel panel-primary'>
 				<div class='panel-heading'>
@@ -103,12 +81,23 @@
 								<p class='help-block'><?php echo $lang['install_step1_dbhost_explain']; ?></p>
 							</div>
 						</div>
+                                                
+                                                <?php
+                                                        $btnType = 'btn-primary'; 
+                                                        if ($cage->post->getAlpha('updated') != 'true' && $settings_file_exists) {
+                                                            $btnType = 'btn-danger'; 
+                                                        ?>
+                                                        <!-- Alert if Settings file already exists -->
+                                                        <div class='col-sm-offset-1 col-sm-7 alert alert-warning'>
+                                                                <?php echo $lang['install_step1_settings_file_already_exists']; ?>
+                                                        </div>
+                                                <?php } ?>
 						
 						<!-- Update button -->
 						<div class='form-group'>
 							<div class='col-sm-offset-2 col-sm-10'>
 								<input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-								<input type='hidden' name='step' value='2' />
+                                                                <input type='hidden' name='step' value='2' />
 								<input type='hidden' name='updated' value='true' />
                                                                 <input type='submit' id='install_dbTestBtn' class='btn btn-default' value='Test Db Connection' />
                                                                 <button class='btn <?php echo $btnType; ?>'><i class='fa fa-save'></i> <?php echo $lang['install_step3_form_update']; ?></button>
@@ -118,12 +107,24 @@
 					</form>
 				</div>
 			</div>
+                    
+                    
+
+			<?php
+			if (isset($table_exists) && ($table_exists)) { ?>
+			
+				<!-- Alert if database already exists -->
+				<div class='alert alert-danger' role='alert'>
+					<i class='fa fa-exclamation-triangle'></i> <?php echo $lang['install_step1_settings_db_already_exists']; ?>
+				</div>
+			<?php } ?>
+			
 
 			<div class='form-actions'>
 				<!-- Previous/Next buttons -->
-				<a href='index.php?step=0' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
+				<a href='index.php?action=install&step=0' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
 				<?php if ($show_next) { // and if db was connected ok ?>
-					<a href='index.php?step=2' class='btn btn-default pull-right' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
+					<a href='index.php?action=install&step=2' class='btn btn-default pull-right' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
 				<?php } else { // link disbaled ?>		    
 					<a class='btn btn-default disabled pull-right' href='#' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
 				<?php } ?>

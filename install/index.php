@@ -89,7 +89,7 @@ $newH = false;
 if ($settings_file_exists) {
     $settings = settingsFile($settings_file_exists);
     // Check whether database and tables exist on this server
-    $db = new ezSQL_mysqli($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
+    $db = new ezSQL_mysql($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
     $db->show_errors = false;
     
     $database_exists = $db->quick_connect($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);	
@@ -167,6 +167,8 @@ if ($step != 0 && $action == 'upgrade' && !$settings_file_exists) {
     exit;
 }
 
+if ($action == 'help') { $step = 90; }
+
 switch ($step) {
 	case 0:
                 //  Show the choice of upgrade or install screen
@@ -209,7 +211,7 @@ switch ($step) {
 		if ($action == 'upgrade') {
 			upgrade_step_3($h);
 		} else {
-			$db = init_database();              
+			//$db = init_database();              
 			register_admin($h);           // Username and password for Admin user...
 		}
 		break;
@@ -220,13 +222,16 @@ switch ($step) {
                         installation_complete($h);    // Delete "install" folder. Visit your site"
                 }
 		break;
+        case 90:
+                template($h, 'help.php');
+                break;
         case 99:
             $dbuser_name = $h->cage->get->testAlnumLines('dbuser_name');
             $dbpassword_name = $h->cage->get->KeyExists('dbpassword_name');
             $dbname_name = $h->cage->get->testAlnumLines('dbname_name');
             $dbhost_name = $h->cage->get->testAlnumLines('dbhost_name');
             if (!$settings_file_exists) {
-                $db = new ezSQL_mysqli($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
+                $db = new ezSQL_mysql($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);
                 $db->show_errors = false;
             }
             $database_exists = $db->quick_connect($dbuser_name, $dbpassword_name, $dbname_name, $dbhost_name);	
@@ -338,7 +343,7 @@ function database_setup($h, $settings_file_exists) {
 	}
 
 	// Check whether database and tables exist on this server
-        $db = new ezSQL_mysqli($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
+        $db = new ezSQL_mysql($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);
         $db->show_errors = false;
 	
         $database_exists = $db->quick_connect($settings->dbuser_name, $settings->dbpassword_name, $settings->dbname_name, $settings->dbhost_name);	
@@ -407,6 +412,11 @@ function database_tables_creation($h)
 	    // delete *all* tables in db:
 	    $db->selectDB(DB_NAME);
 
+            // reset session
+            if (session_id()) {
+                session_destroy(); 
+            }
+            
             template($h,'install/database_creation_2.php', array(
                 'db'=>$db,
                 'show_next' => $show_next,
@@ -425,26 +435,23 @@ function register_admin($h)
 	
 	// Make sure that the cache folders have been created before we call $h for the first time
 	// Since we have defined CACHE in install script, the normal Initialize script will think folders are already present
-	$dirs = array('debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/'); 
-
-	foreach ($dirs as $dir) {
-	    if (!is_dir(CACHE . $dir)) {
-		mkdir(CACHE . $dir);
-	    }
-	}
+	createCacheFolders();
 
 	//$h = new \Libs\Hotaru(); // overwrites current global with fully initialized Hotaru object
 
-        // save default admin user
+        // save default admin user if none already present in db
         $sql = "SELECT user_username FROM " . TABLE_USERS . " WHERE user_role = %s";
         $admin_name = $h->db->get_var($h->db->prepare($sql, 'admin'));
+        
         if (!$admin_name) {
                 // Insert default settings
-                $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
-                $h->db->query($h->db->prepare($sql, 'admin', 'admin', password_hash('password', PASSWORD_DEFAULT), 'admin@example.com', serialize($h->currentUser->getDefaultPermissions($h, 'admin'))));
                 $user_name = 'admin';
                 $user_email = 'admin@example.com';
                 $user_password = 'password';
+                $defaultAdminPermission = serialize($h->currentUser->getDefaultPermissions($h, 'admin'));
+                $passwordHash = password_hash($user_password, PASSWORD_DEFAULT);
+                $sql = "INSERT INTO " . TABLE_USERS . " (user_username, user_role, user_date, user_password, user_email, user_permissions) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s)";
+                $h->db->query($h->db->prepare($sql, $user_name, 'admin', $passwordHash, $user_email, $defaultAdminPermission));
         }
                 
         $next_button = false;
@@ -452,14 +459,42 @@ function register_admin($h)
         $step = $h->cage->post->getInt('step');
 
 	if ($step == 4) {
-		// Test CSRF
-		// if (!$h->csrf()) {
-		//	$h->message = $lang['install_step3_csrf_error'];			;
-		//	$h->messages[$lang['install_step3_csrf_error']] = 'red';
-		//	$error = 1;
-		//}
+            // Test CSRF
+            // if (!$h->csrf()) {
+            //	$h->message = $lang['install_step3_csrf_error'];			;
+            //	$h->messages[$lang['install_step3_csrf_error']] = 'red';
+            //	$error = 1;
+            //}
 
-		// Test username
+            if ($h->cage->post->getAlpha('updated') == 'forum') {
+                // Test username
+		$forumUsernameCheck = $h->cage->post->testUsername('forumUsername');
+		// alphanumeric, dashes and underscores okay, case insensitive
+		if ($forumUsernameCheck) {
+                    $forumUsername = $forumUsernameCheck;
+		} else {
+                    $h->message = $lang['install_step3_username_error'];
+                    $h->messages[$lang['install_step3_username_error']] = 'red';			
+                    $error = 1;
+		}
+                
+                // Test password
+                $forumPasswordCheck = $h->cage->post->testPassword('forumPassword');
+		if ($forumPasswordCheck) {
+                    $forumPassword = $forumPasswordCheck; // $h->currentUser->generateHash($password_check);
+                } else {				
+                    $h->messages[$lang['install_step3_password_match_error']] = 'red';				
+                    $error = 1;
+                }
+                
+                // save
+                \Hotaru\Models2\Setting::makeUpdate($h, 'FORUM_USERNAME', $forumUsername);
+                \Hotaru\Models2\Setting::makeUpdate($h, 'FORUM_PASSWORD', $forumPassword);
+                
+                // TODO give a check/confirmation button 
+                
+            } else {
+                // Test username
 		$name_check = $h->cage->post->testUsername('username');
 		// alphanumeric, dashes and underscores okay, case insensitive
 		if ($name_check) {
@@ -498,35 +533,36 @@ function register_admin($h)
                     $h->messages[$lang['install_step3_email_error']] = 'red';			
                     $error = 1;
 		}
+            }
+        }
                 
-                if ($error == 0) {
-                    $user_info = $h->currentUser->getUser($h, 0, $admin_name);
-                    // On returning to this page via back or next, the fields are empty at this point, so...
-                    $user_name = isset($user_name) ? $user_name : "";
-                    $user_email = isset($user_email) ? $user_email : "";
-                    $user_password = isset($user_password) ? $user_password : ""; 
-                    if ($user_name != "" && $user_email != "" && $user_password != "") {
-                            // There's been a change so update...
-                            $h->currentUser->name = $user_name;
-                            $h->currentUser->email = $user_email;
-                            $h->currentUser->password = $user_password;
-                            $h->currentUser->role = 'admin';
-                            $h->currentUser->updateUserBasic($h);
-                            $h->currentUser->savePassword($h);
-                            
-                            // auto login admin user as well, but no cookie
-                            unset($h->users[$user_name]);
-                            $h->loginCheck($user_name, $user_password);
-                            
-                            $next_button = true;
-                    } else {
-                            $user_id = $user_info->user_id;
-                            $user_name = $user_info->user_username;
-                            $user_email = $user_info->user_email;
-                            //$user_password = $user_info->user_password;
-                    }
-                }
-	}
+        if ($error == 0) {
+            $user_info = $h->currentUser->getUser($h, 0, $admin_name);
+            // On returning to this page via back or next, the fields are empty at this point, so...
+            $user_name = isset($user_name) ? $user_name : "";
+            $user_email = isset($user_email) ? $user_email : "";
+            $user_password = isset($user_password) ? $user_password : ""; 
+            if ($user_name != "" && $user_email != "" && $user_password != "") {
+                    // There's been a change so update...
+                    $h->currentUser->name = $user_name;
+                    $h->currentUser->email = $user_email;
+                    $h->currentUser->password = $user_password;
+                    $h->currentUser->role = 'admin';
+                    $h->currentUser->updateUserBasic($h);
+                    $h->currentUser->savePassword($h);
+
+                    // auto login admin user as well, but no cookie
+                    unset($h->users[$user_name]);
+                    $h->loginCheck($user_name, $user_password);
+
+                    $next_button = true;
+            } else {
+                    $user_id = $user_info->user_id;
+                    $user_name = $user_info->user_username;
+                    $user_email = $user_info->user_email;
+                    //$user_password = $user_info->user_password;
+            }
+        }
 
 	// Show success message
 	if ($step == 4 && $error == 0) {
@@ -562,7 +598,7 @@ function installation_complete($h)
                 $php_module_not_found = false;
 
                 $required = array(
-			'mysql'=>'http://php.net/manual/en/book.mysql.php',
+			'mysqli'=>'http://php.net/manual/en/book.mysqli.php',
 			'filter'=>'http://php.net/manual/en/book.filter.php',
 			'curl'=>'http://php.net/manual/en/book.curl.php',
 			'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php'

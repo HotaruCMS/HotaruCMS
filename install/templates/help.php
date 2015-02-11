@@ -1,80 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Hotaru » Readme</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="description" content="">
-		<meta name="author" content="Hotaru CMS Team">
+<?php
+    $modules = get_loaded_extensions();
+    
+    $required = array(
+        'mysqli'=>'http://php.net/manual/en/book.mysqli.php',
+        'filter'=>'http://php.net/manual/en/book.filter.php',
+        'curl'=>'http://php.net/manual/en/book.curl.php',
+        'mbstring'=>'http://www.php.net/manual/en/book.mbstring.php'
+    );
+    
+    
+?>
 
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
-		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-		<style>
-			body {
-				position: relative;
-				background-color: #f9f9f9;
-				background-repeat: repeat-x;
-				background-position: 0 40px;
-			}
-			.reader {
-				max-width: 650px;
-				padding: 19px 29px 29px;
-				margin: 0 auto 20px;
-				background-color: #fff;
-				border: 1px solid #e5e5e5;
-				-webkit-border-radius: 5px;
-				   -moz-border-radius: 5px;
-						border-radius: 5px;
-				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-				   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-						box-shadow: 0 1px 2px rgba(0,0,0,.05);
-			}
-			.row {
-				padding-top: 20px; /* 60px to make the container go all the way to the bottom of the topbar */
-			}
-		</style>
-		<link href="/install/css/install_style.css" rel="stylesheet">
-	</head>
-
-	<body>
-
-		<nav class="navbar navbar-default navbar-static-top" role="navigation">
-			<div class="navbar-inner">
-				<div class="container-fluid">
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<a class="navbar-brand" href="/install/index.php">Hotaru CMS</a>
-					</div>
-
-					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-						<ul class="nav navbar-nav">
-						<li class="active"><a href="/install/index.php?step=1&action=install"><i class="fa fa-plus-square"></i> Install</a></li>
-						<li class=""><a href="/install/index.php?step=1&action=upgrade"><i class="fa fa-refresh"></i> Upgrade</a></li>
-						<li><a href="instruction.html"><i class="fa fa-question-circle"></i> Help</a></li>
-						<li><a href="/index.php">Site</a></li>
-					</ul>
-
-						<ul class="nav navbar-nav navbar-right">
-							<li><a href="http://forums.hotarucms.org">Forums</a></li>
-							<li><a href="http://forums.hotarucms.org/misc/contact">Contact</a></li>
-						</ul>
-					</div><!-- /.navbar-collapse -->
-				</div><!-- /.container-fluid -->
-			</div><!-- /.navbar-inner -->
-		</nav>
+<!-- Step title -->
+		<legend><?php echo $lang['install_help']; ?></legend>
 
 		<div class="container">
 
 			<div class="row">
-				<div class="col-md-9 reader">
+				<div class="col-md-9">
+                                    
+                                    <div class='panel panel-default'>
+                                        <div class="panel-heading">Your System</div>
+                                        <div class="panel-body">
+                                            <span class="label label-primary">PHP v <?php echo phpversion(); ?></span>
+                                            <?php
+                                            $php_module_not_found = false;
+                                            
+                                            foreach ($required as $module => $url) {
+                                                if (!in_array($module, $modules)) {
+                                                    echo '<span class="label label-danger">' . $module . '</span> ';
+                                                    //$h->messages[$lang['install_step4_form_check_php_warning'] . '<a href="' . $url . '" target="_blank">' . $module . '</a><br/>'] = 'red';
+                                                    $php_module_not_found = true;
+                                                } else {
+                                                    echo '<span class="label label-success">' . $module . '</span> ';
+                                                }
+                                            }
+                                            
+                                            if ($php_module_not_found) {
+                                                echo '<br/><br/>';
+                                                echo '<div class="alert alert-danger" role="alert">' . 'You have some missing modules that are required' . '</div>';
+                                            }
+                                            
+                                            ?>
+                                        </div>
+                                    </div>
 				
 					<section id="installation">
 						<legend>Installation</legend>
@@ -158,5 +127,4 @@
 				</div>
 			</div><!-- /.row -->
 		</div> <!-- /.container -->
-	</body>
-</html>
+	

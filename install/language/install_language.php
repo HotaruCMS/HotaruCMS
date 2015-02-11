@@ -89,7 +89,7 @@ $lang["install_step1_dbname_explain"] = "";
 $lang["install_step1_dbprefix"] = "<b>Database Prefix</b>";
 $lang["install_step1_dbprefix_explain"] = "Database prefix, e.g. 'hotaru_'";
 $lang["install_step1_dbhost"] = "<b>Database Host</b>";
-$lang["install_step1_dbhost_explain"] = "You probably won't need to change this";
+$lang["install_step1_dbhost_explain"] = "You probably won't need to change this. Some systems may require it to be 127.0.0.1 instead of localhost";
 
 $lang["install_step1_dbpassword_error"] = "There was a problem with the password you entered.";
 $lang["install_step1_baseurl_error"] = "There was a problem with the baseurl";
@@ -142,12 +142,16 @@ $lang["install_step3_password_match_error"] = "The password fields don't match";
 $lang["install_step3_email_error"] = "That doesn't parse as a valid email address";
 $lang["install_step3_make_note"] = "Make a note of your new username, email and password before clicking \"Next\"...";
 $lang["install_step3_update_success"] = "Updated successfully";
-$lang["install_step3_form_update"] = "Update File";
+$lang["install_step3_form_update"] = "Update Admin Settings";
+$lang["install_step3_form_update_forum_details"] = "Save Forum Login";
+$lang["install_step3_instructions_forum"] = "Optional: Link your Hotaru Forum Username and Password";
+$lang["install_step3_make_note_forum"] = "This will help with notifications for version updates";
+
 
 /* Install Step 5 */
 $lang["install_step4"] = "Step 4/4: Completion";
-$lang["install_step4_installation_complete"] = "Installation is now complete. Optional Settings";
-$lang["install_step4_installation_delete"] = "<span style='color: red;'><b>WARNING:</b> You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!</span>";
+$lang["install_step4_installation_complete"] = "Installation is now complete";
+$lang["install_step4_installation_delete"] = "<b>WARNING:</b> You <b>must</b> delete the install folder or someone else could run the install script and wipe everything!";
 
 $lang["install_step4_form_check_php"] = "Check PHP Setup";
 $lang["install_step4_form_check_php_warning"] = "Note: Your server is missing the PHP module: ";
@@ -157,3 +161,5 @@ $lang["install_step4_form_check_php_version"] = "Hotaru has not been tested on t
 
 $lang["install_step4_installation_go_play"] = "Done? Okay, go and play with your new Hotaru site!";
 $lang["install_home"] = "Get Started!";
+
+$lang["install_help"] = "Help";

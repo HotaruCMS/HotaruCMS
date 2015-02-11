@@ -289,7 +289,7 @@ class IncludeCssJs extends Prefab
 		
 		// fill "includes" array with all the files we need to merge
 		if($type == 'css') { 
-			$content_type = 'text/css';
+			//$content_type = 'text/css';
 			$includes = $this->getCssIncludes($h->adminPage);
 		} else { 
 			$type = 'js'; 

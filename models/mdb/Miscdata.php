@@ -159,4 +159,40 @@ class Miscdata extends BaseModel
     
     // scope
     
+    
+    
+    
+    // save
+    public static function update($h, $settings, $key)
+    {
+        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+        
+        $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, $key));
+    }
+    
+    
+    public static function add($h, $settings, $key)
+    {
+        $sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_updateby)"
+                . "VALUES(%s, %s, %d)";
+        
+	$h->db->query($h->db->prepare($sql, $key, $settings, $h->currentUser->id));
+    }
+
+                        
+    public static function updateUserSettingsSiteDefaults($h, $settings)
+    {
+        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+        
+        $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
+    }
+    
+    
+    public static function updateUserSettingsBaseDefaults($h, $settings)
+    {
+        $sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+			
+        $h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
+    }
+    
 }

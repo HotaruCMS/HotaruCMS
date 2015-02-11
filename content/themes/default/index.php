@@ -41,7 +41,7 @@ $announcements = $h->checkAnnouncements();
 $h->vars['theme_settings'] = $h->getThemeSettings();
 
 // plugins work here before anything is displayed. Return if overriding.
-if ($h->pluginHook('theme_index_top')) { return false; };
+if ($h->pluginHook('theme_index_top')) { return false; }
 
 // display header if not overriden by a plugin
 if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }

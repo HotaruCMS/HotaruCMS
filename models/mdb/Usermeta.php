@@ -39,4 +39,21 @@ class Usermeta extends BaseModel
         
         return $model;
     }
+    
+    
+    public static function addMeta($h, $userId, $type, $data = "")
+    {
+        $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby)"
+                . " VALUES(%d, %s, %s, %d)";
+
+        $h->db->query($h->db->prepare($sql, $userId, $type, serialize($data), $h->currentUser->id));
+    }
+    
+    
+    public static function updateMeta($h, $userId, $type, $data = "")
+    {
+        $sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
+	
+        $h->db->query($h->db->prepare($sql, serialize($data), $h->currentUser->id, $userId, $type));
+    }
 }

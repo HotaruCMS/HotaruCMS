@@ -53,7 +53,7 @@ foreach($stats as $key=>$extClass){
     <div class="row">
 	
 	<div class="col-md-3">
-	    <?php if ($stats  != null)  { ?>
+	    <?php if ($users  != null)  { ?>
 		<div class="statbox">
 		    <div class="title">
 			<span class="label label-success pull-right">Monthly</span>
@@ -140,8 +140,7 @@ foreach($stats as $key=>$extClass){
 	    <?php
 			               
 	    $hotaru_latest_version = $h->miscdata('hotaru_latest_version');                
-	    if (version_compare($hotaru_latest_version, $h->version) == 1) {
-		?>			
+	    if (version_compare($hotaru_latest_version, $h->version) == 1) { ?>			
 		<div class="statbox danger">
 		    <div class="title">
 			<span class="label label-danger pull-right">Update</span>
@@ -151,23 +150,21 @@ foreach($stats as $key=>$extClass){
 			<?php $h->showMessage('A newer version of Hotaru CMS is available, v.' . $hotaru_latest_version . '. <a href="http://forums.hotarucms.org/resources/hotaru-cms-core.4/" class="alert-link">upgrade now</a>', 'alert-info');   ?>
 		    </div>
 		</div>
-			
 	    <?php			                                                 
-	    } else {
-		?>			
+	    } else { ?>			
 		<div class="statbox danger">
 		    <div class="title">        
 			<span class="label label-success pull-right"><i class='fa fa-check'></i></span>
 			<h5>Software</h5>
 		    </div>
 		    <div class="content">
-			<div>Hotaru CMS <?php echo $h->version; ?></div>   
-			<?php echo $h->lang("admin_theme_version_latest_version_installed"); ?>
+			<div>Hotaru CMS v <?php echo $h->version; ?></div>   
+                        <div><?php echo $h->lang("admin_theme_version_latest_version_installed"); ?></div>
+                        <div>PHP v <?php echo phpversion(); ?></div>
 		    </div>
 		</div>			
 	    <?php	                            
-	    }
-	    ?>
+	    } ?>
 	</div>
     </div>
 </div>

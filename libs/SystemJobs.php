@@ -368,6 +368,12 @@ class SystemJobs extends Prefab
     public function cronGetSchedules($h)
     {
 	    $schedules = array(
+                    'every1min' => array( 'interval' => 60, 'display' => 'Every 1 Minute' ),
+                    'every5min' => array( 'interval' => 300, 'display' => 'Every 5 Minutes' ),
+                    'every10min' => array( 'interval' => 600, 'display' => 'Every 10 Minutes' ),
+                    'every15min' => array( 'interval' => 900, 'display' => 'Every 15 Minutes' ),
+                    'every20min' => array( 'interval' => 1200, 'display' => 'Every 20 Minutes' ),
+                    'every30min' => array( 'interval' => 1800, 'display' => 'Every 30 Minutes' ),
 		    'hourly' => array( 'interval' => 3600, 'display' => 'Once Hourly' ),
 		    'twicedaily' => array( 'interval' => 43200, 'display' => 'Twice Daily' ),
 		    'daily' => array( 'interval' => 86400, 'display' => 'Once Daily' ),

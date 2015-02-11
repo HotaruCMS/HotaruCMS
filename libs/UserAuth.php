@@ -34,6 +34,9 @@ class Authorization
 	 */
 	public static function checkSession($h)
 	{       
+                // user_signin throws out killspammed, banned and suspended users
+                $h->pluginHook('userauth_checkcookie_success');
+                
                 // Check Session first
                 $user = isset($_SESSION["hotaru_user"]) ? $_SESSION["hotaru_user"] : false;
                 if ($user) {
@@ -92,9 +95,6 @@ class Authorization
                 $h->updateUserLastVisit();
                 //$h->messages['added new cookie and login'] = 'red';
                 
-                // user_signin throws out killspammed, banned and suspended users
-                $h->pluginHook('userauth_checkcookie_success');
-		
                 return true;
 	}
         
@@ -195,7 +195,7 @@ class Authorization
                             // save cookie
                             self::setCookie($h, $rememberMe);
                         } else {
-                            $h->messages['Could not login'] = 'red';
+                            //$h->messages['Could not login'] = 'red';
                         }
 
                 }  elseif ($plugin_result) {
@@ -250,16 +250,16 @@ class Authorization
         
         public function externalSignIn($loginInfo, $rememberMe = false)
         {
-            $user = $h->getUserBasic($loginInfo->login);
-            $h->setCurrentUser($user);
-            
-            if (!user) {
-                return false;
-            }
-
-            if ($user->isLockedOut) {
-                return false;  // or a locked out status
-            }
+//            $user = $h->getUserBasic($loginInfo->login);
+//            $h->setCurrentUser($user);
+//            
+//            if (!user) {
+//                return false;
+//            }
+//
+//            if ($user->isLockedOut) {
+//                return false;  // or a locked out status
+//            }
 
             //return self::SignInOrTwoFactor($user, $rememberMe);
         }

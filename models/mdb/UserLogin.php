@@ -65,4 +65,6 @@ class UserLogin extends BaseModel
 
         $h->db->query($h->db->prepare($sql, $userId));
     }
+    
+    
 }

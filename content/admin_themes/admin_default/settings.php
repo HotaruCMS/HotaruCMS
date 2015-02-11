@@ -36,6 +36,7 @@ $h->showMessages();
     <ul id="myTab" class="nav nav-tabs" role="tablist">
       <li class="active"><a href="#main" role="tab" data-toggle="tab">Main</a></li>
       <li><a href="#performance" role="tab" data-toggle="tab">Performance</a></li>
+      <li><a href="#mail" role="tab" data-toggle="tab">Mail</a></li>
 <!--      <li><a href="#spam" role="tab" data-toggle="tab">Spam</a></li>-->
       <li><a href="#security" role="tab" data-toggle="tab">Security</a></li>
 <!--      <li><a href="#notifications" role="tab" data-toggle="tab">Notifications</a></li>-->
@@ -51,7 +52,7 @@ $h->showMessages();
     $active = " active";
 
     $names = array(
-        'Main', 'Performance', 'Spam', 'Security', 'Notifications'      
+        'Main', 'Performance', 'Mail', 'Security', 'Notifications'      
      );
 
     echo '<div class="tab-content">';

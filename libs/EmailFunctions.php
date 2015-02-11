@@ -58,7 +58,7 @@ class EmailFunctions extends Prefab
 	/**
 	 * Send emails - Note: properties must be set before calling this function
 	 */
-	public function doEmail()
+	public function doEmail($h)
 	{
 		if (!$this->body) { return false; }
 		
@@ -82,7 +82,8 @@ class EmailFunctions extends Prefab
 
 			// set content type to work with French accents, etc.
 			if (!isset($this->headers['Content-Type'])) {
-				$this->headers['Content-Type'] = 'text/hmtl; charset=UTF-8';
+				$this->headers['Content-Type'] = 'text/html; charset=UTF-8';
+                                
 			}
 		} else {
 			// if not using SMTP and no headers passed to this function, use default
@@ -118,7 +119,7 @@ class EmailFunctions extends Prefab
 				break;
 			default:
 				if (SMTP == 'true') {
-					$this->doSmtpEmail();
+					$this->doSmtpEmail($h);
 				} else {
 					$sentmail = mail($this->to, $this->subject, $this->body, $this->headers);					
 				}
@@ -129,19 +130,19 @@ class EmailFunctions extends Prefab
 	/**
 	 * Send email using SMTP authentication and SSL Encryption
 	 */
-	public function doSmtpEmail()
+	public function doSmtpEmail($h)
 	{
 		//  Only create a new smtp object if we don't already have one:
 		if (!is_object($this->smtp)) {
-			$smtp_array = array (
-				'host' => SMTP_HOST, 
-				'port' => SMTP_PORT,
-				'auth' => true, 
-				'username' => SMTP_USERNAME, 
-				'password' => SMTP_PASSWORD
-			); 
+//			$smtp_array = array (
+//				'host' => SMTP_HOST, 
+//				'port' => SMTP_PORT,
+//				'auth' => true, 
+//				'username' => SMTP_USERNAME, 
+//				'password' => SMTP_PASSWORD
+//			); 
 		
-			require EXTENSIONS. 'phpMailer/PHPMailerAutoload.php';
+			require_once EXTENSIONS. 'phpMailer/PHPMailerAutoload.php';
 			$mail = new \PHPMailer;
 			
 			$mail->isSMTP();                                // Set mailer to use SMTP
@@ -151,6 +152,7 @@ class EmailFunctions extends Prefab
 			$mail->Password = SMTP_PASSWORD;                // SMTP password
 			$mail->SMTPSecure = 'tls';                      // Enable TLS encryption, `ssl` also accepted
 			$mail->Port = SMTP_PORT;                        // TCP port to connect to
+                        $mail->CharSet = 'UTF-8';
 
                         if ($this->isHtml) { 
                             $mail->IsHTML(true); 
@@ -164,6 +166,15 @@ class EmailFunctions extends Prefab
 		$mail->FromName = $this->headers['From'];
 		
 		if(!$mail->send()) {
+                    $content  = "The following email likely wasn't sent as there was an error in EmailFunctions.php:\r\n\r\n";
+                    //$content .= var_export($mail->getMessage(), true) . "\r\n\r\n";
+                    $content .= var_export($this->headers, true) . "\r\n" . var_export($mail->Subject, true) . "\r\n" . var_export($this->body, true) . "\r\n\r\n";
+                    $content .= $mail->ErrorInfo . '\r\n';
+                    $content .= "**************************************************************\r\n\r\n";
+                    $h->openLog('error_log');
+                    $h->writeLog('error_log', $content);
+                    $h->closeLog('error_log');
+                    //$h->writeLog('error', $h->lang('mail_error_mailer_error') . $mail->ErrorInfo);
                     //$h->messages[$h->lang('mail_error_message_not_sent')] = 'red';  
                     //$h->messages[$h->lang('mail_error_mailer_error')] . $mail->ErrorInfo = 'red'; 		    
 		} else {

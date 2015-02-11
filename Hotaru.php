@@ -5,7 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
-        protected $version = '1.7.1';  // Hotaru CMS version       
+        protected $version = '1.7.2';  // Hotaru CMS version       
         
         /**
 	 * CONSTRUCTOR - Initialize
@@ -109,7 +109,7 @@ class Hotaru extends Initialize
                                 // check access by http access
                                 
                                 // go to api class to extract data for this call
-                                //$this->apiCall();
+                                $this->apiCall();
                                 
                                 break;
                         case 'install':
@@ -327,13 +327,19 @@ class Hotaru extends Initialize
 
                 $result = $this->pluginHook('api_call', $method, $action);
                 
-                // got to extract the right array and items for this call
-                // we should try catch this to make sure no problems exist
+                // log
+                $content = 'IP: ' . $this->cage->server->testIp('REMOTE_ADDR') . ' URI: ' . $this->cage->server->sanitizeTags('REQUEST_URI') . '. Result: ' . var_export($result);
+                $this->openLog('api_log');
+                $this->writeLog('api_log', $content);
+                $this->closeLog('api_log');
+                
+                // extract the right array and items for this call
+                // try catch this to make sure no problems exist
                 $arrayName = ucfirst($method) . '_api_call';  
                 
                 try {
-                    if (isset($result[$arrayName]) && isset($result[$arrayName]->items)) {
-                        $result = array('error' => '', 'items' => $result[$arrayName]->items);
+                    if ($result) {
+                        $result = array('error' => '', 'data' => $result);
                     } else {
                         $result = array('error' => 'data error');
                     }
@@ -571,7 +577,7 @@ class Hotaru extends Initialize
         
         public function newUserAuth()
         {
-                return new UserBase();
+                return UserBase::instance();
         }
         
         
@@ -624,6 +630,18 @@ class Hotaru extends Initialize
         public function getUserLogins($userId)
         {
                 return \Hotaru\Models2\UserLogin::getLogins($this, $userId);
+        }
+        
+        
+        public function deleteUserLogin($userId, $key)
+        {
+                return \Hotaru\Models2\UserLogin::removeLogin($this, $userId, $key);
+        }
+        
+        
+        public function deleteUserLogins($userId)
+        {
+                return \Hotaru\Models2\UserLogin::removeLogins($this, $userId);
         }
 	
 	/**
@@ -1356,19 +1374,19 @@ class Hotaru extends Initialize
                         // for old themes that dont split between loading js and css
                         //if ($this->vars['framework']['bootstrap-js'])
                             //$this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');  
-                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>";
+                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>";
                             
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
                         $this->includes->includeCombined($this, $version_js, $version_css, $this->adminPage);                               	                        
                         
                         // only load jquery if we havent already loaded it
-                        if (!isset($h->vars['framework']['jquery'])) {
+                        if (!isset($this->vars['framework']['jquery'])) {
                             echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
-                            $h->vars['framework']['jquery'] = true;                            
+                            $this->vars['framework']['jquery'] = true;                            
                         }
                         
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>'; 
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.js"></script>'; 
                         echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
                         echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
 
@@ -1377,14 +1395,14 @@ class Hotaru extends Initialize
                         
                         // for better caching we should send this js file separately to hotarus combined js
                         if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js']) {
-                            echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' type='text/css' /></script>";
+                            echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js' type='text/css' /></script>";
                             //echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
                         }
                           
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);  
                         
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.min.js"></script>'; 
+                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.js"></script>'; 
                         echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
                         echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
 
@@ -1395,9 +1413,9 @@ class Hotaru extends Initialize
                         
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
                         // only load jquery if we havent already loaded it
-                        if (!isset($h->vars['framework']['jquery'])) {
+                        if (!isset($this->vars['framework']['jquery'])) {
                             echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
-                            $h->vars['framework']['jquery'] = true;                            
+                            $this->vars['framework']['jquery'] = true;                            
                         }
                         
                         break;
@@ -1475,7 +1493,7 @@ class Hotaru extends Initialize
                 // then css files
                 switch ($file) {
                     case 'bootstrap3':                        
-                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css' type='text/css' />\n";
+                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
                         break;
                     case 'bootstrap':                        
@@ -1485,7 +1503,7 @@ class Hotaru extends Initialize
                     case 'bootstrap-lite':          
                         if (!isset($this->vars['framework']['bootstrap']) || !$this->vars['framework']['bootstrap']) {
                             echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-lite.min.css' type='text/css' />\n";
-                            $h->vars['framework']['bootstrap'] = true;
+                            $this->vars['framework']['bootstrap'] = true;
                         }
                         break;
                     case 'bootstrap-responsive':                        
@@ -1493,15 +1511,15 @@ class Hotaru extends Initialize
                         echo "<link rel='stylesheet' href='" . BASEURL . "libs/frameworks/bootstrap/css/bootstrap-responsive.min.css' type='text/css' />\n";
                         break;
                     case 'none':
-                        $h->vars['framework']['bootstrap'] = true;  // trick it into thinking we already have this done
+                        $this->vars['framework']['bootstrap'] = true;  // trick it into thinking we already have this done
                         break;
                     default:
                         //echo 'framework css incorrect params : ' . $file;
                         break;
                 }   
                 
-                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote.css" type="text/css" />';                
-                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.5.2/summernote-bs3.css" type="text/css" />';
+                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.css" type="text/css" />';                
+                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote-bs3.min.css" type="text/css" />';
                 echo '<link href="//cdn.jsdelivr.net/animatecss/3.2.0/animate.min.css" rel="stylesheet">';
          }
      
@@ -2683,7 +2701,7 @@ class Hotaru extends Initialize
 	 * @param string $type - default is "email", but you can write to a "log" file, print to "screen" or "return" an array of the content
 	 * @return array|false - only if $type = "return"
 	 */
-	public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email', $isHtml = false)
+	public function email($to = '', $subject = '', $body = '', $headers = '', $type = 'email', $isHtml = true)
 	{
 		if (!is_object($this->email)) { 
 			$this->email = EmailFunctions::instance();
@@ -2696,7 +2714,7 @@ class Hotaru extends Initialize
 		$this->email->type = $type;
                 $this->email->isHtml = $isHtml;
 		
-		return $this->email->doEmail();
+		return $this->email->doEmail($this);
 	}
 	
 	

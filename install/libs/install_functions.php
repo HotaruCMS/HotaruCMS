@@ -78,6 +78,7 @@ function drop_table($table_name)
 	$db->query("DROP TABLE " . $table_name);
 }
 
+
 function urlLang($h)
 {
         $pageURL = 'http';
@@ -128,6 +129,7 @@ function template($h, $template, $args = array())
 {
         global $lang;
         global $currentLang;
+        global $action;
 
         // check for any vars being passed in
         extract($args);
@@ -157,3 +159,13 @@ function upgrade_check($h, $old_version, $show_next)
         ));	
 }
 
+function createCacheFolders()
+{
+        $dirs = array('debug_logs/' , 'db_cache/', 'css_js_cache/', 'html_cache/', 'rss_cache/', 'lang_cache/'); 
+
+	foreach ($dirs as $dir) {
+	    if (!is_dir(CACHE . $dir)) {
+		mkdir(CACHE . $dir);
+	    }
+	}
+}
