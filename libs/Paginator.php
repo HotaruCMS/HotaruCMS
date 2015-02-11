@@ -101,7 +101,7 @@ class Paginator extends Prefab
 		// get full url from address bar
 		$host = $h->cage->server->sanitizeTags('HTTP_HOST');
 		$uri = $h->cage->server->sanitizeTags('REQUEST_URI');
-		$path = "http://" . $host  . $uri;
+		$path = "//" . $host  . $uri;
 		
 		// if it doesn't contain $head, then it must be a friendly url 
 		if ($path != SITEURL && !strrpos($path, $head)) {
@@ -132,6 +132,9 @@ class Paginator extends Prefab
 		
 		$this->totalPages = $this->countTotalPages();
 		
+                // don't show the 1 if there's only 1 page
+                if ($this->totalPages == 1) { return false; }
+     
 		//write statement that handles the previous and next phases
 		//if it is not the first page then write previous to the screen
 		if (!$this->isFirstPage()) {
@@ -165,8 +168,7 @@ class Paginator extends Prefab
 			
 			if ($i == $currentPage) {
 				$str .= "<li class='active'><span>$i</span></li>\n";
-			}
-			else {
+			} else {
 				$link = $path . '&pg=' . $i;
 				$link = str_replace('?&', '?', $link); // we don't want an ampersand directly after a question mark
 				$str .= "<li><a class='pagi_page' href='" . $link . "'>$i</a></li>\n";
@@ -266,4 +268,3 @@ class Paginator extends Prefab
 		return ceil($this->totalItems / $this->itemsPerPage);
 	}
 }
-?>

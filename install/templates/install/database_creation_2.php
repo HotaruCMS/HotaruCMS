@@ -49,9 +49,9 @@
 		?>
 		<div class='form-actions'>
 			<!-- Previous/Next buttons -->
-			<a href='index.php?step=1' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
+			<a href='index.php?action=install&step=1' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
 			<?php if ($show_next) { // and if db was connected ok ?>
-				<a href='index.php?step=3' class='btn btn-default pull-right' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
+				<a href='index.php?action=install&step=3' class='btn btn-default pull-right' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
 			<?php } else { // link disbaled ?>		    
 				<a class='btn btn-default disabled pull-right' href='#' role='button'><?php echo $lang['install_next']; ?> <i class='fa fa-arrow-right'></i></a>
 			<?php } ?>

@@ -69,6 +69,9 @@ class AdminPages extends Prefab
                         case "pages_management":
                                 $h->vars['admin_pages_array'] = $this->getPages($h);
 				break;
+                        case "pages_management_edit":
+                                $h->vars['admin_edit_page'] = $h->cage->get->testAlnumLines('filename');
+				break;
 			case "plugin_management":
                                 $h->vars['admin_settings'] = $this->settings($h);
 				$this->adminPlugins($h);

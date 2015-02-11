@@ -748,7 +748,7 @@ class PluginManagement extends Prefab
          */
         public function pluginReorder($h, $sort = '')
         {
-            if (!$sort) return false;
+            if (!$sort) { return false; }
 
             $base_plugins = array('Bookmarking', 'Categories', 'Widgets', 'User Signin', 'Users', 'Gravatar');
 
@@ -921,7 +921,7 @@ class PluginManagement extends Prefab
                     }
                 }
                 
-                if ($this->fileCheckCurlConnection($url, $resourceFile, $username, $password) == 200) {
+                if ($this->fileCheckCurlConnection($h, $url, $resourceFile, $username, $password) == 200) {
                     $h->messages['File succesfully located on remote plugin server'] = 'alert-success';
 		    if ($write = is_writeable($copydir)) {			
                         //if ($h->debug) $h->messages['we will use php for file copy'] = 'alert-info';
@@ -965,7 +965,7 @@ class PluginManagement extends Prefab
 		}
 	}
 
-	public function fileCheckCurlConnection($url, $file, $username, $password)
+	private function fileCheckCurlConnection($h, $url, $file, $username, $password)
 	{
                 // create a new CURL resource and login to forum for cookie
                 $ch = $h->loginForum($username, $password);

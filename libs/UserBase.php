@@ -816,12 +816,20 @@ class UserBase extends Prefab
 		$result = $this->getProfileSettingsData($h, $type, $userid, true);
 		
 		if (!$result) {
-			$sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-			$h->db->get_row($h->db->prepare($sql, $userid, $type, serialize($data), $h->currentUser->id));
+                        \Hotaru\Models2\Usermeta::addMeta($h, $userid, $type, $data);
+			//$sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
+			//$h->db->query($h->db->prepare($sql, $userid, $type, serialize($data), $h->currentUser->id));
 		} else {
-			$sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
-			$h->db->get_row($h->db->prepare($sql, serialize($data), $h->currentUser->id, $userid, $type));
+                        \Hotaru\Models2\Usermeta::updateMeta($h, $userid, $type, $data);
+			//$sql = "UPDATE " . TABLE_USERMETA . " SET usermeta_value = %s, usermeta_updateby = %d WHERE usermeta_userid = %d AND usermeta_key = %s";
+			//$h->db->query($h->db->prepare($sql, serialize($data), $h->currentUser->id, $userid, $type));
 		}
+                
+                // reset session to get permissions updated
+                if ($h->displayUser->id == $h->currentUser->id) {
+                    @session_start();
+                    $_SESSION["hotaru_user"] = $h->displayUser;
+                }
 		
 		return true;
 	}
@@ -861,12 +869,14 @@ class UserBase extends Prefab
 		
 		if ($type == 'site') {
 			// update the site defaults
-			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
-			$h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
+                        \Hotaru\Models2\Miscdata::updateUserSettingsSiteDefaults($h, $settings);
+			//$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+			//$h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
 		} elseif ($type == 'base') {
 			// update the base defaults
-			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
-			$h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
+                        \Hotaru\Models2\Miscdata::updateUserSettingsBaseDefaults($h, $settings);
+			//$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_default = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+			//$h->db->query($h->db->prepare($sql, $settings, $h->currentUser->id, 'user_settings'));
 		}
 	}
 
@@ -980,15 +990,14 @@ class UserBase extends Prefab
                 $result = \Hotaru\Models2\Miscdata::getCurrentValue($h, 'custom_roles');
 
 		// update or insert accordingly 
-		if ($result)
-		{
-			$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
-			$h->db->query($h->db->prepare($sql, serialize($custom_roles), $h->currentUser->id, 'custom_roles'));
-		} 
-		else 
-		{
-			$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_updateby) VALUES(%s, %s, %d)";
-			$h->db->query($h->db->prepare($sql, 'custom_roles', serialize($custom_roles), $h->currentUser->id));
+		if ($result) {
+                        \Hotaru\Models2\Miscdata::update($h, serialize($custom_roles), 'custom_roles');
+			//$sql = "UPDATE " . TABLE_MISCDATA . " SET miscdata_value = %s, miscdata_updateby = %d WHERE miscdata_key = %s";
+			//$h->db->query($h->db->prepare($sql, serialize($custom_roles), $h->currentUser->id, 'custom_roles'));
+		} else {
+                        \Hotaru\Models2\Miscdata::add($h, serialize($custom_roles), 'custom_roles');
+			//$sql = "INSERT INTO " . TABLE_MISCDATA . " (miscdata_key, miscdata_value, miscdata_updateby) VALUES(%s, %s, %d)";
+			//$h->db->query($h->db->prepare($sql, 'custom_roles', serialize($custom_roles), $h->currentUser->id));
 		}
 
 		// Next, update Hotaru's base permissions

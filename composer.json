@@ -13,7 +13,8 @@
         }
     ],
     "require": {        
-        "php": ">=5.2.0"
+        "php": ">=5.2.0",
+        "phpwhois/phpwhois":"~4.0"
     },
     "autoload": {
         "classmap": [

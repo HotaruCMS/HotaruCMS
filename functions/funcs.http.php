@@ -204,4 +204,107 @@ function getStatusCodeMessage($status)
     );
     return (isset($codes[$status])) ? $codes[$status] : '';
 }
-?>
+
+ /**
+* Validate domain exists
+*
+* @param $domain - domain to check
+* @param $return host - if true, will return the host name
+* $return bool or host string
+*/
+function verifyDomain($h, $domain, $return_host = true)
+{
+    // from http://stackoverflow.com/questions/1755144/how-to-validate-domain-name-in-php
+    if (!filter_var(gethostbyname($domain), FILTER_VALIDATE_IP) && !filter_var(gethostbyname($domain), FILTER_VALIDATE_URL)) {
+        $h->messages[$h->lang('global_functions_error_message_no_such_domain')] = "red";
+        return false;
+    }
+
+    if ($return_host) {
+        $parsed_url = parse_url($domain, PHP_URL_HOST);
+
+        // if it came in just as the domain, we will return that as, otherwise, it will be false
+        if (!$parsed_url) { $parsed_url = $domain; }
+
+        $check = is_ip($parsed_url);
+        $host = $parsed_url;
+
+        if (!$check) {
+          $host = !$host ? domain($host) : domain($domain);
+        }
+
+        // this function doesn't work so good - kludge
+        if (substr($host, 0, 1) == '.') { $host = substr($host, 1); }
+
+        // we don't need to verify ourselves
+        if ($host == SITEURL ) { return $host; }
+
+        // from http://sourceforge.net/projects/phpwhois/?source=dlp
+        //include(EXTENSIONS . 'phpwhois/whois.main.php');
+        $whois = new Whois();
+
+        $whois->deep_whois = false;
+        $result = $whois->Lookup($host,false);
+
+        if (isset($result['regrinfo']['registered']) && $result['regrinfo']['registered'] == 'yes') {
+            // if host starts with www, we will remove
+            if (substr(strtolower($host), 0, 4) === 'www.') {
+                 $host = substr($host, 4);
+            }
+            return $host;
+        } 
+        
+        $h->messages[$h->lang('global_functions_error_message_no_such_domain')] = "red";
+        return false;
+    }
+
+    return true;
+}
+
+
+// adopted from http://www.php.net/manual/en/function.parse-url.php#104874
+function is_ip($ip_addr)
+{
+    // first of all the format of the ip address is matched
+    if (preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/", $ip_addr)) {
+        // now all the intger values are separated
+        $parts = explode(".", $ip_addr);
+
+        // now we need to check each part can range from 0-255
+        foreach ($parts as $ip_parts) {
+            //if number is not within range of 0-255
+            if (intval($ip_parts) > 255 || intval($ip_parts) < 0) { return false; }
+        }
+        return true;
+    } 
+    
+    return false;   
+}
+
+
+function domain($domainb)
+{
+    $bits = explode('/', $domainb);
+
+    if ($bits[0] == 'http:' || $bits[0] == 'https:') {
+        $domainb = $bits[2];
+    } else {
+        $domainb = $bits[0];
+    }
+
+    unset($bits);
+    $bits = explode('.', $domainb);
+    $idz = count($bits);
+    $idz -= 3;
+
+    if (strlen($bits[($idz + 2)]) == 2) {
+        $bits_idz = isset($bits[$idz]) ? $bits[$idz] :  '';
+        $url = $bits_idz . '.' . $bits[($idz + 1)] . '.' . $bits[($idz + 2)];
+    } elseif (strlen($bits[($idz + 2)]) == 0) {
+         $url = $bits[($idz)] . '.' . $bits[($idz + 1)];
+    } else {
+        $url = $bits[($idz + 1)] . '.' . $bits[($idz + 2)];
+    }
+
+    return $url;
+}

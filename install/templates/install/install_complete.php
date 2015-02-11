@@ -10,12 +10,13 @@
 					<span class='sr-only'>100% Complete</span>
 				</div>
 			</div>
-                        <?php echo $lang['install_step4_installation_delete']; ?>
-                        
+                        You can optionally install some plugins here
 		</div>
 
 		<!-- Step content -->
 		<?php
+                
+                //$activePluginsCount = $h->plugins();
                 
                 $plugman = Libs\PluginManagement::instance();
                 $pluginArray = $plugman->getPluginsArray($h);
@@ -24,7 +25,7 @@
                 $recommend2 = array('gravatar', 'category_manager', 'search', 'tags', 'post_manager', 'user_manager', 'comment_manager', 'akismet', 'related_posts');
                 
                 echo '<div class="panel panel-default">';
-                echo '<div class="panel-heading">Available Plugins</div>';
+                echo '<div class="panel-heading">Available Plugins in folder <code>/content/plugins</code></div>';
                 echo '<div class="panel-body">';
 
                 if ($pluginArray) {
@@ -53,8 +54,8 @@
                 
                 <div class='row'>
                     <div class='col-md-12'>
-                        <input class="btn btn-success btn-sm" type="button" onclick="installPlugins(1)" value="Install Top Recommended Plugins">&nbsp;&nbsp;
-                        <input class="btn btn-primary btn-sm" type="button" onclick="installPlugins(2)" value="Install Secondary Recommended Plugins">&nbsp;&nbsp;    
+                        <button class="btn btn-success btn-sm" type="button" onclick="installPlugins(1)"><i class="fa fa-save"></i>&nbsp;&nbsp;Click to install Top Recommended Plugins</button>&nbsp;&nbsp;
+                        <button class="btn btn-primary btn-sm" type="button" onclick="installPlugins(2)"><i class="fa fa-save"></i>&nbsp;&nbsp;Click to install Secondary Recommended Plugins</button>
                     </div>
                 </div>
                 
@@ -67,7 +68,7 @@
 				$h->showMessages();        
 			} else {
 		?>	
-			<form role='form' name='install_admin_reg_form' action='index.php?step=4' method='post'>    
+			<form role='form' name='install_admin_reg_form' action='index.php?action=install&step=4' method='post'>    
 				<input type='hidden' name='phpinfo' value='true' />
 				<input type='hidden' name='step' value='4' />
 				<input class='update btn btn-default' type='submit' value='<?php echo $lang['install_step4_form_check_php']; ?>' />
@@ -75,10 +76,14 @@
 			</form>
                         <br/>
 		<?php } ?>
+                        
+                <div class='alert alert-danger' role='alert'>
+                    <i class="fa fa-warning"></i>&nbsp;<?php echo $lang['install_step4_installation_delete']; ?>
+                </div>
                 
 		<div class='form-actions'>
 			<!-- Previous/Next buttons -->
-			<a href='index.php?step=3' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
+			<a href='index.php?action=install&step=3' class='btn btn-default' role='button'><i class='fa fa-arrow-left'></i> <?php echo $lang['install_back']; ?></a>
 			<a href='<?php echo BASEURL; ?>index.php' class='btn btn-success pull-right' role='button'><?php echo $lang['install_home']; ?> <i class='fa fa-arrow-right'></i></a>
 		</div>
                         

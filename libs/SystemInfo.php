@@ -510,10 +510,12 @@ class SystemInfo extends Prefab
 	 */
 	public function logSystemReport($h, $report = NULL)
 	{
+                $siteUrl = isset($report['hotaru_SITEURL']) ? $report['hotaru_SITEURL'] : 'unkown';
+            
 		$output = "\n\n";
 		
 		$output .= "Name: " . $report['hotaru_site_name'] . "\n";
-		$output .= "URL: " . $report['hotaru_SITEURL'] . "\n";
+		$output .= "URL: " . $siteUrl . "\n";
 		$output .= "Hotaru version: " . $report['hotaru_version'] . "\n";
 		$output .= "Hotaru version in database: " . $report['hotaru_version_db'] . "\n";
 		$output .= "PHP version: " . $report['php_version'] . "\n";

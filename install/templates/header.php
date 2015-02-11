@@ -37,9 +37,9 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="/install/index.php?step=1&action=install"><i class="fa fa-plus-square"></i> <?php echo $lang['install_new2']; ?></a></li>
-						<li class=""><a href="/install/index.php?step=1&action=upgrade"><i class="fa fa-refresh"></i> <?php echo $lang['install_upgrade2']; ?></a></li>
-						<li><a href="./templates/instruction.html"><i class="fa fa-question-circle"></i> Help</a></li>
+						<li class="<?php echo $action == 'install' ? 'active' : '' ?>"><a href="/install/index.php?step=1&action=install"><i class="fa fa-plus-square"></i> <?php echo $lang['install_new2']; ?></a></li>
+						<li class="<?php echo $action == 'upgrade' ? 'active' : '' ?>"><a href="/install/index.php?step=1&action=upgrade"><i class="fa fa-refresh"></i> <?php echo $lang['install_upgrade2']; ?></a></li>
+						<li class="<?php echo $action == 'help' ? 'active' : '' ?>"><a href="/install/index.php?action=help"><i class="fa fa-question-circle"></i> Help</a></li>
 						<li><a href="/index.php">Site</a></li>
 					</ul>
 

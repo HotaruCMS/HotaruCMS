@@ -1,0 +1,62 @@
+[
+    {
+        "name": "phpwhois/phpwhois",
+        "version": "v4.2.5",
+        "version_normalized": "4.2.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/phpWhois/phpWhois.git",
+            "reference": "45f46482d8197ec18f5fff47d2b51d422af9c7a4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/phpWhois/phpWhois/zipball/45f46482d8197ec18f5fff47d2b51d422af9c7a4",
+            "reference": "45f46482d8197ec18f5fff47d2b51d422af9c7a4",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "suggest": {
+            "lib-openssl": "*"
+        },
+        "time": "2014-12-30 17:09:58",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "src/whois.main.php",
+                "src/whois.utils.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Mark Jeftovic",
+                "email": "markjr@easydns.com"
+            },
+            {
+                "name": "David Saez Padros",
+                "email": "david@ols.es"
+            },
+            {
+                "name": "Ross Golder",
+                "email": "ross@golder.org"
+            },
+            {
+                "name": "Dmitry Lukashin",
+                "email": "dmitry@lukashin.ru"
+            }
+        ],
+        "description": "phpWhois - library for querying whois services and parsing results. Based on phpwhois.org",
+        "homepage": "http://phpwhois.pw",
+        "keywords": [
+            "php",
+            "phpwhois",
+            "whois"
+        ]
+    }
+]

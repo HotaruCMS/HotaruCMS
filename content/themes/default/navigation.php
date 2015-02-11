@@ -91,6 +91,14 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                         if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
                             $h->adminNav();
                         } ?>
+                        <?php
+                            if ($h->currentUser->getPermission('can_do_messaging') != 'no' && isset($h->vars['messages_waiting']) && $h->vars['messages_waiting'] > 0) { ?>
+                                <li>
+                                    <a href='<?php echo $h->url(array('page'=>'inbox', 'user'=>$h->currentUser->name)); ?>' title='<?php echo $h->lang('messaging_unread_messages_announcement'); ?>'>
+                                        <i class='fa fa-envelope'></i>
+                                    </a>
+                                </li>
+                        <?php } ?>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">
                                 <span id="">
