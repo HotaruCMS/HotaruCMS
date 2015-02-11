@@ -12,7 +12,10 @@ env:
 before_script:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
+  - chmod -R 777 cache
   - mysql -e 'create database myapp_test;'
+  - mysql myapp_test < install/index.php?action=install&step=2;
+  
   
 services:
   - memcached
