@@ -105,6 +105,7 @@ class Language extends Prefab
 				$this->addLanguageFile($h, $file2);
 			}
 
+                        // TODO remove following and test
 			// Add new language to our lang property
 			if (isset($lang)) {
 				foreach($lang as $l => $text) {

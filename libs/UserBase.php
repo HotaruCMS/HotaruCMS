@@ -322,17 +322,17 @@ class UserBase extends Prefab
 				$error = 1;
 			}
 			
-			$username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
-			if (!$username_check) {
-				$h->messages[$h->lang('main_user_account_update_username_error')] = 'red';
-				$error = 1;
-			} elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
-				$h->messages[$h->lang('main_user_account_update_username_exists')] = 'red';
-				$error = 1;
-			} else {
-				//success
-				$viewee->name = $username_check;
-			}
+//			$username_check = $h->cage->post->testUsername('username'); // alphanumeric, dashes and underscores okay, case insensitive
+//			if (!$username_check) {
+//				$h->messages[$h->lang('main_user_account_update_username_error')] = 'red';
+//				$error = 1;
+//			} elseif($h->nameExists($username_check, '', $viewee->id) || $h->isBlocked('user', $username_check)) {
+//				$h->messages[$h->lang('main_user_account_update_username_exists')] = 'red';
+//				$error = 1;
+//			} else {
+//				//success
+//				$viewee->name = $username_check;
+//			}
 			
 			$email_check = $h->cage->post->testEmail('email');
 			if (!$email_check) {
