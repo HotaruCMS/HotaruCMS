@@ -371,9 +371,9 @@ class UserBase extends Prefab
 			
 			// If we've just edited our own account, let's refresh the cookie so it uses our latest username:
 			if ($h->currentUser->id == $h->cage->post->testInt('userid')) {
-				$h->setCookie($h, false);           // delete the cookie
-				$h->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
-				$h->setCookie($h, true);            // create a new, updated cookie
+				$h->setCookie(false);           // delete the cookie
+				$h->getUser($h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->setCookie(true);            // create a new, updated cookie
 			}
 		}
 		
@@ -389,9 +389,9 @@ class UserBase extends Prefab
 				$viewee->updateUserBasic($h, $userid);
 				// only update the cookie if it's your own account:
 				if ($userid == $this->id) { 
-				$h->setCookie($h, false);           // delete the cookie
-				$h->getUser($h, $h->currentUser->id, '', true);    // re-read the database record to get updated info
-				$h->setCookie($h, true);            // create a new, updated cookie
+				$h->setCookie(false);           // delete the cookie
+				$h->getUser($h->currentUser->id, '', true);    // re-read the database record to get updated info
+				$h->setCookie(true);            // create a new, updated cookie
 				}
 				$h->messages[$h->lang('main_user_account_update_success')] = 'green';
 			} else {

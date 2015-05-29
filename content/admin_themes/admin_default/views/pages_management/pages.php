@@ -27,11 +27,7 @@
             $page = trim($file, '.php');
             echo "<li>";
             echo "<a href='" . $h->urlPage($page) . "' target='_blank'>" . $page . "</a>";
-<<<<<<< HEAD
             //echo "      <a href='" . BASEURL . "admin_index.php?page=pages_management_edit&filename=" . $page . "' >Edit</a>";
-=======
-            echo "      <a href='" . BASEURL . "admin_index.php?page=pages_management_edit&filename=" . $page . "' >Edit</a>";
->>>>>>> origin/dev
             echo "</li>";
         }
         echo '</ul>';
