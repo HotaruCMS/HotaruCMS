@@ -132,7 +132,7 @@ class PluginSettings extends Prefab
                 //print "isSetting for folder: " . $folder . '   setting: ' .$setting . '<Br/>';
                         
                 // dont do check in memory. we are going to update based on this. better to go to db
-                if (!isset($h->pluginSettings[$folder])) {
+                if (!isset($h->pluginSettings[$folder][$setting])) {
                     //print "set settings for: " . $folder . '<br/>';
                     $h->pluginSettings[$folder] = unserialize($this->getSetting($h, $setting, $folder));
                 }
@@ -169,8 +169,9 @@ $h->db->query($h->db->prepare($sql, $folder, $setting, $value, $h->currentUser->
 		} else {
 			$sql = "UPDATE " . TABLE_PLUGINSETTINGS . " SET plugin_folder = %s, plugin_setting = %s, plugin_value = %s, plugin_updateby = %d WHERE (plugin_folder = %s) AND (plugin_setting = %s)";
 			if (isset($h->currentUser->id)) { $updateby = $h->currentUser->id; } else { $updateby = 1; }
-//print $sql; print '<br/>';			
+			
 $h->db->query($h->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting));
+//print $h->db->prepare($sql, $folder, $setting, $value, $updateby, $folder, $setting); print '<br/>';
 		}
 		
 		// optimize the table
@@ -184,7 +185,7 @@ $h->db->query($h->db->prepare($sql, $folder, $setting, $value, $updateby, $folde
 //                }
 //                
                 // After updating a setting we should always recall the init methods for populting $h functions   
-                $h->getAllPluginSettings();
+                $h->getAllPluginSettings(true);
 	}
         
         

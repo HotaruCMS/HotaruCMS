@@ -5,7 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Hotaru extends Initialize
 {    
-        protected $version = '1.7.2';  // Hotaru CMS version       
+        protected $version = '1.7.3';  // Hotaru CMS version       
         
         /**
 	 * CONSTRUCTOR - Initialize
@@ -1374,7 +1374,7 @@ class Hotaru extends Initialize
                         // for old themes that dont split between loading js and css
                         //if ($this->vars['framework']['bootstrap-js'])
                             //$this->includeJs(LIBS . 'frameworks/bootstrap3/js/', 'bootstrap.min');  
-                        echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>";
+                        echo "<script type='text/javascript' src='" . $this->bootstrapJsUri . "'></script>";
                             
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $version_css = $this->includes->combineIncludes($this, 'css');
@@ -1382,29 +1382,28 @@ class Hotaru extends Initialize
                         
                         // only load jquery if we havent already loaded it
                         if (!isset($this->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="' . $this->jqueryUri . '"></script>';             
                             $this->vars['framework']['jquery'] = true;                            
                         }
                         
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.js"></script>'; 
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
+                        echo '<script type="text/javascript" src="' . $this->summernoteJsUri . '"></script>'; 
+                        echo '<script type="text/javascript" src="' . $this->knockoutJsUri . '"></script>';             
+                        echo '<script type="text/javascript" src="' . $this->knockoutMappingJsUri . '"></script>';
 
                         break;
                     case 'js': 
                         
                         // for better caching we should send this js file separately to hotarus combined js
                         if (!isset($this->vars['framework']['bootstrap-js']) || $this->vars['framework']['bootstrap-js']) {
-                            echo "<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js' type='text/css' /></script>";
-                            //echo "<script type='text/javascript' src='" . BASEURL . "libs/frameworks/bootstrap3/js/bootstrap.min.js' /></script>\n";
+                            echo "<script type='text/javascript' src='" . $this->bootstrapJsUri . "' type='text/css' /></script>";
                         }
                           
                         $version_js = $this->includes->combineIncludes($this, 'js');
                         $this->includes->includeCombined($this, $version_js, 0, $this->adminPage);  
                         
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.js"></script>'; 
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>';             
-                        echo '<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>';
+                        echo '<script type="text/javascript" src="' . $this->summernoteJsUri . '"></script>'; 
+                        echo '<script type="text/javascript" src="' . $this->knockoutJsUri . '"></script>';             
+                        echo '<script type="text/javascript" src="' . $this->knockoutMappingJsUri . '"></script>';
 
                         break;
                     case 'css': 
@@ -1414,7 +1413,7 @@ class Hotaru extends Initialize
                         // bringing this up-top with css because some inline js on plugins needs to have jquery loaded first to work
                         // only load jquery if we havent already loaded it
                         if (!isset($this->vars['framework']['jquery'])) {
-                            echo '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';             
+                            echo '<script type="text/javascript" src="' . $this->jqueryUri . '"></script>';             
                             $this->vars['framework']['jquery'] = true;                            
                         }
                         
@@ -1481,7 +1480,7 @@ class Hotaru extends Initialize
                        echo '<link rel="stylesheet" href="' . SITEURL . 'content/themes/' . THEME . 'css/style.css" type="text/css" />';                    
                 }        
 
-                echo '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">';
+                echo '<link href="' . $this->fontAwesomeUri . '" rel="stylesheet">';
          }                
 
          
@@ -1493,7 +1492,7 @@ class Hotaru extends Initialize
                 // then css files
                 switch ($file) {
                     case 'bootstrap3':                        
-                        echo "<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css' type='text/css' />\n";
+                        echo "<link rel='stylesheet' href='" . $this->bootstrapCssUri . "' type='text/css' />\n";
                         $this->vars['framework']['bootstrap'] = true;
                         break;
                     case 'bootstrap':                        
@@ -1518,9 +1517,9 @@ class Hotaru extends Initialize
                         break;
                 }   
                 
-                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote.min.css" type="text/css" />';                
-                echo '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.0/summernote-bs3.min.css" type="text/css" />';
-                echo '<link href="//cdn.jsdelivr.net/animatecss/3.2.0/animate.min.css" rel="stylesheet">';
+                echo '<link rel="stylesheet" href="' . $this->summernoteCssUri . '" type="text/css" />';                
+                echo '<link rel="stylesheet" href="' . $this->summernoteCssBs3Uri . '" type="text/css" />';
+                echo '<link rel="stylesheet" href="' . $this->animateCssUri . '" type="text/css" />';
          }
      
      

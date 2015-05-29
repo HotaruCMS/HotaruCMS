@@ -101,7 +101,7 @@ class Paginator extends Prefab
 		// get full url from address bar
 		$host = $h->cage->server->sanitizeTags('HTTP_HOST');
 		$uri = $h->cage->server->sanitizeTags('REQUEST_URI');
-		$path = "//" . $host  . $uri;
+		$path = "http://" . $host  . $uri;
 		
 		// if it doesn't contain $head, then it must be a friendly url 
 		if ($path != SITEURL && !strrpos($path, $head)) {

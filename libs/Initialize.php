@@ -105,7 +105,20 @@ class Initialize extends Prefab
         
 	// vars
         protected $vars                 = array();  // multi-purpose 
-	
+        
+        // cdn Uris
+	protected $jqueryUri            = '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js';
+        protected $summernoteJsUri      = '//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.7/summernote.min.js';
+        protected $summernoteCssUri     = '//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.7/summernote.min.css';
+        protected $summernoteCssBs3Uri  = '//cdnjs.cloudflare.com/ajax/libs/summernote/0.6.7/summernote-bs3.min.css';
+        protected $bootstrapJsUri       = '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js';
+        protected $bootstrapCssUri      = '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css';
+        protected $animateCssUri        = '//cdn.jsdelivr.net/animatecss/3.2.0/animate.min.css';
+        protected $fontAwesomeUri       = '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css';
+        protected $knockoutJsUri        = '//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js';
+        protected $knockoutMappingJsUri = '//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js';
+        
+        
 	/**
 	 * Initialize Hotaru with the essentials
 	 */

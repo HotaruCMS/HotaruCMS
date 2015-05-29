@@ -262,6 +262,14 @@ class IncludeCssJs extends Prefab
 	}
 	
 	
+        public function getThemeJsFiles()
+        {
+            $files = glob(THEMES . THEME . 'javascript/*.{js}', GLOB_BRACE);
+            foreach($files as $file) {
+                $this->setJsIncludes($file);
+            }
+        }
+        
 	/**
 	 * Combine Included CSS & JSS files
 	 *
@@ -295,11 +303,15 @@ class IncludeCssJs extends Prefab
 			$type = 'js'; 
 			$content_type = 'text/javascript';
 			//don't forget to get the globals js file as well            
-			$this->includeJs($h, $cache, 'JavascriptConstants')    ;
-			$this->includeJs($h, BASE . 'javascript/' , "hotaru");        
+			$this->includeJs($h, $cache, 'JavascriptConstants');
+			$this->includeJs($h, BASE . 'javascript/' , "hotaru");
+                        
 			if ($h->adminPage) {
 				$this->includeJs($h, ADMIN_THEMES . ADMIN_THEME. "javascript/" , rtrim(ADMIN_THEME, "/"));
-			}
+			} else {
+                            // get js files in theme folder if not on admin page
+                            $this->getThemeJsFiles();
+                        }
 			
 			$includes = $this->getJsIncludes($h->adminPage);
 		}
@@ -399,4 +411,3 @@ class IncludeCssJs extends Prefab
 		
 	 }
 }
-?>
