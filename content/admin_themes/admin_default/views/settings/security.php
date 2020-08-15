@@ -90,6 +90,11 @@ $loaded_settings = $thisSettings;
                                 else {
                                         $type = strpos($ls->settings_name,'PASSWORD') !== false ? 'password' : 'text';
                                         $disabled = $ls->settings_name == 'HOTARU_API_KEY' ? 'disabled' : '';
+					
+					/* 
+					 * Passwords could contain special characters `entitied` by htmlentities()
+					 * It's suggested avoiding set passwords with the `&` character to avoid errors
+					*/
                                         echo '<input ' . $disabled . ' id="input_' . $ls->settings_name . '" class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . htmlentities($ls->settings_value, ENT_QUOTES, 'UTF-8') . '" ' . $css_class . ' />';
                                 }
                                 ?>
