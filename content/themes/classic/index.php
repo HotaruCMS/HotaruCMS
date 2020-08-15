@@ -68,7 +68,7 @@ if (!$h->pluginHook('theme_index_header')) { $h->template('header'); }
 	<div id="header" class="grid_12">
 		<!-- TITLE & AD BLOCKS -->
 		<div id="hd_title">
-			<h1><a href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a></h1>
+			<h1><a href="<?php echo SITEURL; ?>"><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></a></h1>
 			<h3 class="subtitle"><?php echo $h->vars['theme_settings']['tagline']; ?></h3>
 		</div>
 		<div class="clear"></div>
