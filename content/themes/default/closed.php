@@ -31,7 +31,7 @@
 
 <html lang="en"><head>
     <meta charset="utf-8">
-    <title><?php echo SITE_NAME; ?></title>
+    <title><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
