@@ -198,7 +198,7 @@ foreach($stats as $key=>$extClass){
     <div class="well sidebar-nav">
 	
 	<ul id="site-stats" class="nav nav-list">
-            <li class="nav-header"><?php echo SITE_NAME . " " . $h->lang("admin_theme_main_stats"); ?></li>
+            <li class="nav-header"><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " " . $h->lang("admin_theme_main_stats"); ?></li>
 		    
 
 		<?php $h->pluginHook('admin_theme_main_stats_post_version'); ?>
