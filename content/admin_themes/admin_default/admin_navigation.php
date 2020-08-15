@@ -145,7 +145,7 @@
 		</li>
 		    
                 <li>
-		    <a class="" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
+		    <a class="" href="<?php echo SITEURL; ?>"><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></a>
 		</li>
             </ul>
         </div><!--/.nav-collapse -->
