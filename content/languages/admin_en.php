@@ -39,7 +39,7 @@ $lang['admin_announcement_run_install'] = 'You have a new version of Hotaru but 
 $lang['admin_announcement_plugins_disabled'] = "Go to Plugin Management to enable some plugins.";
 $lang['admin_announcement_users_disabled'] = "Please enable the Users plugin in Plugin Management.";
 $lang['admin_announcement_change_site_email'] = "Please change the site email address in the Settings page.";
-$lang['admin_announcement_site_closed'] = SITE_NAME . " is currently closed!";
+$lang['admin_announcement_site_closed'] = htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " is currently closed!";
 $lang['admin_announcement_debug_mode_on'] = "Reminder : debug mode is on";
 
 /* Plugins */
@@ -133,8 +133,8 @@ $lang["admin_theme_maintenance_site"] = "Site:";
 $lang["admin_theme_maintenance_announcement"] = "Display this announcement at the top of every page:";
 $lang["admin_theme_maintenance_announcement_enable"] = "Enabled";
 $lang["admin_theme_maintenance_announcement_tags"] = "<small>Allowed: &lt;div&gt;&lt;p&gt;&lt;span&gt;&lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;a&gt;&lt;img&gt;&lt;blockquote&gt;&lt;del&gt;&lt;br&gt;</small>";
-$lang["admin_theme_maintenance_close_site"] = "Close " . SITE_NAME . " for maintenance";
-$lang["admin_theme_maintenance_open_site"] = "Open " . SITE_NAME . " to the public";
+$lang["admin_theme_maintenance_close_site"] = "Close " . htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " for maintenance";
+$lang["admin_theme_maintenance_open_site"] = "Open " . htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " to the public";
 $lang["admin_theme_maintenance_close_site_desc"] = "Only users with \"access admin\" permissions will be able to view the site.";
 $lang["admin_theme_maintenance_open_site_desc"] = "Finished maintenance? Allow everyone back in.";
 $lang["admin_theme_maintenance_cache"] = "Cache:";

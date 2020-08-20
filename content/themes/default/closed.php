@@ -31,7 +31,7 @@
 
 <html lang="en"><head>
     <meta charset="utf-8">
-    <title><?php echo SITE_NAME; ?></title>
+    <title><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -90,7 +90,7 @@
           <li><a href="<?php echo SITEURL; ?>admin_index.php?page=admin_login">Admin</a></li>
 
         </ul>
-        <h3 class="muted"><?php echo SITE_NAME; ?></h3>
+        <h3 class="muted"><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></h3>
       </div>
 
       <hr>
@@ -110,7 +110,7 @@
      
       <div class="footer">
           <center>
-            © <?php echo SITE_NAME; ?> 2013<br/>                             
+            © <?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?> 2013<br/>                             
           <a href="http://hotarucms.org"><img src="/content/admin_themes/admin_default/images/hotarucms.png" alt="Hotaru CMS"></a>
           </center>
          

@@ -47,7 +47,7 @@ $h->vars['theme_settings']['userProfile_tabs'] = isset($h->vars['theme_settings'
                 <span class="icon-bar"></span>
             </button>
             <div >
-                <a class="navbar-brand" href="<?php echo SITEURL; ?>"><?php echo SITE_NAME; ?></a>
+                <a class="navbar-brand" href="<?php echo SITEURL; ?>"><?php echo htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); ?></a>
                 <span class="navbar-brand btn-navbar">
                     <?php
 //                    if ($h->currentUser->loggedIn) {
