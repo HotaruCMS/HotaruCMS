@@ -195,31 +195,31 @@ class PageHandling extends Prefab
 			// replace [delimiter] text with the specified delimiter:
 			$h->pageTitle = str_replace('[delimiter]', $delimiter, $h->pageTitle);
 			
-			if ($raw) { return $h->pageTitle; }
+			if ($raw) { return htmlentities($h->pageTitle, ENT_QUOTES, 'UTF-8'); }
                         
                         // title only (set by plugins, e.g. bookmarking) or title followed by site name
 			$pageTitle = $h->pageName == $h->home ? $h->pageTitle : $h->pageTitle . $delimiter . SITE_NAME;
-                        return $pageTitle;
+                        return htmlentities($pageTitle, ENT_QUOTES, 'UTF-8');
 		} elseif ($h->getPageName()) {
 			// make a title from it...
 			$h->pageTitle = make_name($h->pageName);
 			
 			// return the title only
-			if ($raw) { return $h->pageTitle; }
+			if ($raw) { return htmlentities($h->pageTitle, ENT_QUOTES, 'UTF-8'); }
 			
 			// return just the site name for the homepage
-			if ($h->pageName == $h->home) { return SITE_NAME; }
+			if ($h->pageName == $h->home) { return htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); }
 			
 			// return with site name
-			return $h->pageTitle . $delimiter . SITE_NAME;
+			return htmlentities($h->pageTitle . $delimiter . SITE_NAME, ENT_QUOTES, 'UTF-8');
 		} else {
 			// there's no title and no page name - assume "page not found"
 			$h->pageTitle = $h->lang('main_theme_page_not_found');
 			
 			// return the title only
-			if ($raw) { return $h->pageTitle; }
+			if ($raw) { return htmlentities($h->pageTitle, ENT_QUOTES, 'UTF-8'); }
 			
-			return $h->pageTitle  . $delimiter . SITE_NAME;
+			return htmlentities($h->pageTitle  . $delimiter . SITE_NAME, ENT_QUOTES, 'UTF-8');
 		} 
 	}
 	

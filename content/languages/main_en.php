@@ -56,12 +56,12 @@ $lang['main_hotaru_memory_usage_peak'] = "Peak: ";
 $lang['main_hotaru_php_version'] = "PHP v.";
 $lang['main_hotaru_mysql_version'] = "MySQL v.";
 $lang['main_hotaru_hotaru_version'] = "<a href='http://hotarucms.org' title='HotaruCMS.org'>Hotaru CMS</a> v.";
-$lang['main_hotaru_site_closed'] = SITE_NAME . " is undergoing maintenance.<br />Please come back later.";
+$lang['main_hotaru_site_closed'] = htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " is undergoing maintenance.<br />Please come back later.";
 
 /* Announcements */
 $lang['main_announcement_users_disabled'] = "Login and registration is currently disabled.";
 $lang['main_announcement_plugins_disabled'] = "All plugins are currently disabled.";
-$lang['main_announcement_site_closed'] = SITE_NAME . " is currently closed!";
+$lang['main_announcement_site_closed'] = htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " is currently closed!";
 
 /* Times */
 $lang['main_times_days'] = "days";
@@ -107,17 +107,17 @@ $lang["main_theme_footer_hotaru_link"] = "HotaruCMS.org";
 
 /* Forgotten Password */
 $lang['main_user_email_password_conf_sent'] = "An email has been sent to the address provided";
-$lang['main_user_email_password_conf_subject'] = SITE_NAME . " Password Reset Request"; 
-$lang['main_user_email_new_password_subject'] = "Your New Password for " . SITE_NAME; 
+$lang['main_user_email_password_conf_subject'] = htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " Password Reset Request"; 
+$lang['main_user_email_new_password_subject'] = "Your New Password for " . htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8'); 
 $lang['main_user_email_password_conf_body_hello'] = "Hi";
-$lang['main_user_email_password_conf_body_welcome'] = "If you have requested a new password at " . SITE_NAME . ", ";
+$lang['main_user_email_password_conf_body_welcome'] = "If you have requested a new password at " . htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . ", ";
 $lang['main_user_email_password_conf_body_click'] = "click this url or copy it into your browser:";
 $lang['main_user_email_password_conf_body_no_request'] = "If you have NOT requested a new password, please ignore this email.";
 $lang['main_user_email_password_conf_body_regards'] = "Regards,";
-$lang['main_user_email_password_conf_body_sign'] = SITE_NAME . " Admin";
+$lang['main_user_email_password_conf_body_sign'] = htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . " Admin";
 $lang['main_user_email_password_conf_success'] = "A new password has been sent to your email address.";
 $lang['main_user_email_password_conf_fail'] = "Unable to confirm your email address. Please try the link again.";
-$lang['main_user_email_password_conf_body_requested'] = "Here is the new password you requested at " . SITE_NAME . ": ";
+$lang['main_user_email_password_conf_body_requested'] = "Here is the new password you requested at " . htmlentities(SITE_NAME, ENT_QUOTES, 'UTF-8') . ": ";
 $lang['main_user_email_password_conf_body_remember'] = "Please make a note of it and use it next time you log in.";
 $lang['main_user_email_password_conf_body_pass_change'] = "You can change it to something more memorable from your account page.";
 

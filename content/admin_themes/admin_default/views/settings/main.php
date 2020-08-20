@@ -83,7 +83,7 @@ $loaded_settings = $thisSettings;
 				}
 				else {
 					if (strpos($ls->settings_name,'PASSWORD') !== false) { $type = 'password'; } else { $type = 'text'; }
-					echo '<input class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . $ls->settings_value . '" ' . $css_class . ' />';
+					echo '<input class="form-control" type="' . $type . '" size=20 name="' . $ls->settings_name .'" value="' . htmlentities($ls->settings_value, ENT_QUOTES, 'UTF-8') . '" ' . $css_class . ' />';
 				}
 				?>
 			</td>
